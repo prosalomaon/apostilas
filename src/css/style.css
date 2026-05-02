@@ -252,6 +252,14 @@ header a {
   margin: 1.5rem 0;
 }
 
+.console {
+  background: #000;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  padding: 20px; border-radius: 8px;
+  max-height: 300px; overflow-y: auto;
+}
+
 pre {
   padding: 1.5rem;
   overflow-x: auto;
