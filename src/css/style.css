@@ -78,20 +78,102 @@ li {
 }
 
 img {
+  display: block;
   max-width: 100%;
   height: auto;
+  margin: auto;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5rem 0;
 }
 
 .nav-header {
   border-bottom: 3px solid #000;
 }
 
-.logo {
+.logo-toggle {
   text-transform: uppercase;
-  border: 2px solid #fff;
+  border: 2px solid var(--border);
   padding: 0.5rem 1rem;
   font-weight: 800;
   text-decoration: none;
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  user-select: none;
+  margin-bottom: 0.5rem;
+}
+
+.logo-toggle:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--bg);
+  min-width: 280px;
+  box-shadow: 6px 6px 0px var(--fg);
+  border: 2px solid var(--fg);
+  z-index: 1000;
+  top: 100%;
+  left: 0;
+  /* margin-top: 0.5rem; */
+}
+
+.dropdown-content a {
+  color: var(--fg);
+  padding: 0.8rem 1.2rem;
+  text-decoration: none;
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-bottom: 1px solid #f0f0f0;
+  text-transform: none;
+  transition: background 0.1s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: var(--fg);
+  color: var(--bg);
+}
+
+.dropdown-home {
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  background-color: var(--accent);
+}
+
+.dropdown-divider {
+  height: 2px;
+  background-color: var(--fg);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.arrow {
+  font-size: 0.6rem;
+  transition: transform 0.3s ease;
+}
+
+.dropdown:hover .arrow {
+  transform: rotate(180deg);
 }
 
 /* Layout */
@@ -105,7 +187,7 @@ img {
 header {
   background: var(--bg);
   color: var(--fg);
-  padding: 1.5rem 0;
+  padding: 1.5rem 0 1rem;
 }
 
 header .container {
@@ -261,7 +343,7 @@ header a {
 }
 
 pre {
-  padding: 1.5rem;
+  padding: 0.5rem;
   overflow-x: auto;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.9rem;

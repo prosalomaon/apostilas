@@ -2,7 +2,7 @@
 title: "Autorrelacionamento: Modelagem de recursividade e hierarquias."
 aula_numero: "12"
 subject: "banco-de-dados-i"
-description: "Conteúdo da aula 12 do bimestre 2: Autorrelacionamento: Modelagem de recursividade e hierarquias.."
+description: "O autorrelacionamento (ou relacionamento reflexivo) ocorre quando detectamos uma associação entre ocorrências de uma mesma entidade."
 tags:
 - aula
 - bimestre-02
@@ -10,13 +10,257 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 02 em desenvolvimento...</p>
+  <p>O autorrelacionamento (ou relacionamento reflexivo) ocorre quando detectamos uma associação entre ocorrências de uma mesma entidade. No mundo real, isso acontece quando objetos de uma mesma classe desempenham papéis diferentes entre si, como um funcionário que gerencia outros funcionários ou um produto que é composto por outros produtos.</p>
+
+  <h3>1. Conceitos Fundamentais</h3>
+  <ul>
+    <li><strong>Definição:</strong> É um relacionamento binário onde a conexão ocorre com a própria entidade, tratando-a como se fossem dois conjuntos diferentes na abstração.</li>
+    <li><strong>Papéis (Roles ou Alias):</strong> No autorrelacionamento, a definição de "papéis" é vital para distinguir o significado de cada participação. Em uma estrutura de peças, por exemplo, uma peça assume o papel de "composta" (o todo) e a outra o papel de "componente" (a parte).</li>
+    <li><strong>Chave Estrangeira Recursiva:</strong> Implementa-se através de uma chave estrangeira (FK) que aponta para a chave primária (PK) da própria tabela.</li>
+  </ul>
+
+  <hr>
+
+  <h3>2. Tipos de Conectividade e Aplicações</h3>
+  
+  <h4>A. Um-para-Muitos (1:N) - Hierarquia de Níveis</h4>
+  <p>Utilizado para modelar estruturas onde cada item tem apenas um "superior", mas pode ter vários "subordinados".</p>
+  <ul>
+    <li><strong>Exemplo (Gerência):</strong> Na tabela <code>FUNCIONARIO</code>, o campo <code>nss_supervisor</code> (FK) aponta para o <code>nss</code> (PK) do chefe.</li>
+    <li><strong>Exemplo (Biologia):</strong> Uma entidade <code>PARTES_CORPO</code> onde a "Cabeça" é composta por "Olho", e o "Olho" é composto por "Retina".</li>
+  </ul>
+
+  <h4>B. Muitos-para-Muitos (N:N) - Composição (Estrutura de Materiais)</h4>
+  <p>Este é o caso mais complexo, pois um item pode ser, ao mesmo tempo, um "todo" (formado por várias partes) e uma "parte" (integrante de vários outros itens).</p>
+  <p><strong>Refinando o Exemplo da Fábrica (Explicação Detalhada):</strong> Imagine uma única tabela chamada <code>PRODUTO</code> que contém tanto peças simples (parafusos, arruelas) quanto máquinas complexas (motores, carburadores).</p>
+  <ul>
+    <li><strong>A Visão do Componente (A Parte):</strong> Um "Parafuso" não é exclusivo de um único produto. Ele é usado na montagem de um Bloco de Motor e também na montagem de um Carburador. Ou seja, um único componente participa de muitos produtos compostos.</li>
+    <li><strong>A Visão do Composto (O Todo):</strong> Por outro lado, o "Bloco de Motor" não é feito apenas de parafusos. Ele exige Arruelas, Roscas, Pistões e outros produtos. Ou seja, um produto composto exige muitos produtos componentes.</li>
+  </ul>
+
+  <p><strong>A Resolução Técnica (Entidade Associativa):</strong> Como essa relação é N:N, o modelo relacional não permite listar "vários componentes" dentro de uma única linha de produto. Por isso, criamos uma Entidade Associativa (tabela de ligação) chamada <code>COMPOSIÇÃO</code> (ou Estrutura/BOM). Ela terá:</p>
+  <ul>
+    <li><code>ID_Produto_Composto</code> (FK): Referencia o produto que está sendo montado (o "pai").</li>
+    <li><code>ID_Produto_Componente</code> (FK): Referencia o produto que é usado como peça (o "filho").</li>
+    <li><strong>Atributo de Relacionamento:</strong> Geralmente a Quantidade (ex: quantos parafusos vão no bloco?).</li>
+  </ul>
+
+  <hr>
+
+  <h3>3. Comparação: Teoria vs. Prática SQL</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>Teoria (Modelo ER)</th>
+        <th>Prática (SQL)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Identificação</strong></td>
+        <td>Uso de losangos e nomes de papéis.</td>
+        <td>Chave Estrangeira na mesma tabela.</td>
+      </tr>
+      <tr>
+        <td><strong>Raiz da Hierarquia</strong></td>
+        <td>O elemento que não possui "pai".</td>
+        <td>Registro onde a FK é NULL.</td>
+      </tr>
+      <tr>
+        <td><strong>Consulta</strong></td>
+        <td>Navegação lógica por níveis.</td>
+        <td>Uso de Self Join (Join da tabela com ela mesma via Alias).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h3>4. Demonstração Prática</h3>
+  <h4>Implementação da Composição (N:N)</h4>
+  <p>Abaixo, o SQL mostra como a tabela associativa "amarra" a entidade Produto a ela mesma.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Entidade Principal
+CREATE TABLE Produto (
+    codigo_produto INT PRIMARY KEY,
+    nome_produto VARCHAR(50) NOT NULL
+);
+
+-- Tabela Associativa (A ponte do autorrelacionamento N:N)
+CREATE TABLE Composicao (
+    id_composto INT NOT NULL,  -- Referência ao "Todo" (ex: Bloco)
+    id_componente INT NOT NULL, -- Referência à "Parte" (ex: Parafuso)
+    quantidade INT DEFAULT 1,
+    
+    PRIMARY KEY (id_composto, id_componente),
+    FOREIGN KEY (id_composto) REFERENCES Produto(codigo_produto),
+    FOREIGN KEY (id_componente) REFERENCES Produto(codigo_produto)
+);</code></pre>
+  </div>
+
+  <h4>O Desafio da Consulta (Self-Join)</h4>
+  <p>Para visualizar quem compõe o quê em uma hierarquia 1:N (como chefes), usamos Aliases (apelidos) para que o banco "finja" que existem duas tabelas separadas.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Exemplo de Self Join: Quem é o chefe de quem?
+SELECT 
+    SUPERVISOR.nome_vendedor AS Chefe, 
+    SUBORDINADO.nome_vendedor AS Funcionario
+FROM Vendedores AS SUPERVISOR
+INNER JOIN Vendedores AS SUBORDINADO 
+    ON SUPERVISOR.codigo_vendedor = SUBORDINADO.chefe_fk;</code></pre>
+  </div>
+  <p>Nesta consulta, a "Tabela A" assume o papel de supervisores e a "Tabela B" o de subordinados.</p>
+
+  <hr>
+
+  <h3>5. Dicas de Modelagem</h3>
+  <ul>
+    <li><strong>Opcionalidade:</strong> A FK recursiva em hierarquias 1:N deve aceitar <code>NULL</code>. Caso contrário, você nunca conseguiria cadastrar o "Dono da Empresa" (a raiz), pois ele seria obrigado a ter um chefe que ainda não existe.</li>
+    <li><strong>Integridade:</strong> Ao excluir um produto que é "composto", a regra de negócio deve decidir se os componentes também somem (Cascade) ou se a operação é bloqueada para evitar dados inconsistentes.</li>
+    <li><strong>Ciclos:</strong> Um erro comum é criar um ciclo onde o Produto A é parte de B, e B é parte de A. Isso deve ser evitado via lógica de aplicação para não causar recursividade infinita nas consultas.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 02 em desenvolvimento...</p>
+  <h2>Representação Gráfica</h2>
+
+  <h3>1. Modelo Conceitual: Hierarquia 1:N (Exemplo: Funcionários)</h3>
+  <p>Este modelo representa uma estrutura de subordinação simples, onde um funcionário pode gerenciar muitos outros, mas cada subordinado possui apenas um chefe.</p>
+  <div class="mermaid">
+    erDiagram
+        EMPREGADO ||--o{ EMPREGADO : "supervisiona (Papel 1: Supervisor / Papel 2: Supervisionado)"
+        EMPREGADO {
+            string nss PK
+            string nome
+            string nss_supervisor FK
+        }
+  </div>
+  <p><strong>Nota:</strong> A linha indica que um supervisor pode ter zero ou muitos subordinados, mas um subordinado (opcionalmente) tem um supervisor.</p>
+
+  <h3>2. Visão de Instâncias: A Árvore de Dados</h3>
+  <p>Para entender como os dados se comportam em uma hierarquia (como partes do corpo ou organogramas), visualizamos a navegação do "topo para as folhas".</p>
+  <div class="mermaid">
+    graph TD
+        A["Raiz: Diretor (NSS_Supervisor: NULL)"] --> B["Gerente A"]
+        A --> C["Gerente B"]
+        B --> D["Vendedor 1"]
+        B --> E["Vendedor 2"]
+        C --> F["Vendedor 3"]
+
+        subgraph Legenda
+        L1["FK é NULL na Raiz"]
+        L2["FK aponta para PK do 'Pai'"]
+        end
+  </div>
+  <p><strong>Conceito:</strong> O registro onde a Chave Estrangeira é nula representa o elemento raiz da hierarquia.</p>
+
+  <h3>3. Modelo Conceitual: Composição N:N (Exemplo: Produtos/BOM)</h3>
+  <p>Utilizado quando um item pode ser composto por várias partes e, ao mesmo tempo, ser um componente de diversos outros produtos (Lista de Materiais - Bill of Materials).</p>
+  <div class="mermaid">
+    erDiagram
+        PRODUTO ||--o{ COMPOSICAO : "é composto por"
+        PRODUTO ||--o{ COMPOSICAO : "participa como componente em"
+        
+        COMPOSICAO {
+            int id_composto PK, FK
+            int id_componente PK, FK
+            int quantidade
+        }
+  </div>
+  <p><strong>Resolução:</strong> Todo relacionamento reflexivo M:N exige uma entidade associativa (neste caso, COMPOSICAO) para quebrar a relação em duas associações 1:N.</p>
+
+  <h3>4. Mapeamento Lógico: Composição N:N</h3>
+  <p>Abaixo, a representação de como as chaves são herdadas na tabela associativa para efetivar o relacionamento lógico.</p>
+  <div class="mermaid">
+    classDiagram
+        class Produto {
+            +int codigo_produto PK
+            +string descricao
+        }
+        class Composicao {
+            +int codigo_composto PK, FK
+            +int codigo_componente PK, FK
+            +int quantidade_na_montagem
+        }
+        Produto "1" -- "*" Composicao : assume papel de 'Todo'
+        Produto "1" -- "*" Composicao : assume papel de 'Peça'
+  </div>
+  <p><strong>Chave Primária Composta:</strong> A PK da tabela Composicao é formada pela união das PKs que vêm da mesma entidade Produto, mas com nomes/papéis diferentes.</p>
+
+  <h3>5. Lógica do Self-Join (Consulta Prática)</h3>
+  <p>Para recuperar dados de um autorrelacionamento no SQL, o banco de dados trata a mesma tabela como se fossem duas instâncias separadas (A e B) através do uso de Aliases.</p>
+  <div class="mermaid">
+    graph LR
+        subgraph "SGBD (Memória Virtual)"
+        T1["Tabela A (Papel: Supervisor)"]
+        T2["Tabela B (Papel: Subordinado)"]
+        end
+        
+        T1 -- "Join: A.PK = B.FK" --> T2
+        T2 -- "Resultado" --> R["Relatório: 'Nome Chefe' | 'Nome Subordinado'"]
+  </div>
+  <p><strong>Funcionamento:</strong> A cláusula <code>FROM Funcionário A, Funcionário B</code> permite que o sistema compare o <code>nss</code> da Tabela A com o <code>nss_supervisor</code> da Tabela B.</p>
 </section>
+
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+
+  <ul>
+    <li><strong>Gestão de Recursos Humanos (Organogramas):</strong> Esta é a aplicação mais clássica do autorrelacionamento 1:N. Em sistemas de RH, utiliza-se uma única tabela para todos os colaboradores, onde uma coluna de Chave Estrangeira (FK) aponta para a Chave Primária (PK) do próprio colega que exerce a função de gestor.
+      <ul>
+        <li>
+          <strong>Na prática:</strong> Ao cadastrar um vendedor, o sistema associa o campo <code>Chefe_FK</code> ao código de outro vendedor que já está na base. Isso permite reconstruir toda a árvore de comando da empresa através de consultas do tipo Self-Join.
+        </li>
+      </ul>
+    </li>
+    <li><strong>Estrutura de Materiais em Indústrias (BOM - Bill of Materials):</strong> Em ambientes fabris, utiliza-se o autorrelacionamento N:N para gerenciar a composição de produtos. Como um produto acabado (ex: motor) é feito de vários componentes (ex: pistões) e um componente pode participar de vários produtos diferentes, a relação é Muitos-para-Muitos.
+      <ul>
+        <li><strong>Na prática:</strong> Cria-se uma entidade associativa (ex: COMPOSIÇÃO) que armazena dois IDs da mesma tabela de PRODUTO: um no papel de "todo" e outro no papel de "peça", além da quantidade necessária para a montagem.</li>
+      </ul>
+    </li>
+    <li><strong>Sistemas de Catalogação e Taxonomia (Biologia e Anatomia):</strong> Para modelar a decomposição de objetos complexos em partes menores, utiliza-se a navegação recursiva.
+      <ul>
+        <li><strong>Na prática:</strong> Uma entidade <code>PARTES_DO_CORPO</code> pode representar que a "Cabeça" é composta pelo "Olho", e o "Olho" é composto pela "Retina". No banco de dados, o registro da "Retina" terá como "pai" o ID do "Olho", permitindo que o sistema navegue do topo para as folhas da hierarquia.</li>
+      </ul>
+    </li>
+    <li><strong>Hierarquia de Unidades Corporativas (Matriz e Filiais):</strong> Empresas com estruturas complexas utilizam o autorrelacionamento para definir a dependência entre sedes e unidades regionais.
+      <ul>
+        <li><strong>Na prática:</strong> Uma entidade única <code>EMPRESA</code> pode conter um atributo que indica se ela é "sede" ou "filial". Um relacionamento reflexivo permite identificar exatamente qual empresa é a sede de qual filial, simplificando o modelo que antes teria tabelas separadas para o mesmo conjunto de atributos.</li>
+      </ul>
+    </li>
+    <li><strong>Categorização de Produtos em E-commerce:</strong> Para criar menus de navegação com categorias e subcategorias infinitas (ex: Eletrônicos > Computadores > Notebooks), utiliza-se a recursividade.
+      <ul>
+        <li><strong>Na prática:</strong> Cada categoria possui uma referência para sua categoria "pai" dentro da mesma tabela. Se o campo estiver Nulo, o sistema entende que aquela é uma categoria raiz (nível mais alto).</li>
+      </ul>
+    </li>
+    <li><strong>Sistemas de Permissões e Segurança (Acesso Hierárquico):</strong> Em grandes corporações, os níveis de acesso a dados seguem a hierarquia de visões dos departamentos.
+      <ul>
+        <li><strong>Na prática:</strong> As permissões são herdadas; se um gerente tem acesso a uma pasta "pai", ele automaticamente pode visualizar as subpastas "filhas" através da lógica de navegação hierárquica implementada no banco.</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>MACHADO, Felipe Nery Rodrigues. Banco de Dados: Projeto e Implementação. 3. ed. São Paulo: Érica, 2014.</li>
+    <li>TAKAI, Osvaldo Kotaro et al. Introdução a Banco de Dados. São Paulo: DCC-IME-USP, 2005.</li>
+    <li><a href="https://cadcobol.com.br/db2_novo_auto_relacionamento.htm" target="_blank">Auto-Relacionamentos - DORNELLES Carlos Alberto</a></li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+  </ul>
+</section>
+
+
+
 
 
 

@@ -1,23 +1,307 @@
 ---
-layout: exercicio
-title: "O Processo de Abstração: Observação da realidade e definição do Minimundo."
+layout: questionario
+title: "Modelagem de Dados: Autorrelacionamento e Hierarquias"
 exercicio_numero: "02"
-02ero: "02"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 02."
+aula_numero: "12"
+description: "Questionário sobre relacionamentos reflexivos, papéis, chaves recursivas e estruturas hierárquicas no MER."
+perguntas:
+  - texto: "O que define um autorrelacionamento (ou relacionamento reflexivo)?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Uma associação entre duas entidades distintas que possuem a mesma chave primária."
+      - letra: "b"
+        texto: "Uma associação entre ocorrências de uma mesma entidade, onde objetos da mesma classe desempenham papéis diferentes."
+      - letra: "c"
+        texto: "Um relacionamento que obrigatoriamente possui cardinalidade muitos-para-muitos (N:N)."
+      - letra: "d"
+        texto: "A criação de uma entidade fraca que depende de si mesma para existir."
+
+  - texto: "Qual a função dos 'Papéis' (Roles ou Alias) em um autorrelacionamento?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Distinguir o significado de cada participação da entidade no relacionamento, como 'gerente' e 'subordinado'."
+      - letra: "b"
+        texto: "Substituir o nome da tabela original por um nome temporário no banco de dados físico."
+      - letra: "c"
+        texto: "Definir quais atributos serão criptografados por razões de segurança."
+      - letra: "d"
+        texto: "Impedir que uma entidade se relacione com outras entidades externas."
+
+  - texto: "Como é implementado o autorrelacionamento no modelo relacional (tabelas)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Através da criação de uma tabela duplicada com os mesmos dados."
+      - letra: "b"
+        texto: "Utilizando uma chave primária composta por todos os atributos da entidade."
+      - letra: "c"
+        texto: "Por meio de uma chave estrangeira (FK) que aponta para a chave primária (PK) da própria tabela."
+      - letra: "d"
+        texto: "Apenas através de triggers e procedures, sem alteração na estrutura de colunas."
+
+  - texto: "Em um autorrelacionamento 1:N (Um-para-Muitos), como uma estrutura hierárquica é geralmente representada?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Cada registro aponta para todos os seus descendentes simultaneamente em uma única coluna."
+      - letra: "b"
+        texto: "A tabela é dividida em níveis fixos (Nível 1, Nível 2) que não podem ser alterados."
+      - letra: "c"
+        texto: "O relacionamento é ignorado e os dados são duplicados para cada nível da hierarquia."
+      - letra: "d"
+        texto: "Cada ocorrência 'filha' possui uma referência para sua ocorrência 'pai' na mesma tabela."
+
+  - texto: "Qual valor o campo da Chave Estrangeira Recursiva assume para indicar uma 'categoria raiz' ou o topo de uma hierarquia?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Nulo (NULL)."
+      - letra: "b"
+        texto: "Zero (0)."
+      - letra: "c"
+        texto: "O próprio valor da Chave Primária."
+      - letra: "d"
+        texto: "Um caractere especial como '*' ou '#'."
+
+  - texto: "Qual é um exemplo clássico de autorrelacionamento 1:N no mundo corporativo?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Um cliente que compra vários produtos diferentes."
+      - letra: "b"
+        texto: "Um funcionário que gerencia (é supervisor de) outros funcionários."
+      - letra: "c"
+        texto: "Um projeto que possui vários custos associados."
+      - letra: "d"
+        texto: "Uma nota fiscal que contém vários itens de venda."
+
+  - texto: "No autorrelacionamento N:N (Muitos-para-Muitos), o que ocorre na fase de implementação lógica?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "A entidade é fundida com outra entidade externa para simplificar o modelo."
+      - letra: "b"
+        texto: "A cardinalidade é forçada para 1:N para evitar tabelas adicionais."
+      - letra: "c"
+        texto: "Cria-se uma tabela associativa (ou de ligação) onde ambas as FKs apontam para a mesma tabela original."
+      - letra: "d"
+        texto: "O banco de dados relacional impede esse tipo de modelagem por ser recursiva."
+
+  - texto: "O exemplo de 'Lista de Materiais' (Bill of Materials), onde um produto é composto por vários sub-produtos, representa qual tipo de conectividade?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "1:1 (Um-para-Um)."
+      - letra: "b"
+        texto: "1:N (Um-para-Muitos)."
+      - letra: "c"
+        texto: "N:1 (Muitos-para-Um)."
+      - letra: "d"
+        texto: "N:N (Muitos-para-Muitos)."
+
+  - texto: "O que caracteriza a recursividade em sistemas de categorias de e-commerce?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "A capacidade de criar subcategorias infinitas (ex: Eletrônicos > Computadores > Notebooks)."
+      - letra: "b"
+        texto: "A necessidade de cadastrar o mesmo produto em todas as tabelas de categorias."
+      - letra: "c"
+        texto: "O uso de chaves estrangeiras que apontam para sites externos."
+      - letra: "d"
+        texto: "A proibição de que uma categoria tenha mais de um 'pai'."
+
+  - texto: "Por que a definição de cardinalidade mínima é importante em um autorrelacionamento de supervisão?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Para garantir que o banco de dados nunca fique vazio."
+      - letra: "b"
+        texto: "Para definir se todo funcionário deve obrigatoriamente ter um supervisor (cardinalidade 1) ou se pode haver funcionários sem supervisor (cardinalidade 0)."
+      - letra: "c"
+        texto: "Para limitar o número máximo de subordinados que um gerente pode ter."
+      - letra: "d"
+        texto: "Para impedir que um gerente seja seu próprio supervisor."
+
+  - texto: "Na prática de permissões e segurança, como a hierarquia ajuda na gestão de acessos?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Cada subpasta deve ter suas permissões cadastradas manualmente do zero."
+      - letra: "b"
+        texto: "As permissões são bloqueadas para qualquer nível abaixo da raiz."
+      - letra: "c"
+        texto: "As permissões podem ser herdadas; quem tem acesso ao 'pai' pode visualizar os 'filhos' através da lógica hierárquica."
+      - letra: "d"
+        texto: "O sistema de permissões não utiliza bancos de dados relacionais."
+
+  - texto: "Qual a principal diferença entre um relacionamento binário comum e um reflexivo?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "No binário comum as entidades são distintas; no reflexivo a entidade é a mesma."
+      - letra: "b"
+        texto: "O relacionamento reflexivo não aceita atributos próprios."
+      - letra: "c"
+        texto: "O relacionamento binário comum não permite cardinalidade 1:N."
+      - letra: "d"
+        texto: "Apenas o relacionamento binário comum utiliza chaves estrangeiras."
+
+  - texto: "Em um DER, como é representado graficamente o autorrelacionamento?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Por uma linha reta ligando duas tabelas diferentes."
+      - letra: "b"
+        texto: "Por uma linha (arco) que sai da entidade e retorna para ela mesma, passando pelo losango do relacionamento."
+      - letra: "c"
+        texto: "Por um retângulo de linha dupla dentro de outro retângulo."
+      - letra: "d"
+        texto: "Através de uma linha tracejada que indica opcionalidade total."
+
+  - texto: "O que é um autorrelacionamento 1:1?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Um relacionamento onde todos são chefes de todos."
+      - letra: "b"
+        texto: "Uma estrutura onde um registro pode ter múltiplos sucessores e múltiplos antecessores."
+      - letra: "c"
+        texto: "Ocorre quando uma ocorrência se associa a no máximo uma outra da mesma entidade (ex: predecessor e sucessor imediato)."
+      - letra: "d"
+        texto: "Um erro de modelagem que deve ser removido na normalização."
+
+  - texto: "Qual autor é referenciado no material por tratar de autorrelacionamentos e projetos de banco de dados?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Peter Chen (apenas)."
+      - letra: "b"
+        texto: "E. F. Codd (apenas)."
+      - letra: "c"
+        texto: "Dornelles Carlos Alberto."
+      - letra: "d"
+        texto: "Machado, Felipe Nery Rodrigues."
+
+  - texto: "Ao modelar uma 'Árvore Genealógica' em uma única entidade PESSOA, o relacionamento 'é_pai_de' é de que tipo?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "1:1."
+      - letra: "b"
+        texto: "1:N."
+      - letra: "c"
+        texto: "N:N."
+      - letra: "d"
+        texto: "Ternário."
+
+  - texto: "No contexto de peças e componentes, o papel 'Composta' refere-se a quê?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Ao produto final ou conjunto que é formado por outras partes."
+      - letra: "b"
+        texto: "À peça básica que não pode ser dividida."
+      - letra: "c"
+        texto: "Ao fornecedor da peça."
+      - letra: "d"
+        texto: "Ao preço total do componente."
+
+  - texto: "Qual a importância da integridade referencial em uma FK recursiva?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Garantir que os nomes das colunas sejam iguais."
+      - letra: "b"
+        texto: "Impedir a exclusão de qualquer registro da tabela."
+      - letra: "c"
+        texto: "Garantir que o 'pai' referenciado realmente exista na mesma tabela."
+      - letra: "d"
+        texto: "Permitir que chaves primárias sejam duplicadas."
+
+  - texto: "O que define uma hierarquia balanceada em modelagem?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Quando todos os registros possuem o mesmo valor de atributo."
+      - letra: "b"
+        texto: "Quando a tabela associativa possui apenas duas colunas."
+      - letra: "c"
+        texto: "Uma estrutura onde não existem categorias filhas."
+      - letra: "d"
+        texto: "Uma estrutura onde todos os 'ramos' da hierarquia possuem a mesma profundidade/níveis."
+
+  - texto: "Um curso que possui 'pré-requisitos' que também são cursos da mesma grade é um exemplo de:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Autorrelacionamento."
+      - letra: "b"
+        texto: "Entidade Fraca."
+      - letra: "c"
+        texto: "Atributo Multivalorado."
+      - letra: "d"
+        texto: "Especialização Total."
+
+  - texto: "Na implementação de um autorrelacionamento N:N, quantos campos de FK terá a tabela associativa?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Apenas um campo de FK."
+      - letra: "b"
+        texto: "Dois campos de FK, ambos referenciando a mesma tabela de origem."
+      - letra: "c"
+        texto: "Nenhum, pois usa-se apenas chaves primárias simples."
+      - letra: "d"
+        texto: "Três campos, incluindo a data de criação."
+
+  - texto: "Qual o risco de uma consulta mal formulada em tabelas recursivas?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Apagar todos os dados da tabela automaticamente."
+      - letra: "b"
+        texto: "Converter o banco de dados para o modelo orientado a objetos."
+      - letra: "c"
+        texto: "Entrar em um loop infinito ou recursão profunda se houver ciclos nos dados (Ex: A é pai de B, e B é pai de A)."
+      - letra: "d"
+        texto: "Mudar o tipo de dado da chave primária."
+
+  - texto: "O termo 'Relacionamento Reflexivo' é sinônimo de:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Autorrelacionamento."
+      - letra: "b"
+        texto: "Relacionamento Identificador."
+      - letra: "c"
+        texto: "Agregação."
+      - letra: "d"
+        texto: "Composição."
+
+  - texto: "Ao ler um autorrelacionamento no sentido 'Supervisor' para 'Supervisionado', a cardinalidade máxima 'N' indica que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Um supervisor pode ter apenas um subordinado."
+      - letra: "b"
+        texto: "Um supervisor pode gerenciar vários subordinados."
+      - letra: "c"
+        texto: "O supervisor não pode ter subordinados."
+      - letra: "d"
+        texto: "Todos os subordinados devem ser supervisores também."
+
+  - texto: "A modelagem de autorrelacionamento visa principalmente:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Aumentar o número de tabelas no banco de dados."
+      - letra: "b"
+        texto: "Substituir o uso de chaves estrangeiras."
+      - letra: "c"
+        texto: "Eliminar a necessidade de atributos descritivos."
+      - letra: "d"
+        texto: "Representar de forma elegante e econômica associações entre elementos de um mesmo conjunto conceitual."
 ---
-
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
-
-
-
-
-

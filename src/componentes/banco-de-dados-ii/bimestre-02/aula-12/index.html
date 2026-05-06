@@ -9,45 +9,325 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
+  <p>A Álgebra Relacional é uma linguagem de consulta procedural, o que significa que ela descreve o "como" os dados devem ser recuperados através de uma sequência de operações passo a passo. Ela serve como o fundamento teórico para o modelo relacional e para a linguagem SQL, permitindo manipular relações (tabelas) para gerar novos conjuntos de dados como resposta.</p>
+
+  <h3>Origem e Fundamentação Matemática</h3>
+  <p>A Álgebra Relacional não nasceu como uma ferramenta de programação, mas como uma resposta à necessidade de injetar rigor científico e princípios sólidos no campo do gerenciamento de dados.</p>
+  <ul>
+    <li><strong>O Criador:</strong> Foi formulada originalmente por Edgar F. Codd (Ted Codd), um pesquisador da IBM, em seu artigo revolucionário de 1970, intitulado "A Relational Model of Data for Large Shared Data Banks".</li>
+    <li><strong>Base Teórica:</strong> Codd, matemático de formação, utilizou a Teoria dos Conjuntos e a Lógica de Predicados para descrever como os dados deveriam ser estruturados e recuperados de forma transparente ao usuário.</li>
+    <li><strong>Evolução:</strong> Em 1979, Codd e Chris Date refinaram essas operações, dando origem ao que hoje conhecemos como o modelo relacional estendido.</li>
+    <li><strong>A Filosofia de Codd:</strong> Ele defendia a simplicidade e a unicidade. Como ele mesmo dizia: "Se algo é verdadeiro, dizer isso duas vezes não o torna mais verdadeiro" — justificando por que a álgebra relacional proíbe tuplas duplicadas e exige chaves primárias.</li>
+  </ul>
+
+  <h3>1. Operação de Seleção (σ)</h3>
+  <p>A seleção é um operador unário — ou seja, atua sobre apenas uma tabela por vez — e é utilizada para filtrar as linhas (tuplas) que atendem a um critério específico.</p>
+  <ul>
+    <li><strong>Função:</strong> Atua como um filtro horizontal. Ela seleciona um subconjunto de linhas que satisfazem um predicado lógico (como igualdade, maior ou menor que), mantendo todas as colunas originais da tabela.</li>
+    <li><strong>Esquema Resultante:</strong> A relação resultante tem exatamente o mesmo esquema (conjunto de colunas) que a relação de entrada.</li>
+    <li><strong>Exemplo Prático:</strong> Se você deseja buscar apenas os funcionários do sexo 'M', a seleção percorre a tabela e descarta todas as linhas que não atendem a essa condição.</li>
+  </ul>
+
+  <h3>2. Operação de Projeção (π)</h3>
+  <p>A projeção também é um operador unário, mas foca na filtragem das colunas (atributos) de uma relação, descartando as que não foram solicitadas.</p>
+  <ul>
+    <li><strong>Função:</strong> Atua como um filtro vertical. Ela cria uma nova tabela contendo apenas as colunas especificadas na lista de argumentos.</li>
+    <li><strong>Eliminação de Duplicidade:</strong> Um conceito fundamental da álgebra relacional é que o resultado deve ser um conjunto matemático puro. Por isso, a projeção remove automaticamente linhas duplicadas que possam surgir após a exclusão de colunas identificadoras (como chaves primárias).</li>
+    <li><strong>Grau da Relação:</strong> O "grau" (número de colunas) da tabela resultante será igual ao número de atributos listados na operação.</li>
+  </ul>
+
+  <h3>3. Produto Cartesiano (×)</h3>
+  <p>Diferente dos anteriores, o produto cartesiano é um operador binário, pois atua sobre duas tabelas distintas para combinar suas informações.</p>
+  <ul>
+    <li><strong>Função:</strong> É a forma primitiva de unir tabelas heterogêneas (de assuntos diferentes). Ele combina cada linha da primeira tabela com todas as linhas da segunda tabela.</li>
+    <li><strong>Cálculo de Dimensões:</strong>
+      <ul>
+        <li><strong>Atributos:</strong> Se a tabela A tem n colunas e a tabela B tem m colunas, o resultado terá n+m colunas.</li>
+        <li><strong>Tuplas:</strong> Se a tabela A tem 10 linhas e a tabela B tem 5 linhas, o resultado terá 10×5=50 linhas.</li>
+      </ul>
+    </li>
+    <li><strong>Utilidade:</strong> Raramente é usado sozinho para exibição de dados, servindo como a base para operações de Junção (Join), onde o resultado massivo do produto é filtrado por uma Seleção para manter apenas as combinações logicamente relacionadas (como ID_DEPARTAMENTO igual em ambas as tabelas).</li>
+  </ul>
+
+  <h3>Comparação: Teoria (Álgebra) vs. Uso Prático (SQL)</h3>
+  <p>Embora o SQL seja a linguagem utilizada no dia a dia, a álgebra relacional é o motor que define como o SGBD processa internamente os dados. Compreender essa diferença é o que separa um desenvolvedor comum de um especialista em banco de dados.</p>
+
+  <h4>1. Procedural vs. Declarativo</h4>
+  <ul>
+    <li><strong>Álgebra Relacional (Procedural):</strong> Descreve o "como" os dados devem ser recuperados através de uma sequência de passos lógicos. Você precisa definir a ordem exata das operações (ex: primeiro filtrar as linhas, depois isolar as colunas).</li>
+    <li><strong>SQL (Declarativo):</strong> Descreve o "o quê" você deseja obter, deixando para o otimizador do banco de dados a tarefa de decidir a melhor estratégia interna de execução.</li>
+  </ul>
+
+  <h4>2. Mapeamento de Comandos</h4>
+  <p>Os operadores fundamentais da álgebra têm equivalentes diretos nas cláusulas SQL que utilizamos rotineiramente, como SELECT (Projeção), WHERE (Seleção) e FROM (Produto Cartesiano).</p>
+
+  <h4>3. A Propriedade do Fechamento (Closure)</h4>
+  <p>Este é um dos conceitos mais importantes para o uso prático. Tanto na álgebra quanto no SQL, o resultado de uma operação sobre uma relação (tabela) é sempre outra relação.</p>
+  <ul>
+    <li><strong>Na Prática:</strong> É essa propriedade que permite a criação de subconsultas (subqueries) e o aninhamento de comandos SQL complexos. Você pode usar o resultado de um SELECT como se fosse uma tabela real dentro de outro comando.</li>
+  </ul>
+
+  <h4>4. Importância para a Performance</h4>
+  <p>Entender álgebra relacional permite que o analista compreenda a navegação interna do banco de dados. Por exemplo, saber que a Seleção (σ) reduz o número de linhas antes de uma junção cara ajuda a entender por que filtros no WHERE são fundamentais para que a consulta não trave o sistema em grandes massas de dados.</p>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
-  <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
+  <p>Abaixo, apresentamos a comparação prática entre os comandos SQL e seus respectivos operadores na Álgebra Relacional.</p>
 
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
+  <h3>1. Operação de Projeção (π)</h3>
+  <p>A projeção é um operador unário que realiza um filtro vertical, selecionando apenas colunas específicas.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- SQL: Seleciona apenas as colunas de nome e cargo
+SELECT nome_vendedor, faixa_de_comissao 
+FROM vendedores;
+
+-- ÁLGEBRA RELACIONAL: π nome_vendedor, faixa_de_comissao (VENDEDORES)
+-- Comentário: O SELECT do SQL equivale à Projeção (π). 
+-- Na teoria, se houver linhas duplicadas após a projeção, elas são removidas 
+-- automaticamente para manter a propriedade de conjunto.</code></pre>
   </div>
+
+  <h3>2. Operação de Seleção (σ)</h3>
+  <p>A seleção é um operador unário que realiza um filtro horizontal, selecionando linhas que atendem a um predicado.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- SQL: Filtra apenas os produtos com valor superior a 2.00
+SELECT * 
+FROM produto 
+WHERE valor_unitario > 2.00;
+
+-- ÁLGEBRA RELACIONAL: σ valor_unitario > 2.00 (PRODUTO)
+-- Comentário: A cláusula WHERE do SQL equivale à Seleção (σ). 
+-- O resultado mantém todas as colunas originais (o esquema não muda), 
+-- mas reduz o número de tuplas (linhas).</code></pre>
+  </div>
+
+  <h3>3. Projeção e Seleção Combinadas</h3>
+  <p>Na prática, quase sempre combinamos os dois operadores para filtrar colunas e linhas simultaneamente.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- SQL: Lista o nome e endereço apenas de clientes de 'Niterói'
+SELECT nome_cliente, endereco 
+FROM cliente 
+WHERE cidade = 'Niteroi';
+
+-- ÁLGEBRA RELACIONAL: π nome_cliente, endereco (σ cidade = 'Niteroi' (CLIENTE))
+-- Comentário: A execução é procedural (passo a passo): primeiro o SGBD 
+-- aplica a Seleção (σ) para reduzir as linhas e, sobre esse resultado, 
+-- aplica a Projeção (π) para isolar as colunas.</code></pre>
+  </div>
+
+  <h3>4. Produto Cartesiano (×)</h3>
+  <p>Operador binário que combina todas as tuplas de uma tabela com todas as tuplas de outra.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- SQL: Combina cada linha de funcionários com cada linha de cargos
+SELECT * 
+FROM funcionario, cargo;
+-- Ou explicitamente: SELECT * FROM funcionario CROSS JOIN cargo;
+
+-- ÁLGEBRA RELACIONAL: FUNCIONARIO × CARGO
+-- Comentário: Equivale à cláusula FROM com múltiplas tabelas. 
+-- Se a Tabela A tem 10 linhas e a B tem 5, o resultado terá 50 linhas. 
+-- Raramente usado sozinho sem um filtro de junção posterior.</code></pre>
+  </div>
+
+  <h3>5. Junção (⋈)</h3>
+  <p>A junção é, teoricamente, uma Seleção aplicada sobre um Produto Cartesiano.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- SQL: Une tabelas baseando-se em uma coluna comum (chave estrangeira)
+SELECT nome_cliente, numero_pedido 
+FROM cliente 
+INNER JOIN pedido ON cliente.codigo_cliente = pedido.codigo_cliente;
+
+-- ÁLGEBRA RELACIONAL: π nome_cliente, numero_pedido (CLIENTE ⋈ codigo_cliente = codigo_cliente PEDIDO)
+-- Comentário: O operador de Junção (⋈) resolve o produto cartesiano filtrando 
+-- apenas onde os valores das chaves coincidem, efetivando o relacionamento lógico.</code></pre>
+  </div>
+
+  <h3>6. Operação de União (∪)</h3>
+  <p>Operador binário que consolida os registros de dois conjuntos compatíveis.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- SQL: Lista clientes do RJ e vendedores com altos salários em uma só lista
+SELECT nome_cliente FROM cliente WHERE UF = 'RJ'
+UNION
+SELECT nome_vendedor FROM vendedores WHERE salario_fixo > 5000.00;
+
+-- ÁLGEBRA RELACIONAL: (π nome_cliente (σ UF='RJ' (CLIENTE))) ∪ (π nome_vendedor (σ salario>5000 (VENDEDORES)))
+-- Comentário: Para a União (∪) funcionar, as tabelas devem ser "união-compatíveis": 
+-- mesmo número de colunas e domínios de dados idênticos.</code></pre>
+  </div>
+
+  <h3>7. Diferença de Conjuntos (−)</h3>
+  <p>Retorna elementos que existem no primeiro conjunto mas não existem no segundo.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- SQL: Clientes que possuem CONTA mas não possuem EMPRÉSTIMO
+SELECT cod_cliente FROM conta_corrente
+EXCEPT
+SELECT cod_cliente FROM emprestimo;
+-- No MySQL, usa-se subqueries com NOT IN para simular a Diferença.
+
+-- ÁLGEBRA RELACIONAL: π cod_cliente (CONTA_CORRENTE) − π cod_cliente (EMPRESTIMO)
+-- Comentário: O operador de diferença (−) remove do resultado as tuplas 
+-- que são comuns a ambos os conjuntos.</code></pre>
+  </div>
+
+  <h3>8. Interseção (∩)</h3>
+  <p>Retorna apenas as tuplas que existem simultaneamente em ambos os conjuntos.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- SQL: Clientes que possuem simultaneamente CONTA e EMPRÉSTIMO
+SELECT cod_cliente FROM conta_corrente
+INTERSECT
+SELECT cod_cliente FROM emprestimo;
+
+-- ÁLGEBRA RELACIONAL: π cod_cliente (CONTA_CORRENTE) ∩ π cod_cliente (EMPRESTIMO)
+-- Comentário: Pode ser expressa através de uniões e diferenças, mas o operador 
+-- de Interseção (∩) facilita a busca por dados comuns entre tabelas compatíveis.</code></pre>
+  </div>
+
+  <h3>Resumo de Mapeamento Técnico</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Comando SQL</th>
+        <th>Operador Álgebra</th>
+        <th>Tipo de Filtro</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>SELECT</td>
+        <td>Projeção (π)</td>
+        <td>Vertical (Colunas)</td>
+      </tr>
+      <tr>
+        <td>WHERE</td>
+        <td>Seleção (σ)</td>
+        <td>Horizontal (Linhas)</td>
+      </tr>
+      <tr>
+        <td>FROM (A, B)</td>
+        <td>Produto (×)</td>
+        <td>Combinação de Conjuntos</td>
+      </tr>
+      <tr>
+        <td>JOIN / ON</td>
+        <td>Junção (⋈)</td>
+        <td>Combinação Relacional</td>
+      </tr>
+      <tr>
+        <td>UNION</td>
+        <td>União (∪)</td>
+        <td>Consolidação de Conjuntos</td>
+      </tr>
+      <tr>
+        <td>AS</td>
+        <td>Renomear (ρ)</td>
+        <td>Identificação de Resultados</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <section class="section-box">
-  <h2>Diagramação</h2>
-  <p>Representação visual dos conceitos abordados:</p>
+  <h2>Representação Gráfica</h2>
+  <p>Abaixo, apresentamos a representação visual dos fluxos de processamento na Álgebra Relacional.</p>
+
+  <h3>1. Fluxo de Operações Unárias Combinadas</h3>
+  <p>A representação abaixo mostra a precedência de execução (de baixo para cima na lógica procedural) para uma consulta que filtra linhas e depois isola colunas.</p>
   <div class="mermaid">
     graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+    T[Tabela Original: EMPREGADO] --> S["Seleção σ (Filtro de Linhas: ex: NDEP=5)"]
+    S --> P["Projeção π (Filtro de Colunas: ex: Nome, Salário)"]
+    P --> R[Resultado Final]
+    
+    subgraph "Processamento Procedural"
+    S
+    P
+    end
+  </div>
+
+  <h3>2. Lógica da Operação de Junção (JOIN)</h3>
+  <p>A junção (⋈) é frequentemente representada como uma combinação de um Produto Cartesiano (×) seguido por uma Seleção (σ) para filtrar os registros que possuem chaves correspondentes.</p>
+  <div class="mermaid">
+    graph LR
+    A[Tabela A] --> PC[Produto Cartesiano X]
+    B[Tabela B] --> PC
+    PC --> SEL["Seleção σ (Filtro de Chaves: A.ID = B.ID)"]
+    SEL --> RES[Relação Resultante]
+    
+    subgraph "Efetivação da Junção"
+    PC
+    SEL
+    end
+  </div>
+
+  <h3>3. Operações de Teoria dos Conjuntos</h3>
+  <p>Para operadores como União (∪), Interseção (∩) e Diferença (−), as tabelas devem ser união-compatíveis (mesmo número de atributos e domínios idênticos).</p>
+  <div class="mermaid">
+    graph TD
+    T1[Tabela R] --> OP{Operador?}
+    T2[Tabela S] --> OP
+    
+    OP -->|União| U[Inclui tuplas de R e S sem duplicatas]
+    OP -->|Interseção| I[Inclui apenas tuplas comuns a R e S]
+    OP -->|Diferença| D[Tuplas de R que NÃO estão em S]
+    
+    U --> RF1[Resultado]
+    I --> RF2[Resultado]
+    D --> RF3[Resultado]
+  </div>
+
+  <h3>4. Processamento de Funções de Agregação</h3>
+  <p>As funções de agregação (como SOMA, MÉDIA e CONTADOR) operam sobre coleções de valores e, quando combinadas com agrupamento, geram resultados sumarizados por categorias.</p>
+  <div class="mermaid">
+    graph TD
+    Data[Tuplas de Entrada] --> Group["Agrupamento (Group By)"]
+    Group --> Agg["Função de Agregação ℑ (Soma, Média, etc)"]
+    Agg --> Result[Tabela de Sumarização]
   </div>
 </section>
 
 <div class="tip-box">
   <h4>Dicas & Lembretes</h4>
+  
+  <h5>Conceitos Fundamentais</h5>
   <ul>
-    <li>Dica importante sobre Álgebra Relacional aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>A Álgebra é Procedural:</strong> Diferente do SQL (que é declarativo), a álgebra relacional descreve o "como" os dados devem ser recuperados através de uma sequência de operações lógicas.</li>
+    <li><strong>Propriedade do Fechamento (Closure):</strong> Este é o conceito mais importante. O resultado de qualquer operação de álgebra é sempre uma nova relação (tabela). Isso é o que permite o aninhamento de expressões (uma operação dentro da outra).</li>
+    <li><strong>Eliminação de Duplicidade:</strong> Na álgebra relacional pura (teoria dos conjuntos), não existem linhas duplicadas. Ao realizar uma Projeção (π), o sistema remove automaticamente tuplas repetidas para garantir que o resultado seja um conjunto válido.</li>
+  </ul>
+
+  <h5>Regras de Operação</h5>
+  <ul>
+    <li><strong>Compatibilidade de União:</strong> Para utilizar os operadores de União (∪), Interseção (∩) e Diferença (−), as tabelas devem ser "união-compatíveis": precisam ter o mesmo número de colunas e os domínios (tipos) correspondentes devem ser idênticos.</li>
+    <li><strong>Precedência e Parênteses:</strong> Em expressões complexas, as operações dentro dos parênteses são executadas primeiro (lógica bottom-up).</li>
+    <li><strong>Produto vs. Junção:</strong> O Produto Cartesiano (×) combina todas as linhas de uma tabela com todas as linhas de outra, gerando resultados massivos. A Junção (⋈) é mais eficiente, pois equivale a um Produto seguido de uma Seleção que filtra apenas os registros relacionados.</li>
+  </ul>
+
+  <h5>Dicas de Performance e Prática</h5>
+  <ul>
+    <li><strong>Filtre o Quanto Antes:</strong> Uma regra de ouro da otimização é aplicar a Seleção (σ) o mais cedo possível. Filtrar as linhas antes de realizar um Produto Cartesiano ou Junção reduz drasticamente o volume de dados processados pelo SGBD.</li>
+    <li><strong>Cuidado com a Diferença:</strong> A operação de Diferença (−) não é comutativa. A ordem dos fatores altera o resultado: A−B (linhas que estão em A mas não em B) é diferente de B−A.</li>
+    <li><strong>Use Nomes Intermediários:</strong> Para facilitar a leitura de consultas longas, utilize o operador de Atribuição (←) ou Renomeação (ρ) para salvar resultados parciais em "tabelas temporárias".</li>
+    <li><strong>Agregações geram Relações:</strong> Lembre-se de que o resultado de funções como SOMA ou CONTADOR ainda é uma relação (uma tabela com uma linha e uma coluna), e não apenas um valor numérico solto.</li>
+  </ul>
+
+  <h5>Lembrete de Mapeamento (Álgebra → SQL)</h5>
+  <ul>
+    <li><strong>σ (Seleção)</strong> ≈ Cláusula WHERE.</li>
+    <li><strong>π (Projeção)</strong> ≈ Cláusula SELECT.</li>
+    <li><strong>× (Produto)</strong> ≈ Cláusula FROM com múltiplas tabelas.</li>
+    <li><strong>ρ (Renomear)</strong> ≈ Cláusula AS.</li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
   <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
+    <li><strong>Planejamento Lógico de Consultas:</strong> Utilize a natureza procedural da álgebra relacional para desenhar o "caminho" que os dados devem percorrer. Antes de escrever um comando complexo, esboce a sequência de operações: primeiro identifique quais tabelas serão combinadas (Produto), quais filtros de linha são necessários (Seleção) e, por fim, quais colunas devem ser exibidas (Projeção).</li>
+    <li><strong>Otimização Preventiva de Performance:</strong> Aplique a regra de ouro da otimização: filtrem as linhas o quanto antes. Na prática, isso significa entender que realizar uma Seleção (σ) antes de um Produto Cartesiano (×) reduz drasticamente o volume de dados processados pelo SGBD, evitando a criação de tabelas intermediárias imensas e desnecessárias.</li>
+    <li><strong>Análise de Execução Interna (Query Tuning):</strong> Use o conhecimento da álgebra para interpretar como o SGBD processa os comandos internamente. Ao entender que todo comando SQL é desmembrado em operações algébricas, o analista consegue visualizar melhor a utilização de índices em filtros de seleção e a eficiência das junções em consultas que envolvem múltiplas tabelas.</li>
+    <li><strong>Resolução de Ambiguidades em Auto-relacionamentos:</strong> Em situações onde uma consulta precisa comparar dados de uma tabela com ela mesma (self-join), aplique o conceito do operador Renomear (ρ). Isso permite criar "apelidos" lógicos para a mesma relação, garantindo que o produto cartesiano seja executado sem erros de referência duplicada.</li>
+    <li><strong>Validação de Resultados:</strong> Utilize a propriedade do fechamento (closure) para criar subconsultas ou visões intermediárias. Como o resultado de uma operação algébrica é sempre uma nova relação, você pode testar partes isoladas de uma consulta complexa (como apenas a seleção de um subconjunto) antes de integrá-la ao produto final.</li>
   </ul>
 </section>
 

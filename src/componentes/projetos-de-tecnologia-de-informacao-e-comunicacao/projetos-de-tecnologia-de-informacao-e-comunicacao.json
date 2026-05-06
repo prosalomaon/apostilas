@@ -1,0 +1,15 @@
+{
+  "subject": "projetos-de-tecnologia-de-informacao-e-comunicacao",
+  "subject_title": "Projetos de Tecnologia de Informação e Comunicação",
+  "subject_description": "Desenvolvimento de competências digitais, desde gestão de arquivos e produtividade até lógica de programação e aplicação prática de Inteligência Artificial Generativa.",
+  "subject_status": "40 Aulas • 4 Bimestres",
+  "layout": "aula",
+  "tags": ["aula"],
+  "nav_text": "⮜ VOLTAR",
+  "bimester_titles": {
+    "bimestre-01": "Fundamentos Digitais e Design de Apresentações",
+    "bimestre-02": "Análise de Dados e Resolução de Problemas",
+    "bimestre-03": "Lógica de Programação e Introdução à IA",
+    "bimestre-04": "Prática de IA Generativa e Projeto Integrador"
+  }
+}

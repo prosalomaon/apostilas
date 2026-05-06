@@ -3,16 +3,60 @@ layout: exercicio
 title: "Exercício 01 - Álgebra Relacional"
 exercicio_numero: "01"
 aula_numero: "12"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 12."
+description: "Atividade prática de Álgebra Relacional focada em Gestão de Vendas e Comissões."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado: Gestão de Vendas e Comissões</h2>
+  <p>Uma empresa de varejo possui um banco de dados para monitorar o desempenho de sua equipe. O analista de dados precisa extrair relatórios específicos utilizando os operadores da álgebra relacional para validar a lógica de recuperação de informações antes de transformá-las em consultas definitivas.</p>
+  <p>Os dados estão organizados nas seguintes estruturas (esquemas):</p>
+  <ul>
+    <li><strong>VENDEDOR</strong> (<u>Codigo_Vendedor</u>, Nome_Vendedor, Salario_Fixo, Faixa_Comissao)</li>
+    <li><strong>PEDIDO</strong> (<u>Numero_Pedido</u>, Valor_Total, Data_Pedido, Codigo_Vendedor)</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Preparação</h2>
+  <p>Para realizar esta atividade, você deve:</p>
+  <ul>
+    <li>Revisar a simbologia grega: <strong>σ</strong> (Seleção), <strong>π</strong> (Projeção) e <strong>×</strong> (Produto Cartesiano).</li>
+    <li>Lembrar-se da propriedade do fechamento: o resultado de uma operação é sempre uma nova tabela que pode ser usada em uma operação seguinte.</li>
+    <li>Simular uma pequena massa de dados (3 vendedores e 5 pedidos) para validar os resultados visualmente.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Demonstração (Exemplo Básico)</h2>
+  <p><strong>Problema:</strong> Listar apenas os nomes dos vendedores que possuem salário fixo superior a 2.500,00.</p>
+  <p><strong>Resolução Algébrica:</strong></p>
+  <ol>
+    <li>Primeiro, filtramos as linhas (Seleção): <code>T1 ← σ Salario_Fixo > 2500 (VENDEDOR)</code></li>
+    <li>Depois, isolamos a coluna desejada (Projeção): <code>π Nome_Vendedor (T1)</code></li>
+  </ol>
+  <p><strong>Expressão Única:</strong> <code>π Nome_Vendedor (σ Salario_Fixo > 2500 (VENDEDOR))</code></p>
+</section>
+
+<section class="section-box">
+  <h2>O Desafio (Atividade)</h2>
+  <p>Escreva as expressões de Álgebra Relacional para as seguintes solicitações de negócio:</p>
+  <ol>
+    <li><strong>Filtro de Qualificação:</strong> Recupere todos os dados dos vendedores que pertencem à 'Faixa_Comissao' A.</li>
+    <li><strong>Relatório de Faturamento:</strong> Exiba apenas o número do pedido e o valor total de todos os pedidos realizados.</li>
+    <li><strong>Cruzamento Universal:</strong> Gere uma tabela que combine cada vendedor com todos os pedidos existentes (Produto Cartesiano).</li>
+    <li><strong>Consulta Combinada (Junção Lógica):</strong> Liste o nome do vendedor e o valor total de seus respectivos pedidos.
+      <br><em>Dica: Você precisará fazer o Produto Cartesiano e usar a Seleção para igualar as chaves: VENDEDOR.Codigo_Vendedor = PEDIDO.Codigo_Vendedor.</em>
+    </li>
+    <li><strong>Desafio de Otimização:</strong> Liste o nome dos vendedores que realizaram pedidos com 'Valor_Total' superior a 5.000,00. Aplique a Seleção o mais cedo possível para aumentar a performance.</li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Pense Proceduralmente:</strong> A álgebra relacional exige que você defina o "como" recuperar, passo a passo (de baixo para cima no fluxo lógico).</li>
+    <li><strong>Atenção aos Parênteses:</strong> Assim como na matemática, as operações dentro dos parênteses internos são executadas primeiro.</li>
+    <li><strong>Não confunda os Filtros:</strong> Lembre-se que a Seleção (σ) corta a tabela na horizontal (linhas) e a Projeção (π) corta na vertical (colunas).</li>
+    <li><strong>Validação:</strong> Ao finalizar, tente traduzir mentalmente sua expressão para o SQL para verificar se a lógica faz sentido (SELECT = Projeção, FROM = Produto, WHERE = Seleção).</li>
   </ul>
 </div>

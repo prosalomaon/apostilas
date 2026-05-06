@@ -3,54 +3,390 @@ title: "Validação e Sanitização: Uso de filter_input() e proteção contra m
 aula_numero: "07"
 description: "Validação e Sanitização: Uso de filter_input() e proteção contra manipulação de tipos."
 tags:
-  - aula
-  - bimestre-01
+- aula
+- bimestre-01
 ---
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 07 em desenvolvimento...</p>
+  <p>Nesta aula, exploraremos como proteger suas aplicações web tratando os dados que vêm do mundo externo. Aprenderemos
+    a distinguir entre limpar dados e verificar se eles cumprem regras específicas, utilizando ferramentas nativas e
+    modernas do PHP.</p>
+
+  <h3>1.1. O Princípio da Desconfiança</h3>
+  <p>O pilar fundamental da segurança web é: <strong>Nunca confie em dados vindos do usuário ou de fontes
+      externas</strong>. Isso inclui formulários HTML, parâmetros de URL (query strings), cookies e até cabeçalhos HTTP.
+    Esses dados podem ser manipulados para injetar scripts maliciosos ou burlar a lógica do sistema.</p>
+
+  <h3>1.2. Sanitização vs. Validação</h3>
+  <p>Embora usados juntos, são processos distintos:</p>
+  <ul>
+    <li>
+      <strong>Sanitização (Limpeza):</strong> É o processo de remover caracteres indesejados ou perigosos de uma
+      entrada. O objetivo é "limpar" o dado para que ele possa ser processado ou exibido com segurança, sem alterar
+      necessariamente sua essência (ex: remover tags HTML de um comentário).
+    </li>
+    <li>
+      <strong>Validação (Verificação):</strong> É o processo de verificar se o dado atende a critérios pré-definidos. O
+      objetivo é confirmar se o dado é o que se espera que seja (ex: verificar se um campo de "idade" contém apenas
+      números inteiros entre 0 e 120).
+    </li>
+  </ul>
+
+  <h3>1.3. O Uso de filter_input()</h3>
+  <p>A função <code>filter_input()</code> é a maneira recomendada de obter variáveis externas em PHP. Ela combina a
+    obtenção do dado com a filtragem, evitando o acesso direto a superglobais como <code>$_GET</code> ou
+    <code>$_POST</code>, o que é uma prática de segurança mais robusta.
+  </p>
+
+  <p><strong>Sintaxe:</strong> <code>filter_input(tipo_origem, nome_variavel, filtro, opcoes)</code></p>
+  <ul>
+    <li><strong>Tipos de Origem:</strong> <code>INPUT_GET</code>, <code>INPUT_POST</code>, <code>INPUT_COOKIE</code>,
+      <code>INPUT_SERVER</code>, <code>INPUT_ENV</code>.
+    </li>
+    <li><strong>Filtros de Sanitização:</strong> Ex: <code>FILTER_SANITIZE_EMAIL</code>,
+      <code>FILTER_SANITIZE_SPECIAL_CHARS</code>.
+    </li>
+    <li><strong>Filtros de Validação:</strong> Ex: <code>FILTER_VALIDATE_INT</code>, <code>FILTER_VALIDATE_EMAIL</code>,
+      <code>FILTER_VALIDATE_URL</code>.
+    </li>
+  </ul>
+
+  <p><strong>Exemplo de Sanitização:</strong></p>
+  <div class="code-container">
+    <pre><code class="language-php">// Remove tags e caracteres especiais de uma string vinda do POST
+$nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS);
+
+echo $nome; // Se o usuário enviou "&lt;h1&gt;Olá&lt;/h1&gt;", resultará em "&amp;#60;h1&amp;#62;Olá&amp;#60;/h1&amp;#62;"</code></pre>
+  </div>
+
+  <div class="tip-box">
+    <p><strong>Por que funciona assim?</strong></p>
+    <p>Quando você aplica a sanitização de caracteres especiais:</p>
+    <ul>
+      <li><strong>O dado original:</strong> <code>&lt;h1&gt;Olá&lt;/h1&gt;</code></li>
+      <li><strong>A ação do filtro:</strong> Ele identifica caracteres que têm significado especial em HTML (como
+        <code>&lt;</code> e <code>&gt;</code>) e os converte em suas respectivas <strong>Entidades HTML</strong>.
+      </li>
+      <li><strong>A conversão:</strong>
+        <ul>
+          <li><code>&lt;</code> vira <code>&amp;#60;</code> (ou <code>&amp;lt;</code>)</li>
+          <li><code>&gt;</code> vira <code>&amp;#62;</code> (ou <code>&amp;gt;</code>)</li>
+        </ul>
+      </li>
+      <li><strong>O resultado no código-fonte:</strong> <code>&amp;#60;h1&amp;#62;Olá&amp;#60;/h1&amp;#62;</code></li>
+    </ul>
+
+    <p><strong>Qual o benefício disso? (Segurança)</strong></p>
+    <p>Ao fazer essa conversão, o navegador não interpretará mais o texto como uma tag de título
+      (<code>&lt;h1&gt;</code>). Em vez de deixar o texto grande e em negrito, o navegador exibirá literalmente os
+      caracteres <code>&lt;h1&gt;Olá&lt;/h1&gt;</code> na tela do usuário.</p>
+    <p>Isso impede ataques de <strong>XSS (Cross-Site Scripting)</strong>, pois se um usuário mal-intencionado enviasse
+      um
+      script como:<br>
+      <code>&lt;script&gt;alert('Ataque!')&lt;/script&gt;</code>
+    </p>
+    <p>O PHP converteria para:<br>
+      <code>&amp;#60;script&amp;#62;alert('Ataque!')&amp;#60;/script&amp;#62;</code>
+    </p>
+    <p>
+      E o script <strong>não seria executado</strong> pelo navegador.
+    </p>
+
+    <p><strong>Lembrete importante:</strong> Se você usar o filtro <code>FILTER_SANITIZE_STRING</code> (descontinuado no
+      PHP 8.1), o comportamento seria remover as tags completamente, restando apenas "Olá". Por isso, o uso de
+      <code>FILTER_SANITIZE_SPECIAL_CHARS</code> ou a função <code>htmlspecialchars()</code> é o padrão atual e mais
+      seguro.
+    </p>
+  </div>
+
+  <p><strong>Exemplo de Validação:</strong></p>
+  <div class="code-container">
+    <pre><code class="language-php">// Verifica se a idade é um inteiro entre 18 e 100
+$idade = filter_input(INPUT_POST, 'idade', FILTER_VALIDATE_INT, [
+    "options" => [
+        "min_range" => 18, 
+        "max_range" => 100
+    ]
+]);
+
+if ($idade === false) {
+    echo "Idade inválida ou fora do intervalo permitido.";
+}</code></pre>
+  </div>
+
+  <h3>1.4. Proteção contra Manipulação de Tipos (Type Juggling)</h3>
+  <p>O PHP é uma linguagem de tipagem fraca e dinâmica, o que permite "conversões automáticas" de tipos que podem levar
+    a falhas de segurança se não forem tratadas.</p>
+
+  <p><strong>O Problema: Comparações Flexíveis (==)</strong></p>
+  <p>Muitas vezes, desenvolvedores usam <code>==</code> para comparar dados, mas o PHP pode converter strings em números
+    de forma inesperada. O uso de <code>===</code> ainda é a regra de ouro para evitar comportamentos imprevisíveis.</p>
+
+  <p><strong>A Solução: Comparações Estritas e Tipagem no PHP 8</strong></p>
+  <ul>
+    <li><strong>Operadores de Identidade (===):</strong> Sempre use <code>===</code> para comparar valor e tipo,
+      garantindo que "0" (string) não seja igual a 0 (inteiro).</li>
+    <li><strong>Strict Types:</strong> No PHP 8, você pode forçar a tipagem estrita no início do arquivo. Isso impede
+      que uma função que espera um <code>int</code> aceite uma string numérica silenciosamente.</li>
+  </ul>
+
+  <p><strong>Exemplo de Proteção com Tipagem Estrita:</strong></p>
+  <div class="code-container">
+    <pre><code class="language-php">declare(strict_types=1);
+
+function processarIdade(int $idade) {
+    return "A idade é $idade";
+}
+
+// Se o dado vier como string do formulário, o PHP lançará um erro fatal em vez de tentar converter
+try {
+    echo processarIdade($_POST['idade']); // Se $_POST['idade'] for "25", causará erro com strict_types
+} catch (TypeError $e) {
+    echo "Erro: O sistema esperava um número inteiro.";
+}</code></pre>
+  </div>
+
+  <h3>1.5. Boas Práticas no Fluxo de Dados</h3>
+  <p>Para uma segurança completa, siga este fluxo:</p>
+  <ol>
+    <li><strong>Entrada:</strong> Use <code>filter_input()</code> para sanitizar e validar assim que o dado entrar no
+      script.</li>
+    <li><strong>Processamento:</strong> Trabalhe com variáveis validadas e tipos estritos (PHP 8).</li>
+    <li><strong>Saída (Escaping):</strong> Ao exibir dados de volta no HTML, use funções como
+      <code>htmlspecialchars()</code> para impedir ataques de Cross-Site Scripting (XSS).
+    </li>
+  </ol>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>1. Uso do filter_input para Sanitização</h3>
+  <p>A sanitização limpa os dados removendo ou convertendo caracteres perigosos.</p>
   <div class="code-container">
-    <pre><code class="language-php">// Em breve...</code></pre>
+    <pre><code class="language-php">// Sanitizando um nome (remove tags HTML)
+$nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS);
+
+// Sanitizando um e-mail (remove caracteres não permitidos em e-mails)
+$email = filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL);
+
+echo "Nome seguro: " . $nome; // Ex: se enviar &lt;h1&gt;Olá&lt;/h1&gt;, resultará em &amp;lt;h1&amp;gt;Olá&amp;lt;/h1&amp;gt;</code></pre>
+  </div>
+
+  <h3>2. Uso do filter_input para Validação</h3>
+  <p>A validação verifica se o dado segue uma regra específica (ex: se é um e-mail válido).</p>
+  <div class="code-container">
+    <pre><code class="language-php">// Validando um e-mail
+$email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+
+if ($email === false) {
+    echo "E-mail inválido!";
+} else {
+    echo "E-mail aceito: " . $email;
+}
+
+// Validando um número inteiro dentro de um intervalo
+$idade_opcoes = [
+    "options" => [
+        "min_range" => 18,
+        "max_range" => 100
+    ]
+];
+
+$idade = filter_input(INPUT_POST, 'idade', FILTER_VALIDATE_INT, $idade_opcoes);
+
+if ($idade === false || $idade === null) {
+    echo "Idade deve ser um número entre 18 e 100.";
+}</code></pre>
+  </div>
+
+  <h3>3. Proteção contra Manipulação de Tipos (Strict Types)</h3>
+  <p>Para evitar que o PHP converta tipos de forma silenciosa e perigosa, utilize a declaração de tipagem estrita no topo do arquivo.</p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1); // Força o PHP a respeitar rigorosamente os tipos 
+
+function processarIdade(int $idade) {
+    return "A idade processada é: " . $idade;
+}
+
+try {
+    // Se passar "25" (string), o PHP lançará um erro em vez de converter para 25 (int)
+    echo processarIdade(25); 
+} catch (TypeError $e) {
+    echo "Erro de tipo: " . $e-&gt;getMessage();
+}</code></pre>
+  </div>
+
+  <h3>4. Proteção na Exibição (XSS)</h3>
+  <p>Sempre que exibir dados vindos de fora no navegador, use <code>htmlspecialchars</code> para impedir a execução de scripts maliciosos.</p>
+  <div class="code-container">
+    <pre><code class="language-php">$comentario_usuario = "&lt;script&gt;alert('ataque!');&lt;/script&gt;";
+
+// Forma segura de exibir no HTML
+echo htmlspecialchars($comentario_usuario, ENT_QUOTES, 'UTF-8');
+// Resultado: &amp;lt;script&amp;gt;alert('ataque!');&amp;lt;/script&amp;gt;</code></pre>
   </div>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
+
+  <h3>Fluxo Básico</h3>
   <div class="mermaid">
     graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+      User([Entrada do Usuário]) -- "Sujo" --> Untrusted{Dado Não Confiável}
+      Untrusted -- "Sanitizar" --> S[Limpeza dos Dados]
+      Untrusted -- "Validar" --> V[Verificação de Regras]
+      S --> Safe[Dado Seguro]
+      V --> Safe
+      Safe --> Storage[(Banco de Dados / Exibição)]
+  </div>
+
+  <h3>Fluxo de Dados Seguro</h3>
+  <div class="mermaid">
+    sequenceDiagram
+      autonumber
+      actor Usuario as Usuário/Navegador
+      participant Navegador as Validação Client-Side (JS)
+      participant PHP as Servidor PHP (Validação Server-Side)
+      participant BD as Banco de Dados / Saída
+
+      Note over Usuario, Navegador: Dados do Formulário<br/>(Ex: nome="<b>João</b>", email="joao@#exemplo.com")
+      Usuario->>Navegador: Envia Dados
+      Navegador->>Navegador: Validação Básica (JS/HTML5)
+      Note right of Navegador: Pode ser burlada.<br/>Foco em UX.
+
+      Navegador->>PHP: Envia Requisição (POST/GET)
+      
+      Note over PHP: Foco em SEGURANÇA.
+
+      opt Etapa de Sanitização
+          PHP->>PHP: Aplica filtros de Sanitização<br/>(Ex: filter_input com FILTER_SANITIZE_*)
+          Note right of PHP: Remove tags HTML,<br/>caracteres ilegais em e-mails, etc.
+          Note over PHP: Dados Limpos:<br/>nome="João", email="joao@exemplo.com"
+      end
+
+      PHP->>PHP: Aplica filtros de Validação<br/>(Ex: FILTER_VALIDATE_*)
+      
+      alt Dados Válidos?
+          PHP->>BD: Processa/Salva Dados (Seguros)
+          BD-->>PHP: Confirmação
+          PHP-->>Usuario: Feedback de Sucesso
+      else Dados Inválidos
+          PHP-->>Usuario: Retorna Erro (Ex: "E-mail inválido")
+      end
+  </div>
+
+  <h3>Diferença entre Sanitização e Validação</h3>
+  <div class="mermaid">
+    flowchart TD
+      Start([Início: Dado Externo]) --> Input{Como tratar?};
+      
+      Input -- "Sem tratamento" --> Danger([Risco: XSS e Injeção]);
+
+      Input -- "Com filter_input" --> Choice{Objetivo?};
+
+      Choice -- "Limpar Dados" --> Sanitize[Sanitização];
+      Sanitize --> SanitizeEx[Filtro: FILTER_SANITIZE_SPECIAL_CHARS];
+      SanitizeEx --> SanitizeRes[/Remove ou converte tags e caracteres perigosos/];
+      SanitizeRes --> Choice;
+
+      Choice -- "Verificar Regras" --> Validate[Validação];
+      Validate --> ValidateEx[Filtro: FILTER_VALIDATE_EMAIL];
+      ValidateEx --> Check{É válido?};
+      
+      Check -- "Não" --> Error[Retorna FALSE];
+      Error --> HandleErr[Bloquear e avisar usuário];
+
+      Check -- "Sim" --> Success[Retorna o valor];
+      Success --> SafeUsage[/Dado pronto para uso seguro/];
+
+      style Input fill:#f9f,stroke:#333,stroke-width:2px
+      style Danger fill:#ff9999,stroke:#f00
+      style Success fill:#ccffcc,stroke:#090
   </div>
 </section>
 
 <div class="tip-box">
   <h4>Dicas & Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li><strong>Nunca confie em dados externos:</strong> Trate toda e qualquer entrada vinda do usuário ou de fontes externas — como formulários HTML, parâmetros de URL (query strings), cookies e cabeçalhos HTTP — como potencialmente maliciosa.</li>
+    <li><strong>Utilize sempre o filter_input():</strong> Evite acessar diretamente superglobais como <code>$_POST</code> ou <code>$_GET</code>. O uso desta função é a prática recomendada para obter dados externos de forma mais segura.</li>
+    <li><strong>Combine Sanitização e Validação:</strong> Primeiro, realize a Sanitização para "limpar" o dado (remover caracteres desnecessários ou perigosos) e, em seguida, aplique a Validação para verificar se o resultado final cumpre as regras de negócio ou técnicas exigidas.</li>
+    <li><strong>Ative a Tipagem Estrita:</strong> Utilize a declaração <code>declare(strict_types=1)</code> no topo dos seus arquivos PHP. Isso impede que o PHP realize conversões de tipos silenciosas que podem levar a comportamentos inesperados e falhas de segurança.</li>
+    <li><strong>Proteja a Exibição de Dados (XSS):</strong> Ao exibir qualquer dado vindo de fora no navegador, utilize sempre a função <code>htmlspecialchars()</code>. Isso converte caracteres especiais em entidades HTML, impedindo que scripts maliciosos sejam executados no browser do usuário.</li>
+    <li><strong>Entenda a diferença técnica:</strong>
+      <ul>
+        <li><strong>Sanitização:</strong> Focada em limpar o que está "sujo" (ex: remover tags HTML de um comentário).</li>
+        <li><strong>Validação:</strong> Focada em conferir se a informação é o que diz ser (ex: verificar se um campo de e-mail contém realmente um endereço de e-mail válido).</li>
+      </ul>
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+
+  <h3>1. Sistema de Comentários ou Fórum (Prevenção de XSS)</h3>
+  <p>Em um projeto real, usuários podem tentar enviar scripts maliciosos em campos de texto.</p>
+  <ul>
+    <li><strong>Ação:</strong> Ao receber o comentário, utilize <code>FILTER_SANITIZE_SPECIAL_CHARS</code> para converter caracteres como <code>&lt;</code> e <code>&gt;</code> em entidades HTML.</li>
+    <li><strong>Exibição:</strong> Antes de imprimir no navegador, reforce com <code>htmlspecialchars()</code>.</li>
+    <li><strong>Resultado:</strong> O navegador exibe o código do script como texto puro em vez de executá-lo.</li>
+  </ul>
+
+  <h3>2. Cadastro de Usuários (Integridade de Dados)</h3>
+  <p>Ao criar um formulário de cadastro, você precisa garantir que os campos técnicos (e-mail, idade, site) sejam legítimos.</p>
+  <ul>
+    <li><strong>E-mail:</strong> Use <code>filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)</code>. Se retornar <code>false</code>, o cadastro deve ser interrompido com uma mensagem de erro.</li>
+    <li><strong>Idade:</strong> Use <code>FILTER_VALIDATE_INT</code> com a opção <code>min_range</code> para garantir que apenas maiores de 18 anos se cadastrem.</li>
+    <li><strong>URL do Perfil:</strong> Use <code>FILTER_VALIDATE_URL</code> para garantir que o link enviado seja um endereço web válido.</li>
+  </ul>
+
+  <h3>3. Painel Administrativo com Busca (Proteção de URL)</h3>
+  <p>Muitos sistemas utilizam parâmetros via GET para filtrar resultados (ex: <code>lista.php?status=ativo</code>).</p>
+  <ul>
+    <li><strong>Ação:</strong> Um atacante pode mudar a URL para <code>?status=123</code> tentando burlar a lógica.</li>
+    <li><strong>Prática:</strong> Sempre sanitize o parâmetro da URL com <code>FILTER_SANITIZE_FULL_SPECIAL_CHARS</code> e valide se o valor recebido pertence a uma lista de opções permitidas (<em>whitelist</em>).</li>
+  </ul>
+
+  <h3>4. Integração com Banco de Dados (Prevenção de Injeção)</h3>
+  <p>Embora a sanitização ajude, ela não substitui o uso de <strong>Prepared Statements</strong> (Instruções Preparadas) no banco de dados.</p>
+  <ul>
+    <li><strong>Fluxo Real:</strong>
+      <ol>
+        <li>O dado chega (ex: <code>$_POST['id']</code>).</li>
+        <li>Você valida se é um inteiro com <code>filter_input</code>.</li>
+        <li>Você envia o dado validado para o banco de dados usando PDO com <code>bindParam</code>.</li>
+      </ol>
+    </li>
+  </ul>
+
+  <h3>5. Cálculo de Frete ou E-commerce (Proteção de Tipos)</h3>
+  <p>Em sistemas que lidam com cálculos financeiros, a manipulação de tipos (ex: tratar uma string como número) pode gerar erros graves.</p>
+  <ul>
+    <li><strong>Prática:</strong> Use <code>declare(strict_types=1)</code> no topo dos arquivos de lógica de negócio.</li>
+    <li><strong>Benefício:</strong> Se uma função espera um <code>float</code> (preço) e recebe acidentalmente uma string, o PHP interrompe a execução imediatamente, evitando que um cálculo errado seja processado e salvo no banco.</li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li><strong>Tatroe, Kevin; MacIntyre, Peter; Lerdorf, Rasmus.</strong> <em>Programming PHP</em>. 3ª Edição. O'Reilly Media.</li>
+    <li><strong>McLaughlin, Brett.</strong> <em>PHP &amp; MySQL: The Missing Manual</em>. O'Reilly Media</li>
+    <li><strong>Sommerfeld, Roni.</strong> <em>Unlock PHP 8: From Basic to Advanced</em>. 1ª Edição. BPB Publications, 2024.</li>
+    <li><strong>Documentação Técnica da Aula 07.</strong> <em>Validação e Sanitização: Uso de filter_input() e proteção contra manipulação de tipos</em></li>
+    <li><strong>Exemplos Práticos de Código.</strong> <em>Exemplos de Código PHP: Validação e Sanitização</em></li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Atividade Prática</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário</a></li>
   </ul>
 </section>

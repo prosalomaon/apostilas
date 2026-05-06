@@ -1,18 +1,307 @@
 ---
-layout: exercicio
-title: "Exercício 02 - Validação e Sanitização: Uso de filter_input() e proteção contra manipulação de tipos"
+layout: questionario
+title: "Validação e Sanitização: Uso de filter_input() e proteção contra manipulação de tipos"
 exercicio_numero: "02"
 aula_numero: "07"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 07."
+description: "Questionário para consolidar os conhecimentos sobre segurança, filtros e tipagem no PHP."
+perguntas:
+  - texto: "Qual é o pilar fundamental da segurança web mencionado na aula?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Confiar apenas em dados vindos de formulários HTML."
+      - letra: "b"
+        texto: "Utilizar apenas JavaScript para validar dados no cliente."
+      - letra: "c"
+        texto: "Nunca confiar em dados vindos do usuário ou de fontes externas."
+      - letra: "d"
+        texto: "Criptografar todos os campos de um formulário."
+
+  - texto: "O que é o processo de Sanitização?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Verificar se o dado atende a critérios como valor mínimo e máximo."
+      - letra: "b"
+        texto: "Remover caracteres indesejados ou perigosos de uma entrada."
+      - letra: "c"
+        texto: "Converter um objeto em uma string JSON."
+      - letra: "d"
+        texto: "Garantir que o usuário está logado no sistema."
+
+  - texto: "Qual é o objetivo principal da Validação?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Confirmar se o dado é o que se espera que seja (ex: um inteiro)."
+      - letra: "b"
+        texto: "Limpar o código-fonte de comentários desnecessários."
+      - letra: "c"
+        texto: "Traduzir o site para outros idiomas automaticamente."
+      - letra: "d"
+        texto: "Remover tags HTML de um texto enviado."
+
+  - texto: "Por que o uso de superglobais como $_POST e $_GET diretamente é desencorajado?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Porque elas não funcionam no PHP 8."
+      - letra: "b"
+        texto: "Porque elas tornam o site mais lento."
+      - letra: "c"
+        texto: "Porque elas só aceitam dados do tipo string."
+      - letra: "d"
+        texto: "Porque o acesso direto é menos robusto e seguro do que usar filtros."
+
+  - texto: "Qual função é a maneira recomendada de obter e filtrar variáveis externas em PHP?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "htmlspecialchars()"
+      - letra: "b"
+        texto: "filter_input()"
+      - letra: "c"
+        texto: "strip_tags()"
+      - letra: "d"
+        texto: "isset()"
+
+  - texto: "Na função filter_input(), o que define o tipo de origem INPUT_GET?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Dados vindos via parâmetros de URL (Query String)."
+      - letra: "b"
+        texto: "Dados vindos de um formulário com method='POST'."
+      - letra: "c"
+        texto: "Dados armazenados em Cookies."
+      - letra: "d"
+        texto: "Variáveis de ambiente do servidor."
+
+  - texto: "Qual filtro deve ser usado para remover caracteres não permitidos em e-mails?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "FILTER_VALIDATE_EMAIL"
+      - letra: "b"
+        texto: "FILTER_SANITIZE_URL"
+      - letra: "c"
+        texto: "FILTER_SANITIZE_EMAIL"
+      - letra: "d"
+        texto: "FILTER_SANITIZE_STRING"
+
+  - texto: "O filtro FILTER_SANITIZE_SPECIAL_CHARS transforma caracteres como '<' e '>' em quê?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Em espaços em branco."
+      - letra: "b"
+        texto: "Em Entidades HTML (como &#60; e &#62;)."
+      - letra: "c"
+        texto: "Em comentários PHP."
+      - letra: "d"
+        texto: "Eles são simplesmente removidos do texto."
+
+  - texto: "Como o navegador trata uma tag <h1> que foi convertida em entidade HTML?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Ele executa a tag e deixa o texto grande e em negrito."
+      - letra: "b"
+        texto: "Ele ignora o texto completamente."
+      - letra: "c"
+        texto: "Ele abre uma janela de alerta (pop-up)."
+      - letra: "d"
+        texto: "Ele exibe literalmente os caracteres na tela sem interpretá-los como título."
+
+  - texto: "Qual ataque de segurança é prevenido ao converter scripts maliciosos em entidades HTML?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "XSS (Cross-Site Scripting)."
+      - letra: "b"
+        texto: "SQL Injection."
+      - letra: "c"
+        texto: "DDoS."
+      - letra: "d"
+        texto: "Brute Force."
+
+  - texto: "Qual filtro de validação é usado para checar se uma URL é válida?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "FILTER_VALIDATE_INT"
+      - letra: "b"
+        texto: "FILTER_SANITIZE_URL"
+      - letra: "c"
+        texto: "FILTER_VALIDATE_URL"
+      - letra: "d"
+        texto: "FILTER_VALIDATE_EMAIL"
+
+  - texto: "O que a função filter_input retorna quando a validação falha (ex: um e-mail inválido)?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "null"
+      - letra: "b"
+        texto: "false"
+      - letra: "c"
+        texto: "0"
+      - letra: "d"
+        texto: "Uma string de erro."
+
+  - texto: "O que a função filter_input retorna quando a variável solicitada não existe na origem?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "null"
+      - letra: "b"
+        texto: "false"
+      - letra: "c"
+        texto: "void"
+      - letra: "d"
+        texto: "Lança um erro fatal."
+
+  - texto: "Para validar uma idade entre 18 e 100 anos, qual parâmetro do filter_input deve ser preenchido?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "flags"
+      - letra: "b"
+        texto: "type"
+      - letra: "c"
+        texto: "options (min_range e max_range)"
+      - letra: "d"
+        texto: "validate_range"
+
+  - texto: "O que é 'Type Juggling' no PHP?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Conversões automáticas de tipos feitas pela linguagem."
+      - letra: "b"
+        texto: "Um método de criptografia de dados."
+      - letra: "c"
+        texto: "A criação de vários objetos ao mesmo tempo."
+      - letra: "d"
+        texto: "O ato de deletar variáveis da memória."
+
+  - texto: "Qual operador garante que a comparação seja feita tanto no valor quanto no tipo?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "=="
+      - letra: "b"
+        texto: "==="
+      - letra: "c"
+        texto: "!="
+      - letra: "d"
+        texto: "<>"
+
+  - texto: "Para que serve a instrução 'declare(strict_types=1);'?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Para permitir que o PHP ignore erros de sintaxe."
+      - letra: "b"
+        texto: "Para ativar a sanitização automática em todo o site."
+      - letra: "c"
+        texto: "Para acelerar a conexão com o banco de dados."
+      - letra: "d"
+        texto: "Para forçar o PHP a respeitar rigorosamente os tipos definidos em funções."
+
+  - texto: "Onde deve ser colocada a declaração strict_types?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "No topo do arquivo PHP, logo após a tag de abertura."
+      - letra: "b"
+        texto: "Dentro do método __construct da classe."
+      - letra: "c"
+        texto: "No arquivo de configuração do Apache (httpd.conf)."
+      - letra: "d"
+        texto: "Ao final de cada função."
+
+  - texto: "Qual função deve ser usada ao exibir dados de volta no HTML para impedir ataques XSS?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "filter_input()"
+      - letra: "b"
+        texto: "strip_tags()"
+      - letra: "c"
+        texto: "htmlspecialchars()"
+      - letra: "d"
+        texto: "var_dump()"
+
+  - texto: "De acordo com o fluxo de dados seguro, qual é a primeira etapa ao receber um dado?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Salvar no banco de dados."
+      - letra: "b"
+        texto: "Sanitizar e validar o dado assim que ele entra no script."
+      - letra: "c"
+        texto: "Exibir o dado no navegador para confirmação."
+      - letra: "d"
+        texto: "Converter o dado em um objeto JSON."
+
+  - texto: "Na representação gráfica da aula, o que acontece se o dado não for tratado?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "O PHP fecha automaticamente a conexão."
+      - letra: "b"
+        texto: "Os dados são excluídos pelo navegador."
+      - letra: "c"
+        texto: "Há um risco alto de ataques XSS e Injeção."
+      - letra: "d"
+        texto: "O sistema operacional trava."
+
+  - texto: "Qual a diferença técnica entre Sanitização e Validação?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Sanitização limpa o que está sujo; Validação confere se a informação cumpre as regras."
+      - letra: "b"
+        texto: "Sanitização é feita no banco de dados; Validação é feita no HTML."
+      - letra: "c"
+        texto: "Sanitização é para números; Validação é para textos."
+      - letra: "d"
+        texto: "Não há diferença técnica, são sinônimos."
+
+  - texto: "Por que a validação Client-Side (JavaScript) não é suficiente para a segurança?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Porque o JavaScript é mais lento que o PHP."
+      - letra: "b"
+        texto: "Porque ela pode ser facilmente burlada ou desativada pelo usuário."
+      - letra: "c"
+        texto: "Porque o navegador não suporta validação de e-mails."
+      - letra: "d"
+        texto: "Porque o JavaScript não consegue ler formulários HTML."
+
+  - texto: "Em um cálculo financeiro, qual prática evita erros graves de manipulação de tipos?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Usar apenas números inteiros."
+      - letra: "b"
+        texto: "Desativar as mensagens de erro do PHP."
+      - letra: "c"
+        texto: "Sempre converter tudo para string."
+      - letra: "d"
+        texto: "Usar tipagem estrita (strict_types) para garantir que cálculos usem tipos numéricos reais."
+
+  - texto: "O que acontece se uma função espera um 'int' e recebe uma 'string' com strict_types ativo?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "O PHP converte a string silenciosamente."
+      - letra: "b"
+        texto: "O programa ignora o parâmetro e segue a execução."
+      - letra: "c"
+        texto: "O PHP lança um erro de tipo (TypeError)."
+      - letra: "d"
+        texto: "O valor da variável é definido como zero."
 ---
-
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Aplique os conceitos de lógica e sintaxe aprendidos.</li>
-    <li>Verifique se o resultado atende aos requisitos propostos.</li>
-    <li>Documente seu código para facilitar o entendimento.</li>
-  </ul>
-</div>

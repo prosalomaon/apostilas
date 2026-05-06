@@ -9,5 +9,276 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em construção.</p>
+  <p>Na programação orientada a objetos, os métodos representam o que um objeto faz (seus comportamentos), enquanto os atributos representam o que ele é (seu estado). Modularizar um programa em pequenos pedaços ou módulos, conhecidos como métodos, é a base da estratégia de "dividir para conquistar", tornando o desenvolvimento mais gerenciável, permitindo o reaproveitamento de código e evitando a repetição desnecessária de instruções.</p>
+
+  <h3>1. Anatomia de um Método</h3>
+  <p>Um método é um bloco de construção composto por um cabeçalho e um corpo. Sua estrutura básica inclui:</p>
+  <ul>
+    <li><strong>Modificador de acesso:</strong> Define a visibilidade (ex: <code>public</code> ou <code>private</code>).</li>
+    <li><strong>Tipo de retorno:</strong> Especifica a qualidade da informação que o método devolve ao chamador.</li>
+    <li><strong>Nome do método:</strong> Deve seguir a convenção <em>camelCase</em> (iniciar com letra minúscula).</li>
+    <li><strong>Lista de parâmetros:</strong> Localizada entre parênteses, contém as informações que o método exige para realizar sua tarefa.</li>
+    <li><strong>Corpo:</strong> Delimitado por chaves <code>{ }</code>, contém as instruções que executam a tarefa.</li>
+  </ul>
+
+  <h3>2. O Fluxo de Informação: Parâmetros e Argumentos</h3>
+  <p>Embora usados como sinônimos, há uma distinção técnica importante:</p>
+  <ul>
+    <li><strong>Parâmetros:</strong> São as variáveis declaradas na assinatura do método. Funcionam como variáveis locais que só existem enquanto o método está sendo executado.</li>
+    <li><strong>Argumentos:</strong> São os valores reais passados para os parâmetros no momento em que o método é invocado.</li>
+  </ul>
+
+  <h4>Passagem por Valor</h4>
+  <p>No Java, todos os argumentos são passados por valor, o que significa que o método recebe uma cópia da informação.</p>
+  <ul>
+    <li>Para <strong>tipos primitivos</strong> (int, double, etc.), as alterações no parâmetro dentro do método não afetam a variável original.</li>
+    <li>Para <strong>objetos</strong>, o Java passa uma cópia da referência (o endereço de memória). Isso significa que o método e o chamador referenciam o mesmo objeto, permitindo que o método altere o estado interno desse objeto diretamente.</li>
+  </ul>
+
+  <h3>3. O Tipo de Retorno e a Instrução return</h3>
+  <p>O método deve sempre declarar o que retorna:</p>
+  <ul>
+    <li><strong>void:</strong> Indica que o método realiza uma tarefa, mas não envia nenhuma informação de volta ao chamador.</li>
+    <li><strong>Tipos de dados (ex: int, boolean, String):</strong> Exigem o uso da palavra-chave <code>return</code> para enviar um resultado ao chamador.</li>
+  </ul>
+
+  <h3>4. Exemplos Conceituais e Práticos</h3>
+  
+  <h4>A. Exemplo Básico (Ação sem retorno)</h4>
+  <p>Imagine um método que apenas imprime informações de um livro.</p>
+  <div class="code-container">
+    <pre><code class="language-java">void mostrarDetalhes() {
+    System.out.println("Nome: " + this.nome);
+    System.out.println("Valor: " + this.valor);
+} // O retorno é void; ele apenas executa instruções.</code></pre>
+  </div>
+
+  <h4>B. Exemplo Intermediário (Parâmetro e lógica de negócio)</h4>
+  <p>Um método para aplicar um desconto que altera o estado do objeto.</p>
+  <div class="code-container">
+    <pre><code class="language-java">void aplicaDescontoDe(double porcentagem) {
+    this.valor -= this.valor * porcentagem; 
+} // 'porcentagem' é o parâmetro; 'this.valor' acessa o atributo da classe.</code></pre>
+  </div>
+
+  <h4>C. Exemplo Avançado (Retorno de estado e validação)</h4>
+  <p>Um método que verifica se uma operação de saque foi bem-sucedida, devolvendo um valor booleano.</p>
+  <div class="code-container">
+    <pre><code class="language-java">boolean saca(double valor) {
+    if (this.saldo < valor) {
+        return false; // Saldo insuficiente
+    } else {
+        this.saldo -= valor;
+        return true; // Saque realizado com sucesso.
+    }
+}</code></pre>
+  </div>
+
+  <h3>5. Diferenciando Escopos: Variáveis Locais vs. de Instância</h3>
+  <ul>
+    <li><strong>Variáveis de Instância (Campos):</strong> São declaradas dentro da classe, mas fora dos métodos, e mantêm seus valores ao longo da vida do objeto.</li>
+    <li><strong>Variáveis Locais:</strong> São declaradas no corpo de um método e são "destruídas" assim que a execução do método termina.</li>
+  </ul>
+
+  <h3>6. Tópicos Especiais e Avançados</h3>
+  <ul>
+    <li><strong>A Referência this:</strong> Utilizada para referenciar o próprio objeto atual. É essencial quando o nome do parâmetro é idêntico ao nome do atributo, evitando o sombreamento (shadowing) da variável de instância.</li>
+    <li><strong>Métodos static:</strong> Também chamados de métodos de classe, podem ser chamados sem a necessidade de criar um objeto (ex: <code>Math.sqrt()</code>). Eles não podem acessar atributos ou métodos de instância nem usar a palavra-chave <code>this</code>.</li>
+    <li><strong>Sobrecarga de Métodos (Overloading):</strong> Permite criar vários métodos com o mesmo nome, desde que possuam listas de parâmetros diferentes (em número, tipo ou ordem).</li>
+    <li><strong>Recursão:</strong> Ocorre quando um método chama a si mesmo para resolver problemas complexos dividindo-os em versões menores.</li>
+  </ul>
 </section>
+
+<section class="section-box">
+  <h2>Demonstração Prática</h2>
+
+  <h3>1. Comportamento Básico: Método sem Retorno (void)</h3>
+  <p>Um método <code>void</code> realiza uma tarefa, mas não fornece nenhuma informação de volta ao chamador. É ideal para ações como exibir dados no console.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Livro {
+    String nome;
+    double valor;
+
+    // Método que define o comportamento de exibir detalhes
+    public void mostrarDetalhes() {
+        System.out.println("Nome: " + nome);
+        System.out.println("Valor: " + valor);
+    } 
+}</code></pre>
+  </div>
+
+  <h3>2. Métodos com Parâmetros: Alterando o Estado</h3>
+  <p>Parâmetros são variáveis locais que recebem informações necessárias para o método realizar sua tarefa. O exemplo abaixo utiliza o parâmetro para aplicar uma lógica de desconto.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Livro {
+    double valor;
+
+    // O parâmetro 'porcentagem' recebe o valor passado na chamada
+    public void aplicaDescontoDe(double porcentagem) {
+        this.valor -= this.valor * porcentagem; 
+    } // A palavra 'this' referencia o atributo da própria classe
+}</code></pre>
+  </div>
+
+  <h3>3. Métodos com Retorno: Recuperando Informações</h3>
+  <p>Quando um método especifica um tipo de retorno diferente de <code>void</code>, ele deve utilizar a instrução <code>return</code> para passar um resultado de volta ao chamador.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Conta {
+    private double saldo;
+
+    // Retorna o saldo atual (método Getter)
+    public double getSaldo() {
+        return this.saldo; 
+    }
+
+    // Retorna um boolean indicando se o saque foi bem-sucedido
+    public boolean saca(double valor) {
+        if (this.saldo < valor) {
+            return false; // Saldo insuficiente
+        } else {
+            this.saldo -= valor;
+            return true; // Sucesso
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>4. Exemplo Intermediário: Múltiplos Parâmetros</h3>
+  <p>Os métodos podem exigir várias informações, separadas por vírgulas na lista de parâmetros.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Calculadora {
+    // Determina o maior entre três valores double
+    public double maximum(double x, double y, double z) {
+        double max = x; 
+        if (y > max) max = y;
+        if (z > max) max = z;
+        return max;
+    } // O Java também permite simplificar usando Math.max
+}</code></pre>
+  </div>
+
+  <h3>5. Exemplo Avançado: Objeto como Parâmetro</h3>
+  <p>Em sistemas robustos, objetos frequentemente interagem passando referências de outros objetos como argumentos para métodos.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Conta {
+    double saldo;
+
+    // Transfere valor de uma conta para outra
+    public boolean transfere(Conta destino, double valor) {
+        boolean retirou = this.saca(valor); // Tenta sacar da conta atual
+        if (retirou == false) {
+            return false; // Não foi possível transferir
+        } else {
+            destino.deposita(valor); // Deposita na conta destino recebida como objeto
+            return true; 
+        }
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
+
+  <h3>1. Anatomia e Estrutura de um Método</h3>
+  <p>Um método é um bloco de construção que modulariza o programa, seguindo a estratégia de "dividir para conquistar". Ele oculta os mecanismos internos do usuário, funcionando como o pedal de um acelerador que aumenta a velocidade sem que o motorista precise entender a mecânica do motor.</p>
+  <div class="mermaid">
+    graph TD
+        A[Método] --> B[Cabeçalho]
+        A --> C[Corpo]
+
+        subgraph "Corpo do Método"
+        C --> C1[Instruções e Lógica de Execução]
+        C --> C2[Palavra-chave: return]
+        end
+        
+        subgraph "Estrutura do Cabeçalho"
+        B --> B1[Modificador de Acesso: public/private]
+        B --> B2[Tipo de Retorno: void ou tipo de dado]
+        B --> B3[Nome do Método: camelCase]
+        B --> B4[Lista de Parâmetros: entre parênteses]
+        end
+        
+        style B fill:#f9f,stroke:#333,stroke-width:2px
+        style C fill:#bbf,stroke:#333,stroke-width:2px
+  </div>
+  <p>A chave esquerda <code>{</code> inicia o corpo e a direita <code>}</code> o termina.</p>
+
+  <h3>2. Fluxo de Informação: Parâmetros vs. Argumentos</h3>
+  <p>Os parâmetros são variáveis locais declaradas no cabeçalho do método que representam a informação necessária para a tarefa. Os argumentos são os valores reais passados pelo chamador no momento da invocação.</p>
+  <div class="mermaid">
+    sequenceDiagram
+        participant C as Chamador (ex: método main)
+        participant M as Objeto (Método invocado)
+        
+        Note over C: Possui os Argumentos (Valores Reais)
+        C->>M: Invoca método passando Argumentos
+        Note over M: Parâmetros recebem cópia dos valores
+        M->>M: Executa comportamento baseado nos Parâmetros
+        M-->>C: Retorna controle (e valor, se não for void)
+  </div>
+  <p>No Java, todos os argumentos são passados por valor, ou seja, o método recebe uma cópia da informação.</p>
+
+  <h3>3. Lógica do Retorno e a palavra-chave return</h3>
+  <p>O tipo de retorno especifica a "qualidade" do dado que será devolvido. Se um método não devolve nada, ele é marcado como <code>void</code>. Se houver retorno, a instrução <code>return</code> encerra o método e passa o valor de volta ao chamador.</p>
+  <div class="mermaid">
+    graph LR
+        subgraph "Método com Retorno"
+        R1[Entrada: Parâmetros] --> R2[Processamento Interno]
+        R2 --> R3{return valor;}
+        R3 --> R4[Resultado enviado ao Chamador]
+        end
+        
+        subgraph "Método sem Retorno (VOID)"
+        V1[Entrada: Parâmetros] --> V2[Processamento / Ação]
+        V2 --> V3[Fim do Bloco]
+        V3 --> V4[Apenas o Controle volta ao Chamador]
+        end
+
+        style R3 fill:#dfd,stroke:#000
+        style V3 fill:#fdd,stroke:#000
+  </div>
+  <p>Um método pode retornar no máximo um valor (ou uma referência a um objeto que contenha vários valores).</p>
+
+  <h3>4. Relação Hierárquica de Chamada</h3>
+  <p>A interação entre métodos segue uma hierarquia de gerenciamento, onde um "chefe" (chamador) solicita um trabalho a um "trabalhador" (método chamado).</p>
+  <div class="mermaid">
+    graph TD
+        subgraph "Pilha de Execução (Stack)"
+        Main[Método Chamador: main] -->|Invocação| M1[Método 1]
+        M1 -->|Invocação| M2[Método 2]
+        M2 -.->|return| M1
+        M1 -.->|return| Main
+        end
+  </div>
+  <p>Cada chamada de método cria um quadro de pilha (<em>stack frame</em>) na memória, seguindo o princípio <strong>LIFO</strong> (<em>Last In, First Out</em>): o último a entrar é o primeiro a sair.</p>
+
+  
+  <p><strong>Dica de Engenharia:</strong> Se um nome conciso não conseguir expressar a tarefa de um método, ele provavelmente está tentando realizar tarefas demais e deve ser dividido em métodos menores.</p>
+</section>
+
+<div class="tip-box">
+
+  <h3>Dicas e Lembretes</h3>
+  <ul>
+    <li><strong>Modularização:</strong> Divida programas grandes em métodos pequenos que realizam uma única tarefa bem definida.</li>
+    <li><strong>Nomenclatura:</strong> Nomes de métodos devem expressar sua tarefa efetivamente e iniciar com letra minúscula (camelCase).</li>
+    <li><strong>Encapsulamento:</strong> Utilize métodos <code>get</code> e <code>set</code> para controlar como os dados de variáveis privadas são acessados ou modificados.</li>
+    <li><strong>Escopo:</strong> Lembre-se que parâmetros e variáveis declaradas dentro de um método são locais e deixam de existir quando a execução termina.</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <p>DEITEL, Paul; DEITEL, Harvey. Java: Como Programar (10ª Edição)</p>
+  <a href="https://www.ispsn.org/sites/default/files/documentos-virtuais/pdf/apostila-java-orientacao-objetos_1.pdf">Java e Orientação a Objetos (Alura)</a>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02">Exercício 02: Desafio de Fixação</a></li>
+  </ul>
+</section>
+

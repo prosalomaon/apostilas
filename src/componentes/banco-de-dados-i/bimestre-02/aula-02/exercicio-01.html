@@ -1,23 +1,50 @@
 ---
 layout: exercicio
-title: "O Processo de Abstração: Observação da realidade e definição do Minimundo."
+title: "Exercício 01: Autorrelacionamento e Hierarquias"
 exercicio_numero: "01"
-02ero: "02"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 02."
+aula_numero: "12"
+description: "Modelagem conceitual do sistema EduTech envolvendo autorrelacionamentos 1:N e N:N."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado: Sistema de Gestão de Conhecimento "EduTech"</h2>
+  <p>A empresa EduTech precisa de um modelo de dados para organizar dois pilares fundamentais do seu negócio: seu quadro de colaboradores e sua trilha de aprendizagem.</p>
+
+  <ul>
+    <li><strong>Colaboradores e Mentoria:</strong> A empresa possui diversos funcionários. Para incentivar o crescimento, cada colaborador (exceto o Diretor Geral) possui um mentor, que obrigatoriamente também é um colaborador da casa. Um mentor pode orientar vários colaboradores simultaneamente, mas cada colaborador tem apenas um mentor fixo.</li>
+    <li><strong>Cursos e Pré-requisitos:</strong> A EduTech oferece uma vasta gama de cursos técnicos. Para garantir o aprendizado, o sistema deve registrar as dependências entre eles. Um curso pode exigir vários outros cursos como pré-requisito (ex: para fazer "Banco de Dados II", é preciso ter feito "Banco de Dados I" e "Lógica de Programação"). Da mesma forma, um único curso básico pode ser pré-requisito para diversos cursos avançados.</li>
+    <li><strong>Treinamentos:</strong> Os colaboradores se inscrevem nos cursos. O sistema deve registrar a data da inscrição e a nota final obtida pelo colaborador naquele curso específico.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Preparação</h2>
+  <p>Para realizar esta modelagem, você deve:</p>
+  <ul>
+    <li>Revisar os conceitos de entidade, atributo e relacionamento.</li>
+    <li>Identificar onde ocorrem os relacionamentos reflexivos (associações entre ocorrências da mesma entidade).</li>
+    <li>Definir os papéis (roles ou aliases) para distinguir os sentidos das associações recursivas (ex: quem é o "mentor" e quem é o "mentorado").</li>
+    <li>Determinar a conectividade/cardinalidade (1:1, 1:N ou M:N) e a opcionalidade de cada ligação.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>O Desafio</h2>
+  <p>Crie um Diagrama Entidade-Relacionamento (DER) conceitual completo para o cenário acima. Sua modelagem deve conter:</p>
+  <ul>
+    <li>As entidades necessárias com seus respectivos atributos (incluindo chaves primárias).</li>
+    <li>Os relacionamentos, nomeados adequadamente com verbos.</li>
+    <li>A representação clara dos autorrelacionamentos descritos, indicando os nomes dos papéis.</li>
+    <li>As cardinalidades mínimas e máximas de cada ponta dos relacionamentos.</li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Foco na Abstração:</strong> Não se preocupe com tabelas ou chaves estrangeiras físicas agora; foque na representação fiel da realidade (modelo conceitual).</li>
+    <li><strong>Atenção aos Atributos:</strong> Lembre-se de que informações que dependem da combinação de dois objetos (como a 'nota' de um aluno em um curso) devem ser colocadas no relacionamento, caso este seja Muitos-para-Muitos.</li>
+    <li><strong>Identificadores:</strong> Certifique-se de que cada entidade possua um atributo identificador único (Chave Primária).</li>
+    <li><strong>Raiz da Hierarquia:</strong> No relacionamento de mentoria, considere como representar o Diretor Geral, que não possui mentor (opcionalidade).</li>
   </ul>
 </div>
-
-
-
-
-

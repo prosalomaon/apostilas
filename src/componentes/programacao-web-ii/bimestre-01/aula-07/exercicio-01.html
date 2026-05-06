@@ -1,18 +1,194 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Validação e Sanitização: Uso de filter_input() e proteção contra manipulação de tipos"
+title: "Exercício 01 - Processamento Seguro de Formulários"
 exercicio_numero: "01"
 aula_numero: "07"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 07."
+description: "Construção de um script de processamento seguro utilizando filtros nativos do PHP para sanitização e validação."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>Nesta atividade, você deve construir um script de processamento para um formulário de cadastro de eventos. O objetivo é garantir que nenhum dado malicioso (scripts XSS) entre no sistema e que todas as regras de negócio (idade mínima, formato de e-mail e URL) sejam respeitadas utilizando estritamente as funções de filtro nativas do PHP.</p>
+</section>
+
+<section class="section-box">
+  <h2>Preparação</h2>
+  <ul>
+    <li><strong>Ambiente:</strong> Certifique-se de usar o PHP 8.1 ou superior.</li>
+    <li><strong>Arquivos:</strong> Crie uma pasta e salve os dois arquivos abaixo (<code>index.html</code> e <code>processa.php</code>).</li>
+    <li><strong>Tipagem Estrita:</strong> O arquivo PHP deve conter <code>declare(strict_types=1);</code> no topo para evitar que o PHP converta tipos de forma automática e insegura.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Código Base: index.html (Interface Pronta)</h2>
+  <p>Copie este código para criar um formulário moderno usando Bootstrap 5.</p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!doctype html&gt;
+&lt;html lang="pt-br"&gt;
+
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Cadastro de Evento - Seguro&lt;/title&gt;
+  &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" /&gt;
+&lt;/head&gt;
+
+&lt;body class="bg-light"&gt;
+  &lt;div class="container py-5"&gt;
+    &lt;div class="row justify-content-center"&gt;
+      &lt;div class="col-md-6"&gt;
+        &lt;div class="card shadow border-0"&gt;
+          &lt;div class="card-header bg-primary text-white text-center py-3"&gt;
+            &lt;h4 class="mb-0"&gt;Inscrição no Evento&lt;/h4&gt;
+          &lt;/div&gt;
+          &lt;div class="card-body p-4"&gt;
+            &lt;form action="processa.php" method="POST"&gt;
+              &lt;div class="mb-3"&gt;
+                &lt;label class="form-label fw-bold"&gt;Nome Completo&lt;/label&gt;
+                &lt;input type="text" name="nome" class="form-control" placeholder="Ex: Jorge Silva" required /&gt;
+              &lt;/div&gt;
+              &lt;div class="mb-3"&gt;
+                &lt;label class="form-label fw-bold"&gt;E-mail&lt;/label&gt;
+                &lt;input name="email" class="form-control" placeholder="exemplo@email.com" required /&gt;
+              &lt;/div&gt;
+              &lt;div class="row mb-3"&gt;
+                &lt;div class="col-md-6"&gt;
+                  &lt;label class="form-label fw-bold"&gt;Idade&lt;/label&gt;
+                  &lt;input type="number" name="idade" class="form-control" placeholder="18 a 60" required /&gt;
+                &lt;/div&gt;
+                &lt;div class="col-md-6"&gt;
+                  &lt;label class="form-label fw-bold"&gt;Site Pessoal/LinkedIn&lt;/label&gt;
+                  &lt;input name="website" class="form-control" placeholder="https://..." /&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+              &lt;button type="submit" class="btn btn-primary w-100 py-2 fw-bold"&gt;
+                Finalizar Cadastro
+              &lt;/button&gt;
+            &lt;/form&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>O Desafio: processa.php</h2>
+  <p>Você deve completar o arquivo <code>processa.php</code> seguindo os comentários de instrução.</p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+// --- 1. LÓGICA DE PROCESSAMENTO ---
+$erros = [];
+$sucesso = false;
+
+// Variáveis para persistência e exibição segura
+$nome = $email = $idade = $website = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    /**
+     * TODO: SANITIZAÇÃO
+     * Utilize filter_input para capturar e limpar o 'nome' e o 'email'.
+     * Dica: Use FILTER_SANITIZE_SPECIAL_CHARS e FILTER_SANITIZE_EMAIL.
+     */
+    $nome  = ""; // Implementar aqui
+    $email = ""; // Implementar aqui
+    
+    /**
+     * TODO: VALIDAÇÃO DE E-MAIL
+     * Verifique se o e-mail sanitizado acima é um formato válido.
+     * Se for inválido, adicione a mensagem "E-mail inválido" ao array $erros.
+     */
+
+    /**
+     * TODO: VALIDAÇÃO DE IDADE (INTERVALO)
+     * Utilize filter_input com FILTER_VALIDATE_INT e o array de 'options'.
+     * A regra é: idade mínima 18 e máxima 60.
+     */
+    $opcoes_idade = []; // Definir o range aqui
+    $idade_validada = false; // Implementar filter_input aqui
+    
+    if ($idade_validada === false || $idade_validada === null) {
+        $erros[] = "A idade deve estar entre 18 e 60 anos.";
+    } else {
+        $idade = (string)$idade_validada;
+    }
+
+    /**
+     * TODO: VALIDAÇÃO DE URL
+     * Verifique se o campo 'website' é uma URL válida.
+     */
+
+    // Lógica de decisão: Se o array de erros estiver vazio, mude $sucesso para true.
+    if (empty($erros)) {
+        $sucesso = true;
+    }
+
+} else {
+    // Bloqueio de acesso direto
+    header("Location: index.html");
+    exit;
+}
+?&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-br"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Resultado do Cadastro&lt;/title&gt;
+    &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body class="bg-light"&gt;
+
+    &lt;div class="container py-5"&gt;
+        &lt;div class="row justify-content-center"&gt;
+            &lt;div class="col-md-7"&gt;
+                
+                &lt;?php if ($sucesso): ?&gt;
+                    &lt;!-- TODO: EXIBIÇÃO DE SUCESSO --&gt;
+                    &lt;div class="alert alert-success shadow border-0 p-4"&gt;
+                        &lt;h4 class="alert-heading fw-bold"&gt;Cadastro Realizado!&lt;/h4&gt;
+                        &lt;hr&gt;
+                        &lt;ul class="list-unstyled mb-0"&gt;
+                            &lt;!-- TODO: Exibir Nome, Email, Idade e Website aqui --&gt;
+                            &lt;!-- Dica: Use htmlspecialchars() para exibir strings com segurança. --&gt;
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                    &lt;a href="index.html" class="btn btn-primary mt-3"&gt;Novo Cadastro&lt;/a&gt;
+
+                &lt;?php else: ?&gt;
+                    &lt;!-- TODO: EXIBIÇÃO DE ERROS --&gt;
+                    &lt;div class="alert alert-danger shadow border-0 p-4"&gt;
+                        &lt;h4 class="alert-heading fw-bold"&gt;Erros Encontrados&lt;/h4&gt;
+                        &lt;ul class="mt-2"&gt;
+                            &lt;!-- TODO: Criar um foreach para listar as mensagens do array $erros. --&gt;
+                        &lt;/ul&gt;
+                        &lt;hr&gt;
+                        &lt;a href="javascript:history.back()" class="btn btn-outline-danger"&gt;Voltar ao Formulário&lt;/a&gt;
+                    &lt;/div&gt;
+                &lt;?php endif; ?&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais e Testes</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Regra de Ouro:</strong> Não acesse <code>$_POST</code> diretamente. Use apenas <code>filter_input()</code>.</li>
+    <li><strong>Tratamento de Erros:</strong> Caso algum campo seja inválido, o programa deve listar os erros em vez de confirmar o cadastro.</li>
+    <li><strong>Teste de Segurança:</strong> No campo "Nome", tente enviar: <code>&lt;script&gt;alert('hack')&lt;/script&gt;</code>. O PHP deve exibir o texto na tela em vez de executar o alerta, provando que a sanitização funcionou.</li>
+    <li><strong>Dica Profissional:</strong> O parâmetro <code>options</code> do <code>filter_input</code> permite definir <code>min_range</code> e <code>max_range</code>, o que economiza vários blocos de <code>if</code> no seu código.</li>
   </ul>
 </div>

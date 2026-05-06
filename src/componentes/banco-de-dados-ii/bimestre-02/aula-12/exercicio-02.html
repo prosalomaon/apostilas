@@ -1,18 +1,307 @@
 ---
-layout: exercicio
-title: "Exercício 02 - Álgebra Relacional"
+layout: questionario
+title: "Exercício 02 - Álgebra Relacional: Seleção, Projeção e Produto."
 exercicio_numero: "02"
 aula_numero: "12"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 12."
+description: "Questionário sobre os fundamentos da Álgebra Relacional, operadores unários e binários."
+perguntas:
+  - texto: "O que define a Álgebra Relacional como uma linguagem procedural?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Ela descreve apenas o resultado final desejado, sem detalhar passos."
+      - letra: "b"
+        texto: "Ela descreve o 'como' os dados devem ser recuperados através de uma sequência de operações passo a passo."
+      - letra: "c"
+        texto: "Ela é uma linguagem de programação voltada exclusivamente para o hardware."
+      - letra: "d"
+        texto: "Ela não possui base matemática e foca apenas na sintaxe SQL."
+
+  - texto: "Quem foi o pesquisador da IBM responsável por formular originalmente a Álgebra Relacional em 1970?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Chris Date."
+      - letra: "b"
+        texto: "Felipe Nery Machado."
+      - letra: "c"
+        texto: "Osvaldo Kotaro Takai."
+      - letra: "d"
+        texto: "Edgar F. Codd (Ted Codd)."
+
+  - texto: "Qual é a base teórica utilizada para estruturar a Álgebra Relacional?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Teoria dos Conjuntos e Lógica de Predicados."
+      - letra: "b"
+        texto: "Cálculo Diferencial e Integral."
+      - letra: "c"
+        texto: "Álgebra Linear e Geometria Analítica."
+      - letra: "d"
+        texto: "Teoria do Caos e Algoritmos Genéticos."
+
+  - texto: "Sobre a 'Filosofia de Codd', por que a álgebra relacional proíbe tuplas duplicadas?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Para economizar espaço físico no disco rígido."
+      - letra: "b"
+        texto: "Para aumentar a velocidade de conexão com o servidor."
+      - letra: "c"
+        texto: "Pela defesa da simplicidade e unicidade: dizer algo duas vezes não o torna mais verdadeiro."
+      - letra: "d"
+        texto: "Porque o SQL não consegue ler tabelas com registros repetidos."
+
+  - texto: "A operação de Seleção (σ) é classificada como um operador:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Unário, pois atua sobre apenas uma tabela por vez."
+      - letra: "b"
+        texto: "Binário, pois combina duas relações distintas."
+      - letra: "c"
+        texto: "Ternário, pois exige três predicados lógicos."
+      - letra: "d"
+        texto: "Declarativo, pois define apenas o alvo da consulta."
+
+  - texto: "Qual é a função principal da operação de Seleção (σ)?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Filtrar colunas específicas e descartar o restante."
+      - letra: "b"
+        texto: "Atuar como um filtro horizontal, selecionando linhas (tuplas) que atendem a um critério."
+      - letra: "c"
+        texto: "Combinar todas as linhas de duas tabelas diferentes."
+      - letra: "d"
+        texto: "Remover automaticamente colunas que possuem chaves primárias."
+
+  - texto: "O que acontece com o esquema (conjunto de colunas) de uma relação após uma operação de Seleção (σ)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "O esquema é reduzido apenas às colunas usadas no filtro."
+      - letra: "b"
+        texto: "O esquema é ampliado com novas colunas calculadas."
+      - letra: "c"
+        texto: "A relação resultante tem exatamente o mesmo esquema que a relação de entrada."
+      - letra: "d"
+        texto: "O esquema é apagado para economizar memória RAM."
+
+  - texto: "A operação de Projeção (π) atua como um filtro:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Horizontal, selecionando subconjuntos de linhas."
+      - letra: "b"
+        texto: "Diagonal, combinando atributos e tuplas aleatoriamente."
+      - letra: "c"
+        texto: "Procedural, alterando o valor dos dados armazenados."
+      - letra: "d"
+        texto: "Vertical, focando na filtragem das colunas (atributos) e descartando as não solicitadas."
+
+  - texto: "O que a Projeção (π) faz automaticamente para manter a propriedade de conjunto matemático?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Ordena as linhas por ordem alfabética."
+      - letra: "b"
+        texto: "Remove automaticamente linhas duplicadas que possam surgir."
+      - letra: "c"
+        texto: "Adiciona uma nova chave primária sequencial."
+      - letra: "d"
+        texto: "Converte todos os textos para letras maiúsculas."
+
+  - texto: "Como é calculado o número de colunas (grau) no resultado de um Produto Cartesiano (A × B)?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "É a soma do número de colunas de A com o número de colunas de B (n + m)."
+      - letra: "b"
+        texto: "É a multiplicação do número de colunas de A pelo de B (n * m)."
+      - letra: "c"
+        texto: "É sempre igual ao número de colunas da tabela A."
+      - letra: "d"
+        texto: "É a diferença entre o número de colunas das duas tabelas."
+
+  - texto: "Se a tabela A possui 10 linhas e a tabela B possui 5 linhas, quantas linhas terá o Produto Cartesiano (A × B)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "15 linhas (10 + 5)."
+      - letra: "b"
+        texto: "10 linhas (predomina a maior tabela)."
+      - letra: "c"
+        texto: "50 linhas (10 * 5)."
+      - letra: "d"
+        texto: "2 linhas (10 / 5)."
+
+  - texto: "Qual é a principal utilidade prática do Produto Cartesiano (×) no processamento de dados?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Exibir relatórios finais diretamente para o usuário comum."
+      - letra: "b"
+        texto: "Servir como base para operações de Junção (Join)."
+      - letra: "c"
+        texto: "Reduzir o volume de dados antes de aplicar filtros."
+      - letra: "d"
+        texto: "Eliminar duplicatas em colunas não identificadoras."
+
+  - texto: "Diferente da Álgebra Relacional, a linguagem SQL é considerada:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Procedural, pois define a ordem exata das operações."
+      - letra: "b"
+        texto: "Matemática pura, pois não aceita linhas duplicadas."
+      - letra: "c"
+        texto: "Declarativa, pois descreve 'o quê' obter, e não 'como' obter."
+      - letra: "d"
+        texto: "Unária, pois só processa uma tabela por comando."
+
+  - texto: "O que define a Propriedade do Fechamento (Closure) na Álgebra Relacional?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "O resultado de uma operação sobre uma relação é sempre outra relação."
+      - letra: "b"
+        texto: "O banco de dados fecha automaticamente após cada consulta."
+      - letra: "c"
+        texto: "Uma tabela não pode ser alterada após ser criada."
+      - letra: "d"
+        texto: "As colunas de uma tabela são fechadas para novos atributos."
+
+  - texto: "Qual cláusula SQL equivale diretamente ao operador de Seleção (σ)?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "SELECT."
+      - letra: "b"
+        texto: "FROM."
+      - letra: "c"
+        texto: "ORDER BY."
+      - letra: "d"
+        texto: "WHERE."
+
+  - texto: "Na Álgebra Relacional, o operador de Junção (⋈) pode ser interpretado teoricamente como:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Uma União seguida de uma Projeção."
+      - letra: "b"
+        texto: "Uma Seleção aplicada sobre um Produto Cartesiano."
+      - letra: "c"
+        texto: "Uma Diferença entre duas Projeções."
+      - letra: "d"
+        texto: "Um Produto Cartesiano que remove colunas duplicadas."
+
+  - texto: "Para utilizar os operadores de União (∪), Interseção (∩) e Diferença (−), as tabelas devem ser:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "De tamanhos diferentes em número de linhas."
+      - letra: "b"
+        texto: "Armazenadas no mesmo arquivo físico do disco."
+      - letra: "c"
+        texto: "União-compatíveis (mesmo número de colunas e domínios idênticos)."
+      - letra: "d"
+        texto: "Criadas pelo mesmo usuário administrador."
+
+  - texto: "Qual operador retorna as tuplas que existem no primeiro conjunto, mas não existem no segundo?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Diferença de Conjuntos (−)."
+      - letra: "b"
+        texto: "União (∪)."
+      - letra: "c"
+        texto: "Interseção (∩)."
+      - letra: "d"
+        texto: "Produto Cartesiano (×)."
+
+  - texto: "O operador de Interseção (∩) retorna apenas as tuplas que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Estão em qualquer uma das tabelas, sem repetição."
+      - letra: "b"
+        texto: "Existem simultaneamente em ambos os conjuntos."
+      - letra: "c"
+        texto: "Estão na primeira tabela, mas não na segunda."
+      - letra: "d"
+        texto: "Não possuem chaves estrangeiras vinculadas."
+
+  - texto: "Por que a regra de ouro da otimização recomenda 'filtrar o quanto antes'?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Porque o SQL exige que o WHERE venha antes do SELECT."
+      - letra: "b"
+        texto: "Para garantir que o resultado final tenha mais colunas."
+      - letra: "c"
+        texto: "Para evitar a remoção automática de duplicatas pela Projeção."
+      - letra: "d"
+        texto: "Porque aplicar a Seleção (σ) cedo reduz o volume de dados processados em operações binárias caras."
+
+  - texto: "O operador Renomear (ρ) é equivalente a qual cláusula ou palavra-chave no SQL?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "WHERE."
+      - letra: "b"
+        texto: "AS."
+      - letra: "c"
+        texto: "JOIN."
+      - letra: "d"
+        texto: "DISTINCT."
+
+  - texto: "Na representação gráfica de fluxos unários combinados, qual a ordem lógica de execução (bottom-up)?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Primeiro a Seleção (reduz linhas), depois a Projeção (isola colunas)."
+      - letra: "b"
+        texto: "Primeiro a Projeção, depois o Produto Cartesiano."
+      - letra: "c"
+        texto: "Primeiro a União, depois a Diferença."
+      - letra: "d"
+        texto: "A ordem não importa, pois o resultado é sempre o mesmo."
+
+  - texto: "Qual é a característica da operação de Diferença (−) em relação à ordem das tabelas?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Ela é comutativa (A−B é igual a B−A)."
+      - letra: "b"
+        texto: "Ela só pode ser realizada entre tabelas com nomes de colunas diferentes."
+      - letra: "c"
+        texto: "Ela não é comutativa; a ordem dos fatores altera o resultado."
+      - letra: "d"
+        texto: "Ela exige que as tabelas tenham o mesmo número de linhas."
+
+  - texto: "O resultado de uma função de agregação (como SOMA ou CONTADOR) na Álgebra Relacional é:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Um valor numérico solto na memória."
+      - letra: "b"
+        texto: "Ainda uma relação (tabela)."
+      - letra: "c"
+        texto: "Um predicado lógico de seleção."
+      - letra: "d"
+        texto: "Uma nova chave primária global."
+
+  - texto: "A propriedade de Fechamento (Closure) é o que permite tecnicamente a criação de:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Subconsultas (subqueries) e aninhamento de comandos complexos."
+      - letra: "b"
+        texto: "Backups automáticos do banco de dados."
+      - letra: "c"
+        texto: "Conexões simultâneas de múltiplos usuários."
+      - letra: "d"
+        texto: "Criptografia de ponta a ponta nas tabelas."
 ---
-
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Aplique os conceitos de lógica e sintaxe aprendidos.</li>
-    <li>Verifique se o resultado atende aos requisitos propostos.</li>
-    <li>Documente seu código para facilitar o entendimento.</li>
-  </ul>
-</div>

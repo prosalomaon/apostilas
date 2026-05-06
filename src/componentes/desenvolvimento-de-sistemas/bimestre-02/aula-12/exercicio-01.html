@@ -1,0 +1,120 @@
+---
+layout: exercicio
+title: "Exercício 01: Comportamentos de Objetos (MoneyBank)"
+exercicio_numero: "01"
+aula_numero: "12"
+description: "Atividade prática para implementação de métodos (void, parâmetros e retorno) na classe Conta do sistema MoneyBank."
+---
+
+<section class="section-box">
+  <h2>Atividade Prática: Sistema MoneyBank - Comportamentos de Objetos</h2>
+  
+  <h3>1. Enunciado</h3>
+  <p>No paradigma de orientação a objetos, os métodos representam as ações ou comportamentos que um objeto pode realizar. Você deve evoluir a classe <code>Conta</code> do sistema MoneyBank, transformando-a de um simples repositório de dados em uma entidade funcional capaz de gerenciar saldo, validar operações financeiras e interagir com outras instâncias da mesma classe.</p>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li><strong>Localização:</strong> Crie os arquivos dentro da pasta estruturada <code>aulas/aula-12/exercicios/</code>.</li>
+    <li><strong>Arquivos Necessários:</strong>
+      <ul>
+        <li><code>MoneyBank.java</code>: Classe principal (driver) que contém o método <code>main</code> para execução dos testes.</li>
+        <li><code>Conta.java</code>: Classe que servirá de molde para os objetos, onde você implementará a lógica de negócio.</li>
+      </ul>
+    </li>
+    <li><strong>Requisitos:</strong> JDK 17+ instalado e ambiente de desenvolvimento configurado [Plano 370].</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Código Base (Exemplo Básico)</h2>
+  <p>O professor fornece a classe de teste pronta. O seu objetivo é fazer com que a classe <code>Conta</code> atenda a todas as chamadas realizadas abaixo.</p>
+  
+  <div class="code-container">
+    <div class="code-header">
+      <span class="file-name">MoneyBank.java</span>
+    </div>
+    <pre><code class="language-java">public class MoneyBank {
+    public static void main(String[] args) {
+        Conta c1 = new Conta();
+        Conta c2 = new Conta();
+
+        c1.titular = "Aluno Herói";
+        c1.saldo = 1000.0;
+        
+        c2.titular = "MoneyBank Reserva";
+        c2.saldo = 500.0;
+
+        System.out.println("--- Bem-vindo ao MoneyBank ---");
+        
+        // Testando Depósito
+        System.out.println("\n[Ação] Depositando R$ 250 na conta de " + c1.titular);
+        c1.deposita(250.0);
+        System.out.println("Novo saldo c1: R$" + c1.getSaldo());
+
+        // Testando Saque
+        System.out.println("\n[Ação] Tentando sacar R$ 2000 da conta de " + c1.titular);
+        if (c1.saca(2000.0)) {
+            System.out.println("Saque realizado! Saldo atual: R$" + c1.getSaldo());
+        } else {
+            System.out.println("Erro: Saldo insuficiente.");
+        }
+
+        // Testando Transferência
+        System.out.println("\n[Ação] Transferindo R$ 300 de " + c1.titular + " para " + c2.titular);
+        if (c1.transfere(c2, 300.0)) {
+            System.out.println("Transferência concluída com sucesso!");
+        } else {
+            System.out.println("Falha na transferência.");
+        }
+
+        System.out.println("\nSaldo final de " + c1.titular + ": R$" + c1.getSaldo());
+        System.out.println("Saldo final de " + c2.titular + ": R$" + c2.getSaldo());
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio (Atividade em questão)</h2>
+  <p>Sua tarefa é codificar a classe <code>Conta.java</code> implementando os seguintes métodos conforme a anatomia correta (cabeçalho e corpo):</p>
+  
+  <ul>
+    <li><strong>Atributos:</strong> Declare os campos <code>String titular</code> e <code>double saldo</code>.</li>
+    <li><strong>Método deposita (Sem Retorno):</strong>
+      <ul>
+        <li>Deve receber um <code>double valor</code> como parâmetro e somá-lo ao saldo atual.</li>
+        <li>Use a palavra-chave <code>void</code> para indicar que não há retorno de informação.</li>
+      </ul>
+    </li>
+    <li><strong>Método saca (Com Retorno Boolean):</strong>
+      <ul>
+        <li>Deve receber um <code>double valor</code>.</li>
+        <li>Lógica: Se o saldo for maior ou igual ao valor, subtraia e retorne <code>true</code>. Caso contrário, retorne <code>false</code>.</li>
+        <li>A instrução <code>return</code> encerra o método e devolve a resposta ao chamador.</li>
+      </ul>
+    </li>
+    <li><strong>Método getSaldo (Getter):</strong>
+      <ul>
+        <li>Deve retornar o valor contido no atributo <code>saldo</code>.</li>
+      </ul>
+    </li>
+    <li><strong>Método transfere (Interação entre Objetos):</strong>
+      <ul>
+        <li>Deve receber a <code>Conta destino</code> e o <code>double valor</code>.</li>
+        <li><strong>Dica de Engenharia:</strong> Aplique a estratégia de "dividir para conquistar": use o método <code>saca</code> dentro da transferência para validar a operação antes de depositar na conta destino.</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<div class="tip-box">
+  <h3>5. Orientações Finais</h3>
+  <ul>
+    <li><strong>A Referência this:</strong> Utilize <code>this.saldo</code> para diferenciar variáveis de instância de parâmetros locais que possuam o mesmo nome.</li>
+    <li><strong>Convenções:</strong> Nomes de métodos devem obrigatoriamente iniciar com letra minúscula (<em>camelCase</em>).</li>
+    <li><strong>Modularização:</strong> Lembre-se que cada método deve realizar uma única tarefa bem definida para facilitar o reuso.</li>
+    <li><strong>Validação:</strong> Verifique se o código compila sem erros. Se apagar um ponto e vírgula, a IDE indicará visualmente a falha antes mesmo da execução.</li>
+  </ul>
+</div>
