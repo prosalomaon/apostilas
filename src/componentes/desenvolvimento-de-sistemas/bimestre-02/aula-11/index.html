@@ -9,5 +9,139 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em construção.</p>
+  <h3>1. História</h3>
+  <p>
+    Nascida na <strong>década de 1960</strong> como um paradigma para modelar software de forma mais próxima ao mundo real, usando objetos que combinam dados e comportamentos.
+    Os noruegueses <strong>Kristen Nygaard e Ole-Johan Dahl</strong> criaram a linguagem Simula em 1967, no Centro Norueguês de Computação, inicialmente para simulações de eventos
+    discretos como explosões de navios. Nessa época eles já haviam introduzido conceitos fundamentais como:
+  </p>
+  <ul>
+    <li>
+      <strong>Classe:</strong> Categorias de objetos com atributos e comportamentos únicos (Imagine um molde, onde podem ser feitos objetos de maneira mais fácil a partir dele, assim não precisando reconstruir o mesmo várias vezes)
+    </li>
+    <li>
+      <strong>Objetos:</strong> uma entidade que representa uma instância concreta de uma classe, ou seja, um “exemplar” específico com dados e comportamentos bem definidos.
+    </li>
+    <li>
+      <strong>Herança:</strong> Superclasses e subclasses, onde as subclasses herdam atributos e ações das superclasses (imagine como pai e filho, o filho herda algo do pai).
+    </li>
+  </ul>
+  <h3>2. Analogia</h3>
+  <p>
+    Imagine que todas as linguagens antes da Simula, fizessem tudo na mão, como se toda a vez que você fosse navegar, tivesse que construir cada
+    navio do zero - martelo, madeira, parafuso. Já com a Simula isso mudou, porque agora, toda a vez que precisar de um navio, você já tem um molde
+    pronto (classe) e não precisa construir ele do zero.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Exemplo de Código</h2>
+  <h3>1. Montando classes</h3>
+
+  <div class="code-container">
+    <pre>
+      <code>
+        class Carro {  // Classe (molde)
+          String modelo;
+          String cor;  // Atributo (estado)
+
+          void acelerar() {  // Comportamento (método)
+              System.out.println("Vrum!");
+          }
+        }
+      </code>
+    </pre>
+  </div>
+
+  <h3>2. Criando objetos</h3>
+  <p></p>
+
+  <div class="code-container">
+    <pre>
+      <code>
+        public class Main{
+
+          public static void main(String[] args){
+
+            //Nosso primeiro objeto (utilizamos new para instanciar uma classe)
+            Carro carro = new Carro();
+
+            /*
+              Para acessarmos os atributos das nossas classes:
+              Objeto.NomeDoAtributo
+            */
+
+            //Definindo o modelo do nosso carro (Objeto)
+            carro.modelo = "Volkswagen Polo";
+            //Definindo a cor do nosso carro (Objeto)
+            carro.cor = "Preto";
+
+            //Exemplo de debug
+            System.out.println("Nosso objeto feito a partir do molde carro");
+            System.out.println("Modelo: " + carro.modelo);
+            System.out.println("Cor: " + carro.cor);
+
+          }
+
+        }
+      </code>
+    </pre>
+  </div>
+
+  <h3>2.1 Saída esperada:</h3>
+  <div class="console">
+    <pre>
+      > C://desenvolvimento-de-sistemas/Main.java
+
+      > Nosso objeto feito a partir do molde carro
+      > Modelo: Volkswagen Polo
+      > Cor: Preto
+    </pre>
+  </div>
+
+</section>
+
+<section class="section-box">
+  <h2>Fluxo de Segurança (Abstraído)</h2>
+  <p>Este fluxo detalha como funciona as classes, objetos e atributos de maneira abstrata:</p>
+  <div class="mermaid">
+    graph TD
+    A[Classe] -->|Cria| B[Objeto]
+    B -->|Manipula| C[Atributo]
+
+  </div>
+</section>
+
+<section class="section-box">
+
+  <h2>Recapitulando:</h2>
+
+  <div class="tip-box">
+
+    <ul>
+      <li>
+        <strong>Classe:</strong> Classe é tudo aquilo que é criado para ser utilizado como molde.
+        Ela será reutilizada várias vezes com o intuito de deixar o código mais simples e enxuto
+      </li>
+      <br>
+      <li><strong>Objeto:</strong> Objeto é tudo aquilo que é criado a partir de uma classe <strong>(toda instância de uma classe)</strong>, com dados e ações próprias</li>
+      <br>
+      <li><strong>Atributo:</strong> Uma variável associada a uma classe ou a seus objetos (instâncias), que armazena os dados ou características (estado) do objeto.</li>
+    </ul>
+
+  </div>
+
+</section>
+
+<section class="section-box">
+
+  <h2>Exercícios:</h2>
+
+  <h4>Se você chegou até aqui, significa que está pronto para encarar os desafios:</h4>
+  <br>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 1: Montando uma biblioteca</a></li>
+    <li><a href="./exercicio-02/">Exercício 2: Consolidando conhecimentos</a></li>
+  </ul>
+
 </section>
