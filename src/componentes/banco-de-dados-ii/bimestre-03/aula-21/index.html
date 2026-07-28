@@ -1,55 +1,274 @@
 ---
-title: "Blocos de Linguagem SQL"
+title: "Blocos de Linguagem SQL - Procedimentos e Lógica"
 aula_numero: "21"
-description: "Variáveis e controle de fluxo."
+componente: "Banco de Dados II"
+description: "Esta aula aborda os Blocos de Linguagem SQL, estruturas fundamentais que agrupam múltiplas instruções
+em uma única unidade lógica, permitindo a criação de Procedimentos Armazenados, lógica condicional e controle de
+fluxo diretamente no banco de dados."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que são Blocos SQL?</h3>
+  <p>
+    Um bloco SQL é um agrupamento de múltiplas instruções que o Sistema Gerenciador de Banco de Dados (SGBD) trata
+    como uma <strong>única unidade lógica</strong>. Eles formam o "corpo" de objetos como <em>Procedimentos
+      Armazenados (Stored Procedures)</em>, <em>Funções</em> e <em>Gatilhos (Triggers)</em>.
+  </p>
+
+  <h3>2. Estrutura Fundamental: BEGIN ... END</h3>
+  <p>
+    A sintaxe básica de um bloco é delimitada pelas palavras-chave <code class="one-line-code">BEGIN</code> para
+    iniciar e <code class="one-line-code">END</code> para finalizar.
+  </p>
+  <ul>
+    <li><strong>Terminadores Internos:</strong> Cada comando individual dentro do bloco deve ser finalizado com
+      ponto e vírgula (<code class="one-line-code">;</code>).</li>
+    <li><strong>Variáveis Locais:</strong> Blocos permitem o uso da instrução <code
+        class="one-line-code">DECLARE</code> para criar variáveis que existem apenas durante a execução daquele
+      trecho de código.</li>
+  </ul>
+
+  <h3>3. Controle de Fluxo e Lógica Procedural</h3>
+  <p>
+    Diferente das consultas simples, os blocos permitem a implementação de <strong>lógica algorítmica</strong>:
+  </p>
+
+  <h4>A. Condicionais (IF e CASE)</h4>
+  <p>Permitem que o banco de dados tome decisões baseadas em valores de dados.</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Sintaxe Conceitual
+IF condicao THEN
+    -- comandos se verdadeiro;
+ELSE
+    -- comandos se falso;
+END IF;</code></pre>
+  </div>
+
+  <h4>B. Laços de Repetição (Loops)</h4>
+  <p>
+    Utilizados para repetir operações até que uma condição de parada seja atingida. As formas mais comuns incluem
+    <code class="one-line-code">WHILE</code>, <code class="one-line-code">REPEAT</code> e
+    <code class="one-line-code">LOOP</code> simples. Eles são frequentemente usados com <strong>Cursores</strong>
+    para processar resultados linha por linha.
+  </p>
+
+  <h3>4. Implementação Prática: MySQL vs. PostgreSQL</h3>
+  <p>
+    Cada SGBD possui particularidades na forma como implementa e executa blocos de linguagem procedural:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>MySQL</th>
+        <th>PostgreSQL (PL/pgSQL)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Linguagem procedural</strong></td>
+        <td>SQL procedural nativo</td>
+        <td>PL/pgSQL (linguagem própria)</td>
+      </tr>
+      <tr>
+        <td><strong>Declaração de variáveis</strong></td>
+        <td><code class="one-line-code">DECLARE</code> dentro do <code class="one-line-code">BEGIN</code></td>
+        <td><code class="one-line-code">DECLARE</code> antes do <code class="one-line-code">BEGIN</code></td>
+      </tr>
+      <tr>
+        <td><strong>Delimitador de bloco</strong></td>
+        <td>Requer <code class="one-line-code">DELIMITER $$</code> no terminal</td>
+        <td>Usa <code class="one-line-code">$$</code> como delimitador de string literal</td>
+      </tr>
+      <tr>
+        <td><strong>Criação de Procedure</strong></td>
+        <td><code class="one-line-code">CREATE PROCEDURE nome()</code></td>
+        <td><code class="one-line-code">CREATE OR REPLACE FUNCTION nome() RETURNS tipo</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5. Tratamento de Exceções</h3>
+  <p>
+    Blocos SQL podem conter <strong>Manipuladores de Condição</strong> (<em>Condition Handlers</em>). Eles funcionam
+    como um "escudo" que captura erros — como uma violação de chave estrangeira — e decide o que fazer: ignorar o
+    erro, desfazer a operação (<code class="one-line-code">ROLLBACK</code>) ou emitir um aviso customizado via
+    comando <code class="one-line-code">SIGNAL</code>.
+  </p>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
   <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
 
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
+  <h3>Exemplo no MySQL</h3>
+  <p>
+    No MySQL, ao definir blocos via terminal, você deve usar o comando <code class="one-line-code">DELIMITER</code>
+    para evitar que o cliente interprete os <code class="one-line-code">;</code> internos como o fim do comando de
+    criação do objeto.
+  </p>
+
+  <h4>Criação da Procedure</h4>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+CREATE PROCEDURE CalculaBonus(IN id_vendedor INT)
+BEGIN
+    DECLARE salario_atual DECIMAL(10,2);
+    SET salario_atual = (SELECT salario_fixo FROM vendedores WHERE codigo_vendedor = id_vendedor);
+    
+    IF salario_atual < 2000 THEN
+        UPDATE vendedores SET salario_fixo = salario_fixo * 1.1 WHERE codigo_vendedor = id_vendedor;
+    END IF;
+END $$
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Como utilizar</h4>
+  <p>
+    Após criada, uma <em>Stored Procedure</em> no MySQL é invocada com o comando
+    <code class="one-line-code">CALL</code>, passando os argumentos necessários.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Chama a procedure para o vendedor de código 5
+CALL CalculaBonus(5);
+
+-- Verifica o resultado após a execução
+SELECT codigo_vendedor, salario_fixo FROM vendedores WHERE codigo_vendedor = 5;</code></pre>
+  </div>
+
+  <h3>Exemplo no PostgreSQL (PL/pgSQL)</h3>
+  <p>
+    No PostgreSQL, os blocos de lógica são escritos na linguagem <em>PL/pgSQL</em>. A seção de declaração de
+    variáveis (<code class="one-line-code">DECLARE</code>) ocorre <strong>obrigatoriamente antes</strong> do
+    <code class="one-line-code">BEGIN</code>.
+  </p>
+
+  <h4>Criação da Function</h4>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE OR REPLACE FUNCTION aumenta_estoque(prod_id INT, qtd INT) RETURNS VOID AS $$
+DECLARE
+    estoque_atual INT;
+BEGIN
+    SELECT saldo_estoque INTO estoque_atual FROM produtos WHERE codigo = prod_id;
+    UPDATE produtos SET saldo_estoque = estoque_atual + qtd WHERE codigo = prod_id;
+END;
+$$ LANGUAGE plpgsql;</code></pre>
+  </div>
+
+  <h4>Como utilizar</h4>
+  <p>
+    No PostgreSQL, funções que retornam <code class="one-line-code">VOID</code> são chamadas com
+    <code class="one-line-code">SELECT</code> ou com o atalho <code class="one-line-code">PERFORM</code>
+    (dentro de outro bloco). Funções com retorno de valor podem ser usadas diretamente em consultas.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Chama a função para adicionar 50 unidades ao produto de código 10
+SELECT aumenta_estoque(10, 50);
+
+-- Verifica o resultado após a execução
+SELECT codigo, saldo_estoque FROM produtos WHERE codigo = 10;
+
+-- Chamando PERFORM dentro de outro bloco PL/pgSQL
+DO $$
+BEGIN
+    PERFORM aumenta_estoque(10, 50);
+END;
+$$;</code></pre>
   </div>
 </section>
 
 <section class="section-box">
   <h2>Diagramação</h2>
   <p>Representação visual dos conceitos abordados:</p>
+
+  <h3>1. Estrutura de um Bloco SQL</h3>
+  <p>Fluxo interno de execução de um bloco procedural com lógica condicional.</p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+    flowchart TD
+    A([Início da Procedure]) --> B[DECLARE variáveis locais]
+    B --> C[Executa comandos SQL]
+    C --> D{IF condicao}
+    D -->|Verdadeiro| E[Executa bloco THEN]
+    D -->|Falso| F[Executa bloco ELSE]
+    E --> G[END IF]
+    F --> G
+    G --> H([END - Fim do Bloco])
+
+    style A fill:#d1e7dd,stroke:#0f5132,stroke-width:2px
+    style H fill:#d1e7dd,stroke:#0f5132,stroke-width:2px
+    style D fill:#fff3cd,stroke:#664d03,stroke-width:2px
+    style B fill:#cfe2ff,stroke:#084298,stroke-width:1px
+  </div>
+
+  <h3>2. MySQL vs. PostgreSQL: Posição do DECLARE</h3>
+  <p>A principal diferença estrutural entre os dois SGBDs na escrita de blocos procedurais.</p>
+  <div class="mermaid">
+    graph LR
+    subgraph MySQL ["MySQL"]
+      direction TB
+      M1["BEGIN"] --> M2["DECLARE variavel TIPO"]
+      M2 --> M3["comandos..."]
+      M3 --> M4["END"]
+    end
+
+    subgraph PostgreSQL ["PostgreSQL (PL/pgSQL)"]
+      direction TB
+      P1["DECLARE"] --> P2["variavel TIPO"]
+      P2 --> P3["BEGIN"]
+      P3 --> P4["comandos..."]
+      P4 --> P5["END"]
+    end
+
+    style M1 fill:#fff3cd,stroke:#664d03,stroke-width:2px
+    style M4 fill:#fff3cd,stroke:#664d03,stroke-width:2px
+    style P1 fill:#cfe2ff,stroke:#084298,stroke-width:2px
+    style P3 fill:#cfe2ff,stroke:#084298,stroke-width:2px
+    style P5 fill:#cfe2ff,stroke:#084298,stroke-width:2px
+  </div>
+
+  <h3>3. Fluxo do Tratamento de Exceções</h3>
+  <p>Como o Manipulador de Condição intercepta um erro dentro de um bloco.</p>
+  <div class="mermaid">
+    flowchart TD
+    A([Início do Bloco]) --> B[Executa Instrução SQL]
+    B --> C{Erro ocorreu?}
+    C -->|Não| D[Continua normalmente]
+    C -->|Sim| E{Handler definido?}
+    E -->|Sim| F["Executa tratamento\n(ROLLBACK / SIGNAL)"]
+    E -->|Não| G[Interrompe o bloco]
+    F --> H([Fim do Bloco])
+    D --> H
+    G --> I([Erro propagado])
+
+    style C fill:#fff3cd,stroke:#664d03,stroke-width:2px
+    style E fill:#fff3cd,stroke:#664d03,stroke-width:2px
+    style F fill:#d1e7dd,stroke:#0f5132,stroke-width:2px
+    style G fill:#f8d7da,stroke:#721c24,stroke-width:2px
+    style I fill:#f8d7da,stroke:#721c24,stroke-width:2px
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Dica importante sobre Blocos de Linguagem SQL aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>Atomicidade:</strong> Embora um bloco contenha muitos comandos, ele é disparado como uma unidade.
+      Se um erro ocorrer e não for tratado, ele pode interromper todo o processo.</li>
+    <li><strong>Performance:</strong> Use blocos para reduzir o tráfego de rede entre a aplicação e o banco,
+      executando a lógica diretamente onde os dados residem.</li>
+    <li><strong>Identação:</strong> Mantenha o código dentro do <code class="one-line-code">BEGIN...END</code>
+      identado para facilitar a leitura de estruturas aninhadas.</li>
+    <li><strong>Limpeza:</strong> Se abrir um <code class="one-line-code">CURSOR</code> dentro de um bloco,
+      lembre-se sempre de dar um <code class="one-line-code">CLOSE</code> antes do <code
+        class="one-line-code">END</code> para liberar recursos do servidor.</li>
   </ul>
 </div>
-
-<section class="section-box">
-  <h2>Como aplicar na Prática</h2>
-  <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
-  </ul>
-</section>
 
 <section class="section-box">
   <h2>Referências</h2>
