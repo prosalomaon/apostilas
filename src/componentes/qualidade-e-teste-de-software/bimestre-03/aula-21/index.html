@@ -2,18 +2,410 @@
 title: "Qualidade de Código e Dívida Técnica"
 aula_numero: "21"
 subject: "qualidade-e-teste-de-software"
-description: "Conteúdo da aula 01 do bimestre 03: Qualidade de Código e Dívida Técnica."
+description: "Conceito de Clean Code, Dívida Técnica, seus quadrantes, causas, consequências e estratégias de redução."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 01 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é Qualidade de Código?</h3>
+  <p>
+    Qualidade de código não se resume apenas a um software que <em>funciona</em>. Um sistema pode executar sua função
+    corretamente e, ao mesmo tempo, ser extremamente difícil de manter, expandir ou corrigir. O conceito de qualidade
+    vai muito além do resultado visível: ele diz respeito a <strong>como</strong> o código é escrito internamente.
+  </p>
+  <p>
+    O termo que sintetiza esse ideal é <strong>Clean Code</strong> (Código Limpo), popularizado pelo engenheiro
+    Robert C. Martin. As três pilastras do código limpo são:
+  </p>
+  <ul>
+    <li>
+      <strong>Manutenibilidade:</strong> A capacidade de realizar alterações e correções sem introduzir novos erros.
+      Um código de baixa manutenibilidade é dito <em>frágil</em> (do inglês <em>brittle</em>): qualquer pequena
+      mudança quebra partes aparentemente não relacionadas.
+    </li>
+    <li>
+      <strong>Legibilidade:</strong> O código deve ser <em>autodocumentado</em>, ou seja, legível e compreensível
+      por outros programadores sem a necessidade de comentários excessivos. Nomes de variáveis, funções e classes
+      devem comunicar claramente sua intenção.
+    </li>
+    <li>
+      <strong>Simplicidade:</strong> Evitar complexidade desnecessária, focando na clareza e no baixo acoplamento
+      entre os componentes do sistema.
+    </li>
+  </ul>
+
+  <h3>2. O Conceito de Dívida Técnica</h3>
+  <p>
+    O termo <strong>Dívida Técnica</strong> (Technical Debt) foi cunhado por Ward Cunningham em 1992 para descrever
+    o esforço adicional que uma equipe precisará despender no futuro para manter ou evoluir um software desenvolvido
+    com atalhos técnicos e baixa qualidade.
+  </p>
+  <p>
+    A <strong>metáfora financeira</strong> é poderosa: assim como uma dívida bancária, entregar código imaturo
+    "acelera" o desenvolvimento <em>hoje</em>, mas gera <strong>juros</strong> que serão pagos no futuro na forma
+    de atrasos, retrabalho e baixa produtividade. Quanto mais tempo a dívida permanece sem ser paga, mais os juros
+    se acumulam.
+  </p>
+
+  <h3>3. Os Quatro Quadrantes da Dívida Técnica (Martin Fowler)</h3>
+  <p>
+    Martin Fowler propõe uma matriz para classificar a dívida técnica de acordo com duas dimensões: a
+    <strong>intencionalidade</strong> (Deliberado vs. Inadvertido) e a <strong>prudência</strong>
+    (Prudente vs. Imprudente).
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Prudente</th>
+        <th>Imprudente</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deliberado</strong></td>
+        <td>
+          <em>"Sabemos que estamos assumindo uma dívida agora para cumprir o prazo, e temos um plano de
+            refatoração."</em>
+        </td>
+        <td>
+          <em>"Não temos tempo para seguir boas práticas."</em>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Inadvertido</strong></td>
+        <td>
+          <em>"Só entendemos a melhor arquitetura depois de ter implementado."</em>
+        </td>
+        <td>
+          <em>"O que são camadas? O que é um padrão de projeto?"</em>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Detalhamento dos Quadrantes</h4>
+  <ul>
+    <li>
+      <strong>Deliberado e Imprudente:</strong> A equipe <em>sabe</em> que está fazendo errado, mas ignora as boas
+      práticas por pressão de prazo. Gerada por má gestão. É a forma mais perigosa de dívida.
+    </li>
+    <li>
+      <strong>Inadvertido e Imprudente:</strong> A equipe <em>não conhece</em> as boas práticas. É resultado de
+      amadorismo técnico. O código ruim é gerado por desconhecimento, não por escolha.
+    </li>
+    <li>
+      <strong>Inadvertido e Prudente:</strong> A equipe descobre uma solução melhor <em>após</em> já ter
+      implementado. É a dívida natural do processo de aprendizado — inevitável e aceitável.
+    </li>
+    <li>
+      <strong>Deliberado e Prudente:</strong> A equipe assume o débito <em>conscientemente</em> para cumprir um
+      prazo vital, documentando a decisão e planejando a correção futura. É a forma mais responsável de assumir
+      dívida técnica.
+    </li>
+  </ul>
+
+  <h3>4. Causas e Consequências da Dívida Técnica</h3>
+
+  <h4>Principais Causas</h4>
+  <ul>
+    <li><strong>Pressão por prazos agressivos:</strong> O principal gatilho para a geração de dívida deliberada.</li>
+    <li>
+      <strong>Falta de profissionais qualificados:</strong> "Amadores no caminho crítico" geram dívida inadvertida
+      por desconhecimento das boas práticas de engenharia.
+    </li>
+    <li>
+      <strong>Má gestão de negócios:</strong> Cultura organizacional que não valoriza a qualidade técnica e
+      enxerga refatoração como desperdício de tempo.
+    </li>
+    <li>
+      <strong>Ausência de processos de revisão:</strong> Sem Code Review e padrões de desenvolvimento, o código
+      deteriora-se progressivamente ao longo do tempo.
+    </li>
+  </ul>
+
+  <h4>Consequências para o Negócio</h4>
+  <ul>
+    <li>
+      <strong>Para Desenvolvedores:</strong> Horas extras excessivas, desmotivação e alta rotatividade de
+      profissionais (turnover).
+    </li>
+    <li>
+      <strong>Para a Produção:</strong> Baixa confiabilidade do sistema, erros aleatórios em produção e
+      dificuldade crescente para adicionar novas funcionalidades.
+    </li>
+    <li>
+      <strong>Para o Cliente:</strong> Perda de competitividade, atrasos constantes em entregas e baixo retorno
+      sobre o investimento (ROI) no produto de software.
+    </li>
+  </ul>
+
+  <h3>5. Boas Práticas para Reduzir a Dívida Técnica</h3>
+  <p>
+    Pagar a dívida técnica exige disciplina organizacional e adoção de práticas sistemáticas. As principais
+    estratégias recomendadas são:
+  </p>
+  <ul>
+    <li>
+      <strong>Refatoração Constante:</strong> Melhorar a estrutura interna do código sem alterar seu comportamento
+      externo. A refatoração deve ser um hábito contínuo, não um evento emergencial.
+    </li>
+    <li>
+      <strong>Integração Contínua (CI):</strong> Executar builds e suítes de testes automatizados a cada
+      <em>commit</em> no repositório, detectando regressões antes que cheguem à produção.
+    </li>
+    <li>
+      <strong>Gestão de Configuração (SCM):</strong> Utilizar sistemas de controle de versão como o Git com
+      estratégias de branching e políticas de merge review bem definidas.
+    </li>
+    <li>
+      <strong>Metas de Qualidade Mensuráveis:</strong> Definir e monitorar métricas concretas de qualidade no
+      projeto, como:
+      <ul>
+        <li>Complexidade ciclomática máxima por classe (ex: ≤ 20).</li>
+        <li>Cobertura de testes mínima (ex: ≥ 70%).</li>
+        <li>Zero dependências cíclicas entre pacotes.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>6. Ferramentas de Apoio à Qualidade</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Categoria</th>
+        <th>Ferramentas</th>
+        <th>Finalidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Análise Estática</strong></td>
+        <td>SonarQube, CheckStyle, PMD, FindBugs</td>
+        <td>Identificar <em>code smells</em>, violações de regras e dívida técnica automaticamente.</td>
+      </tr>
+      <tr>
+        <td><strong>Versionamento</strong></td>
+        <td>Git, GitHub, GitLab</td>
+        <td>Controle de versão, histórico de mudanças e revisão de código (Code Review).</td>
+      </tr>
+      <tr>
+        <td><strong>Gestão de Tarefas</strong></td>
+        <td>Trello, GitHub Projects, Jira</td>
+        <td>Monitorar o backlog de refatoração e priorizar o pagamento da dívida técnica.</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 01 em desenvolvimento...</p>
+  <h2>Exemplos Práticos</h2>
+
+  <h3>1. O Exemplo dos "Juros" no Dia a Dia</h3>
+  <p>
+    Um dos sintomas mais claros de dívida técnica acumulada é o aumento progressivo do esforço para adicionar
+    novas funcionalidades. Considere o seguinte cenário hipotético:
+  </p>
+  <ul>
+    <li>
+      <strong>Ano 1 do projeto:</strong> Adicionar uma nova funcionalidade leva, em média, <strong>2 dias</strong>
+      de desenvolvimento.
+    </li>
+    <li>
+      <strong>Ano 3 do projeto</strong> (sem refatoração): A mesma funcionalidade passa a levar
+      <strong>10 dias</strong>, pois o código está tão acoplado e "embaralhado" que qualquer mudança
+      quebra partes aparentemente não relacionadas (<em>brittleness</em>).
+    </li>
+  </ul>
+  <p>
+    Os 8 dias extras são os <strong>juros</strong> da dívida técnica sendo pagos. O produto perdeu 80% da sua
+    velocidade de evolução (velocidade de desenvolvimento) sem que nenhuma linha de negócio nova tenha sido
+    entregue.
+  </p>
+
+  <h3>2. O Legado do "Herói" (Síndrome do Insubstituível)</h3>
+  <p>
+    Em projetos com alta dívida técnica, é comum surgir a figura do <strong>"Herói"</strong>: um desenvolvedor
+    que, ao longo dos anos, acumulou conhecimento tácito sobre um sistema caótico e se tornou a única pessoa capaz
+    de mantê-lo. O que parece um ativo valioso é, na prática, um <strong>risco crítico de negócio</strong>.
+  </p>
+  <p>
+    Se essa pessoa pede demissão, entra de licença ou simplesmente não está disponível, a empresa fica paralisada.
+    O conhecimento estava na cabeça do programador, não no código. Um código limpo e bem documentado distribui
+    o conhecimento pela equipe, eliminando esse ponto único de falha.
+  </p>
+
+  <h3>3. A Lei de Pareto Aplicada à Dívida Técnica</h3>
+  <p>
+    O <strong>Princípio de Pareto</strong> (regra 80/20) tem uma aplicação direta em projetos com dívida técnica
+    acumulada: geralmente, <strong>20% das partes críticas</strong> do código ruim são responsáveis por
+    <strong>80% dos problemas</strong> de manutenção, bugs e atrasos.
+  </p>
+  <p>
+    Ferramentas de análise estática como o <strong>SonarQube</strong> são extremamente valiosas neste contexto
+    porque conseguem identificar automaticamente esses 20% prioritários — os módulos com maior complexidade
+    ciclomática, maior número de <em>code smells</em> e maior concentração de dívida — permitindo que a equipe
+    foque o esforço de refatoração nos pontos de maior impacto.
+  </p>
+
+  <h3>4. Exemplo Conceitual: Código com e sem Qualidade</h3>
+  <p>
+    A diferença entre código com e sem qualidade pode ser ilustrada por nomes de variáveis. Considere duas
+    implementações da mesma lógica de cálculo de desconto:
+  </p>
+
+  <p><strong>Código sem qualidade (baixa legibilidade):</strong></p>
+  <div class="code-container">
+    <pre><code class="language-javascript">// Código difícil de entender: nomes sem significado
+function calc(x, y, z) {
+  if (z > 100) {
+    return x - (x * 0.10);
+  }
+  return x;
+}</code></pre>
+  </div>
+
+  <p><strong>Clean Code (alta legibilidade — autodocumentado):</strong></p>
+  <div class="code-container">
+    <pre><code class="language-javascript">// Clean Code: a intenção é clara sem precisar de comentários
+const DESCONTO_VIP = 0.10;
+const LIMITE_COMPRAS_VIP = 100;
+
+function calcularPrecoFinal(precoOriginal, totalComprasCliente) {
+  const clienteEhVip = totalComprasCliente > LIMITE_COMPRAS_VIP;
+  if (clienteEhVip) {
+    return precoOriginal - (precoOriginal * DESCONTO_VIP);
+  }
+  return precoOriginal;
+}</code></pre>
+  </div>
+  <p>
+    Ambos os trechos produzem o mesmo resultado, mas o segundo é autoexplicativo. Qualquer desenvolvedor da equipe
+    consegue entender, manter e modificar o segundo trecho sem precisar perguntar ao autor o que <code
+      class="one-line-code">x</code>, <code class="one-line-code">y</code> ou <code class="one-line-code">z</code>
+    representam.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Diagramação</h2>
+  <p>Representação visual dos principais conceitos abordados nesta aula:</p>
+
+  <h3>1. A Metáfora da Dívida Técnica: Acúmulo de Juros</h3>
+  <p>
+    Este diagrama ilustra como a velocidade de desenvolvimento (capacidade de entrega) diminui progressivamente
+    à medida que a dívida técnica se acumula ao longo do tempo, sem ações de refatoração.
+  </p>
+  <div class="mermaid">
+    graph LR
+    A["Pressão por Prazo\n(Decisão Inicial)"] --> B["Código de Baixa\nQualidade Entregue"]
+    B --> C["Dívida Técnica\nAcumulada"]
+    C --> D["Custo Crescente\npara Manutenção"]
+    D --> E["Velocidade de\nDesenvolvimento Cai"]
+    E --> F["Mais Pressão\npor Prazo"]
+    F --> B
+
+    style A fill:#fff3cd,stroke:#856404
+    style C fill:#f8d7da,stroke:#721c24
+    style E fill:#f8d7da,stroke:#721c24
+  </div>
+
+  <h3>2. Os Quatro Quadrantes de Martin Fowler</h3>
+  <p>
+    Classificação da dívida técnica segundo a intencionalidade e a prudência da decisão que a gerou.
+  </p>
+  <div class="mermaid">
+    quadrantChart
+    title Quadrantes da Dívida Técnica (Martin Fowler)
+    x-axis Inadvertido --> Deliberado
+    y-axis Imprudente --> Prudente
+    quadrant-1 Deliberado e Prudente
+    quadrant-2 Inadvertido e Prudente
+    quadrant-3 Inadvertido e Imprudente
+    quadrant-4 Deliberado e Imprudente
+    Aceitar prazo consciente: [0.75, 0.75]
+    Descoberta de solução melhor: [0.25, 0.75]
+    Amadorismo tecnico: [0.25, 0.25]
+    Ignorar boas praticas: [0.75, 0.25]
+  </div>
+
+  <h3>3. Estratégia de Redução da Dívida Técnica</h3>
+  <p>
+    Fluxo das práticas recomendadas para identificar, priorizar e reduzir a dívida técnica de forma sistemática.
+  </p>
+  <div class="mermaid">
+    graph TD
+    A["Análise Estática\n(SonarQube, PMD)"] --> B["Identificar os 20%\nCríticos da Dívida"]
+    B --> C["Priorizar no Backlog\n(Trello / GitHub Projects)"]
+    C --> D["Refatoração\nContínua"]
+    D --> E["Testes Automatizados\n(CI/CD)"]
+    E --> F["Medir Melhoria\ndas Métricas"]
+    F --> A
+
+    style A fill:#d1e7dd,stroke:#0f5132
+    style D fill:#d1e7dd,stroke:#0f5132
+    style E fill:#d1e7dd,stroke:#0f5132
+  </div>
+</section>
+
+<section class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>Dívida Técnica não é necessariamente ruim:</strong> A forma <em>Deliberada e Prudente</em>
+      (assumir conscientemente para cumprir um prazo vital, com plano de correção) é uma decisão estratégica
+      legítima. O problema ocorre quando a dívida é acumulada de forma imprudente e sem controle.
+    </li>
+    <li>
+      <strong>Refatoração ≠ Reescrita:</strong> Refatorar significa melhorar a estrutura interna do código
+      <em>sem alterar seu comportamento externo</em>. Uma reescrita completa ("do zero") raramente é a melhor
+      solução e costuma ser muito mais arriscada do que uma série de refatorações incrementais.
+    </li>
+    <li>
+      <strong>Métricas importam:</strong> Qualidade de código sem medição é subjetiva. Use ferramentas como o
+      SonarQube para transformar a dívida em dados concretos (ex: "Temos 48 horas de dívida técnica estimada
+      neste módulo"), facilitando a tomada de decisão pelo negócio.
+    </li>
+    <li>
+      <strong>Code Review é prevenção:</strong> Revisar o código de outros desenvolvedores antes do merge é uma
+      das práticas mais eficazes para evitar que nova dívida técnica seja introduzida no repositório
+      inadvertidamente.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>MARTIN, Robert C. <em>Clean Code: A Handbook of Agile Software Craftsmanship</em>. Prentice Hall, 2008.</li>
+    <li>FOWLER, Martin. <em>Refactoring: Improving the Design of Existing Code</em>. 2. ed. Addison-Wesley, 2018.</li>
+    <li>CUNNINGHAM, Ward. The WyCash Portfolio Management System. OOPSLA '92, 1992.</li>
+    <li>
+      <a href="https://martinfowler.com/bliki/TechnicalDebt.html" target="_blank">
+        Martin Fowler: Technical Debt (artigo original)
+      </a>
+    </li>
+    <li>
+      <a href="https://martinfowler.com/bliki/TechnicalDebtQuadrant.html" target="_blank">
+        Martin Fowler: Technical Debt Quadrant
+      </a>
+    </li>
+    <li>
+      <a href="https://www.youtube.com/watch?v=pqeJFYwnkjE" target="_blank">
+        Youtube: What is Technical Debt?
+      </a>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Identificando Dívida Técnica</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>

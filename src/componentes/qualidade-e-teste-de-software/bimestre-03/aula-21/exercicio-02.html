@@ -2,13 +2,84 @@
 layout: questionario
 title: "Qualidade de Código e Dívida Técnica"
 exercicio_numero: "02"
-aula_numero: "01"
+aula_numero: "21"
 subject: "qualidade-e-teste-de-software"
-description: "Exercício 02 da aula 01 do bimestre 03: Qualidade de Código e Dívida Técnica."
-perguntas: []
+description: "Questionário de fixação da aula 21 do bimestre 03: Qualidade de Código e Dívida Técnica."
+perguntas:
+  - pergunta: "Qual das alternativas melhor define o termo 'Dívida Técnica' conforme popularizado por Ward Cunningham?"
+    opcoes:
+      - "A quantidade de bugs registrados no sistema de rastreamento de erros."
+      - "O esforço adicional necessário no futuro para manter ou evoluir um software desenvolvido com atalhos técnicos."
+      - "O custo financeiro total de um projeto de software ultrapassado."
+      - "A documentação técnica que está desatualizada em relação ao código."
+    resposta: 1
+    explicacao: "Ward Cunningham cunhou o termo em 1992 para descrever o esforço futuro extra gerado por decisões técnicas de curto prazo — assim como juros de uma dívida financeira."
+
+  - pergunta: "Uma equipe decide lançar um produto sem testes automatizados para cumprir um prazo contratual crítico. Eles registram a decisão em ata e criam tarefas de refatoração no backlog para a próxima sprint. Segundo os Quadrantes de Fowler, como essa dívida é classificada?"
+    opcoes:
+      - "Inadvertido e Imprudente."
+      - "Inadvertido e Prudente."
+      - "Deliberado e Imprudente."
+      - "Deliberado e Prudente."
+    resposta: 3
+    explicacao: "A dívida é 'Deliberada' porque foi uma escolha consciente, e 'Prudente' porque a equipe reconhece o trade-off, documenta a decisão e planeja corrigi-la — o comportamento mais responsável ao assumir dívida técnica."
+
+  - pergunta: "Qual das seguintes características é uma das três principais pilastras do Clean Code (Código Limpo)?"
+    opcoes:
+      - "Alta cobertura de testes de integração."
+      - "Uso obrigatório de comentários explicativos em todas as funções."
+      - "Legibilidade: o código deve ser autodocumentado."
+      - "Performance: o código deve ser o mais rápido possível."
+    resposta: 2
+    explicacao: "As três pilastras do Clean Code são: Manutenibilidade, Legibilidade e Simplicidade. Um código legível é autodocumentado — seu propósito fica claro pelos nomes de variáveis, funções e classes, sem depender de comentários excessivos."
+
+  - pergunta: "O que é 'brittleness' (fragilidade) no contexto de qualidade de código?"
+    opcoes:
+      - "Quando o código possui muitos comentários desnecessários."
+      - "Quando o sistema é lento para responder às requisições dos usuários."
+      - "Quando qualquer pequena mudança no código quebra partes aparentemente não relacionadas."
+      - "Quando o código não possui testes unitários escritos."
+    resposta: 2
+    explicacao: "Fragilidade (brittleness) é uma consequência direta da dívida técnica e do alto acoplamento: o código é tão interdependente que uma modificação em um ponto propaga falhas de forma imprevisível para outras partes do sistema."
+
+  - pergunta: "Qual ferramenta da categoria de 'Análise Estática de Código' é mencionada no conteúdo da aula como útil para identificar code smells e medir a dívida técnica automaticamente?"
+    opcoes:
+      - "Git"
+      - "Trello"
+      - "SonarQube"
+      - "GitHub Actions"
+    resposta: 2
+    explicacao: "O SonarQube é uma ferramenta de análise estática que inspeciona automaticamente o código-fonte em busca de bugs, vulnerabilidades de segurança, code smells e até estima a dívida técnica em horas de trabalho."
+
+  - pergunta: "A Lei de Pareto aplicada à dívida técnica sugere que:"
+    opcoes:
+      - "100% do código deve ser refatorado para eliminar toda a dívida técnica."
+      - "50% dos módulos geram 50% dos problemas de manutenção."
+      - "Geralmente, 20% das partes críticas do código ruim são responsáveis por 80% dos problemas de manutenção."
+      - "20% dos desenvolvedores produzem 80% da dívida técnica do projeto."
+    resposta: 2
+    explicacao: "O Princípio de Pareto (80/20) se aplica aqui: focar o esforço de refatoração nos 20% dos módulos mais críticos (identificados por ferramentas de análise estática) gera 80% do impacto positivo na redução da dívida técnica."
+
+  - pergunta: "O que diferencia 'Refatoração' de 'Reescrita' de um sistema?"
+    opcoes:
+      - "Refatoração é mais rápida; Reescrita é mais segura."
+      - "Refatoração melhora a estrutura interna sem alterar o comportamento externo; Reescrita substitui o código completamente."
+      - "Refatoração adiciona novas funcionalidades ao código existente."
+      - "Não há diferença prática entre os dois termos."
+    resposta: 1
+    explicacao: "Refatoração, segundo Martin Fowler, é a técnica de reestruturar código existente sem alterar seu comportamento externo observável. A reescrita (do zero) é muito mais arriscada, pois descarta o conhecimento acumulado no código existente e não garante que o novo sistema terá as mesmas capacidades."
+
+  - pergunta: "Qual das situações abaixo é um exemplo claro da 'Síndrome do Herói' como consequência de dívida técnica acumulada?"
+    opcoes:
+      - "Um desenvolvedor que escreve código de alta qualidade e documenta tudo detalhadamente."
+      - "Um gerente de projeto que prioriza qualidade de código acima dos prazos de entrega."
+      - "Um desenvolvedor que é o único capaz de manter um sistema crítico porque o código é tão complexo que ninguém mais o entende."
+      - "Uma equipe que realiza sessões semanais de code review para compartilhar conhecimento."
+    resposta: 2
+    explicacao: "A Síndrome do Herói surge quando a dívida técnica (código complexo, sem documentação, sem testes) concentra o conhecimento do sistema em uma única pessoa. Isso cria um ponto único de falha crítico para o negócio: se o 'herói' se afasta, a empresa fica paralisada."
 ---
 
-<p>Conteúdo do exercício 02 da aula 01 em desenvolvimento...</p>
+<p>Responda as questões abaixo para consolidar os conhecimentos sobre Qualidade de Código e Dívida Técnica.</p>
 
 <div class="tip-box">
   <h4>Orientações</h4>

@@ -2,18 +2,94 @@
 layout: exercicio
 title: "Qualidade de Código e Dívida Técnica"
 exercicio_numero: "01"
-aula_numero: "01"
+aula_numero: "21"
 subject: "qualidade-e-teste-de-software"
-description: "Exercício 01 da aula 01 do bimestre 03: Qualidade de Código e Dívida Técnica."
+description: "Exercício 01 da aula 21 do bimestre 03: Identificando e Classificando Dívida Técnica."
 ---
 
-<p>Conteúdo do exercício 01 da aula 01 em desenvolvimento...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Uma startup de tecnologia chamada <strong>DevRapid</strong> desenvolveu um sistema de controle de pedidos ao
+    longo de dois anos. Com a pressão constante por novas funcionalidades, a equipe nunca reservou tempo para
+    refatoração. Agora, adicionar uma nova feature que deveria levar 1 dia está levando mais de uma semana, e os
+    bugs em produção aumentaram 300% no último trimestre.
+  </p>
+  <p>
+    Você foi contratado como <strong>consultor de qualidade de software</strong> e recebeu os seguintes relatos
+    da equipe. Leia cada situação e responda as questões a seguir.
+  </p>
+  <hr>
+  <h3>Situações Relatadas</h3>
+  <ol>
+    <li>
+      <strong>Situação A:</strong> O desenvolvedor sênior João é o único que entende o módulo de faturamento.
+      Ele está de férias e ninguém consegue corrigir um bug crítico que surgiu neste módulo.
+    </li>
+    <li>
+      <strong>Situação B:</strong> A equipe de gestão decidiu, há seis meses, lançar uma versão do produto sem
+      validação de dados nas entradas do formulário para cumprir um prazo contratual. Eles registraram a
+      decisão em ata e criaram tarefas no backlog para corrigir isso na próxima sprint.
+    </li>
+    <li>
+      <strong>Situação C:</strong> Um desenvolvedor júnior criou um módulo de pagamento onde todas as funções
+      têm nomes como <code class="one-line-code">f1()</code>, <code class="one-line-code">proc(x,y)</code> e
+      <code class="one-line-code">calc2(a)</code>. Ele nunca estudou sobre Clean Code ou boas práticas de
+      nomenclatura.
+    </li>
+    <li>
+      <strong>Situação D:</strong> Após desenvolver o sistema de autenticação, a equipe percebeu que deveria
+      ter utilizado um padrão de projeto Strategy para gerenciar os diferentes provedores de login (Google,
+      Facebook, GitHub). A implementação atual funciona, mas é muito difícil adicionar um novo provedor.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+  <ol>
+    <li>
+      <strong>Classificação nos Quadrantes:</strong> Identifique em qual dos quatro quadrantes de Martin Fowler
+      se enquadra a dívida técnica gerada em cada uma das Situações A, B, C e D. Justifique cada resposta com
+      base nas dimensões de <em>intencionalidade</em> (Deliberado/Inadvertido) e <em>prudência</em>
+      (Prudente/Imprudente).
+    </li>
+    <li>
+      <strong>Consequências:</strong> Quais são as consequências práticas observadas na DevRapid que indicam
+      acúmulo de dívida técnica? Cite pelo menos três e relacione cada uma aos conceitos estudados na aula.
+    </li>
+    <li>
+      <strong>Plano de Ação:</strong> Elabore um plano de ação com pelo menos três medidas concretas que a
+      DevRapid deveria adotar para começar a reduzir sua dívida técnica. Para cada medida, indique qual
+      ferramenta ou prática do conteúdo da aula seria aplicada.
+    </li>
+    <li>
+      <strong>Análise do Código:</strong> O trecho abaixo foi encontrado no sistema da DevRapid. Identifique
+      os problemas de qualidade de código e reescreva-o aplicando os princípios do Clean Code.
+      <div class="code-container">
+        <pre><code class="language-javascript">// Código encontrado no sistema
+function p(d, v, c) {
+  var r;
+  if (c == 1) {
+    r = v * 0.05;
+  } else if (c == 2) {
+    r = v * 0.10;
+  } else {
+    r = 0;
+  }
+  return v - r;
+}</code></pre>
+      </div>
+    </li>
+  </ol>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia o enunciado com atenção antes de começar.</li>
-    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Leia o enunciado com atenção e revise o conteúdo da aula antes de responder.</li>
+    <li>Para a questão 1, lembre-se que os quadrantes combinam <em>duas</em> dimensões simultaneamente.</li>
+    <li>Para a questão 4, foque em: nomes de variáveis e funções, uso de constantes nomeadas e clareza de intenção.</li>
     <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
