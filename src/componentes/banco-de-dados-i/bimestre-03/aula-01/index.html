@@ -1,28 +1,211 @@
 ---
-title: "Introdução à Normalização: Por que normalizar? (Redundância e Inconsistência)."
+title: "Introdução à Normalização: Por que normalizar?"
+componente: "Banco de Dados I"
 aula_numero: "21"
-subject: "banco-de-dados-i"
-description: "Conteúdo da aula 21 do bimestre 3: Introdução à Normalização: Por que normalizar? (Redundância e Inconsistência).."
+description: "Entenda o que é a normalização, seus principais objetivos (reduzir redundância, evitar inconsistências e anomalias) e por que ela é um passo essencial no projeto de bancos de dados relacionais."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 01 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é Normalização?</h3>
+  <p>
+    A normalização é um <strong>processo matemático formal</strong>, fundamentado na teoria dos conjuntos, que consiste
+    em aplicar uma série de regras (chamadas <strong>Formas Normais</strong>) sobre as tabelas de um banco de dados.
+    Criada por <strong>Edgar F. Codd</strong> em 1970, essa técnica visa verificar se as tabelas estão corretamente
+    projetadas, evitando a "mistura de assuntos" em uma única estrutura.
+  </p>
+  <p>
+    Em termos práticos, a normalização é uma <em>metodologia de revisão</em> do modelo lógico: ela parte de tabelas
+    "crus" e as reorganiza em estruturas menores e mais coesas, sempre respeitando as dependências entre os dados.
+  </p>
+
+  <h3>2. Por que Normalizar? (Principais Objetivos)</h3>
+  <p>Normalizar não é apenas uma questão de organização estética; trata-se de uma exigência técnica para:</p>
+  <ul>
+    <li><strong>Minimizar a Redundância:</strong> Evitar que o mesmo dado seja armazenado repetidamente em vários
+      lugares.</li>
+    <li><strong>Eliminar Inconsistências:</strong> Garantir que, ao atualizar um dado, ele seja alterado uniformemente
+      em todo o sistema.</li>
+    <li><strong>Evitar Anomalias:</strong> Impedir erros acidentais durante a inserção, alteração ou exclusão de
+      registros.</li>
+    <li><strong>Estabilidade do Modelo:</strong> Simplificar os atributos para reduzir a necessidade de manutenções
+      futuras nas tabelas.</li>
+  </ul>
+
+  <h3>3. Redundância e Inconsistência</h3>
+  <p>
+    A <strong>redundância</strong> ocorre quando informações (como o nome ou endereço de um cliente) são repetidas para
+    cada pedido que ele faz. Isso gera dois problemas graves:
+  </p>
+  <ul>
+    <li><strong>Desperdício de Espaço:</strong> Armazenar dados repetidos consome armazenamento desnecessário.</li>
+    <li><strong>Inconsistência de Dados:</strong> Se um cliente mudar de endereço e a alteração não for feita em todas
+      as linhas repetidas, o banco de dados entrará em um estado contraditório (o cliente parecerá morar em dois lugares
+      ao mesmo tempo).</li>
+  </ul>
+
+  <h3>4. Anomalias de Atualização</h3>
+  <p>O principal motivo para normalizar é evitar as três anomalias clássicas:</p>
+  <ul>
+    <li>
+      <strong>Anomalia de Inserção:</strong> Quando não é possível cadastrar uma informação porque ela depende de outra
+      que ainda não existe. <em>Exemplo:</em> Você não consegue cadastrar um novo departamento no sistema porque o
+      formulário exige que ele já tenha ao menos um funcionário vinculado.
+    </li>
+    <li>
+      <strong>Anomalia de Deleção (Exclusão):</strong> Ocorre quando a remoção de um registro causa a perda acidental de
+      uma informação importante. <em>Exemplo:</em> Ao apagar o único pedido de um cliente, os dados de cadastro
+      (telefone, endereço) desse cliente também desaparecem do banco de dados.
+    </li>
+    <li>
+      <strong>Anomalia de Modificação (Alteração):</strong> Exige que o sistema procure e altere múltiplas linhas para
+      uma única mudança de fato. Se uma linha for esquecida, os dados tornam-se inconsistentes.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 01 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+  <p>
+    Abaixo, o comando DDL que cria o "Tabelão" <strong>não normalizado</strong>: uma única tabela misturando dados de
+    Pedidos, Clientes e Produtos. Perceba como o endereço do cliente precisará ser repetido em cada pedido.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Tabela NÃO normalizada: mistura Pedido, Cliente e Produto
+CREATE TABLE pedido_tabelao (
+    numero_pedido    INT PRIMARY KEY,
+    data_pedido      DATE,
+    cliente          VARCHAR(100),
+    endereco_cliente VARCHAR(150),
+    produto          VARCHAR(100),
+    valor_unitario   DECIMAL(10,2)
+);
+
+INSERT INTO pedido_tabelao VALUES
+(1458, '2026-05-05', 'Davi B.',   'Rio de Janeiro', 'Limpadora',  600.00),
+(2730, '2026-06-05', 'Helena D.', 'Vancouver',      'Computador', 1800.00),
+(2461, '2026-03-07', 'Davi B.',   'Rio de Janeiro', 'Rádio',      150.00);</code></pre>
+  </div>
+  <p>
+    Note que o nome e o endereço de <em>Davi B.</em> aparecem em <strong>duas linhas diferentes</strong>. Essa repetição
+    é exatamente o problema que a normalização busca eliminar nas próximas aulas.
+  </p>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
+  <p>Considere a tabela abaixo, chamada de "Tabelão" (não normalizada):</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Pedido</th>
+        <th>Data</th>
+        <th>Cliente</th>
+        <th>Endereço Cliente</th>
+        <th>Produto</th>
+        <th>Valor Unitário</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1458</td>
+        <td>05/05/26</td>
+        <td>Davi B.</td>
+        <td>Rio de Janeiro</td>
+        <td>Limpadora</td>
+        <td>600,00</td>
+      </tr>
+      <tr>
+        <td>2730</td>
+        <td>05/06/26</td>
+        <td>Helena D.</td>
+        <td>Vancouver</td>
+        <td>Computador</td>
+        <td>1.800,00</td>
+      </tr>
+      <tr>
+        <td>2461</td>
+        <td>07/03/26</td>
+        <td>Davi B.</td>
+        <td>Rio de Janeiro</td>
+        <td>Rádio</td>
+        <td>150,00</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <h3>Problemas identificados no Tabelão</h3>
+  <ul>
+    <li><strong>Redundância:</strong> O nome e o endereço de "Davi B." aparecem duas vezes.</li>
+    <li><strong>Risco de Inconsistência:</strong> Se Davi mudar para Curitiba, precisaremos alterar o endereço em todas
+      as linhas de seus pedidos.</li>
+    <li><strong>Anomalia de Exclusão:</strong> Se Helena cancelar o pedido 2730 e deletarmos a linha, perderemos o
+      registro de que ela é nossa cliente e qual é o seu endereço.</li>
+  </ul>
 
+  <h3>Fluxo do problema e o caminho da solução</h3>
+  <div class="mermaid">
+    flowchart TD
+    A["Tabela não normalizada\n(mistura Pedido, Cliente e Produto)"] --> B["Redundância\n(dados repetidos)"]
+    A --> C["Anomalia de Inserção\n(ex.: cadastrar departamento exige funcionário)"]
+    A --> D["Anomalia de Deleção\n(apagar pedido perde dados do cliente)"]
+    A --> E["Anomalia de Modificação\n(alterar endereço em várias linhas)"]
+    B --> F["Inconsistência de Dados"]
+    C --> G["Normalização\n(formas normais)"]
+    D --> G
+    E --> G
+    F --> G
+    G --> H["Tabelas coesas\n(um assunto por tabela)"]
+  </div>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>Bom Senso Formalizado:</strong> A normalização é descrita por especialistas como o "senso comum"
+      aplicado de forma rigorosa e sistemática ao projeto de dados.</li>
+    <li><strong>A Regra da Tabela:</strong> Uma tabela bem projetada deve representar apenas <em>um assunto</em>
+      (entidade ou relacionamento).</li>
+    <li><strong>Desnormalização:</strong> Embora a normalização seja o ideal, às vezes ela é revertida
+      (desnormalização) em casos específicos de <em>Data Warehouse</em> para priorizar a velocidade de consultas
+      complexas em vez da integridade de escrita.</li>
+    <li><strong>Ordem de estudo:</strong> A normalização não é opcional — ela deve ser aplicada logo após o modelo
+      lógico, antes da implementação física (DDL).</li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>Sistemas de e-commerce:</strong> Cadastre <em>Clientes</em>, <em>Pedidos</em> e <em>Produtos</em> em
+      tabelas separadas. Assim, um mesmo cliente pode ter vários pedidos sem duplicar nome ou endereço.</li>
+    <li><strong>Cadastros de departamento/funcionário:</strong> Separe a entidade que pode existir sozinha
+      (Departamento) da que depende dela (Funcionário), evitando a anomalia de inserção.</li>
+    <li><strong>Revisão de modelos legados:</strong> Use a normalização como <em>checklist</em> para auditar tabelas
+      existentes antes de integrá-las a um novo sistema.</li>
+    <li><strong>Data Warehouse:</strong> Ao construir cubos analíticos, avalie conscientemente a desnormalização
+      (tabelas fato e dimensão) para priorizar a performance de leitura.</li>
+  </ul>
+</section>
 
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
+    <li>HEUSER, Carlos Alberto. Projeto de Banco de Dados. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
+      Paulo: DCC-IME-USP, 2005.</li>
+  </ul>
+</section>
 
-
-
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+  </ul>
+</section>
