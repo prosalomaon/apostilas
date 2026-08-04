@@ -1,77 +1,320 @@
 ---
-title: "Stored Procedures"
+title: "Stored Procedures: Automatizando e Encapsulando a Lógica"
+componente: "Banco de Dados II"
 aula_numero: "22"
-description: "Automatizando tarefas e encapsulando lógica de negócio diretamente no servidor de Banco de Dados."
+description: "Esta aula apresenta as Stored Procedures (Procedimentos Armazenados), objetos que agrupam comandos SQL em uma unidade lógica no servidor, cobrindo parâmetros IN/OUT/INOUT, implementação em MySQL e PostgreSQL e a diferença para funções."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Uma Stored Procedure (Procedimento Armazenado) é um conjunto de comandos SQL compilados e armazenados no
-    servidor. Elas permitem:</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é uma Stored Procedure?</h3>
+  <p>
+    Uma <strong>Stored Procedure</strong> (Procedimento Armazenado) é um objeto definido pelo usuário que consiste em
+    uma ou mais instruções SQL armazenadas no <strong>servidor</strong> para execução posterior. Diferente de uma
+    consulta enviada do cliente para o servidor a cada execução, a procedure <em>reside no banco de dados</em> e pode
+    ser invocada apenas pelo seu nome.
+  </p>
+  <p>
+    Isso faz dela a ferramenta ideal para <strong>automatizar tarefas</strong> e <strong>encapsular regras de negócio
+      complexas</strong> que envolvem múltiplas tabelas.
+  </p>
+
+  <h3>2. Principais Vantagens</h3>
   <ul>
-    <li><strong>Reutilização:</strong> Escreva uma vez, execute em qualquer lugar do sistema.</li>
-    <li><strong>Segurança:</strong> Usuários podem executar a procedure sem ter acesso direto às tabelas
-      subjacentes.</li>
-    <li><strong>Performance:</strong> Reduz o tráfego de rede e aproveita o plano de execução em cache.</li>
+    <li><strong>Encapsulamento:</strong> Permite realizar operações complexas sem que a aplicação precise conhecer os
+      detalhes das tabelas ou repetir o código SQL.</li>
+    <li><strong>Segurança:</strong> É possível conceder permissão de execução em uma procedure a um usuário sem dar a
+      ele acesso direto às tabelas base.</li>
+    <li><strong>Performance:</strong> Reduz o tráfego de rede, pois apenas o comando de chamada é enviado ao servidor,
+      onde todo o processamento ocorre.</li>
   </ul>
-</section>
 
-<section class="section-box">
-  <h2>Exemplo de Código</h2>
-  <p>Criação de uma procedure para registrar uma venda e atualizar o estoque:</p>
-  <div class="code-container">
-    <pre><code class="one-line-code">CREATE PROCEDURE RegistrarVenda
-    @ProdutoID INT,
-    @Quantidade INT
-AS
-BEGIN
-    BEGIN TRANSACTION
-        INSERT INTO Vendas (ProdutoID, Quantidade, DataVenda)
-        VALUES (@ProdutoID, @Quantidade, GETDATE());
-
-        UPDATE Produtos 
-        SET Estoque = Estoque - @Quantidade
-        WHERE ProdutoID = @ProdutoID;
-    COMMIT TRANSACTION
-END;</code></pre>
+  <h3>3. O que "sobra" na rede?</h3>
+  <p>
+    Compare os dois caminhos abaixo: na consulta tradicional, o SQL inteiro viaja pela rede a cada chamada; com a
+    procedure, apenas o nome e os parâmetros trafegam — toda a lógica já está no servidor.
+  </p>
+  <div class="mermaid">
+    sequenceDiagram
+    participant App as Aplicação
+    participant SGBD as Servidor de Banco
+    participant Proc as Stored Procedure
+    App->>SGBD: CALL ObterEstatisticasVendedor(11, @total)
+    SGBD->>Proc: Executa a lógica armazenada
+    Proc->>SGBD: SELECT COUNT(*) (ocorre no servidor)
+    SGBD-->>App: @total (apenas o resultado trafega)
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Diagramação Lógica</h2>
+  <h2>Parâmetros: IN, OUT e INOUT</h2>
+  <p>
+    Diferente das funções simples, que geralmente recebem apenas entradas, os procedimentos podem <strong>devolver
+      múltiplos valores</strong> através de parâmetros específicos:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Parâmetro</th>
+        <th>Direção</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>IN</strong></td>
+        <td>Entrada</td>
+        <td>O valor é passado da aplicação para a procedure (comportamento padrão).</td>
+      </tr>
+      <tr>
+        <td><strong>OUT</strong></td>
+        <td>Saída</td>
+        <td>A procedure atribui um valor ao parâmetro, que pode ser lido pela aplicação após a execução.</td>
+      </tr>
+      <tr>
+        <td><strong>INOUT</strong></td>
+        <td>Entrada e Saída</td>
+        <td>O parâmetro entra com um valor, pode ser modificado pela procedure e retorna o novo valor.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Exemplo de INOUT no MySQL</h3>
+  <p>
+    A procedure abaixo recebe um valor, aplica um percentual de desconto e <strong>devolve o novo valor</strong> no
+    mesmo parâmetro:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE AplicarDesconto(INOUT valor DECIMAL(10,2), IN percentual DECIMAL(5,2))
+BEGIN
+    SET valor = valor - (valor * percentual / 100);
+END //
+
+DELIMITER ;
+
+-- Uso: variável de usuário (@) entra com 1000.00 e sai com 900.00
+SET @preco = 1000.00;
+CALL AplicarDesconto(@preco, 10);
+SELECT @preco; -- 900.00</code></pre>
+  </div>
+
   <div class="mermaid">
-    sequenceDiagram
-    participant App as Aplicação
-    participant SGBD as Servidor DB
-    participant Proc as Stored Procedure
-    App->>SGBD: EXEC RegistrarVenda(10, 2)
-    SGBD->>Proc: Executa Lógica
-    Proc->>SGBD: INSERT Vendas
-    Proc->>SGBD: UPDATE Estoque
-    SGBD-->>App: Sucesso / Erro
+    flowchart LR
+    subgraph IN ["IN (entrada)"]
+      direction LR
+      A1["Aplicação"] -->|"valor"| A2["Procedure"]
+    end
+    subgraph OUT ["OUT (saída)"]
+      direction LR
+      B1["Procedure"] -->|"resultado"| B2["Aplicação"]
+    end
+    subgraph INOUT ["INOUT (entrada e saída)"]
+      direction LR
+      C1["Aplicação"] -->|"valor inicial"| C2["Procedure"]
+      C2 -->|"novo valor"| C3["Aplicação"]
+    end
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Implementação Prática: MySQL vs. PostgreSQL</h2>
+
+  <h3>Exemplo no MySQL</h3>
+  <p>
+    No MySQL, ao definir procedimentos com múltiplas linhas, é essencial usar o comando
+    <code class="one-line-code">DELIMITER</code> para que o ponto e vírgula (<code class="one-line-code">;</code>)
+    interno não seja interpretado como o fim do comando de criação.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Altera o delimitador para permitir o uso de ';' dentro do bloco
+DELIMITER //
+
+CREATE PROCEDURE ObterEstatisticasVendedor(IN id_vendedor INT, OUT total_pedidos INT)
+BEGIN
+    -- Busca o total de pedidos e atribui ao parâmetro de saída
+    SELECT COUNT(*) INTO total_pedidos
+    FROM pedido
+    WHERE codigo_vendedor = id_vendedor;
+END //
+
+DELIMITER ;
+
+-- Como invocar (CALL)
+CALL ObterEstatisticasVendedor(11, @total);
+SELECT @total; -- Exibe o valor retornado</code></pre>
+  </div>
+
+  <h3>Exemplo no PostgreSQL (PL/pgSQL)</h3>
+  <p>
+    No PostgreSQL, os procedimentos são implementados com o comando <code class="one-line-code">PROCEDURE</code>
+    (versões 11+) ou como funções, utilizando a linguagem <em>PL/pgSQL</em>. A lógica fica entre
+    <code class="one-line-code">$$</code> e o idioma é declarado com <code class="one-line-code">LANGUAGE plpgsql</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE OR REPLACE PROCEDURE atualizar_estoque(prod_id INT, qtd_venda INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Lógica de negócio encapsulada
+    UPDATE produtos
+    SET saldo_estoque = saldo_estoque - qtd_venda
+    WHERE codigo = prod_id;
+
+    -- No PostgreSQL, você pode disparar avisos ou logs
+    RAISE NOTICE 'Estoque atualizado para o produto %', prod_id;
+END;
+$$;
+
+-- Como invocar (CALL)
+CALL atualizar_estoque(108, 5);</code></pre>
+  </div>
+
+  <h3>Comparativo entre os SGBDs</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>MySQL</th>
+        <th>PostgreSQL (PL/pgSQL)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Criação</strong></td>
+        <td><code class="one-line-code">CREATE PROCEDURE nome(...)</code></td>
+        <td><code class="one-line-code">CREATE OR REPLACE PROCEDURE nome(...)</code></td>
+      </tr>
+      <tr>
+        <td><strong>Delimitador do bloco</strong></td>
+        <td>Requer <code class="one-line-code">DELIMITER //</code> no terminal</td>
+        <td>Usa <code class="one-line-code">$$</code> para o corpo (string literal)</td>
+      </tr>
+      <tr>
+        <td><strong>Linguagem</strong></td>
+        <td>SQL procedural nativo</td>
+        <td><code class="one-line-code">LANGUAGE plpgsql</code></td>
+      </tr>
+      <tr>
+        <td><strong>Avisos/logs</strong></td>
+        <td>Usa <code class="one-line-code">SIGNAL</code> para erros</td>
+        <td>Usa <code class="one-line-code">RAISE NOTICE</code></td>
+      </tr>
+      <tr>
+        <td><strong>Invocação</strong></td>
+        <td colspan="2" style="text-align:center"><code class="one-line-code">CALL nome(...)</code></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Stored Procedure vs. Function</h2>
+  <p>
+    Embora ambos sejam "Stored Programs" (programas armazenados), existem distinções fundamentais:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>Stored Procedure</th>
+        <th>Function</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Retorno</strong></td>
+        <td>Pode retornar vários valores (via OUT/INOUT) ou nenhum.</td>
+        <td>Sempre retorna um valor através da cláusula <code class="one-line-code">RETURN</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Uso em expressões</strong></td>
+        <td>Não. É chamada via <code class="one-line-code">CALL</code> e não pode ser usada em expressões.</td>
+        <td>Sim. Pode ser usada dentro de um <code class="one-line-code">SELECT</code> ou na cláusula
+          <code class="one-line-code">WHERE</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Finalidade</strong></td>
+        <td>Processos que modificam dados ou produzem múltiplos resultados.</td>
+        <td>Cálculos e valores escalares (ex: calcular imposto).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Exemplo de Function no MySQL</h3>
+  <p>
+    Uma função para cálculo de imposto, que pode ser usada diretamente dentro de uma consulta:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE FUNCTION CalcularImposto(valor DECIMAL(10,2)) RETURNS DECIMAL(10,2)
+BEGIN
+    RETURN valor * 0.20; -- 20% de imposto
+END //
+
+DELIMITER ;
+
+-- Funções podem ser usadas dentro de SELECT
+SELECT CalcularImposto(1000.00) AS imposto; -- 200.00</code></pre>
+  </div>
+
+  <div class="mermaid">
+    flowchart TD
+    P{"Precisa retornar um valor\nusado em SELECT/expressões?"}
+    P -->|"Sim"| F["Function\n(RETURN valor)\ncálculos e valores escalares"]
+    P -->|"Não"| PR["Stored Procedure\n(CALL nome)\nmodifica dados ou produz múltiplos resultados"]
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
-  <p>Sempre use <code class="one-line-code">BEGIN TRANSACTION</code> e <code class="one-line-code">COMMIT/ROLLBACK</code> dentro de procedures que alteram
-    dados, garantindo a atomicidade da operação.</p>
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>Privilégios:</strong> Para <em>criar</em> uma procedure, você precisa do privilégio
+      <code class="one-line-code">CREATE ROUTINE</code>; para <em>rodá-la</em>, do privilégio
+      <code class="one-line-code">EXECUTE</code>.</li>
+    <li><strong>Manutenção:</strong> Se você renomear uma tabela, lembre-se de atualizar todas as procedures que fazem
+      referência a ela.</li>
+    <li><strong>Variáveis Locais:</strong> Dentro de um bloco <code class="one-line-code">BEGIN...END</code>, você pode
+      declarar variáveis locais (via <code class="one-line-code">DECLARE</code>) que existem apenas durante a execução
+      daquele procedimento.</li>
+    <li><strong>Tratamento de Erros:</strong> Procedures podem incluir "Handlers" para capturar erros específicos e
+      decidir se devem continuar ou cancelar a transação.</li>
+    <li><strong>Delimitador esquecido:</strong> No MySQL, executar uma procedure de múltiplas linhas sem o
+      <code class="one-line-code">DELIMITER</code> gera erro de sintaxe no primeiro <code class="one-line-code">;</code>
+      interno.</li>
+  </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Procedures são ideais para processos complexos de fechamento de mês, geração de relatórios consolidados e
-    qualquer operação que envolva múltiplas tabelas e regras de validação.</p>
+  <ul>
+    <li><strong>Fechamento de mês:</strong> Crie uma procedure que calcula comissões, gera lançamentos contábeis e
+      atualiza relatórios em uma única chamada.</li>
+    <li><strong>Controle de estoque:</strong> Encapsule a regra "só vender se houver saldo" dentro da procedure
+      <code class="one-line-code">atualizar_estoque</code>, garantindo que nenhuma aplicação ignore essa validação.</li>
+    <li><strong>Segurança por camadas:</strong> Conceda apenas <code class="one-line-code">EXECUTE</code> ao usuário da
+      aplicação, sem acesso direto às tabelas base — as regras de negócio ficam protegidas no servidor.</li>
+    <li><strong>Processos agendados:</strong> Procedures são o alvo natural de tarefas agendadas (eventos, cron) para
+      execução de rotinas de limpeza e consolidação de dados.</li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>SQL Server: CREATE PROCEDURE (Transact-SQL).</li>
-    <li>Oracle PL/SQL Programming - Steven Feuerstein.</li>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
+      Paulo: DCC-IME-USP, 2005.</li>
+    <li>MySQL Documentation. Stored Programs and Views. Disponível em:
+      https://dev.mysql.com/doc/refman/8.0/en/stored-programs.html</li>
+    <li>PostgreSQL Documentation. PL/pgSQL — SQL Procedural Language. Disponível em:
+      https://www.postgresql.org/docs/current/plpgsql.html</li>
   </ul>
 </section>
 

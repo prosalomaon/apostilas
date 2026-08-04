@@ -1,18 +1,188 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Stored Procedures"
+title: "Stored Procedures na Prática: Loja VendaMais"
 exercicio_numero: "01"
 aula_numero: "22"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 22."
+description: "Atividade prática para consolidar a criação e o uso de Stored Procedures e parâmetros IN/OUT/INOUT no MySQL, em um cenário de vendas."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado(a) para automatizar as regras de negócio da loja <strong>VendaMais</strong>. Em vez de deixar a
+    aplicação executar comandos SQL soltos, todas as operações de venda, estoque e estatísticas devem ser
+    <strong>encapsuladas em Stored Procedures</strong> no servidor MySQL.
+  </p>
+  <p>
+    Seu objetivo é criar as procedures e funções descritas nos desafios, executá-las e validar os resultados diretamente
+    no banco.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li><strong>Ambiente:</strong> Abra seu terminal ou o MySQL Workbench e conecte-se ao seu servidor local.</li>
+    <li><strong>Script:</strong> Execute o script da seção "1. Script de Preparação" integralmente e confirme que o
+      banco <code class="one-line-code">vendamais_db</code> foi criado.</li>
+    <li><strong>Resolução:</strong> Escreva cada procedure/função com o comando <code class="one-line-code">DELIMITER
+        //</code> e <code class="one-line-code">DELIMITER ;</code> ao final, como no exemplo da aula.</li>
+    <li><strong>Validação:</strong> Depois de cada <code class="one-line-code">CALL</code>, consulte as tabelas para
+      confirmar que os dados foram alterados conforme o esperado.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Script de Preparação (MySQL)</h2>
+  <p>Execute o script abaixo para criar o banco, as tabelas e a massa de dados do cenário de vendas:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE DATABASE vendamais_db;
+USE vendamais_db;
+
+CREATE TABLE vendedores (
+    codigo_vendedor INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    salario_fixo DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE produtos (
+    codigo INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    preco_venda DECIMAL(10,2) NOT NULL,
+    saldo_estoque INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE pedidos (
+    numero_pedido INT AUTO_INCREMENT PRIMARY KEY,
+    data_pedido DATE NOT NULL,
+    codigo_vendedor INT NOT NULL,
+    FOREIGN KEY (codigo_vendedor) REFERENCES vendedores(codigo_vendedor)
+);
+
+CREATE TABLE itens_pedido (
+    numero_pedido INT NOT NULL,
+    codigo_produto INT NOT NULL,
+    quantidade INT NOT NULL,
+    preco_unitario DECIMAL(10,2) NOT NULL,
+    PRIMARY KEY (numero_pedido, codigo_produto),
+    FOREIGN KEY (numero_pedido) REFERENCES pedidos(numero_pedido),
+    FOREIGN KEY (codigo_produto) REFERENCES produtos(codigo)
+);
+
+-- Massa de Dados
+INSERT INTO vendedores (nome, salario_fixo) VALUES
+('Carlos Souza', 2500.00),
+('Mariana Lima', 3200.00),
+('Fernanda Alves', 2800.00);
+
+INSERT INTO produtos (nome, preco_venda, saldo_estoque) VALUES
+('Notebook', 2999.90, 10),
+('Monitor', 899.90, 15),
+('Teclado', 149.90, 30),
+('Mouse', 79.90, 40),
+('Impressora', 1299.90, 8);
+
+INSERT INTO pedidos (data_pedido, codigo_vendedor) VALUES
+('2026-04-01', 1),
+('2026-04-02', 2),
+('2026-04-03', 1),
+('2026-04-04', 3),
+('2026-04-05', 2);
+
+INSERT INTO itens_pedido (numero_pedido, codigo_produto, quantidade, preco_unitario) VALUES
+(1, 1, 1, 2999.90),
+(1, 3, 2, 149.90),
+(2, 2, 1, 899.90),
+(3, 4, 5, 79.90),
+(4, 5, 1, 1299.90),
+(5, 1, 1, 2999.90);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Procedure básica de estoque</h3>
+  <ol>
+    <li>Crie a procedure <code class="one-line-code">AtualizarEstoque</code> que recebe um
+      <code class="one-line-code">IN codigo_produto</code> e um <code class="one-line-code">IN qtd</code>, e decrementa o
+      <code class="one-line-code">saldo_estoque</code> do produto correspondente.</li>
+    <li>Chame <code class="one-line-code">AtualizarEstoque(1, 1)</code> e verifique que o saldo do produto 1 passou de
+      10 para 9.</li>
+    <li>Reflita: por que a procedure é mais segura do que um <code class="one-line-code">UPDATE</code> executado
+      diretamente pela aplicação?</li>
+  </ol>
+
+  <h3>Bloco 2: Procedure que registra uma venda completa</h3>
+  <p>
+    Crie uma procedure que <strong>encapsula todo o processo de venda</strong>: insere um novo pedido, insere o item e
+    dá baixa no estoque — tudo em uma única chamada.
+  </p>
+  <ol>
+    <li>Crie a procedure <code class="one-line-code">RegistrarVenda</code> com parâmetros:
+      <code class="one-line-code">IN id_vendedor INT</code>, <code class="one-line-code">IN codigo_produto INT</code>,
+      <code class="one-line-code">IN qtd INT</code>. Dentro dela:
+      <ul>
+        <li>Insira um registro em <code class="one-line-code">pedidos</code> usando <code class="one-line-code">NOW()</code>
+          como data (ou <code class="one-line-code">CURDATE()</code>).</li>
+        <li>Insira o item em <code class="one-line-code">itens_pedido</code>, capturando o
+          <code class="one-line-code">numero_pedido</code> recém-criado (dica:
+          <code class="one-line-code">LAST_INSERT_ID()</code>).</li>
+        <li>Dê baixa no estoque do produto.</li>
+      </ul>
+    </li>
+    <li>Chame <code class="one-line-code">CALL RegistrarVenda(3, 2, 2)</code> (vendedora Fernanda vende 2 Monitores).</li>
+    <li>Valide: o estoque do Monitor deve cair de 15 para 13, e o faturamento de Fernanda deve aumentar em 1.799,80
+      (2 × 899,90).</li>
+  </ol>
+
+  <h3>Bloco 3: Parâmetro OUT (saída)</h3>
+  <ol>
+    <li>Crie a procedure <code class="one-line-code">ObterTotalPedidosVendedor</code> com
+      <code class="one-line-code">IN id_vendedor INT</code> e <code class="one-line-code">OUT total INT</code>, que
+      atribui ao parâmetro de saída o total de pedidos do vendedor (use
+      <code class="one-line-code">SELECT COUNT(*) INTO ...</code>).</li>
+    <li>Invoque e exiba o resultado:
+      <div class="code-container">
+        <pre><code class="language-sql">CALL ObterTotalPedidosVendedor(1, @total);
+SELECT @total;</code></pre>
+      </div>
+    </li>
+    <li>Crie <code class="one-line-code">ObterFaturamentoVendedor</code> com <code class="one-line-code">OUT
+        faturamento DECIMAL(10,2)</code>, somando <code class="one-line-code">preco_unitario * quantidade</code> dos
+      itens dos pedidos daquele vendedor (use um JOIN).</li>
+    <li>Invoque para o vendedor 1 e confira se o valor corresponde ao total somado manualmente.</li>
+  </ol>
+
+  <h3>Bloco 4: Parâmetro INOUT (entrada e saída)</h3>
+  <ol>
+    <li>Crie a procedure <code class="one-line-code">AplicarAumentoSalario</code> com
+      <code class="one-line-code">INOUT salario DECIMAL(10,2)</code> e <code class="one-line-code">IN percentual
+        DECIMAL(5,2)</code>, que aumenta o valor do parâmetro no percentual informado.</li>
+    <li>Teste com o salário do vendedor 2 (Mariana, 3200.00):
+      <div class="code-container">
+        <pre><code class="language-sql">SET @salario = (SELECT salario_fixo FROM vendedores WHERE codigo_vendedor = 2);
+CALL AplicarAumentoSalario(@salario, 10);
+SELECT @salario; -- deve exibir 3520.00
+
+UPDATE vendedores SET salario_fixo = @salario WHERE codigo_vendedor = 2;</code></pre>
+      </div>
+    </li>
+    <li>Explique com suas palavras a diferença entre <code class="one-line-code">OUT</code> e
+      <code class="one-line-code">INOUT</code> a partir do que observou.</li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Delimitador:</strong> No MySQL, toda procedure de múltiplas linhas precisa ser criada entre
+      <code class="one-line-code">DELIMITER //</code> e <code class="one-line-code">DELIMITER ;</code>.</li>
+    <li><strong>Privilégios:</strong> Você precisa do privilégio <code class="one-line-code">CREATE ROUTINE</code> para
+      criar e <code class="one-line-code">EXECUTE</code> para chamar as procedures.</li>
+    <li><strong>Validação:</strong> Sempre confirme os efeitos colaterais (estoque, totais) com um
+      <code class="one-line-code">SELECT</code> após cada <code class="one-line-code">CALL</code>.</li>
+    <li><strong>Variáveis:</strong> Para receber valores de saída, use variáveis de usuário com <code class="one-line-code">@</code>
+      (ex.: <code class="one-line-code">@total</code>).</li>
+    <li><strong>Tente sozinho:</strong> Resolva os blocos sem consultar a aula primeiro; volte a ela somente se travar
+      em algum conceito.</li>
   </ul>
 </div>
