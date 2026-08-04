@@ -534,8 +534,76 @@ footer {
   margin-top: 0;
 }
 
+/* Quiz: campo de nome */
+.quiz-name-label {
+  display: block;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.quiz-name-input {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.quiz-name-input:focus {
+  outline: none;
+  border-color: var(--fg);
+  box-shadow: 4px 4px 0px var(--fg);
+}
+
+.quiz-name-error {
+  display: none;
+  color: #c00;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  border-left: 4px solid #c00;
+  padding-left: 0.75rem;
+}
+
+/* Quiz: resultado */
+.quiz-result-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+/* Quiz: bloco de codigo de autenticidade */
+.quiz-auth-code-box {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-left: 8px solid var(--fg);
+  background: var(--accent);
+}
+
+.quiz-auth-code-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.quiz-auth-code {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.9rem;
+  word-break: break-all;
+}
+
 #incorrect-feedback {
-  border: 2px solid red;
+  border: 2px solid #c00;
   padding: 1rem;
 }
 

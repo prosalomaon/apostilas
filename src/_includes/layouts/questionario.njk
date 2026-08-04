@@ -20,6 +20,18 @@ layout: base
     </ul>
   </div>
 
+  <div class="section-box" id="student-name-box">
+    <label class="quiz-name-label" for="student-name"><strong>Seu nome completo:</strong></label>
+    <input
+      type="text"
+      id="student-name"
+      class="quiz-name-input"
+      placeholder="Digite seu nome completo antes de comecar..."
+      autocomplete="name"
+    />
+    <p id="student-name-error" class="quiz-name-error">Por favor, informe seu nome completo antes de verificar as respostas.</p>
+  </div>
+
   <form id="quiz-form">
     {% for pergunta in perguntas %}
     {% set perguntaNum = loop.index %}
@@ -36,16 +48,58 @@ layout: base
 
   <div id="resultado" class="section-box">
     <h2>Resultado:</h2>
+    <p id="nome-aluno-resultado" class="quiz-result-name"></p>
     <p id="pontuacao"></p>
     <p id="feedback"></p>
     <div id="incorrect-feedback">
       <h4>Respostas Incorretas</h4>
       <p id="incorrect-questions"></p>
     </div>
+    <div id="codigo-unico-box" class="quiz-auth-code-box">
+      <p class="quiz-auth-code-label">Codigo de autenticidade:</p>
+      <code id="codigo-unico" class="quiz-auth-code"></code>
+    </div>
   </div>
 
   <script>
+    /**
+     * Codifica o nome do aluno de forma determinística e reversível.
+     * Algoritmo: para cada caractere do nome normalizado, XOR com
+     * (posição + comprimento_do_nome) e converte para hex com 2 dígitos.
+     * Isso permite verificação posterior sem armazenar segredos.
+     */
+    function codificarNome(nome) {
+      const normalizado = nome.trim().toUpperCase();
+      const len = normalizado.length;
+      let resultado = '';
+      for (let i = 0; i < len; i++) {
+        const charCode = normalizado.charCodeAt(i);
+        const chave = (i + len) % 256;
+        resultado += ((charCode ^ chave) & 0xFF).toString(16).padStart(2, '0');
+      }
+      return resultado.toUpperCase();
+    }
+
+    function gerarCodigoUnico(nome) {
+      const timestamp = Date.now();
+      const componente = '{{ sigla_componente | default("XX") }}';
+      const nomeCodificado = codificarNome(nome);
+      return `${timestamp}:${componente}:${nomeCodificado}`;
+    }
+
     function verificarRespostas() {
+      // Validar nome do aluno
+      const nomeInput = document.getElementById('student-name');
+      const nomeErro = document.getElementById('student-name-error');
+      const nome = nomeInput ? nomeInput.value.trim() : '';
+
+      if (!nome) {
+        nomeErro.style.display = 'block';
+        nomeInput.focus();
+        return;
+      }
+      nomeErro.style.display = 'none';
+
       document.getElementById('incorrect-feedback').style.display = 'block';
       const resultSection = document.getElementById('resultado');
       const closeResultSectionText = "Fechar Respostas";
@@ -87,9 +141,11 @@ layout: base
         feedback = 'Precisa revisar o conteúdo. Tente novamente.';
       }
 
+      document.getElementById('nome-aluno-resultado').textContent = `Aluno(a): ${nome}`;
       document.getElementById('pontuacao').textContent = `Você acertou ${pontuacao} de ${totalPerguntas} perguntas (${porcentagem.toFixed(0)}%).`;
       document.getElementById('feedback').textContent = feedback;
       document.getElementById('incorrect-questions').textContent = incorrectFeedback.slice(0, -2);
+      document.getElementById('codigo-unico').textContent = gerarCodigoUnico(nome);
 
       if(!incorrectFeedback) {
         document.getElementById('incorrect-feedback').style.display = 'none';
