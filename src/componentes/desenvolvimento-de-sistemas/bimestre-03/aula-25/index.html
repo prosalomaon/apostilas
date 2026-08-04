@@ -1,13 +1,365 @@
 ---
 title: "Persistência de Dados I: Conectividade via JDBC"
+componente: "Desenvolvimento de Sistemas"
 aula_numero: "25"
-description: "Uso da API JDBC para conectar aplicações Java a bancos de dados relacionais (MySQL/SQL Server), executando comandos SQL diretamente pelo código."
+description: "Introdução à persistência de dados e à API JDBC (Java Database Connectivity): como conectar aplicações Java a bancos de dados relacionais com segurança, performance e boas práticas (PreparedStatement, ResultSet e padrão DAO)."
 tags:
-  - aula
-  - bimestre-03
+- aula
+- bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em construção.</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é Persistência?</h3>
+  <p>
+    O armazenamento de informações de forma que elas <strong>sobrevivam ao encerramento da execução</strong> de um
+    programa é chamado de <em>persistência</em>. Sem ela, os dados ficam restritos à memória volátil (RAM) e são
+    perdidos assim que a aplicação termina. Por isso, sistemas reais gravam seus dados em bancos de dados relacionais
+    (MySQL, PostgreSQL, Oracle, SQL Server, entre outros).
+  </p>
+
+  <h3>2. O que é JDBC?</h3>
+  <p>
+    Em Java, a principal biblioteca para interagir com bancos de dados relacionais é o <strong>JDBC (Java Database
+      Connectivity)</strong>, que consiste em um conjunto de <strong>interfaces</strong> contidas no pacote
+    <code class="one-line-code">java.sql</code>. O JDBC define um "contrato" único: a aplicação fala com o banco apenas
+    por essas interfaces, sem depender de detalhes proprietários de cada SGBD.
+  </p>
+
+  <h3>3. O Driver JDBC: o "tradutor"</h3>
+  <p>
+    O <strong>Driver JDBC</strong> funciona como um "tradutor" entre o código Java e o protocolo proprietário de cada
+    banco de dados (MySQL, Oracle, PostgreSQL, etc.). A API fornece a interface, mas a implementação concreta vem do
+    driver, que normalmente é distribuído como um arquivo <code class="one-line-code">.jar</code>.
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    A["Aplicação Java\n(código JDBC)"] -->|"interfaces java.sql"| B["Driver JDBC\n(arquivo .jar)"]
+    B -->|"protocolo proprietário"| C["SGBD\n(MySQL / PostgreSQL / Oracle)"]
+  </div>
+
+  <h3>4. Portabilidade</h3>
+  <p>
+    A API JDBC é <strong>portátil</strong>: o mesmo código Java consegue manipular diferentes bancos de dados, desde
+    que o driver correto seja fornecido. A única parte que muda é a <em>URL de conexão</em>, que identifica qual driver
+    e qual banco serão utilizados.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Conectando ao Banco: A Anatomia da Conexão</h2>
+  <p>
+    Para estabelecer uma conexão, a classe <code class="one-line-code">DriverManager</code> utiliza uma
+    <strong>String de Conexão (URL)</strong>, além de um usuário e senha. A URL segue o formato
+    <code class="one-line-code">protocolo:subprotocolo://endereco:porta/nome_do_banco</code>:
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    A["jdbc:mysql://localhost:3306/agenda_contatos"]
+    A --> B["protocolo: jdbc"]
+    A --> C["subprotocolo: mysql\n(identifica o driver)"]
+    A --> D["endereço + porta\n(localhost:3306)"]
+    A --> E["nome do banco\n(agenda_contatos)"]
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-java">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class ExemploConexao {
+    public static void main(String[] args) {
+        // URL no formato: protocolo:subprotocolo://endereco:porta/nome_do_banco
+        String url = "jdbc:mysql://localhost:3306/agenda_contatos";
+
+        try (Connection conexao = DriverManager.getConnection(url, "root", "senha")) {
+            System.out.println("Conectado ao banco de dados!");
+        } catch (SQLException e) {
+            // SQLException é uma exceção do tipo checked
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+  </div>
+  <p>
+    Observe dois detalhes importantes: a conexão é aberta dentro de um bloco
+    <code class="one-line-code">try-with-resources</code> (que a fechará automaticamente) e o erro é uma
+    <code class="one-line-code">SQLException</code>, uma exceção <strong>checked</strong> — ou seja, o compilador obriga
+    você a tratá-la ou repassá-la.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Executando Comandos SQL</h2>
+  <p>
+    Existem duas formas principais de enviar comandos ao banco: <code class="one-line-code">Statement</code> e
+    <code class="one-line-code">PreparedStatement</code>. A recomendação prática é quase sempre o
+    <strong>PreparedStatement</strong>.
+  </p>
+
+  <h3>1. Statement: o perigo da concatenação</h3>
+  <p>
+    O <code class="one-line-code">Statement</code> comum monta o SQL por concatenação de strings. Além de difícil de
+    ler, ele é vulnerável a <strong>SQL Injection</strong> — o texto digitado pelo usuário vira parte do comando
+    executável:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// MODO ERRADO: concatenação de strings
+String sql = "SELECT * FROM contatos WHERE nome = '" + nomeUsuario + "'";
+
+// Se nomeUsuario = "'; DROP TABLE contatos; --"
+// o comando executado passa a ser (catastrófico!):
+// SELECT * FROM contatos WHERE nome = ''; DROP TABLE contatos; --'</code></pre>
+  </div>
+
+  <h3>2. PreparedStatement: a prática recomendada</h3>
+  <p>
+    Diferente do <code class="one-line-code">Statement</code>, o <code class="one-line-code">PreparedStatement</code>
+    cria instruções SQL <strong>pré-compiladas</strong> com parâmetros, indicados pelo caractere
+    <code class="one-line-code">?</code>.
+  </p>
+  <ul>
+    <li><strong>Segurança:</strong> É a principal defesa contra SQL Injection, pois trata a entrada do usuário
+      estritamente como <em>dado</em>, não como parte do comando executável.</li>
+    <li><strong>Performance:</strong> É mais eficiente para instruções executadas múltiplas vezes com valores
+      diferentes, pois o SQL é compilado uma única vez.</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-java">String sql = "INSERT INTO contatos (nome, email) VALUES (?, ?)";
+
+try (Connection conexao = DriverManager.getConnection(url, "root", "senha");
+     PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+    stmt.setString(1, "João Silva"); // preenche o primeiro '?'
+    stmt.setString(2, "joao@email.com");
+    stmt.executeUpdate();            // usado para INSERT, UPDATE e DELETE
+}</code></pre>
+  </div>
+  <p>
+    Repare que o valor é passado via <code class="one-line-code">setString(posicao, valor)</code>: o Java envia o
+    conteúdo como dado e o banco nunca o interpreta como sintaxe.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A[Entrada do usuário] --> B{Como montar o SQL?}
+    B -->|"Statement + concatenação"| C["SQL é reescrito\n(risco de SQL Injection)"]
+    B -->|"PreparedStatement"| D["Valor enviado como dado\n(posições ? pré-compiladas)"]
+    C --> E[("Dados vulneráveis")]
+    D --> F[("Consulta segura")]
+  </div>
+
+  <h3>3. ResultSet: recuperando dados</h3>
+  <p>
+    Para consultas (<code class="one-line-code">SELECT</code>), utilizamos o método
+    <code class="one-line-code">executeQuery()</code>, que retorna um objeto <code class="one-line-code">ResultSet</code>.
+    Ele permite navegar pelos registros através do método <code class="one-line-code">next()</code>, que avança uma
+    linha por vez e retorna <code class="one-line-code">false</code> quando não há mais registros:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String sql = "SELECT id, nome, email FROM contatos WHERE nome LIKE ?";
+
+try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+    stmt.setString(1, "%" + termoBusca + "%");
+
+    try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nome = rs.getString("nome");
+            String email = rs.getString("email");
+            System.out.println(id + " - " + nome + " - " + email);
+        }
+    }
+}</code></pre>
+  </div>
+  <p>
+    Os valores das colunas podem ser lidos pelo <strong>nome da coluna</strong> (como no exemplo) ou pelo índice — mas
+    atenção: diferente dos arrays de Java, que começam em <code class="one-line-code">0</code>, as colunas do
+    <code class="one-line-code">ResultSet</code> e os parâmetros do <code class="one-line-code">PreparedStatement</code>
+    começam em <strong>1</strong>.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Boas Práticas: Exceções e Gerenciamento de Recursos</h2>
+
+  <h3>1. Relançando SQLException como RuntimeException</h3>
+  <p>
+    Uma prática comum é capturar a <code class="one-line-code">SQLException</code> (checked) e relançá-la como uma
+    <code class="one-line-code">RuntimeException</code> (unchecked), evitando que a API JDBC "vaze" pelas demais camadas
+    do sistema e desacople o código de negócio da implementação de banco de dados.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public void salvar(Contato contato) {
+    String sql = "INSERT INTO contatos (nome, email) VALUES (?, ?)";
+
+    try (Connection conexao = Conexao.abrir();
+         PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+        stmt.setString(1, contato.getNome());
+        stmt.setString(2, contato.getEmail());
+        stmt.executeUpdate();
+
+    } catch (SQLException e) {
+        // relança como unchecked para não acoplar as camadas superiores
+        throw new RuntimeException("Erro ao salvar contato", e);
+    }
+}</code></pre>
+  </div>
+
+  <h3>2. Fechando recursos sempre</h3>
+  <p>
+    Recursos "caros" como conexões devem ser fechados o mais rápido possível. O uso do bloco
+    <code class="one-line-code">finally</code> ou da instrução <code class="one-line-code">try-with-resources</code>
+    (Java 7+) garante que a conexão será encerrada mesmo em caso de erro — como ocorre em todos os exemplos desta aula.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A[Início do try-with-resources] --> B[Abre a conexão]
+    B --> C[Executa a instrução SQL]
+    C --> D{Erro?}
+    D -->|Não| E[Fecha recursos automaticamente]
+    D -->|Sim| F[Catch trata a exceção]
+    F --> E
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Padrão DAO: Separando a Persistência do Negócio</h2>
+  <p>
+    Misturar código SQL com a lógica de negócio torna o sistema difícil de manter. A solução é o padrão
+    <strong>DAO (Data Access Object)</strong>, que isola todo o acesso ao banco em classes específicas. Com ele, a
+    camada de negócio conhece apenas a <em>interface</em>, não os detalhes do JDBC.
+  </p>
+  <div class="mermaid">
+    flowchart TB
+    subgraph App ["Camadas da aplicação"]
+      A["Controller / View"] --> B["Service\n(lógica de negócio)"]
+      B --> C["DAO\n(interface)"]
+      C --> D["DAOImpl\n(implementação JDBC)"]
+      D --> E["Banco de dados"]
+    end
+  </div>
+
+  <h3>1. O Java Bean que representa a tabela</h3>
+  <p>
+    É comum utilizar classes que seguem o padrão <strong>Java Beans</strong> (construtor vazio e getters/setters) para
+    representar as tabelas do banco no código Java:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Contato {
+    private int id;
+    private String nome;
+    private String email;
+
+    public Contato() { } // construtor vazio exigido pelo padrão Java Beans
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}</code></pre>
+  </div>
+
+  <h3>2. A interface do DAO</h3>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.List;
+
+public interface ContatoDAO {
+    void salvar(Contato contato);
+    List&lt;Contato&gt; listar();
+    Contato buscarPorId(int id);
+    void excluir(int id);
+}</code></pre>
+  </div>
+
+  <h3>3. A implementação com JDBC</h3>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.ArrayList;
+import java.util.List;
+
+public class ContatoDAOImpl implements ContatoDAO {
+
+    @Override
+    public List&lt;Contato&gt; listar() {
+        List&lt;Contato&gt; contatos = new ArrayList&lt;&gt;();
+        String sql = "SELECT id, nome, email FROM contatos";
+
+        try (Connection conexao = Conexao.abrir();
+             PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Contato c = new Contato();
+                c.setId(rs.getInt("id"));
+                c.setNome(rs.getString("nome"));
+                c.setEmail(rs.getString("email"));
+                contatos.add(c);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar contatos", e);
+        }
+        return contatos;
+    }
+}</code></pre>
+  </div>
+  <p>
+    Se amanhã o sistema trocar de banco (de MySQL para PostgreSQL), apenas o driver e a URL mudam — o código que usa o
+    <code class="one-line-code">ContatoDAO</code> permanece intacto. Isso é a portabilidade do JDBC aliada ao padrão DAO.
+  </p>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes Técnicos</h4>
+  <ul>
+    <li><strong>Índices no JDBC:</strong> Ao contrário dos arrays (que começam em 0), os índices de colunas no
+      <code class="one-line-code">ResultSet</code> e os parâmetros no <code class="one-line-code">PreparedStatement</code>
+      começam em <strong>1</strong>.</li>
+    <li><strong>Classpath:</strong> Lembre-se de adicionar o arquivo <code class="one-line-code">.jar</code> do driver
+      do seu banco de dados ao <em>Build Path</em> do projeto para que o Java localize a implementação do driver.</li>
+    <li><strong>Java Beans:</strong> É comum usar classes com construtor vazio e getters/setters para representar as
+      tabelas do banco no código Java.</li>
+    <li><strong>Nunca concatene SQL:</strong> Sempre que houver um valor vindo do usuário, use
+      <code class="one-line-code">PreparedStatement</code> — isso elimina o risco de SQL Injection.</li>
+    <li><strong>execute vs executeUpdate:</strong> Para INSERT, UPDATE e DELETE, prefira
+      <code class="one-line-code">executeUpdate()</code>, que ainda informa quantas linhas foram afetadas.</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>Cadastro de usuários:</strong> Use um <code class="one-line-code">PreparedStatement</code> para inserir
+      os dados recebidos de um formulário, jamais concatenando o valor digitado no SQL.</li>
+    <li><strong>CRUD completo:</strong> Crie uma interface <code class="one-line-code">XxxDAO</code> com
+      <em>salvar/listar/buscarPorId/excluir</em> e uma implementação JDBC para cada tabela do sistema.</li>
+    <li><strong>Conexão centralizada:</strong> Coloque a abertura de conexão em uma classe utilitária única
+      (ex.: <code class="one-line-code">Conexao.abrir()</code>) para evitar repetição e facilitar a troca de banco.</li>
+    <li><strong>Login com segurança:</strong> Consulte o usuário com <code class="one-line-code">WHERE email = ?</code>
+      — a proteção contra SQL Injection começa na consulta, não na tela.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>CAELUM. Java para Desenvolvimento Web. Apostila FJ-21 da Caelum.</li>
+    <li>CAELUM. Java e Orientação a Objetos. Apostila FJ-11 da Caelum.</li>
+    <li>DEITEL, Harvey M.; DEITEL, Paul J. Java: como programar. 8. ed. São Paulo: Pearson, 2010.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+  </ul>
+
+  <hr>
+  <a class="btn" href="./demonstracao-pratica" target="_blank">Para Demonstração</a>
 </section>

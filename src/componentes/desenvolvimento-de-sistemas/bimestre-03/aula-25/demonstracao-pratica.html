@@ -1,0 +1,600 @@
+---
+layout: exercicio
+title: "Projeto Prático: Cadastro de Produtos (Maven + Swing + JDBC/MySQL)"
+exercicio_numero: "01"
+aula_numero: "25"
+description: "Demonstração prática completa: aplicação Java com interface Swing, Maven e JDBC conectada ao MySQL, com CRUD de produtos pronto para copiar e colar."
+---
+
+<section class="section-box">
+    <h2>Enunciado</h2>
+    <p>
+        Vamos construir uma aplicação <strong>funcional e completa</strong> que coloca em prática todos os conceitos da
+        aula: persistência via <strong>JDBC</strong>, conexão com o <strong>MySQL</strong> e o padrão
+        <strong>DAO</strong>. O resultado final é um sistema de <strong>cadastro de produtos</strong> com interface
+        gráfica <strong>Swing</strong> e um <strong>CRUD completo</strong> (Cadastrar, Listar, Atualizar e Excluir).
+    </p>
+    <p>
+        Todo o código foi escrito para ser <strong>copiado e colado</strong>: basta seguir a ordem dos passos, criando
+        um arquivo por vez no VS Code. Ao final, o projeto executa com um único comando.
+    </p>
+
+    <hr>
+
+    <h3>Pré-requisitos (VS Code + Java)</h3>
+    <ol>
+        <li><strong>VS Code</strong> com o pacote de extensões <em>"Extension Pack for Java"</em> (Microsoft), que já
+            inclui Maven, depurador e suporte a Swing.</li>
+        <li><strong>JDK 17 ou superior</strong> instalado e configurado no VS Code.</li>
+        <li><strong>MySQL Server</strong> em execução local (ou via XAMPP).</li>
+        <li>Nada de drivers para baixar manualmente: o driver do MySQL entra pelo <strong>Maven</strong> (pom.xml).</li>
+    </ol>
+</section>
+
+<section class="section-box">
+    <h2>Passo 1: Preparando o Banco de Dados</h2>
+    <p>
+        Execute o script abaixo no MySQL (via MySQL Workbench, terminal ou painel do XAMPP). Ele cria o banco
+        <code>cadastro_produtos</code> e a tabela <code>produtos</code> com os campos usados pela aplicação.
+    </p>
+    <div class="code-container">
+        <pre><code class="language-sql">-- 1. Cria o banco de dados
+CREATE DATABASE IF NOT EXISTS cadastro_produtos;
+USE cadastro_produtos;
+
+-- 2. Cria a tabela de produtos
+CREATE TABLE IF NOT EXISTS produtos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    quantidade INT NOT NULL DEFAULT 0,
+    categoria VARCHAR(50)
+);
+
+-- 3. (Opcional) Registros iniciais para testar o Listar
+INSERT INTO produtos (nome, preco, quantidade, categoria) VALUES
+('Notebook', 2999.90, 5, 'Informática'),
+('Mouse', 49.90, 20, 'Informática'),
+('Cadeira Gamer', 899.90, 3, 'Móveis');</code></pre>
+    </div>
+</section>
+
+<section class="section-box">
+    <h2>Passo 2: Criando o Projeto Maven</h2>
+    <p>
+        No VS Code, pressione <code>Ctrl+Shift+P</code> e escolha <strong>"Java: Create Java Project"</strong> →
+        <em>Maven</em>. Dê o nome <code>cadastro-produtos</code> ao projeto. A estrutura criada deve ser esta:
+    </p>
+    <pre>cadastro-produtos/
+├── pom.xml
+└── src/main/java/com/exemplo/produtos/
+    ├── Main.java
+    ├── Conexao.java
+    ├── model/Produto.java
+    ├── dao/ProdutoDAO.java
+    ├── dao/ProdutoDAOImpl.java
+    └── ui/ProdutoForm.java</pre>
+
+    <p>
+        Substitua o conteúdo do arquivo <code>pom.xml</code> gerado pelo código abaixo. Ele declara o
+        <strong>driver oficial do MySQL</strong> (<code>mysql-connector-j</code>), que o Maven baixa automaticamente:
+    </p>
+    <div class="code-container">
+        <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.exemplo&lt;/groupId&gt;
+    &lt;artifactId&gt;cadastro-produtos&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+
+    &lt;properties&gt;
+        &lt;maven.compiler.source&gt;17&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;17&lt;/maven.compiler.target&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;!-- Driver oficial do MySQL --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+            &lt;version&gt;8.4.0&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/project&gt;</code></pre>
+    </div>
+    <div class="tip-box">
+        <h4>Lembrete</h4>
+        <ul>
+            <li>Se o VS Code ainda não reconhecer o Maven, clique com o botão direito no <code>pom.xml</code> →
+                <strong>Update Project</strong> ou pressione <code>Ctrl+Shift+P</code> → <em>"Java: Reload Projects"</em>.
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section class="section-box">
+    <h2>Passo 3: Classe de Conexão (Conexao.java)</h2>
+    <p>
+        Centraliza a abertura da conexão. Ajuste o usuário e a senha para os do seu MySQL. A URL segue o formato visto
+        na aula: <code>jdbc:mysql://endereco:porta/nome_do_banco</code>.
+    </p>
+    <div class="code-container">
+        <pre><code class="language-java">package com.exemplo.produtos;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class Conexao {
+
+    private static final String URL = "jdbc:mysql://localhost:3306/cadastro_produtos";
+    private static final String USUARIO = "root";
+    private static final String SENHA = "sua_senha";
+
+    public static Connection abrir() {
+        try {
+            return DriverManager.getConnection(URL, USUARIO, SENHA);
+        } catch (SQLException e) {
+            // Relança como unchecked para não acoplar as demais camadas ao JDBC
+            throw new RuntimeException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+}</code></pre>
+    </div>
+    <p>
+        Repare que a <code>SQLException</code> (checked) é capturada e relançada como
+        <code>RuntimeException</code> (unchecked) — exatamente a boa prática apresentada na aula.
+    </p>
+</section>
+
+<section class="section-box">
+    <h2>Passo 4: Modelo Produto (Java Bean)</h2>
+    <p>
+        Classe que representa a tabela <code>produtos</code> no código Java, seguindo o padrão Java Beans (construtor
+        vazio e getters/setters). Ela fica no pacote <code>model</code>.
+    </p>
+    <div class="code-container">
+        <pre><code class="language-java">package com.exemplo.produtos.model;
+
+public class Produto {
+
+    private int id;
+    private String nome;
+    private double preco;
+    private int quantidade;
+    private String categoria;
+
+    public Produto() {
+    }
+
+    public Produto(int id, String nome, double preco, int quantidade, String categoria) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+        this.quantidade = quantidade;
+        this.categoria = categoria;
+    }
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public double getPreco() { return preco; }
+    public void setPreco(double preco) { this.preco = preco; }
+
+    public int getQuantidade() { return quantidade; }
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
+}</code></pre>
+    </div>
+</section>
+
+<section class="section-box">
+    <h2>Passo 5: Camada DAO</h2>
+    <p>
+        O padrão DAO isola todo o SQL. A <strong>interface</strong> define o contrato; a
+        <strong>implementação</strong> usa o JDBC. O restante da aplicação nunca toca em SQL diretamente.
+    </p>
+
+    <h3>Interface ProdutoDAO</h3>
+    <div class="code-container">
+        <pre><code class="language-java">package com.exemplo.produtos.dao;
+
+import com.exemplo.produtos.model.Produto;
+import java.util.List;
+
+public interface ProdutoDAO {
+
+    void salvar(Produto produto);
+    void atualizar(Produto produto);
+    void excluir(int id);
+    List&lt;Produto&gt; listar();
+    Produto buscarPorId(int id);
+}</code></pre>
+    </div>
+
+    <h3>Implementação ProdutoDAOImpl</h3>
+    <p>
+        Toda instrução usa <code>PreparedStatement</code> (proteção contra SQL Injection), com os valores passados por
+        posição (começando em 1) e recursos fechados via <code>try-with-resources</code>.
+    </p>
+    <div class="code-container">
+        <pre><code class="language-java">package com.exemplo.produtos.dao;
+
+import com.exemplo.produtos.Conexao;
+import com.exemplo.produtos.model.Produto;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ProdutoDAOImpl implements ProdutoDAO {
+
+    @Override
+    public void salvar(Produto produto) {
+        String sql = "INSERT INTO produtos (nome, preco, quantidade, categoria) VALUES (?, ?, ?, ?)";
+        try (Connection conexao = Conexao.abrir();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setString(1, produto.getNome());
+            stmt.setDouble(2, produto.getPreco());
+            stmt.setInt(3, produto.getQuantidade());
+            stmt.setString(4, produto.getCategoria());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao salvar produto.", e);
+        }
+    }
+
+    @Override
+    public void atualizar(Produto produto) {
+        String sql = "UPDATE produtos SET nome = ?, preco = ?, quantidade = ?, categoria = ? WHERE id = ?";
+        try (Connection conexao = Conexao.abrir();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setString(1, produto.getNome());
+            stmt.setDouble(2, produto.getPreco());
+            stmt.setInt(3, produto.getQuantidade());
+            stmt.setString(4, produto.getCategoria());
+            stmt.setInt(5, produto.getId());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar produto.", e);
+        }
+    }
+
+    @Override
+    public void excluir(int id) {
+        String sql = "DELETE FROM produtos WHERE id = ?";
+        try (Connection conexao = Conexao.abrir();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao excluir produto.", e);
+        }
+    }
+
+    @Override
+    public List&lt;Produto&gt; listar() {
+        List&lt;Produto&gt; produtos = new ArrayList&lt;&gt;();
+        String sql = "SELECT id, nome, preco, quantidade, categoria FROM produtos ORDER BY nome";
+
+        try (Connection conexao = Conexao.abrir();
+             PreparedStatement stmt = conexao.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Produto p = new Produto(
+                        rs.getInt("id"),
+                        rs.getString("nome"),
+                        rs.getDouble("preco"),
+                        rs.getInt("quantidade"),
+                        rs.getString("categoria"));
+                produtos.add(p);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar produtos.", e);
+        }
+        return produtos;
+    }
+
+    @Override
+    public Produto buscarPorId(int id) {
+        String sql = "SELECT id, nome, preco, quantidade, categoria FROM produtos WHERE id = ?";
+        try (Connection conexao = Conexao.abrir();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Produto(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getDouble("preco"),
+                            rs.getInt("quantidade"),
+                            rs.getString("categoria"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar produto.", e);
+        }
+        return null;
+    }
+}</code></pre>
+    </div>
+</section>
+
+<section class="section-box">
+    <h2>Passo 6: Interface Gráfica Swing (ProdutoForm.java)</h2>
+    <p>
+        A janela principal reúne o formulário (campos), a tabela de produtos e os botões do CRUD. O código usa
+        <code>JTable</code> com um <code>DefaultTableModel</code> para exibir a listagem.
+    </p>
+    <div class="code-container">
+        <pre><code class="language-java">package com.exemplo.produtos.ui;
+
+import com.exemplo.produtos.dao.ProdutoDAO;
+import com.exemplo.produtos.dao.ProdutoDAOImpl;
+import com.exemplo.produtos.model.Produto;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+
+public class ProdutoForm extends JFrame {
+
+    private final ProdutoDAO produtoDAO = new ProdutoDAOImpl();
+
+    private final JTextField campoId = new JTextField(6);
+    private final JTextField campoNome = new JTextField(20);
+    private final JTextField campoPreco = new JTextField(10);
+    private final JTextField campoQuantidade = new JTextField(6);
+    private final JTextField campoCategoria = new JTextField(12);
+
+    private final DefaultTableModel modeloTabela = new DefaultTableModel(
+            new String[]{"ID", "Nome", "Preço", "Qtd.", "Categoria"}, 0);
+
+    private final JTable tabela = new JTable(modeloTabela);
+
+    public ProdutoForm() {
+        setTitle("Cadastro de Produtos - JDBC + Swing");
+        setSize(720, 480);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        setLayout(new BorderLayout());
+        add(criarCampos(), BorderLayout.NORTH);
+        add(criarTabela(), BorderLayout.CENTER);
+        add(criarBotoes(), BorderLayout.SOUTH);
+
+        listar();
+    }
+
+    private JPanel criarCampos() {
+        JPanel painel = new JPanel(new GridLayout(3, 4, 8, 8));
+        painel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        painel.add(new JLabel("ID:"));
+        painel.add(campoId);
+        painel.add(new JLabel("Nome:"));
+        painel.add(campoNome);
+        painel.add(new JLabel("Preço:"));
+        painel.add(campoPreco);
+        painel.add(new JLabel("Quantidade:"));
+        painel.add(campoQuantidade);
+        painel.add(new JLabel("Categoria:"));
+        painel.add(campoCategoria);
+        painel.add(new JLabel());
+        painel.add(new JLabel());
+
+        return painel;
+    }
+
+    private JScrollPane criarTabela() {
+        tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabela.getSelectionModel().addListSelectionListener(e -&gt; preencherCamposDaLinhaSelecionada());
+        return new JScrollPane(tabela);
+    }
+
+    private JPanel criarBotoes() {
+        JButton salvar = new JButton("Salvar (Novo)");
+        JButton atualizar = new JButton("Atualizar");
+        JButton excluir = new JButton("Excluir");
+        JButton limpar = new JButton("Limpar");
+        JButton listar = new JButton("Listar");
+
+        salvar.addActionListener(e -&gt; salvar());
+        atualizar.addActionListener(e -&gt; atualizar());
+        excluir.addActionListener(e -&gt; excluir());
+        limpar.addActionListener(e -&gt; limparCampos());
+        listar.addActionListener(e -&gt; listar());
+
+        JPanel painel = new JPanel();
+        painel.add(salvar);
+        painel.add(atualizar);
+        painel.add(excluir);
+        painel.add(limpar);
+        painel.add(listar);
+        return painel;
+    }
+
+    private void salvar() {
+        try {
+            Produto p = new Produto();
+            p.setNome(campoNome.getText().trim());
+            p.setPreco(Double.parseDouble(campoPreco.getText().trim()));
+            p.setQuantidade(Integer.parseInt(campoQuantidade.getText().trim()));
+            p.setCategoria(campoCategoria.getText().trim());
+
+            produtoDAO.salvar(p);
+            JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
+            limparCampos();
+            listar();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + ex.getMessage());
+        }
+    }
+
+    private void atualizar() {
+        if (campoId.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Selecione um produto na tabela.");
+            return;
+        }
+        try {
+            Produto p = new Produto();
+            p.setId(Integer.parseInt(campoId.getText().trim()));
+            p.setNome(campoNome.getText().trim());
+            p.setPreco(Double.parseDouble(campoPreco.getText().trim()));
+            p.setQuantidade(Integer.parseInt(campoQuantidade.getText().trim()));
+            p.setCategoria(campoCategoria.getText().trim());
+
+            produtoDAO.atualizar(p);
+            JOptionPane.showMessageDialog(this, "Produto atualizado com sucesso!");
+            limparCampos();
+            listar();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar: " + ex.getMessage());
+        }
+    }
+
+    private void excluir() {
+        if (campoId.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Selecione um produto na tabela.");
+            return;
+        }
+        int id = Integer.parseInt(campoId.getText().trim());
+        int confirmacao = JOptionPane.showConfirmDialog(
+                this, "Excluir o produto selecionado?", "Confirmar", JOptionPane.YES_NO_OPTION);
+
+        if (confirmacao == JOptionPane.YES_OPTION) {
+            produtoDAO.excluir(id);
+            limparCampos();
+            listar();
+        }
+    }
+
+    private void listar() {
+        modeloTabela.setRowCount(0);
+        for (Produto p : produtoDAO.listar()) {
+            modeloTabela.addRow(new Object[]{
+                    p.getId(), p.getNome(), p.getPreco(), p.getQuantidade(), p.getCategoria()
+            });
+        }
+    }
+
+    private void preencherCamposDaLinhaSelecionada() {
+        int linha = tabela.getSelectedRow();
+        if (linha &gt;= 0) {
+            campoId.setText(String.valueOf(modeloTabela.getValueAt(linha, 0)));
+            campoNome.setText(String.valueOf(modeloTabela.getValueAt(linha, 1)));
+            campoPreco.setText(String.valueOf(modeloTabela.getValueAt(linha, 2)));
+            campoQuantidade.setText(String.valueOf(modeloTabela.getValueAt(linha, 3)));
+            campoCategoria.setText(String.valueOf(modeloTabela.getValueAt(linha, 4)));
+        }
+    }
+
+    private void limparCampos() {
+        campoId.setText("");
+        campoNome.setText("");
+        campoPreco.setText("");
+        campoQuantidade.setText("");
+        campoCategoria.setText("");
+    }
+}</code></pre>
+    </div>
+</section>
+
+<section class="section-box">
+    <h2>Passo 7: Classe Principal (Main.java)</h2>
+    <p>
+        A classe com o método <code>main</code> apenas abre a janela Swing. O
+        <code>SwingUtilities.invokeLater</code> garante que a interface seja criada na <strong>Event Dispatch
+            Thread</strong> (EDT), prática obrigatória em qualquer aplicação gráfica Java.
+    </p>
+    <div class="code-container">
+        <pre><code class="language-java">package com.exemplo.produtos;
+
+import com.exemplo.produtos.ui.ProdutoForm;
+import javax.swing.SwingUtilities;
+
+public class Main {
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -&gt; {
+            new ProdutoForm().setVisible(true);
+        });
+    }
+}</code></pre>
+    </div>
+</section>
+
+<section class="section-box">
+    <h2>Como Executar</h2>
+    <ol>
+        <li><strong>Banco:</strong> execute o script do Passo 1 no seu MySQL (confira se o serviço está rodando).</li>
+        <li><strong>Conexão:</strong> em <code>Conexao.java</code>, ajuste <code>USUARIO</code> e <code>SENHA</code>
+            para as credenciais do seu MySQL.</li>
+        <li><strong>Compilar:</strong> no VS Code, abra o arquivo <code>Main.java</code> e clique no botão
+            <strong>"Run"</strong> (ou pressione <code>F5</code>). O Maven resolve a dependência do driver
+            automaticamente.</li>
+        <li><strong>Testar o CRUD:</strong>
+            <ul>
+                <li><strong>Salvar:</strong> preencha os campos e clique em <em>"Salvar (Novo)"</em>.</li>
+                <li><strong>Atualizar:</strong> selecione uma linha da tabela, altere os campos e clique em
+                    <em>"Atualizar"</em>.</li>
+                <li><strong>Excluir:</strong> selecione a linha e clique em <em>"Excluir"</em> (o sistema pede
+                    confirmação).</li>
+                <li><strong>Listar:</strong> o botão <em>"Listar"</em> recarrega a tabela com os dados do banco.</li>
+            </ul>
+        </li>
+    </ol>
+    <div class="tip-box">
+        <h4>Dica de demonstração em sala</h4>
+        <ul>
+            <li>Rode a aplicação e cadastre alguns produtos. Em seguida, abra o MySQL Workbench e execute
+                <code class="one-line-code">SELECT * FROM cadastro_produtos.produtos;</code> para mostrar aos alunos que
+                os dados realmente foram persistidos no banco — não apenas na memória do programa.</li>
+            <li>Para demonstrar a proteção contra SQL Injection, troque momentaneamente o
+                <code class="one-line-code">PreparedStatement</code> por concatenação de strings e digite
+                <code class="one-line-code">' OR '1'='1</code> em um campo de busca.</li>
+        </ul>
+    </div>
+</section>
+
+<section class="tip-box">
+    <h4>Dicas &amp; Lembretes</h4>
+    <ul>
+        <li><strong>Driver automático:</strong> com o Maven, o arquivo <code>.jar</code> do driver é baixado e colocado
+            no classpath automaticamente — você não precisa fazer nada manual.</li>
+        <li><strong>URL de conexão:</strong> se o MySQL usar outra porta (ex.: 3307 no XAMPP), ajuste a URL em
+            <code>Conexao.java</code>.</li>
+        <li><strong>Nunca concatene SQL:</strong> todos os comandos usam <code>PreparedStatement</code> com
+            parâmetros começando em 1 — jamais monte o SQL com valores do usuário.</li>
+        <li><strong>Recursos:</strong> todas as conexões e statements usam <code>try-with-resources</code>, garantindo
+            o fechamento mesmo em caso de erro.</li>
+        <li><strong>Interface gráfica:</strong> crie a janela na EDT com <code>SwingUtilities.invokeLater</code>.</li>
+    </ul>
+</section>
+
