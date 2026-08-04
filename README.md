@@ -2,8 +2,6 @@
 
 Este repositório contém o **Portal de Apostilas Digitais** da ETEC, um conjunto de apostilas interativas para os componentes curriculares do curso técnico em Desenvolvimento de Sistemas. O portal é gerado com o gerador de sites estáticos **Eleventy (11ty)**, com foco em performance, facilidade de manutenção e uma experiência de leitura fluida para os alunos.
 
----
-
 Este README é a **fonte única de documentação** do projeto (arquitetura, estrutura, convenções e design system).
 
 ## Tecnologias Utilizadas
