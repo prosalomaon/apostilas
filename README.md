@@ -215,7 +215,7 @@ A aula deve seguir esta sequência de seções para garantir a consistência ped
 </section>
 ```
 
-2. **Exemplo de Código** — demonstração prática de sintaxe ou lógica:
+1. **Exemplo de Código** — demonstração prática de sintaxe ou lógica:
 
 ```html
 <section class="section-box">
@@ -226,7 +226,7 @@ A aula deve seguir esta sequência de seções para garantir a consistência ped
 </section>
 ```
 
-3. **Representação Gráfica** — diagramas Mermaid para visualização:
+1. **Representação Gráfica** — diagramas Mermaid para visualização:
 
 ```html
 <section class="section-box">
@@ -238,7 +238,7 @@ A aula deve seguir esta sequência de seções para garantir a consistência ped
 </section>
 ```
 
-4. **Dicas & Lembretes** — destaques e "pulos do gato":
+1. **Dicas & Lembretes** — destaques e "pulos do gato":
 
 ```html
 <div class="tip-box">
@@ -249,7 +249,7 @@ A aula deve seguir esta sequência de seções para garantir a consistência ped
 </div>
 ```
 
-5. **Como aplicar na Prática** — cenários de uso real:
+1. **Como aplicar na Prática** — cenários de uso real:
 
 ```html
 <section class="section-box">
@@ -260,7 +260,7 @@ A aula deve seguir esta sequência de seções para garantir a consistência ped
 </section>
 ```
 
-6. **Referências** — fontes de estudo e bibliografia:
+1. **Referências** — fontes de estudo e bibliografia:
 
 ```html
 <section class="section-box">
@@ -271,7 +271,7 @@ A aula deve seguir esta sequência de seções para garantir a consistência ped
 </section>
 ```
 
-7. **Para Praticar** — links para os exercícios da aula:
+1. **Para Praticar** — links para os exercícios da aula:
 
 ```html
 <section class="section-box">
@@ -285,7 +285,7 @@ A aula deve seguir esta sequência de seções para garantir a consistência ped
 
 ### 4. Exercício prático (`exercicio-01.html`, layout `exercicio`)
 
-#### Metadados (front matter)
+#### Metadados (front matter) - Exercício prático
 
 ```yaml
 ---
@@ -349,7 +349,7 @@ description: "Breve resumo da atividade"
 
 O questionário é renderizado pelo layout `questionario`, que já fornece o formulário interativo, a correção automática e o **código de autenticidade** (gerado a partir do nome do aluno, da sigla do componente e de um timestamp).
 
-#### Metadados (front matter)
+#### Metadados (front matter) - Questionário
 
 ```yaml
 ---
