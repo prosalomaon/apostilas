@@ -56,6 +56,174 @@ END IF;</code></pre>
     <code class="one-line-code">LOOP</code> simples. Eles são frequentemente usados com <strong>Cursores</strong>
     para processar resultados linha por linha.
   </p>
+  <p>
+    No MySQL, os laços são escritos dentro de um bloco <code class="one-line-code">BEGIN ... END</code> e exigem o uso
+    do <code class="one-line-code">DELIMITER</code>. O exemplo abaixo preenche uma tabela auxiliar de sorteio usando as
+    três formas mais comuns:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE numeros_sorteio (id INT AUTO_INCREMENT PRIMARY KEY, valor INT);
+
+DELIMITER $$
+
+-- WHILE: executa enquanto a condição for verdadeira
+CREATE PROCEDURE GeraSorteioWhile(IN qtd INT)
+BEGIN
+    DECLARE contador INT DEFAULT 1;
+
+    WHILE contador <= qtd DO
+        INSERT INTO numeros_sorteio (valor) VALUES (contador);
+        SET contador = contador + 1;
+    END WHILE;
+END $$
+
+-- REPEAT: executa primeiro e repete até a condição se tornar verdadeira
+CREATE PROCEDURE GeraSorteioRepeat(IN qtd INT)
+BEGIN
+    DECLARE contador INT DEFAULT 1;
+
+    REPEAT
+        INSERT INTO numeros_sorteio (valor) VALUES (contador);
+        SET contador = contador + 1;
+    UNTIL contador > qtd
+    END REPEAT;
+END $$
+
+-- LOOP: infinito, interrompido por um LEAVE rotulado
+CREATE PROCEDURE GeraSorteioLoop(IN qtd INT)
+BEGIN
+    DECLARE contador INT DEFAULT 1;
+
+    loop_sorteio: LOOP
+        INSERT INTO numeros_sorteio (valor) VALUES (contador);
+        SET contador = contador + 1;
+
+        IF contador > qtd THEN
+            LEAVE loop_sorteio;
+        END IF;
+    END LOOP;
+END $$
+
+DELIMITER ;
+
+CALL GeraSorteioWhile(10);
+CALL GeraSorteioRepeat(20);
+CALL GeraSorteioLoop(30);
+
+SELECT COUNT(*) FROM numeros_sorteio; -- 60 números</code></pre>
+  </div>
+  <p>
+    No PostgreSQL (PL/pgSQL), a forma mais comum é o laço <code class="one-line-code">FOR</code>, que percorre uma
+    faixa de valores ou o resultado de uma consulta — ideal para processar linhas uma a uma:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Laço FOR percorrendo uma faixa de valores
+CREATE OR REPLACE FUNCTION gera_sorteio_for(qtd INT) RETURNS VOID AS $$
+DECLARE
+    contador INT;
+BEGIN
+    FOR contador IN 1..qtd LOOP
+        INSERT INTO numeros_sorteio (valor) VALUES (contador);
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT gera_sorteio_for(40);
+
+-- Laço FOR percorrendo o resultado de uma consulta (linha por linha)
+CREATE OR REPLACE FUNCTION soma_estoque() RETURNS INT AS $$
+DECLARE
+    linha RECORD;
+    total INT := 0;
+BEGIN
+    FOR linha IN SELECT saldo_estoque FROM produtos LOOP
+        total := total + linha.saldo_estoque;
+    END LOOP;
+    RETURN total;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT soma_estoque();</code></pre>
+  </div>
+
+  <h4>B1. Laços com Cursores</h4>
+  <p>
+    Quando a repetição precisa <strong>percorrer as linhas do resultado de uma consulta</strong>, combinamos um laço
+    com um <strong>Cursor</strong>: um ponteiro que percorre o conjunto de resultados linha por linha. Em um cursor
+    são executadas quatro etapas: <code class="one-line-code">DECLARE</code> (definição da consulta),
+    <code class="one-line-code">OPEN</code> (abertura), <code class="one-line-code">FETCH</code> (leitura de cada
+    linha) e <code class="one-line-code">CLOSE</code> (liberação dos recursos).
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- MySQL: cursor com laço LOOP e handler para detectar o fim dos dados
+DELIMITER $$
+
+CREATE PROCEDURE AtualizaComissoes()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_codigo INT;
+    DECLARE v_salario DECIMAL(10,2);
+
+    DECLARE cursor_vendedores CURSOR FOR
+        SELECT codigo_vendedor, salario_fixo FROM vendedores;
+
+    -- Quando o FETCH não encontrar mais linhas, marca o fim da leitura
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cursor_vendedores;
+
+    loop_leitura: LOOP
+        FETCH cursor_vendedores INTO v_codigo, v_salario;
+
+        IF done THEN
+            LEAVE loop_leitura;
+        END IF;
+
+        IF v_salario < 2000 THEN
+            UPDATE vendedores
+            SET salario_fixo = salario_fixo * 1.05
+            WHERE codigo_vendedor = v_codigo;
+        END IF;
+    END LOOP;
+
+    CLOSE cursor_vendedores;
+END $$
+
+DELIMITER ;
+
+CALL AtualizaComissoes();</code></pre>
+  </div>
+  <p>
+    No PostgreSQL, o cursor é declarado na seção <code class="one-line-code">DECLARE</code> da função, e o laço
+    <code class="one-line-code">LOOP</code> usa o comando <code class="one-line-code">EXIT WHEN NOT FOUND</code> para
+    encerrar quando todas as linhas forem percorridas:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE OR REPLACE FUNCTION atualiza_comissoes() RETURNS VOID AS $$
+DECLARE
+    rec_vendedor RECORD;
+    cursor_vendedores CURSOR FOR
+        SELECT codigo_vendedor, salario_fixo FROM vendedores;
+BEGIN
+    OPEN cursor_vendedores;
+
+    LOOP
+        FETCH cursor_vendedores INTO rec_vendedor;
+        EXIT WHEN NOT FOUND;
+
+        IF rec_vendedor.salario_fixo < 2000 THEN
+            UPDATE vendedores
+            SET salario_fixo = salario_fixo * 1.05
+            WHERE codigo_vendedor = rec_vendedor.codigo_vendedor;
+        END IF;
+    END LOOP;
+
+    CLOSE cursor_vendedores;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT atualiza_comissoes();</code></pre>
+  </div>
 
   <h3>4. Implementação Prática: MySQL vs. PostgreSQL</h3>
   <p>
@@ -100,6 +268,65 @@ END IF;</code></pre>
     erro, desfazer a operação (<code class="one-line-code">ROLLBACK</code>) ou emitir um aviso customizado via
     comando <code class="one-line-code">SIGNAL</code>.
   </p>
+  <p>
+    No MySQL, os manipuladores são declarados com a instrução <code class="one-line-code">DECLARE ... HANDLER</code>
+    no início do bloco. Existem dois tipos principais: <code class="one-line-code">CONTINUE</code>, que ignora o erro
+    e segue o fluxo, e <code class="one-line-code">EXIT</code>, que encerra o bloco. O comando
+    <code class="one-line-code">SIGNAL</code> permite emitir um erro customizado para a aplicação:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+CREATE PROCEDURE RegistraPedido(IN id_vendedor INT, IN id_produto INT)
+BEGIN
+    -- EXIT: se qualquer erro ocorrer, desfaz a transação e aborta com mensagem própria
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro ao registrar o pedido';
+    END;
+
+    -- CONTINUE: ignora duplicatas (SQLSTATE 23000) e segue o fluxo normal
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '23000' SET @ignorada = 1;
+
+    START TRANSACTION;
+
+    INSERT INTO pedido (codigo_vendedor) VALUES (id_vendedor);
+    INSERT INTO item_pedido (numero_pedido, codigo_produto, quantidade, preco_unitario)
+    VALUES (LAST_INSERT_ID(), id_produto, 1,
+            (SELECT preco_venda FROM produtos WHERE codigo = id_produto));
+
+    COMMIT;
+END $$
+
+DELIMITER ;
+
+CALL RegistraPedido(11, 108);</code></pre>
+  </div>
+  <p>
+    No PostgreSQL, o tratamento é feito em um <strong>sub-bloco</strong> com a cláusula
+    <code class="one-line-code">EXCEPTION WHEN ... THEN</code>. Cada exceção tem um nome próprio, como
+    <code class="one-line-code">foreign_key_violation</code> ou <code class="one-line-code">unique_violation</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE OR REPLACE FUNCTION registra_pedido(id_vendedor INT, id_produto INT) RETURNS VOID AS $$
+BEGIN
+    BEGIN
+        INSERT INTO pedido (codigo_vendedor) VALUES (id_vendedor);
+        INSERT INTO item_pedido (numero_pedido, codigo_produto, quantidade, preco_unitario)
+        VALUES (LASTVAL(), id_produto, 1,
+                (SELECT preco_venda FROM produtos WHERE codigo = id_produto));
+
+        EXCEPTION WHEN foreign_key_violation THEN
+            RAISE NOTICE 'Vendedor ou produto inexistente';
+            ROLLBACK;
+    END;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT registra_pedido(11, 108);   -- executa normalmente
+SELECT registra_pedido(999, 108);  -- dispara o aviso e desfaz a operação</code></pre>
+  </div>
 </section>
 
 <section class="section-box">
