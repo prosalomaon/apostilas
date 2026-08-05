@@ -1,19 +1,483 @@
 ---
-title: "Técnicas de Caixa Preta"
+title: "Técnicas de Teste de Caixa Preta"
 aula_numero: "22"
 subject: "qualidade-e-teste-de-software"
-description: "Conteúdo da aula 02 do bimestre 03: Técnicas de Caixa Preta."
+description: "Esta aula apresenta as Técnicas de Teste de Caixa Preta (teste funcional), que tratam o software como um sistema fechado, focando na funcionalidade externa. Aborda Particionamento de Classes de Equivalência (ECP), Análise de Valor Limite (BVA), Tabelas de Decisão e técnicas complementares para projetar casos de teste eficazes."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 02 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. Objetivos da Aula</h3>
+  <ul>
+    <li>Compreender os fundamentos do <strong>Teste de Caixa Preta</strong> (funcional).</li>
+    <li>Aprender a aplicar o <strong>Particionamento de Equivalência</strong> e a <strong>Análise de Valor
+        Limite</strong> para reduzir o número de casos de teste mantendo a eficácia.</li>
+    <li>Utilizar <strong>Tabelas de Decisão</strong> para validar lógicas de negócio complexas com múltiplas
+      variáveis.</li>
+  </ul>
+
+  <h3>2. A. O que é Teste de Caixa Preta?</h3>
+  <p>
+    Também chamado de <strong>teste funcional</strong>, esta técnica <strong>ignora os detalhes internos do
+    código</strong> e foca exclusivamente nas <strong>entradas</strong> e <strong>saídas</strong> do sistema. O
+    testador verifica se o comportamento do software está em conformidade com os <strong>requisitos e
+    especificações</strong> documentados, tratando o programa como um <strong>bloco opaco</strong>.
+  </p>
+  <p>
+    Como a caixa é "preta", o testador não enxerga a implementação: ele conhece apenas o que o sistema deve
+    receber e o que deve produzir. Isso permite que os testes sejam executados por <strong>profissionais
+    independentes</strong>, sem depender do conhecimento do código-fonte, e torna esta técnica ideal para a
+    validação dos <em>requisitos funcionais</em> do sistema.
+  </p>
+
+  <h3>3. B. Particionamento de Classes de Equivalência (ECP)</h3>
+  <p>
+    Esta técnica divide o <strong>domínio de entrada</strong> em subdomínios, chamados de
+    <strong>Classes de Equivalência</strong>.
+  </p>
+  <ul>
+    <li>
+      <strong>Conceito:</strong> Parte-se do princípio de que todos os dados dentro de uma mesma classe terão o
+      <em>mesmo efeito</em> no sistema.
+    </li>
+    <li>
+      <strong>Aplicação:</strong> Em vez de testar todos os valores possíveis, seleciona-se apenas
+      <strong>um representante</strong> de cada classe (<em>válida</em> ou <em>inválida</em>).
+    </li>
+    <li>
+      <strong>Vantagem:</strong> Permite cobrir um domínio imenso com um número reduzido e eficiente de casos de
+      teste.
+    </li>
+  </ul>
+  <p>
+    Cada classe de equivalência deve conter ao menos um caso de teste: uma classe <em>válida</em> representa uma
+    entrada aceita pelo sistema, e uma classe <em>inválida</em> representa uma entrada que deve ser rejeitada. As
+    classes inválidas recebem atenção especial porque, na prática, é onde a maioria dos defeitos é encontrada.
+  </p>
+
+  <h3>4. C. Análise de Valor Limite (BVA)</h3>
+  <p>
+    A experiência mostra que <strong>a maioria dos erros ocorre nas fronteiras dos domínios de entrada</strong>, e
+    não em seus valores centrais.
+  </p>
+  <ul>
+    <li>
+      <strong>Foco:</strong> Complementa o particionamento ao selecionar dados <strong>nos limites</strong> das
+      classes (mínimo, máximo e valores imediatamente fora deles).
+    </li>
+    <li>
+      <strong>Exemplo:</strong> Se um campo aceita valores de <strong>1 a 100</strong>, os testes de valor limite
+      seriam realizados em <code class="one-line-code">0, 1, 2</code> e <code class="one-line-code">99, 100,
+        101</code>.
+    </li>
+  </ul>
+  <p>
+    Enquanto o ECP escolhe um representante do meio de cada classe, o BVA concentra os testes
+    <strong>exatamente nas fronteiras</strong> e nos valores adjacentes — o <em>menor válido</em>, o
+    <em>maior válido</em> e os valores imediatamente fora do intervalo (<em>one below</em> e <em>one above</em>).
+  </p>
+
+  <h3>5. D. Tabelas de Decisão</h3>
+  <p>
+    Muitas vezes, uma funcionalidade depende da <strong>combinação de vários critérios</strong>. As
+    <strong>Tabelas de Decisão</strong> são usadas para modelar essas lógicas complexas.
+  </p>
+  <ul>
+    <li>
+      <strong>Estrutura:</strong> Consiste em um conjunto de <strong>condições</strong> (causas) e
+      <strong>efeitos</strong> (resultados esperados).
+    </li>
+    <li>
+      <strong>Regras:</strong> Cada coluna da tabela representa uma <strong>regra de negócio</strong> e torna-se um
+      <strong>caso de teste específico</strong> a ser executado.
+    </li>
+  </ul>
+  <p>
+    Com duas condições binárias, temos <strong>2<sup>2</sup> = 4 regras</strong>; com três, já são
+    <strong>8 combinações</strong>. A tabela garante que nenhuma combinação relevante de condições fique fora do
+    plano de testes.
+  </p>
+
+  <h3>6. E. Outras Técnicas de Caixa Preta</h3>
+  <p>Além das principais, o material cita técnicas complementares:</p>
+  <ul>
+    <li>
+      <strong>Adivinhação de Erros (Error Guessing):</strong> Baseia-se no <em>conhecimento e intuição</em> do
+      testador para prever onde o software pode falhar (ex.: dividir por zero, campos vazios, valores negativos).
+    </li>
+    <li>
+      <strong>Teste Aleatório:</strong> Seleção de entradas de forma <em>randômica</em> dentro do domínio para
+      verificar a estabilidade geral do sistema.
+    </li>
+    <li>
+      <strong>Teste de Transição de Estados:</strong> Focado em sistemas onde o resultado depende do
+      <em>estado atual</em> e de uma nova entrada (comum em sistemas de ATM ou telecomunicações).
+    </li>
+  </ul>
+
+  <h3>7. F. Ferramentas de Apoio</h3>
+  <p>
+    Para a execução destes testes, o plano de curso sugere ferramentas que permitem <strong>automação e
+    registro</strong>:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Ferramenta</th>
+        <th>Finalidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Selenium</strong></td>
+        <td>Automação de testes funcionais em navegadores web.</td>
+      </tr>
+      <tr>
+        <td><strong>BadBoy ou Wireshark</strong></td>
+        <td>Interceptar e testar o fluxo de dados entre entrada e saída.</td>
+      </tr>
+      <tr>
+        <td><strong>Planilhas Eletrônicas</strong></td>
+        <td>Criação das Matrizes de Rastreabilidade e das Tabelas de Decisão.</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 02 em desenvolvimento...</p>
+  <h2>Exemplos Práticos</h2>
+
+  <h3>1. Particionamento de Equivalência: Cadastro de Senhas</h3>
+  <p>
+    Um sistema de cadastro exige que a senha tenha <strong>entre 6 e 12 caracteres</strong>. O domínio de entrada é
+    dividido em três classes, e basta um representante de cada uma para cobrir todo o universo de testes:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Classe de Equivalência</th>
+        <th>Tipo</th>
+        <th>Valor Representativo</th>
+        <th>Resultado Esperado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Senha com menos de 6 caracteres</td>
+        <td>Inválida</td>
+        <td><code class="one-line-code">"abc"</code> (3 caracteres)</td>
+        <td>Erro: senha muito curta</td>
+      </tr>
+      <tr>
+        <td>Senha entre 6 e 12 caracteres</td>
+        <td>Válida</td>
+        <td><code class="one-line-code">"segredo123"</code> (10 caracteres)</td>
+        <td>Senha aceita</td>
+      </tr>
+      <tr>
+        <td>Senha com mais de 12 caracteres</td>
+        <td>Inválida</td>
+        <td><code class="one-line-code">"chavemuitolongaparaouso"</code> (15 caracteres)</td>
+        <td>Erro: senha muito longa</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    O exemplo do enunciado usa <strong>3, 8 e 15 caracteres</strong> como representantes das três classes —
+    todos dentro das mesmas classes da tabela acima.
+  </p>
+
+  <h3>2. Análise de Valor Limite: Campo Numérico e a Senha</h3>
+  <p>
+    Aplicando o BVA ao campo que aceita valores de <strong>1 a 100</strong>, os casos de teste concentram-se nas
+    fronteiras:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Valor Testado</th>
+        <th>Posição na Fronteira</th>
+        <th>Resultado Esperado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">0</code></td>
+        <td>Imediatamente abaixo do mínimo (inválido)</td>
+        <td>Erro de validação</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">1</code></td>
+        <td>Limite mínimo válido</td>
+        <td>Aceito</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">2</code></td>
+        <td>Primeiro valor acima do mínimo</td>
+        <td>Aceito</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">99</code></td>
+        <td>Último valor abaixo do máximo</td>
+        <td>Aceito</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">100</code></td>
+        <td>Limite máximo válido</td>
+        <td>Aceito</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">101</code></td>
+        <td>Imediatamente acima do máximo (inválido)</td>
+        <td>Erro de validação</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    O mesmo raciocínio pode ser aplicado à senha de 6 a 12 caracteres: testar tamanhos
+    <code class="one-line-code">5</code>, <code class="one-line-code">6</code>, <code
+      class="one-line-code">7</code> e <code class="one-line-code">11</code>, <code
+      class="one-line-code">12</code>, <code class="one-line-code">13</code>.
+  </p>
+
+  <h3>3. Tabela de Decisão: Pagamento de Bônus de Funcionários</h3>
+  <p>
+    Um sistema de pagamento de bônus combina duas condições: <em>"Trabalhou mais de 40 horas?"</em> e
+    <em>"É funcionário mensalista?"</em>. Com duas condições binárias, temos 4 regras possíveis — cada coluna da
+    tabela abaixo é um <strong>caso de teste</strong>:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Regra 1</th>
+        <th>Regra 2</th>
+        <th>Regra 3</th>
+        <th>Regra 4</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>C1: Trabalhou mais de 40 horas?</strong></td>
+        <td>Não</td>
+        <td>Não</td>
+        <td>Sim</td>
+        <td>Sim</td>
+      </tr>
+      <tr>
+        <td><strong>C2: É funcionário mensalista?</strong></td>
+        <td>Não</td>
+        <td>Sim</td>
+        <td>Não</td>
+        <td>Sim</td>
+      </tr>
+      <tr>
+        <td><strong>E1: Pagar valor base</strong></td>
+        <td style="text-align:center">-</td>
+        <td style="text-align:center">X</td>
+        <td style="text-align:center">-</td>
+        <td style="text-align:center">X</td>
+      </tr>
+      <tr>
+        <td><strong>E2: Pagar hora extra dobrada</strong></td>
+        <td style="text-align:center">-</td>
+        <td style="text-align:center">-</td>
+        <td style="text-align:center">X</td>
+        <td style="text-align:center">X</td>
+      </tr>
+      <tr>
+        <td><strong>E3: Bloquear pagamento</strong></td>
+        <td style="text-align:center">X</td>
+        <td style="text-align:center">-</td>
+        <td style="text-align:center">-</td>
+        <td style="text-align:center">-</td>
+      </tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><strong>Regra 1:</strong> sem horas extras e sem contrato mensal → <em>bloquear pagamento</em> (situação
+      inconsistente).</li>
+    <li><strong>Regra 2:</strong> mensalista sem horas extras → <em>pagar valor base</em>.</li>
+    <li><strong>Regra 3:</strong> não mensalista com horas extras → <em>pagar hora extra dobrada</em>.</li>
+    <li><strong>Regra 4:</strong> mensalista com horas extras → <em>pagar valor base + hora extra dobrada</em>.</li>
+  </ul>
+  <p>
+    Cada combinação desses fatores gera uma linha na tabela de execução, garantindo que a lógica de negócio seja
+    validada em todas as possibilidades.
+  </p>
+
+  <h3>4. Adivinhação de Erros: ideias de "onde pode falhar"</h3>
+  <p>
+    Usando a intuição do testador, no exemplo da senha podemos levantar suspeitas antes mesmo de executar:
+  </p>
+  <ul>
+    <li>O que acontece se a senha tiver <strong>exatamente 6</strong> ou <strong>exatamente 12</strong>
+      caracteres? (fronteiras)</li>
+    <li>E se for <strong>vazia</strong> ou conter apenas <strong>espaços</strong>?</li>
+    <li>E se contiver <strong>caracteres especiais</strong> ou <strong>acentos</strong>?</li>
+    <li>E se vier com <strong>espaços no início ou no fim</strong>?</li>
+  </ul>
+  <p>
+    Essas "suposições" viram casos de teste rápidos que frequentemente revelam defeitos ignorados pelas técnicas
+    sistemáticas.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Diagramação</h2>
+  <p>Representação visual dos principais conceitos abordados nesta aula:</p>
+
+  <h3>1. O Software como uma "Caixa Preta"</h3>
+  <p>
+    O testador interage apenas com as entradas e observa as saídas, sem enxergar o código interno (Caixa Preta) —
+    diferentemente do que ocorre no teste de caixa branca.
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    subgraph BP ["CAIXA PRETA"]
+      direction LR
+      B1["Entradas"] --> B2["Sistema (bloco opaco)"]
+      B2 --> B3["Saídas"]
+    end
+    A["Casos de teste\n(requisitos)"] --> B1
+    B3 --> R["Resultado vs. Especificação"]
+
+    style B2 fill:#212529,color:#fff,stroke:#495057,stroke-width:2px
+    style B1 fill:#cfe2ff,stroke:#084298
+    style B3 fill:#cfe2ff,stroke:#084298
+  </div>
+
+  <h3>2. Processo do Particionamento de Equivalência</h3>
+  <p>
+    Fluxo de construção dos casos de teste a partir das classes de equivalência do domínio de entrada.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A([Domínio de Entrada]) --> B[Dividir em Classes\nde Equivalência]
+    B --> C{Classe é válida\nou inválida?}
+    C -->|Válida| D[Selecionar um\nrepresentante]
+    C -->|Inválida| E[Selecionar um\nrepresentante]
+    D --> F[Criar caso de teste\ncom resultado esperado]
+    E --> F
+    F --> G([Executar e comparar\ncom a especificação])
+
+    style A fill:#d1e7dd,stroke:#0f5132
+    style C fill:#fff3cd,stroke:#664d03
+    style G fill:#d1e7dd,stroke:#0f5132
+  </div>
+
+  <h3>3. BVA: Concentrando Testes nas Fronteiras</h3>
+  <p>
+    Para um intervalo de <strong>1 a 100</strong>, os pontos de maior probabilidade de defeito ficam exatamente
+    nas bordas e em seus vizinhos imediatos.
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    A["0\n(inválido)"] --> B["1\n(mínimo)"]
+    B --> C["2\n(acima do mínimo)"]
+    C --> D["... valores centrais\n(cobertos pelo ECP) ..."]
+    D --> E["99\n(abaixo do máximo)"]
+    E --> F["100\n(máximo)"]
+    F --> G["101\n(inválido)"]
+
+    style A fill:#f8d7da,stroke:#721c24
+    style G fill:#f8d7da,stroke:#721c24
+    style B fill:#d1e7dd,stroke:#0f5132
+    style C fill:#d1e7dd,stroke:#0f5132
+    style E fill:#d1e7dd,stroke:#0f5132
+    style F fill:#d1e7dd,stroke:#0f5132
+  </div>
+
+  <h3>4. Tabela de Decisão como Fluxo de Decisão</h3>
+  <p>
+    A lógica do pagamento de bônus representada como uma árvore de decisão equivalente à tabela:
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A([Início]) --> B{"Trabalhou\nmais de 40h?"}
+    B -->|Não| C{"É mensalista?"}
+    C -->|Não| D[Bloquear pagamento]
+    C -->|Sim| E[Pagar valor base]
+    B -->|Sim| F{"É mensalista?"}
+    F -->|Não| G[Pagar hora extra dobrada]
+    F -->|Sim| H[Pagar valor base + hora extra dobrada]
+
+    style D fill:#f8d7da,stroke:#721c24
+    style E fill:#d1e7dd,stroke:#0f5132
+    style G fill:#d1e7dd,stroke:#0f5132
+    style H fill:#d1e7dd,stroke:#0f5132
+  </div>
+
+  <h3>5. Teste de Transição de Estados</h3>
+  <p>
+    Sistemas como um caixa eletrônico (ATM) mudam de estado conforme a entrada recebida e o estado atual:
+  </p>
+  <div class="mermaid">
+    stateDiagram-v2
+    [*] --> AguardandoCartao
+    AguardandoCartao --> Autenticado: cartão validado
+    Autenticado --> Operacao: valor informado
+    Operacao --> Autenticado: nova operação
+    Autenticado --> AguardandoCartao: ejetar cartão
+    Operacao --> Erro: saldo insuficiente
+    Erro --> Operacao: novo valor informado
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>ECP e BVA são complementares:</strong> o Particionamento define <em>onde</em> testar (um
+      representante por classe) e o Valor Limite refina as <em>fronteiras</em> — onde ocorre a maioria dos
+      defeitos. Use os dois juntos.
+    </li>
+    <li>
+      <strong>Não se esqueça das classes inválidas:</strong> testar apenas entradas válidas deixa de fora a maior
+      fonte de defeitos. Toda classe inválida também merece um caso de teste.
+    </li>
+    <li>
+      <strong>Caixa Preta não exige código:</strong> os casos podem ser projetados diretamente a partir da
+      especificação e executados por testadores independentes do desenvolvimento.
+    </li>
+    <li>
+      <strong>Tabelas de Decisão:</strong> com <code class="one-line-code">n</code> condições binárias, são
+      <code class="one-line-code">2^n</code> regras. Para lógicas com 2 ou mais condições combinadas, a tabela é a
+      ferramenta mais confiável.
+    </li>
+    <li>
+      <strong>Registre tudo:</strong> use planilhas eletrônicas para documentar a Matriz de Rastreabilidade e
+      transformar cada regra da tabela de decisão em um caso de teste executável.
+    </li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>
+      PRESSMAN, Roger S. <em>Engenharia de Software: Uma Abordagem Profissional</em>. 8. ed. Porto Alegre: AMGH,
+      2016.
+    </li>
+    <li>
+      MYERS, Glenford J.; SANDLER, Corey; BADGETT, Tom. <em>The Art of Software Testing</em>. 3. ed. Hoboken: John
+      Wiley &amp; Sons, 2012.
+    </li>
+    <li>
+      ISTQB. <em>Certified Tester Foundation Level Syllabus</em>. International Software Testing Qualifications
+      Board. Disponível em: https://www.istqb.org
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Projetando Testes de Caixa Preta</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>
