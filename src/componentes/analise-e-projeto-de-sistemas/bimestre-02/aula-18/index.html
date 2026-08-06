@@ -1,50 +1,242 @@
 ﻿---
-title: "Entrega do Projeto 2"
+title: "Projeto 2: Engenharia Reversa (Java → UML)"
 aula_numero: "18"
-description: "Conteúdo da aula 18 : Entrega do Projeto 2"
+subject: "analise-e-projeto-de-sistemas"
+description: "Pedido de projeto: analisar a implementação em Java do módulo de pedidos de um totem de autoatendimento de fast-food e entregar o Diagrama de Casos de Uso e o Diagrama de Classes da UML."
 tags:
   - aula
   - bimestre-02
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 18 em desenvolvimento...</p>
+  <h2>Proposta de Atividade</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 35%;">Item</th>
+        <th>Detalhe</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Proposta de Atividade</strong></td>
+        <td>Engenharia Reversa (Código Java → UML)</td>
+      </tr>
+      <tr>
+        <td><strong>Tema</strong></td>
+        <td>Totem de Autoatendimento de Fast-Food</td>
+      </tr>
+      <tr>
+        <td><strong>Modalidade</strong></td>
+        <td>Individual</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Objetivo</h3>
+  <p>
+    Analisar a implementação em Java do módulo de pedidos de um totem de fast-food e construir os seguintes artefatos
+    UML:
+  </p>
+  <ul>
+    <li><strong>Diagrama de Casos de Uso</strong> (visão funcional/comportamental);</li>
+    <li><strong>Diagrama de Classes</strong> (visão estrutural).</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplos e demonstrações da aula 18 em desenvolvimento...</p>
+  <h2>Entrega</h2>
+  <p>
+    Com base na análise do código-fonte abaixo, construa diretamente os dois diagramas UML e entregue-os:
+  </p>
+  <ol>
+    <li>
+      <strong>Diagrama de Casos de Uso</strong> — identificando os atores (principal e sistemas externos), os casos de
+      uso derivados do código e os relacionamentos aplicáveis (incluindo
+      <strong>&lt;&lt;include&gt;&gt;</strong> e <strong>&lt;&lt;extend&gt;&gt;</strong>).
+    </li>
+    <li>
+      <strong>Diagrama de Classes</strong> — com nome, atributos e métodos (visibilidade correta:
+      <code class="one-line-code">-</code> para <em>private</em>, <code class="one-line-code">+</code> para
+      <em>public</em>) e os relacionamentos com suas multiplicidades.
+    </li>
+  </ol>
+  <p>
+    Para consultar exemplos de representação gráfica, revise as aulas 12 e 13 (Diagrama de Casos de Uso) e as aulas 15
+    a 17 (Diagrama de Classes).
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
-  <p>Diagramas e esquemas visuais em construção...</p>
+  <h2>Código-Fonte Java Base</h2>
+  <p>Use o código abaixo como base para a análise:</p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.ArrayList;
+import java.util.List;
+
+// --- CLASSE PRODUTO ---
+public class Produto {
+    private String codigo;
+    private String nome;
+    private double preco;
+
+    public Produto(String codigo, String nome, double preco) {
+        this.codigo = codigo;
+        this.nome = nome;
+        this.preco = preco;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
+
+// --- CLASSE ITEM PEDIDO ---
+public class ItemPedido {
+    private int quantidade;
+    private Produto produto;
+
+    public ItemPedido(Produto produto, int quantidade) {
+        this.produto = produto;
+        this.quantidade = quantidade;
+    }
+
+    public double calcularSubtotal() {
+        return produto.getPreco() * quantidade;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+}
+
+// --- CLASSE PEDIDO ---
+public class Pedido {
+    private int numeroPedido;
+    private String status; // ex: "EM_ANDAMENTO", "PAGO", "CANCELADO"
+    private List&lt;ItemPedido&gt; itens;
+    private Pagamento pagamento;
+
+    public Pedido(int numeroPedido) {
+        this.numeroPedido = numeroPedido;
+        this.status = "EM_ANDAMENTO";
+        this.itens = new ArrayList&lt;&gt;();
+    }
+
+    public void adicionarItem(Produto produto, int quantidade) {
+        if (status.equals("EM_ANDAMENTO")) {
+            this.itens.add(new ItemPedido(produto, quantidade));
+        }
+    }
+
+    public double calcularTotal() {
+        double total = 0;
+        for (ItemPedido item : itens) {
+            total += item.calcularSubtotal();
+        }
+        return total;
+    }
+
+    public boolean realizarPagamento(String formaPagamento) {
+        double total = calcularTotal();
+        this.pagamento = new Pagamento(formaPagamento, total);
+
+        if (this.pagamento.processar()) {
+            this.status = "PAGO";
+            return true;
+        }
+        return false;
+    }
+
+    public void cancelarPedido() {
+        this.status = "CANCELADO";
+    }
+}
+
+// --- CLASSE PAGAMENTO ---
+public class Pagamento {
+    private String tipo; // "CARTAO_CREDITO", "PIX", "ALIMENTACAO"
+    private double valor;
+    private boolean confirmado;
+
+    public Pagamento(String tipo, double valor) {
+        this.tipo = tipo;
+        this.valor = valor;
+        this.confirmado = false;
+    }
+
+    public boolean processar() {
+        // Simulação de autorização do pagamento
+        this.confirmado = true;
+        return this.confirmado;
+    }
+}
+
+// --- CLASSE CLIENTE (ATOR / INTERAÇÃO NO TOTEM) ---
+public class Cliente {
+    private String nome;
+
+    public Cliente(String nome) {
+        this.nome = nome;
+    }
+
+    public void montarPedido(Pedido pedido, Produto produto, int qtd) {
+        pedido.adicionarItem(produto, qtd);
+    }
+
+    public void finalizarEPay(Pedido pedido, String meioPagamento) {
+        pedido.realizarPagamento(meioPagamento);
+    }
+}</code></pre>
+  </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes para a Entrega</h4>
   <ul>
-    <li>Conteúdo em breve.</li>
+    <li>
+      <strong>Divida as tarefas da dupla:</strong> combine quem fica responsável pelo Diagrama de Casos de Uso e quem
+      fica pelo Diagrama de Classes — ou façam os dois juntos e confiram mutuamente.
+    </li>
+    <li>
+      <strong>Reveja a notação antes de desenhar:</strong> atributos <code class="one-line-code">private</code> viram
+      <code class="one-line-code">-</code>, métodos <code class="one-line-code">public</code> viram
+      <code class="one-line-code">+</code>, e a ordem correta é <em>nome: tipo</em>
+      (ex.: <code class="one-line-code">- preco: double</code>).
+    </li>
+    <li>
+      <strong>&lt;&lt;include&gt;&gt; é obrigatório; &lt;&lt;extend&gt;&gt; é opcional:</strong> se o caso base
+      <em>sempre</em> executa o outro, é <em>include</em>; se depende de uma condição, é <em>extend</em>.
+    </li>
+    <li>
+      <strong>Confira as multiplicidades:</strong> leia cada ponta da associação olhando para a extremidade oposta —
+      ex.: em "1 → 1..*", a multiplicidade <code class="one-line-code">1..*</code> fica do lado da classe com vários
+      objetos.
+    </li>
+    <li>
+      <strong>A classe Cliente é o ator:</strong> no Diagrama de Casos de Uso, o Cliente é o ator principal e o
+      Sistema de Pagamento é o ator secundário/sistema externo.
+    </li>
+    <li>
+      <strong>Compare com o código:</strong> todo relacionamento do diagrama de classes deve ter correspondência no
+      código-fonte (ex.: um atributo que guarda uma lista ou uma referência para outra classe).
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
-  <p>Cenários de aplicação profissional em breve...</p>
-</section>
-
-<section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Documentação oficial e bibliografia recomendada.</li>
-  </ul>
-</section>
-
-<section class="section-box">
-  <h2>Para Praticar</h2>
-  <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Atividade Prática</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Questionário</a></li>
+    <li>BOOCH, Grady; RUMBAUGH, James; JACOBSON, Ivar. <em>UML: Guia do Usuário</em>. 2. ed. Rio de Janeiro: Elsevier, 2012.</li>
+    <li>PRESSMAN, Roger S. <em>Engenharia de Software: Uma Abordagem Profissional</em>. 8. ed. Porto Alegre: AMGH, 2016.</li>
+    <li>SOMMERVILLE, Ian. <em>Engenharia de Software</em>. 10. ed. São Paulo: Pearson, 2019.</li>
   </ul>
 </section>
