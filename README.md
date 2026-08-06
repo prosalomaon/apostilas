@@ -482,3 +482,5 @@ O projeto cresceu de forma incremental e parte do código ainda diverge da docum
 
 Este material foi desenvolvido para fins educacionais.
 Copyright © 2026 - Professor Salomão.
+
+DEPLOY
