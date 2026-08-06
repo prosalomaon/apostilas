@@ -1,0 +1,368 @@
+---
+layout: exercicio
+title: "Projeto Prático: Controle de Estoque com Set e Map"
+exercicio_numero: "01"
+aula_numero: "21"
+description: "Demonstração prática completa: aplicação de console que gerencia o estoque de um mercado usando Map para associação chave-valor, Set para garantir unicidade e equals()/hashCode()."
+---
+
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Vamos construir uma aplicação <strong>funcional</strong> que coloca em prática os conceitos da aula:
+    <strong>Set</strong>, <strong>Map</strong>, <strong>equals()/hashCode()</strong> e a iteração com
+    <strong>Java 8</strong>. O resultado final é um sistema de <strong>controle de estoque</strong> de um mini mercado,
+    operado pelo console, com cadastro, consulta e venda de produtos.
+  </p>
+  <p>
+    Todo o código foi escrito para ser <strong>copiado e colado</strong>: basta seguir a ordem dos passos, criando um
+    arquivo por vez no VS Code. Ao final, o projeto executa com um único comando.
+  </p>
+
+  <h3>Arquitetura das Coleções</h3>
+  <p>
+    O coração do sistema são duas estruturas: um <code class="one-line-code">Map</code> que associa cada
+    <em>Produto</em> (chave única) à sua quantidade, e um <code class="one-line-code">Set</code> que mantém as
+    categorias únicas cadastradas.
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    subgraph ESTOQUE ["Classe Estoque"]
+      M["Map &lt;Produto, Integer&gt; produtos\n(produto -&gt; quantidade)"]
+      S["Set &lt;String&gt; categorias\n(categorias únicas)"]
+    end
+    P1["Produto 'Arroz'"] --> M
+    P2["Produto 'Feijão'"] --> M
+    C1["'Grãos'"] --> S
+    C2["'Bebidas'"] --> S
+  </div>
+
+  <hr>
+
+  <h3>Pré-requisitos (VS Code + Java)</h3>
+  <ol>
+    <li><strong>VS Code</strong> com o pacote de extensões <em>"Extension Pack for Java"</em> (Microsoft).</li>
+    <li><strong>JDK 8 ou superior</strong> instalado e configurado no VS Code. Todo o código usa apenas recursos do
+      Java 8 (lambdas, <code class="one-line-code">forEach</code> e método de referência), funcionando igualmente nas
+      versões LTS atuais (11, 17 e 21).</li>
+    <li>Nenhuma biblioteca externa: tudo usa apenas a <code class="one-line-code">java.util</code> padrão do Java.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Passo 1: Criando o Projeto</h2>
+  <p>
+    Crie uma pasta chamada <code>controle-estoque</code> e, dentro dela, uma pasta <code>src</code>. Todos os arquivos
+    Java ficam dentro de <code>src</code>. A estrutura final deve ficar assim:
+  </p>
+  <pre>controle-estoque/
+└── src/
+    ├── Produto.java
+    ├── Estoque.java
+    └── Main.java</pre>
+</section>
+
+<section class="section-box">
+  <h2>Passo 2: Classe Produto (com equals e hashCode)</h2>
+  <p>
+    A classe que representa um item do estoque. Repare no <strong>ponto-chave da aula</strong>: o método
+    <code class="one-line-code">equals()</code> e o <code class="one-line-code">hashCode()</code> consideram apenas o
+    <strong>nome</strong>. Assim, dois produtos com o mesmo nome são "iguais" — é isso que torna o nome uma chave única
+    no <code class="one-line-code">Map</code>. A <strong>Regra de Ouro</strong> é respeitada: se são iguais pelo
+    <code class="one-line-code">equals()</code>, retornam o mesmo <code class="one-line-code">hashCode()</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Objects;
+
+public class Produto {
+
+    private final String nome;
+    private final String categoria;
+    private final double preco;
+
+    public Produto(String nome) {
+        this(nome, "Geral", 0.0);
+    }
+
+    public Produto(String nome, String categoria, double preco) {
+        this.nome = nome;
+        this.categoria = categoria;
+        this.preco = preco;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    // A identidade do produto é o NOME: dois produtos com o mesmo nome
+    // são considerados "iguais" (Regra de Ouro).
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Produto produto = (Produto) o;
+        return Objects.equals(nome, produto.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nome);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s) - R$ %.2f", nome, categoria, preco);
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 3: Classe Estoque (Set e Map)</h2>
+  <p>
+    A lógica de negócio do sistema. Ela declara as variáveis com o <strong>tipo da interface</strong>
+    (<code class="one-line-code">Map</code> e <code class="one-line-code">Set</code>) e instancia com as classes
+    concretas — exatamente a dica de "programação para interface" da aula. Observe também o <strong>Autoboxing</strong>:
+    o <code class="one-line-code">int</code> vira <code class="one-line-code">Integer</code> automaticamente.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+public class Estoque {
+
+    // MAP: associa cada produto (chave única) à quantidade em estoque.
+    // O Produto é a CHAVE, por isso precisa de equals() e hashCode() corretos.
+    private final Map&lt;Produto, Integer&gt; produtos = new HashMap&lt;&gt;();
+
+    // SET: categorias únicas do mercado, sem duplicatas.
+    private final Set&lt;String&gt; categorias = new HashSet&lt;&gt;();
+
+    public boolean cadastrar(String nome, String categoria, double preco, int quantidade) {
+        Produto produto = new Produto(nome, categoria, preco);
+
+        // containsKey verifica se já existe produto com este nome (unicidade)
+        if (produtos.containsKey(produto)) {
+            return false;
+        }
+
+        produtos.put(produto, quantidade); // Autoboxing: int -&gt; Integer
+        categorias.add(categoria);
+        return true;
+    }
+
+    public Integer consultar(String nome) {
+        // get() usa hashCode() para achar o "balde" e equals() para confirmar
+        return produtos.get(new Produto(nome));
+    }
+
+    public boolean vender(String nome, int quantidade) {
+        Produto chave = new Produto(nome);
+
+        if (!produtos.containsKey(chave)) {
+            return false; // produto não cadastrado
+        }
+
+        int atual = produtos.get(chave);
+        if (atual &lt; quantidade) {
+            return false; // estoque insuficiente
+        }
+
+        // put() com chave já existente SOBRESCREVE o valor antigo
+        produtos.put(chave, atual - quantidade);
+        return true;
+    }
+
+    public void listarOrdenado() {
+        // TreeMap mantém as chaves ordenadas pelo Comparator fornecido
+        Map&lt;Produto, Integer&gt; ordenado = new TreeMap&lt;&gt;(Comparator.comparing(Produto::getNome));
+        ordenado.putAll(produtos);
+
+        // forEach + Lambda percorre cada par chave-valor (Java 8)
+        ordenado.forEach((produto, quantidade) -&gt;
+                System.out.println(produto + " | Quantidade: " + quantidade));
+    }
+
+    public void listarCategorias() {
+        System.out.println("Categorias cadastradas:");
+        for (String categoria : categorias) { // Enhanced-For sobre o Set
+            System.out.println(" - " + categoria);
+        }
+    }
+
+    public void listarEmFalta() {
+        System.out.println("Produtos com estoque zerado:");
+        produtos.forEach((produto, quantidade) -&gt; {
+            if (quantidade == 0) {
+                System.out.println(" - " + produto.getNome());
+            }
+        });
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 4: Classe Main (menu interativo)</h2>
+  <p>
+    A classe que conversa com o usuário pelo console. O menu chama os métodos da classe
+    <code class="one-line-code">Estoque</code>, que já encapsula toda a lógica das coleções.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Estoque estoque = new Estoque();
+        Scanner scanner = new Scanner(System.in);
+        // Ponto decimal (29.90) em vez de vírgula, em qualquer sistema
+        scanner.useLocale(java.util.Locale.US);
+
+        int opcao;
+        do {
+            System.out.println();
+            System.out.println("=== CONTROLE DE ESTOQUE ===");
+            System.out.println("1 - Cadastrar produto");
+            System.out.println("2 - Consultar estoque");
+            System.out.println("3 - Vender produto");
+            System.out.println("4 - Listar estoque (ordem alfabética)");
+            System.out.println("5 - Listar categorias");
+            System.out.println("6 - Produtos em falta");
+            System.out.println("0 - Sair");
+            System.out.print("Opção: ");
+
+            opcao = scanner.nextInt();
+            scanner.nextLine(); // consome o Enter deixado pelo nextInt
+
+            switch (opcao) {
+                case 1: cadastrarProduto(estoque, scanner); break;
+                case 2: consultarProduto(estoque, scanner); break;
+                case 3: venderProduto(estoque, scanner); break;
+                case 4: estoque.listarOrdenado(); break;
+                case 5: estoque.listarCategorias(); break;
+                case 6: estoque.listarEmFalta(); break;
+                case 0: System.out.println("Encerrando o sistema..."); break;
+                default: System.out.println("Opção inválida!"); break;
+            }
+        } while (opcao != 0);
+
+        scanner.close();
+    }
+
+    private static void cadastrarProduto(Estoque estoque, Scanner scanner) {
+        System.out.print("Nome do produto: ");
+        String nome = scanner.nextLine();
+        System.out.print("Categoria: ");
+        String categoria = scanner.nextLine();
+        System.out.print("Preço: ");
+        double preco = scanner.nextDouble();
+        scanner.nextLine();
+        System.out.print("Quantidade inicial: ");
+        int quantidade = scanner.nextInt();
+        scanner.nextLine();
+
+        if (estoque.cadastrar(nome, categoria, preco, quantidade)) {
+            System.out.println("Produto cadastrado com sucesso!");
+        } else {
+            System.out.println("ERRO: já existe um produto com este nome.");
+        }
+    }
+
+    private static void consultarProduto(Estoque estoque, Scanner scanner) {
+        System.out.print("Nome do produto: ");
+        String nome = scanner.nextLine();
+
+        Integer quantidade = estoque.consultar(nome); // Autoboxing no retorno
+        if (quantidade == null) {
+            System.out.println("Produto não encontrado.");
+        } else {
+            System.out.println("Quantidade em estoque: " + quantidade);
+        }
+    }
+
+    private static void venderProduto(Estoque estoque, Scanner scanner) {
+        System.out.print("Nome do produto: ");
+        String nome = scanner.nextLine();
+        System.out.print("Quantidade vendida: ");
+        int quantidade = scanner.nextInt();
+        scanner.nextLine();
+
+        if (estoque.vender(nome, quantidade)) {
+            System.out.println("Venda realizada com sucesso!");
+        } else {
+            System.out.println("ERRO: produto não cadastrado ou estoque insuficiente.");
+        }
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Como Executar</h2>
+  <ol>
+    <li><strong>Estrutura:</strong> crie a pasta <code>controle-estoque</code> com a subpasta <code>src</code> e copie
+      os três arquivos (<code>Produto.java</code>, <code>Estoque.java</code>, <code>Main.java</code>) para dentro de
+      <code>src</code>.</li>
+    <li><strong>Executar:</strong> abra o arquivo <code>Main.java</code> no VS Code e clique no botão
+      <strong>"Run"</strong> (ou pressione <code>F5</code>).</li>
+    <li><strong>Testar o fluxo:</strong>
+      <ul>
+        <li><strong>Cadastrar</strong> o produto <em>"Arroz"</em> e depois tentar cadastrar novamente o mesmo nome — o
+          sistema recusa, provando a unicidade do <code class="one-line-code">Map</code>.</li>
+        <li><strong>Consultar</strong> o <em>"Arroz"</em> e ver a quantidade em estoque.</li>
+        <li><strong>Listar estoque</strong> após cadastrar vários produtos — perceba que a saída sai em
+          <strong>ordem alfabética</strong>, graças ao <code class="one-line-code">TreeMap</code>.</li>
+        <li><strong>Listar categorias</strong> e cadastrar duas vezes a mesma categoria — ela só aparece uma vez,
+          provando a unicidade do <code class="one-line-code">Set</code>.</li>
+        <li><strong>Vender</strong> até zerar um produto e verificar o item na opção <em>"Produtos em falta"</em>.</li>
+      </ul>
+    </li>
+  </ol>
+  <div class="tip-box">
+    <h4>Dica de demonstração em sala</h4>
+    <ul>
+      <li>Antes de rodar, pergunte aos alunos: <em>"quantas vezes um produto pode aparecer no estoque?"</em> e
+        <em>"o que acontece se cadastrarmos o mesmo nome duas vezes?"</em> — a resposta é o coração da aula.</li>
+      <li>Mostre o que aconteceria se <code class="one-line-code">equals()</code>/<code class="one-line-code">hashCode()</code>
+        da classe <code class="one-line-code">Produto</code> não existissem: a busca por
+        <code class="one-line-code">new Produto("Arroz")</code> falharia mesmo com o produto no mapa.</li>
+      <li>Para reforçar a iteração Java 8, peça para substituírem o <code class="one-line-code">for</code> da opção 5 por
+        um <code class="one-line-code">categorias.forEach(System.out::println)</code>.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>Regra de Ouro:</strong> se dois objetos são iguais pelo <code class="one-line-code">equals()</code>,
+      eles devem ter o mesmo <code class="one-line-code">hashCode()</code>. Aqui, ambos usam apenas o
+      <code class="one-line-code">nome</code>.</li>
+    <li><strong>Chaves do Map:</strong> para localizar um valor, criamos <code class="one-line-code">new Produto(nome)</code>.
+      O <code class="one-line-code">hashCode()</code> acha o balde e o <code class="one-line-code">equals()</code>
+      confirma a igualdade.</li>
+    <li><strong>Sobrescrita de valores:</strong> <code class="one-line-code">put()</code> em uma chave existente
+      substitui o valor antigo — por isso o método <code class="one-line-code">vender()</code> atualiza a quantidade.</li>
+    <li><strong>Autoboxing:</strong> <code class="one-line-code">int</code> e <code class="one-line-code">double</code>
+      são convertidos automaticamente em <code class="one-line-code">Integer</code> e
+      <code class="one-line-code">Double</code> ao entrarem em coleções.</li>
+    <li><strong>Programação para interface:</strong> as variáveis são declaradas como <code class="one-line-code">Map</code>
+      e <code class="one-line-code">Set</code>, e a instância concreta (ex: <code class="one-line-code">HashMap</code>)
+      pode ser trocada sem afetar o restante do código.</li>
+    <li><strong>Scanner e ponto decimal:</strong> o <code class="one-line-code">useLocale(Locale.US)</code> garante que o
+      preço seja digitado com ponto (<code class="one-line-code">29.90</code>), independentemente do idioma do sistema.</li>
+  </ul>
+</section>

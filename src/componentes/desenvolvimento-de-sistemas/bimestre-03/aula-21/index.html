@@ -1,5 +1,6 @@
 ---
 title: "Collections Framework Avançado: Set e Map"
+componente: "Desenvolvimento de Sistemas"
 aula_numero: "21"
 description: "Manipulação de conjuntos de dados únicos (Set) e dicionários de chave-valor (Map) para buscas e organizações complexas de dados."
 tags:
@@ -8,6 +9,400 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em construção.</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    O <strong>Collections Framework</strong> é um conjunto de interfaces e implementações prontas do Java para
+    armazenar e manipular grupos de objetos. Já conhecemos as listas (a interface <code class="one-line-code">List</code>).
+    Nesta aula exploramos duas famílias mais avançadas: os <strong>conjuntos</strong> (<code class="one-line-code">Set</code>),
+    que garantem unicidade de elementos, e os <strong>mapas</strong> (<code class="one-line-code">Map</code>), que associam
+    chaves a valores — como um dicionário.
+  </p>
+
+  <h3>1. A Interface java.util.Set</h3>
+  <p>
+    Um conjunto (<code class="one-line-code">Set</code>) funciona de forma análoga aos conjuntos da matemática: ele é uma
+    coleção que <strong>não permite elementos duplicados</strong>. Ao tentar adicionar um elemento que já existe, o método
+    <code class="one-line-code">add</code> retornará <code class="one-line-code">false</code> e a operação será ignorada.
+  </p>
+  <ul>
+    <li><strong>Ordenação:</strong> ao contrário das listas, a interface <code class="one-line-code">Set</code> não garante
+      uma ordem específica de armazenamento; os elementos podem não ser recuperados na mesma ordem em que foram inseridos.</li>
+    <li><strong>Performance:</strong> a grande vantagem do <code class="one-line-code">Set</code> é a velocidade.
+      Implementações como o <code class="one-line-code">HashSet</code> possuem performance incomparável com as listas para
+      operações de pesquisa, como o método <code class="one-line-code">contains</code>.</li>
+  </ul>
+
+  <h4>Exemplo de Código: HashSet e Unicidade</h4>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.HashSet;
+import java.util.Set;
+
+public class ExemploHashSet {
+    public static void main(String[] args) {
+        Set&lt;String&gt; cargos = new HashSet&lt;&gt;();
+        cargos.add("Gerente");
+        cargos.add("Diretor");
+        cargos.add("Gerente"); // Elemento repetido: será ignorado
+
+        System.out.println(cargos.size()); // Saída será 2
+        System.out.println(cargos);        // Ordem de exibição NÃO é garantida
+    }
+}</code></pre>
+  </div>
+  <p>
+    O resultado <code class="one-line-code">2</code> prova que o segundo <em>"Gerente"</em> foi descartado. Repare que a
+    ordem de exibição pode variar entre execuções: o <code class="one-line-code">HashSet</code> não se compromete com nenhuma
+    ordenação.
+  </p>
+
+  <div class="mermaid">
+    flowchart TD
+    A["cargos.add('Gerente')"] --> B{Ja existe?}
+    B -->|"Nao"| C["Insere\n(size = 1)"]
+    A2["cargos.add('Diretor')"] --> B2{Ja existe?}
+    B2 -->|"Nao"| C2["Insere\n(size = 2)"]
+    A3["cargos.add('Gerente')"] --> B3{Ja existe?}
+    B3 -->|"Sim"| D["Ignora e retorna false\n(size continua 2)"]
+  </div>
+
+  <h3>2. Principais Implementações de Set</h3>
+  <p>
+    A interface <code class="one-line-code">Set</code> possui três implementações clássicas, que diferem principalmente na
+    <strong>ordem</strong> em que os elementos são armazenados:
+  </p>
+  <ul>
+    <li><strong>HashSet:</strong> armazena os dados em uma <em>tabela de hash</em>. É a implementação mais rápida, mas não
+      garante nenhuma ordem.</li>
+    <li><strong>TreeSet:</strong> armazena os elementos em uma <em>árvore</em>. Os elementos são mantidos em sua ordem natural
+      (ex: alfabética ou numérica) ou por um <code class="one-line-code">Comparator</code> personalizado.</li>
+    <li><strong>LinkedHashSet:</strong> uma variante do <code class="one-line-code">HashSet</code> que mantém a
+      <strong>ordem de inserção</strong> dos elementos.</li>
+  </ul>
+
+  <h4>Exemplo de Código: Comparando a Ordem das Implementações</h4>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
+
+public class ComparandoSets {
+    public static void main(String[] args) {
+        Set&lt;String&gt; hashSet = new HashSet&lt;&gt;();
+        Set&lt;String&gt; treeSet = new TreeSet&lt;&gt;();
+        Set&lt;String&gt; linkedHashSet = new LinkedHashSet&lt;&gt;();
+
+        String[] nomes = {"Ana", "Carlos", "Bruno"};
+
+        for (String nome : nomes) {
+            hashSet.add(nome);
+            treeSet.add(nome);
+            linkedHashSet.add(nome);
+        }
+
+        System.out.println("HashSet: " + hashSet);        // ordem imprevisivel
+        System.out.println("TreeSet: " + treeSet);        // [Ana, Bruno, Carlos] (alfabetica)
+        System.out.println("LinkedHashSet: " + linkedHashSet); // [Ana, Carlos, Bruno] (insercao)
+    }
+}</code></pre>
+  </div>
+
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Implementação</th>
+        <th>Estrutura Interna</th>
+        <th>Ordenação</th>
+        <th>Quando Usar</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>HashSet</strong></td>
+        <td>Tabela de hash</td>
+        <td>Nenhuma (imprevisível)</td>
+        <td>Busca rápida por <code class="one-line-code">contains</code></td>
+      </tr>
+      <tr>
+        <td><strong>TreeSet</strong></td>
+        <td>Árvore (Red-Black)</td>
+        <td>Ordem natural ou <code class="one-line-code">Comparator</code></td>
+        <td>Elementos sempre ordenados</td>
+      </tr>
+      <tr>
+        <td><strong>LinkedHashSet</strong></td>
+        <td>Tabela de hash + lista ligada</td>
+        <td>Ordem de inserção</td>
+        <td>Unicidade preservando a chegada</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Map: Dicionários de Chave-Valor</h2>
+
+  <h3>1. A Interface java.util.Map</h3>
+  <p>
+    Um mapa (<code class="one-line-code">Map</code>) é uma coleção que associa <strong>chaves únicas</strong> a
+    <strong>valores</strong>, funcionando como um dicionário ou matriz associativa. Embora faça parte do framework de
+    coleções, a interface <code class="one-line-code">Map</code> <strong>não estende</strong>
+    <code class="one-line-code">Collection</code>, pois seu comportamento é fundamentalmente diferente.
+  </p>
+  <ul>
+    <li><strong>Chaves:</strong> devem ser únicas. Se você inserir um valor com uma chave já existente, o valor antigo será
+      <strong>sobrescrito</strong> pelo novo.</li>
+    <li><strong>Valores:</strong> podem ser duplicados; várias chaves podem apontar para o mesmo valor.</li>
+  </ul>
+
+  <h4>Exemplo de Código: HashMap</h4>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.HashMap;
+import java.util.Map;
+
+public class ExemploHashMap {
+    public static void main(String[] args) {
+        Map&lt;String, Double&gt; contas = new HashMap&lt;&gt;();
+        contas.put("diretor", 10000.0); // put para adicionar chave e valor
+        contas.put("gerente", 5000.0);
+
+        double saldo = contas.get("diretor"); // get para recuperar pela chave
+        System.out.println(saldo); // 10000.0
+
+        contas.put("diretor", 12000.0); // chave repetida: sobrescreve o valor
+        System.out.println(contas.get("diretor")); // 12000.0
+    }
+}</code></pre>
+  </div>
+
+  <div class="mermaid">
+    flowchart LR
+    subgraph MAP ["Map &lt;String, Double&gt;"]
+      K1["chave: 'diretor'"] --> V1["valor: 10000.0"]
+      K2["chave: 'gerente'"] --> V2["valor: 5000.0"]
+    end
+  </div>
+
+  <h3>2. Principais Implementações de Map</h3>
+  <ul>
+    <li><strong>HashMap:</strong> implementação baseada em tabela de hash. É rápida, não sincronizada e permite chaves ou
+      valores <code class="one-line-code">null</code>.</li>
+    <li><strong>TreeMap:</strong> mantém as chaves em ordem classificada (ordem natural ou
+      <code class="one-line-code">Comparator</code>).</li>
+    <li><strong>Hashtable:</strong> implementação mais antiga, sincronizada (thread-safe) e que
+      <strong>não permite</strong> elementos nulos.</li>
+  </ul>
+
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Implementação</th>
+        <th>Ordem das Chaves</th>
+        <th>Thread-Safe</th>
+        <th>Permite null</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>HashMap</strong></td>
+        <td>Nenhuma (imprevisível)</td>
+        <td>Não</td>
+        <td>Sim</td>
+      </tr>
+      <tr>
+        <td><strong>TreeMap</strong></td>
+        <td>Ordenada (natural ou <code class="one-line-code">Comparator</code>)</td>
+        <td>Não</td>
+        <td>Só valores</td>
+      </tr>
+      <tr>
+        <td><strong>Hashtable</strong></td>
+        <td>Nenhuma (imprevisível)</td>
+        <td>Sim</td>
+        <td>Não</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>hashCode() e equals(): O Segredo do Funcionamento</h2>
+  <p>
+    Para que as coleções baseadas em espalhamento (como <code class="one-line-code">HashSet</code> e
+    <code class="one-line-code">HashMap</code>) funcionem corretamente, é essencial que os objetos usados como chaves ou
+    elementos implementem corretamente os métodos <code class="one-line-code">hashCode()</code> e
+    <code class="one-line-code">equals()</code>.
+  </p>
+  <p>
+    <strong>Regra de Ouro:</strong> se dois objetos são considerados iguais pelo método
+    <code class="one-line-code">equals()</code>, eles <strong>devem</strong> retornar o mesmo valor no método
+    <code class="one-line-code">hashCode()</code>. Caso essa regra seja quebrada, a coleção não conseguirá localizar os
+    objetos corretamente, mesmo que eles estejam lá.
+  </p>
+
+  <h3>Exemplo de Código: equals() e hashCode()</h3>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Objects;
+
+public class Conta {
+    private String titular;
+    private double saldo;
+
+    public Conta(String titular, double saldo) {
+        this.titular = titular;
+        this.saldo = saldo;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Conta conta = (Conta) o;
+        return Double.compare(conta.saldo, saldo) == 0
+                &amp;&amp; Objects.equals(titular, conta.titular);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(titular, saldo);
+    }
+}</code></pre>
+  </div>
+  <p>
+    Observe que ambos os métodos utilizam os <strong>mesmos atributos</strong> (<code class="one-line-code">titular</code> e
+    <code class="one-line-code">saldo</code>). Assim, duas contas iguais pelo <code class="one-line-code">equals()</code>
+    sempre produzirão o mesmo <code class="one-line-code">hashCode()</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.HashSet;
+import java.util.Set;
+
+public class TesteUnicidade {
+    public static void main(String[] args) {
+        Set&lt;Conta&gt; contas = new HashSet&lt;&gt;();
+        contas.add(new Conta("Maria", 2500.0));
+        contas.add(new Conta("Maria", 2500.0)); // objeto "igual" ao anterior
+
+        System.out.println(contas.size()); // Saída: 1 (unicidade funcionando)
+    }
+}</code></pre>
+  </div>
+
+  <div class="mermaid">
+    flowchart TD
+    A["add(obj)"] --> B["Calcula obj.hashCode()"]
+    B --> C["Localiza o balde na tabela"]
+    C --> D{Balde tem elementos?}
+    D -->|"Nao"| E["Insere normalmente"]
+    D -->|"Sim"| F["Compara com equals()\nbalde por balde"]
+    F -->|"Nenhum igual"| E
+    F -->|"Encontrou igual"| G["Descarta duplicata\n(returns false)"]
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Iteração e Java 8</h2>
+  <p>
+    Embora conjuntos não possuam índices (como o <code class="one-line-code">get(i)</code> das listas), eles podem ser
+    percorridos facilmente usando o <strong>Enhanced-For</strong> ou a API de <strong>Streams</strong> do Java 8. Já para
+    os mapas, o método <code class="one-line-code">forEach</code> permite realizar operações em cada par chave-valor de
+    forma concisa.
+  </p>
+
+  <h3>Exemplo de Código: Percorrendo Set e Map</h3>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class IterandoColecoes {
+    public static void main(String[] args) {
+        // Percorrendo um Set com Enhanced-For
+        Set&lt;String&gt; cargos = new HashSet&lt;&gt;();
+        cargos.add("Gerente");
+        cargos.add("Diretor");
+
+        for (String cargo : cargos) {
+            System.out.println("Cargo: " + cargo);
+        }
+
+        // Percorrendo um Map com forEach + Lambda (Java 8)
+        Map&lt;String, Conta&gt; mapaDeContas = new HashMap&lt;&gt;();
+        mapaDeContas.put("diretor", new Conta("Diretor", 12000.0));
+        mapaDeContas.put("gerente", new Conta("Gerente", 5000.0));
+
+        mapaDeContas.forEach((cargo, conta) -> {
+            System.out.println("Cargo: " + cargo + " | Saldo: " + conta.getSaldo());
+        });
+    }
+}</code></pre>
+  </div>
+  <p>
+    No mapa, a sintaxe <code class="one-line-code">(cargo, conta) -&gt;</code> recebe cada par chave-valor e executa a
+    operação desejada. Também é possível percorrer apenas as chaves com <code class="one-line-code">keySet()</code> ou
+    apenas os valores com <code class="one-line-code">values()</code>.
+  </p>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes Técnicos</h4>
+  <ul>
+    <li><strong>Escolha a Coleção Certa:</strong> use <code class="one-line-code">List</code> quando a ordem e duplicatas
+      importarem. Use <code class="one-line-code">Set</code> para garantir unicidade e performance em buscas. Use
+      <code class="one-line-code">Map</code> para associações de chave-valor.</li>
+    <li><strong>Tipos Primitivos:</strong> coleções não aceitam tipos primitivos (como <code class="one-line-code">int</code>
+      ou <code class="one-line-code">double</code>). O Java utiliza o <strong>Autoboxing</strong> para converter esses
+      valores em suas classes empacotadoras (ex: <code class="one-line-code">Integer</code>,
+      <code class="one-line-code">Double</code>) automaticamente.</li>
+    <li><strong>Programação para Interface:</strong> sempre declare suas variáveis usando o tipo da interface (ex:
+      <code class="one-line-code">Set</code>) e instancie com a classe concreta (ex: <code class="one-line-code">HashSet</code>).
+      Isso diminui o acoplamento e facilita a troca de implementação futura.</li>
+    <li><strong>equals + hashCode:</strong> em classes usadas como chave de <code class="one-line-code">Map</code> ou
+      elemento de <code class="one-line-code">Set</code>, implemente sempre <code class="one-line-code">equals()</code> e
+      <code class="one-line-code">hashCode()</code> usando os mesmos atributos.</li>
+    <li><strong>Map não é Collection:</strong> apesar de fazer parte do framework, <code class="one-line-code">Map</code>
+      não estende a interface <code class="one-line-code">Collection</code> — ele tem métodos próprios como
+      <code class="one-line-code">put</code> e <code class="one-line-code">get</code>.</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>Cadastro de usuários:</strong> use um <code class="one-line-code">Set&lt;String&gt;</code> de emails para
+      impedir que o mesmo email seja cadastrado duas vezes.</li>
+    <li><strong>Dicionário de configurações:</strong> armazene parâmetros do sistema em um
+      <code class="one-line-code">Map&lt;String, String&gt;</code> (ex: <em>"url_banco"</em> → valor).</li>
+    <li><strong>Contador de ocorrências:</strong> percorra uma lista e conte cada elemento usando um
+      <code class="one-line-code">Map&lt;String, Integer&gt;</code>, incrementando o valor a cada repetição.</li>
+    <li><strong>Menu ordenado:</strong> para exibir opções sempre em ordem alfabética, use
+      <code class="one-line-code">TreeSet</code> ou <code class="one-line-code">TreeMap</code>.</li>
+    <li><strong>Lista de presença:</strong> um <code class="one-line-code">LinkedHashSet</code> registra cada aluno uma
+      única vez, preservando a ordem em que chegou.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>CAELUM. Java e Orientação a Objetos. Apostila FJ-11 da Caelum.</li>
+    <li>DEITEL, Harvey M.; DEITEL, Paul J. Java: como programar. 8. ed. São Paulo: Pearson, 2010.</li>
+    <li>Oracle. The Collections Framework (Java Tutorials).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Atividade Prática - Sistema de Notas com Set e Map</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
+
+  <hr>
+  <a class="btn" href="./demonstracao-pratica" target="_blank">Para Demonstração</a>
 </section>

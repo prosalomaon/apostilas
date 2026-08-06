@@ -1,0 +1,273 @@
+---
+layout: exercicio
+title: "Atividade Prática: Sistema de Notas com Set e Map"
+exercicio_numero: "01"
+aula_numero: "21"
+description: "Construção de um sistema de notas para uma turma usando Set para matrículas únicas e Map para associar cada aluno à sua nota final."
+---
+
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Nesta atividade você construirá um <strong>sistema de notas</strong> para uma turma da ETEC, aplicando na prática as
+    estruturas da aula: um <code class="one-line-code">Set</code> para garantir que cada aluno seja matriculado uma única
+    vez e um <code class="one-line-code">Map</code> para associar cada aluno à sua <strong>nota final</strong>. Ao final,
+    o sistema deve listar os aprovados, exibir o boletim em ordem alfabética e calcular a média da turma.
+  </p>
+
+  <h3>Arquitetura das Coleções</h3>
+  <div class="mermaid">
+    flowchart LR
+    subgraph TURMA ["Classe Turma"]
+      S["Set &lt;Aluno&gt; alunos\n(matrículas únicas por email)"]
+      M["Map &lt;Aluno, Double&gt; notas\n(aluno -&gt; nota final)"]
+    end
+    A1["Aluno 'Ana'"] --> S
+    A2["Aluno 'Bruno'"] --> S
+    S -.->|"add() rejeita duplicata"| S
+    A1 --> M
+    A2 --> M
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li><strong>Localização:</strong> crie os arquivos dentro da sua pasta de projetos Java (ex:
+      <code class="one-line-code">src/aula21/</code>).</li>
+    <li><strong>Arquivos Necessários:</strong>
+      <ul>
+        <li><code class="one-line-code">Aluno.java</code>: a classe que representa o estudante.</li>
+        <li><code class="one-line-code">Turma.java</code>: a lógica com as coleções <code class="one-line-code">Set</code>
+          e <code class="one-line-code">Map</code>.</li>
+        <li><code class="one-line-code">Main.java</code>: o menu interativo.</li>
+      </ul>
+    </li>
+    <li><strong>Versão do Java:</strong> o código usa apenas recursos do <strong>Java 8</strong> (lambdas,
+      <code class="one-line-code">forEach</code> e método de referência), sendo compatível com os LTS atuais (11, 17 e 21).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Passo a Passo</h2>
+
+  <h3>Passo 1: A Classe Aluno (Aluno.java)</h3>
+  <p>
+    A identidade do aluno será o <strong>email</strong>: dois alunos com o mesmo email são considerados "iguais".
+    Por isso, <code class="one-line-code">equals()</code> e <code class="one-line-code">hashCode()</code> usam apenas o
+    email — respeitando a <strong>Regra de Ouro</strong> da aula.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Objects;
+
+public class Aluno {
+
+    private final String nome;
+    private final String email;
+
+    public Aluno(String nome, String email) {
+        this.nome = nome;
+        this.email = email;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    // A identidade do aluno é o EMAIL: dois alunos com o mesmo email
+    // são considerados "iguais" (Regra de Ouro).
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Aluno aluno = (Aluno) o;
+        return Objects.equals(email, aluno.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
+    }
+
+    @Override
+    public String toString() {
+        return nome + " (" + email + ")";
+    }
+}</code></pre>
+  </div>
+
+  <h3>Passo 2: A Classe Turma (Turma.java)</h3>
+  <p>
+    Repare em três pontos da aula: as variáveis são declaradas com o <strong>tipo da interface</strong>
+    (<code class="one-line-code">Set</code> e <code class="one-line-code">Map</code>), o <code class="one-line-code">Set</code>
+    descarta matrículas duplicadas e o <code class="one-line-code">Map</code> usa o <code class="one-line-code">Aluno</code>
+    como <strong>chave</strong> (é por isso que <code class="one-line-code">equals()</code>/<code class="one-line-code">hashCode()</code>
+    são indispensáveis).
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+public class Turma {
+
+    // SET: cada aluno aparece uma única vez (unicidade por email)
+    private final Set&lt;Aluno&gt; alunos = new HashSet&lt;&gt;();
+
+    // MAP: aluno -&gt; nota final (Aluno é a CHAVE, por isso equals/hashCode)
+    private final Map&lt;Aluno, Double&gt; notas = new HashMap&lt;&gt;();
+
+    public boolean matricular(Aluno aluno) {
+        return alunos.add(aluno); // retorna false se o email já existe
+    }
+
+    // Set não tem índice: buscamos o aluno real percorrendo o conjunto
+    public Aluno buscarPorEmail(String email) {
+        Aluno chave = new Aluno("", email); // so o email importa (equals)
+        for (Aluno aluno : alunos) {
+            if (aluno.equals(chave)) {
+                return aluno;
+            }
+        }
+        return null;
+    }
+
+    public void lancarNota(String email, double nota) {
+        Aluno aluno = buscarPorEmail(email);
+        if (aluno == null) {
+            System.out.println("ERRO: aluno não matriculado.");
+            return;
+        }
+        notas.put(aluno, nota); // chave existente: sobrescreve a nota
+    }
+
+    public int totalDeAlunos() {
+        return alunos.size();
+    }
+
+    public void listarAprovados() {
+        System.out.println("Aprovados (nota &gt;= 6.0):");
+        notas.forEach((aluno, nota) -&gt; {
+            if (nota &gt;= 6.0) {
+                System.out.println(" - " + aluno.getNome() + ": " + nota);
+            }
+        });
+    }
+
+    public void exibirBoletim() {
+        // TreeMap ordena as chaves usando o Comparator fornecido
+        Map&lt;Aluno, Double&gt; boletim = new TreeMap&lt;&gt;(Comparator.comparing(Aluno::getNome));
+        boletim.putAll(notas);
+
+        boletim.forEach((aluno, nota) -&gt;
+                System.out.println(aluno.getNome() + " -&gt; " + nota));
+    }
+
+    public double calcularMedia() {
+        double soma = 0;
+        for (Double nota : notas.values()) { // Enhanced-For sobre os valores
+            soma += nota;
+        }
+        return notas.isEmpty() ? 0 : soma / notas.size();
+    }
+}</code></pre>
+  </div>
+
+  <h3>Passo 3: O Menu (Main.java)</h3>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Turma turma = new Turma();
+        Scanner scanner = new Scanner(System.in);
+        // Ponto decimal (8.5) em vez de vírgula, em qualquer sistema
+        scanner.useLocale(java.util.Locale.US);
+
+        int opcao;
+        do {
+            System.out.println();
+            System.out.println("=== SISTEMA DE NOTAS ===");
+            System.out.println("1 - Matricular aluno");
+            System.out.println("2 - Lançar nota");
+            System.out.println("3 - Listar aprovados");
+            System.out.println("4 - Exibir boletim (ordem alfabética)");
+            System.out.println("5 - Média da turma");
+            System.out.println("6 - Total de alunos");
+            System.out.println("0 - Sair");
+            System.out.print("Opção: ");
+
+            opcao = scanner.nextInt();
+            scanner.nextLine(); // consome o Enter deixado pelo nextInt
+
+            switch (opcao) {
+                case 1: matricular(turma, scanner); break;
+                case 2: lancarNota(turma, scanner); break;
+                case 3: turma.listarAprovados(); break;
+                case 4: turma.exibirBoletim(); break;
+                case 5: System.out.println("Média da turma: " + turma.calcularMedia()); break;
+                case 6: System.out.println("Total de alunos: " + turma.totalDeAlunos()); break;
+                case 0: System.out.println("Encerrando..."); break;
+                default: System.out.println("Opção inválida!"); break;
+            }
+        } while (opcao != 0);
+
+        scanner.close();
+    }
+
+    private static void matricular(Turma turma, Scanner scanner) {
+        System.out.print("Nome do aluno: ");
+        String nome = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        if (turma.matricular(new Aluno(nome, email))) {
+            System.out.println("Aluno matriculado com sucesso!");
+        } else {
+            System.out.println("ERRO: já existe um aluno com este email.");
+        }
+    }
+
+    private static void lancarNota(Turma turma, Scanner scanner) {
+        System.out.print("Email do aluno: ");
+        String email = scanner.nextLine();
+        System.out.print("Nota final: ");
+        double nota = scanner.nextDouble();
+        scanner.nextLine();
+
+        turma.lancarNota(email, nota);
+    }
+}</code></pre>
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>4. Desafios de Fixação</h4>
+  <ul>
+    <li><strong>Unicidade:</strong> matricule <em>Ana</em> (ana@etec.com.br) e depois tente matricular novamente com o
+      mesmo email. O que o método <code class="one-line-code">add</code> retorna? Depois, matricule
+      <em>Ana Souza</em> com um email diferente — o sistema deve aceitar, pois a identidade é o email.</li>
+    <li><strong>Sobrescrita no Map:</strong> lance uma nota para um aluno que já tem nota. Verifique que o valor antigo é
+      substituído, exatamente como o <code class="one-line-code">put()</code> se comporta em chaves existentes.</li>
+    <li><strong>Mude a Regra de Ouro:</strong> altere <code class="one-line-code">equals()</code>/<code class="one-line-code">hashCode()</code>
+      da classe <code class="one-line-code">Aluno</code> para usar o <strong>nome</strong> em vez do email. Repita o
+      desafio 1 e explique o que mudou no comportamento.</li>
+    <li><strong>Iteração Java 8:</strong> reescreva o método <code class="one-line-code">calcularMedia()</code> usando
+      <code class="one-line-code">notas.values().forEach(...)</code> ou <code class="one-line-code">forEach</code> sobre
+      a entrada.</li>
+    <li><strong>Explore o TreeSet:</strong> declare o conjunto de alunos como <code class="one-line-code">TreeSet&lt;Aluno&gt;</code>
+      (com um <code class="one-line-code">Comparator.comparing(Aluno::getNome)</code>) e liste os alunos. Qual a diferença
+      no comportamento?</li>
+    <li><strong>Scanner e ponto decimal:</strong> o <code class="one-line-code">useLocale(Locale.US)</code> faz o
+      <code class="one-line-code">nextDouble()</code> aceitar o ponto (ex: <code class="one-line-code">8.5</code>) em
+      qualquer sistema, independentemente do idioma.</li>
+  </ul>
+</div>
