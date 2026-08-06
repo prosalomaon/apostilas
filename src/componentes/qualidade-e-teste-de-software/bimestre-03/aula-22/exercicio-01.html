@@ -1,19 +1,240 @@
 ---
 layout: exercicio
-title: "Técnicas de Caixa Preta"
+title: "Atividade Prática: Projetando Testes de Caixa Preta"
 exercicio_numero: "01"
 aula_numero: "22"
 subject: "qualidade-e-teste-de-software"
-description: "Exercício 01 da aula 22 do bimestre 03: Técnicas de Caixa Preta."
+description: "Projetar casos de teste de caixa preta para um sistema de empréstimos aplicando Particionamento de Classes de Equivalência (ECP), Análise de Valor Limite (BVA), Tabelas de Decisão e Adivinhação de Erros."
 ---
 
-<p>Conteúdo do exercício 01 da aula 02 em desenvolvimento...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    A startup <strong>CredRápido</strong> está desenvolvendo um sistema online de concessão de
+    <strong>empréstimos pessoais</strong>. O módulo de análise é novo e ainda não foi testado. Você foi contratado
+    como <strong>analista de testes</strong> e deve projetar os casos de teste de <strong>caixa preta</strong> a
+    partir apenas da especificação abaixo — sem conhecer o código interno do sistema.
+  </p>
+  <hr>
+  <h3>Especificação do Módulo de Empréstimo</h3>
+  <ul>
+    <li><strong>Idade:</strong> o solicitante deve ter entre <strong>18 e 65 anos</strong> (inclusive).</li>
+    <li><strong>Renda mensal:</strong> deve estar entre <strong>R$ 1.000,00 e R$ 50.000,00</strong> (inclusive).</li>
+    <li>
+      <strong>Valor do empréstimo:</strong> deve ser de no mínimo <strong>R$ 500,00</strong> e no máximo
+      <strong>10 vezes a renda mensal</strong>.
+    </li>
+    <li>
+      <strong>Regra de aprovação:</strong> o empréstimo é aprovado quando o solicitante é
+      <em>maior de idade</em> (<strong>idade &ge; 18</strong>) <em>e</em> tem <em>renda suficiente</em>
+      (valor solicitado &le; 10 vezes a renda) <em>e</em> possui <em>nome limpo</em> no SPC/Serasa.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Particionamento de Classes de Equivalência (ECP)</h3>
+  <p>
+    Divida o domínio de entrada do campo <strong>idade</strong> (18 a 65 anos) em classes de equivalência
+    <em>válidas</em> e <em>inválidas</em>. Preencha a tabela abaixo selecionando um valor representante para cada
+    classe:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Classe de Equivalência</th>
+        <th>Tipo (Válida/Inválida)</th>
+        <th>Valor Representante</th>
+        <th>Resultado Esperado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Idade inferior a 18</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Idade entre 18 e 65</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Idade superior a 65</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <strong>Desafio:</strong> explique por que bastou um representante de cada classe para cobrir todo o domínio,
+    em vez de testar todos os valores possíveis.
+  </p>
+
+  <h3>Questão 2: Análise de Valor Limite (BVA)</h3>
+  <p>
+    Aplique a <strong>Análise de Valor Limite</strong> ao campo <strong>idade</strong> (18 a 65 anos). Liste os
+    valores que devem ser testados nas fronteiras (<em>one below</em>, <em>limite</em> e <em>one above</em>),
+    indicando o resultado esperado para cada um:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Valor Testado</th>
+        <th>Posição na Fronteira</th>
+        <th>Resultado Esperado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td>Imediatamente abaixo do mínimo</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Limite mínimo válido</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Primeiro valor acima do mínimo</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Último valor abaixo do máximo</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Limite máximo válido</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Imediatamente acima do máximo</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <strong>Desafio:</strong> compare ECP e BVA para o mesmo campo e explique por que são técnicas
+    <em>complementares</em>.
+  </p>
+
+  <h3>Questão 3: Tabela de Decisão</h3>
+  <p>
+    A aprovação do empréstimo depende de <strong>três condições binárias</strong>: maior de idade, renda suficiente
+    e nome limpo. Construa a <strong>Tabela de Decisão</strong> completa (com <code class="one-line-code">2<sup>3</sup> = 8</code>
+    regras) indicando, em cada coluna, o efeito esperado: <strong>Aprovar</strong> ou <strong>Recusar</strong>.
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Condição</th>
+        <th>R1</th>
+        <th>R2</th>
+        <th>R3</th>
+        <th>R4</th>
+        <th>R5</th>
+        <th>R6</th>
+        <th>R7</th>
+        <th>R8</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>C1: Maior de idade?</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>C2: Renda suficiente?</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>C3: Nome limpo?</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>E1: Aprovar</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>E2: Recusar</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <strong>Desafio:</strong> transforme cada regra da tabela em um <strong>caso de teste executável</strong>,
+    definindo os valores concretos de idade, renda e situação do nome para pelo menos <strong>4 regras</strong>.
+  </p>
+
+  <h3>Questão 4: Adivinhação de Erros (Error Guessing)</h3>
+  <p>
+    Usando apenas <em>intuição e experiência</em>, liste pelo menos <strong>5 situações de erro prováveis</strong>
+    que o sistema da CredRápido poderia apresentar e que não são cobertas diretamente pelas técnicas sistemáticas.
+    Para cada uma, proponha uma <strong>entrada de teste</strong> que a revele.
+  </p>
+  <p><em>Dica: pense em campos vazios, valores negativos, zeros, casas decimais, espaços e divisão por zero.</em></p>
+
+  <h3>Questão 5: Matriz de Rastreabilidade</h3>
+  <p>
+    A equipe precisa registrar qual requisito cada caso de teste valida. Crie uma <strong>Matriz de
+    Rastreabilidade</strong> (no formato de tabela) relacionando pelo menos <strong>5 casos de teste</strong>
+    projetados nas questões anteriores aos requisitos da especificação (idade, renda, valor e regra de aprovação).
+    Indique a ferramenta sugerida na aula para criar essa matriz.
+  </p>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia o enunciado com atenção antes de começar.</li>
-    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Revise o conteúdo da aula antes de começar: ECP, BVA, Tabelas de Decisão e Adivinhação de Erros.</li>
+    <li>Na Questão 1, lembre-se de que as classes <em>inválidas</em> merecem atenção especial: é onde a maioria dos defeitos é encontrada.</li>
+    <li>Na Questão 2, os valores devem estar exatamente nas fronteiras e em seus vizinhos imediatos.</li>
+    <li>Na Questão 3, com três condições binárias a tabela terá 8 regras — não deixe nenhuma combinação de fora.</li>
     <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
