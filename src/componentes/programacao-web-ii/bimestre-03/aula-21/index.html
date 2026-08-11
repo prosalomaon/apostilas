@@ -8,42 +8,227 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 21 em desenvolvimento...</p>
-</section>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    A linguagem <strong>SQL</strong> (<em>Structured Query Language</em>) é dividida em subconjuntos de acordo com a
+    <strong>finalidade do comando</strong> no banco de dados. Para um desenvolvedor Web, entender essas divisões é
+    crucial para organizar os scripts de criação do sistema e a lógica de manipulação de dados dentro do código PHP.
+  </p>
 
-<section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <div class="mermaid">
+    flowchart TD
+    A["SQL (Structured Query Language)"] --> B["DDL<br/>Definição de Dados"]
+    A --> C["DML<br/>Manipulação de Dados"]
+    A --> D["DQL<br/>Consulta de Dados"]
+    B --> B1["CREATE, ALTER, DROP"]
+    C --> C1["INSERT, UPDATE, DELETE"]
+    D --> D1["SELECT"]
+  </div>
+
+  <h3>1. DDL – Linguagem de Definição de Dados (<em>Data Definition Language</em>)</h3>
+  <p>
+    A DDL é utilizada para <strong>definir a estrutura e a organização dos dados</strong>. Em um projeto Web, esses
+    comandos são geralmente executados <strong>uma única vez</strong> na fase de implantação ou durante migrações de
+    versão do sistema.
+  </p>
+  <ul>
+    <li><code class="one-line-code">CREATE DATABASE</code>: Cria o banco de dados que abrigará as tabelas.</li>
+    <li><code class="one-line-code">CREATE TABLE</code>: Define o nome da tabela, suas colunas e tipos de dados
+      (<code class="one-line-code">int</code>, <code class="one-line-code">varchar</code>,
+      <code class="one-line-code">date</code>, etc.).</li>
+    <li><code class="one-line-code">ALTER TABLE</code>: Modifica a estrutura de uma tabela existente (adicionar ou
+      remover colunas/restrições).</li>
+    <li><code class="one-line-code">DROP TABLE</code>: Exclui permanentemente uma tabela e seus dados.</li>
+  </ul>
+  <p>Exemplo MySQL (criação da tabela de usuários):</p>
   <div class="code-container">
-    <pre><code class="language-php">// Em breve...</code></pre>
+    <pre><code class="language-sql">CREATE TABLE usuarios (
+    id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);</code></pre>
+  </div>
+
+  <h3>2. DML – Linguagem de Manipulação de Dados (<em>Data Manipulation Language</em>)</h3>
+  <p>
+    A DML permite <strong>incluir, remover ou atualizar</strong> os registros armazenados nas tabelas. No PHP, esses
+    comandos formam a base das operações de escrita (Create, Update, Delete) do <strong>CRUD</strong>.
+  </p>
+  <ul>
+    <li><code class="one-line-code">INSERT INTO</code>: Adiciona novos registros.</li>
+    <li><code class="one-line-code">UPDATE</code>: Altera valores em registros já existentes.</li>
+    <li><code class="one-line-code">DELETE</code>: Remove registros específicos.</li>
+  </ul>
+  <p>Exemplo MySQL (inserção de dados):</p>
+  <div class="code-container">
+    <pre><code class="language-sql">INSERT INTO usuarios (nome, email, senha) VALUES ('Ana Silva', 'ana@email.com', 'hash_senha');</code></pre>
+  </div>
+
+  <h3>3. DQL – Linguagem de Consulta de Dados (<em>Data Query Language</em>)</h3>
+  <p>
+    Focada <strong>exclusivamente na extração e recuperação de informações</strong>. É o componente mais utilizado em
+    aplicações Web para exibir conteúdos dinâmicos aos usuários.
+  </p>
+  <ul>
+    <li><code class="one-line-code">SELECT</code>: Especifica as colunas desejadas.</li>
+    <li><code class="one-line-code">FROM</code>: Indica de qual(is) tabela(s) os dados vêm.</li>
+    <li><code class="one-line-code">WHERE</code>: Aplica filtros para selecionar apenas linhas específicas.</li>
+    <li><code class="one-line-code">ORDER BY</code>: Define a ordem de exibição dos resultados.</li>
+  </ul>
+  <p>Exemplo MySQL (busca ordenada):</p>
+  <div class="code-container">
+    <pre><code class="language-sql">SELECT nome, email FROM usuarios WHERE email LIKE '%@gmail.com' ORDER BY nome ASC;</code></pre>
+  </div>
+
+  <div class="mermaid">
+    sequenceDiagram
+    participant N as Navegador (Front-end)
+    participant P as PHP (Back-end)
+    participant M as MySQL
+    N->>P: Requisição (ex.: página de lista)
+    P->>M: SELECT nome, email FROM usuarios
+    M-->>P: Linhas encontradas
+    P-->>N: Página HTML renderizada
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>Integração com PHP (Contexto Web II)</h2>
+  <p>
+    Na programação Web, a interação entre o PHP e o MySQL é feita preferencialmente através da interface
+    <strong>PDO</strong> (<em>PHP Data Objects</em>), que oferece uma <strong>camada de abstração segura</strong>.
+  </p>
+
+  <h3>A. Conexão via PDO</h3>
+  <p>
+    Para conectar-se ao banco, o PHP utiliza um <strong>DSN</strong> (<em>Data Source Name</em>) que contém o host e o
+    nome do banco.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">$dsn = "mysql:host=localhost;dbname=meu_banco_web";
+$conexao = new PDO($dsn, "usuario", "senha");</code></pre>
+  </div>
+
+  <h3>B. Execução de Comandos</h3>
+  <ul>
+    <li>
+      <strong>Comandos que não retornam linhas (DDL/DML):</strong> usa-se o método
+      <code class="one-line-code">exec()</code>, que retorna o número de linhas afetadas.
+    </li>
+    <li>
+      <strong>Consultas (DQL):</strong> usa-se o método <code class="one-line-code">query()</code> ou, para maior
+      segurança, <code class="one-line-code">prepare()</code> com <em>placeholders</em>.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-php">// Comando sem retorno de linhas (DML): exec() devolve o total de linhas afetadas
+$linhas = $conexao->exec("DELETE FROM usuarios WHERE id = 10");
+echo "Registros removidos: $linhas";
+
+// Consulta (DQL): query() para comandos simples
+$resultado = $conexao->query("SELECT nome, email FROM usuarios");
+foreach ($resultado as $linha) {
+    echo $linha['nome'] . ' - ' . $linha['email'] . PHP_EOL;
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Segurança e Boas Práticas: SQL Injection</h2>
+  <p>
+    Ao construir sistemas Web, <strong>nunca insira variáveis vindas de formulários diretamente na string SQL</strong>.
+    Isso abre brecha para ataques de <strong>SQL Injection</strong>, onde um invasor pode injetar comandos maliciosos
+    para roubar ou apagar dados.
+  </p>
+
   <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    flowchart LR
+    subgraph Inseguro ["Código Inseguro"]
+      A["String SQL montada por concatenação"] --> B["Dados do formulário entram no comando"]
+      B --> C["Invasor injeta comandos maliciosos"]
+    end
+    subgraph Seguro ["Código Seguro (PDO)"]
+      D["SELECT * FROM usuarios WHERE email = ?"] --> E["prepare() + execute()"]
+      E --> F["PDO sanitiza o dado automaticamente"]
+    end
+  </div>
+
+  <h3>A Solução: Placeholders (?)</h3>
+  <p>
+    Em vez de concatenar valores, utilize o <strong>sinal de interrogação</strong> como marcador. O PDO se encarrega de
+    sanitizar os dados automaticamente.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">$sql = "SELECT * FROM usuarios WHERE email = ?";
+$stmt = $conexao->prepare($sql);
+$stmt->execute([$email_vindo_do_form]); // O dado é tratado com segurança pelo PDO
+$usuario = $stmt->fetch();</code></pre>
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Persistência:</strong> use o MySQL para garantir que os dados submetidos via formulário HTML permaneçam
+      gravados após o navegador ser fechado.
+    </li>
+    <li>
+      <strong>Identificadores:</strong> no MySQL, utilize sempre
+      <code class="one-line-code">AUTO_INCREMENT</code> em chaves primárias numéricas para facilitar a gestão de novos
+      registros pela aplicação Web.
+    </li>
+    <li>
+      <strong>Dicionário de Dados:</strong> documente as regras de cada coluna (tamanho do
+      <code class="one-line-code">VARCHAR</code>, se aceita <code class="one-line-code">NULL</code>) para que seu
+      código PHP faça validações condizentes com o banco.
+    </li>
+    <li>
+      <strong>Placeholders:</strong> prefira sempre <code class="one-line-code">prepare()</code> com
+      <code class="one-line-code">?</code> (ou <code class="one-line-code">:nome</code>) a concatenar variáveis em
+      strings SQL — nunca confie em dados vindos do usuário.
+    </li>
+    <li>
+      <strong>Execução única:</strong> comandos DDL (<code class="one-line-code">CREATE</code>,
+      <code class="one-line-code">ALTER</code>) são executados na implantação; a aplicação Web usa DML e DQL no dia a
+      dia.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Cadastro de usuários:</strong> crie a tabela com DDL, insira os dados submetidos no formulário com
+      <code class="one-line-code">INSERT</code> via PDO e confirme o cadastro com um
+      <code class="one-line-code">SELECT</code>.
+    </li>
+    <li>
+      <strong>Login seguro:</strong> use <code class="one-line-code">prepare()</code> com
+      <code class="one-line-code">WHERE email = ?</code> para buscar o usuário sem risco de SQL Injection.
+    </li>
+    <li>
+      <strong>Listagens dinâmicas:</strong> use <code class="one-line-code">ORDER BY</code> para exibir conteúdos
+      ordenados e <code class="one-line-code">WHERE</code> + <code class="one-line-code">LIKE</code> para filtros de
+      busca.
+    </li>
+    <li>
+      <strong>Edição e remoção:</strong> combine <code class="one-line-code">UPDATE</code> e
+      <code class="one-line-code">DELETE</code> (com <code class="one-line-code">WHERE</code>!) com
+      <code class="one-line-code">exec()</code> ou <code class="one-line-code">prepare()</code> para completar o CRUD.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>NIEDERAUER, Juliano. Interatividade na Web com PHP e MySQL. São Paulo: Érica, 2013.</li>
+    <li>MySQL Documentation. SQL Statements. Disponível em: https://dev.mysql.com/doc/refman/8.0/en/sql-statements.html</li>
+    <li>PHP Documentation. PDO — PHP Data Objects. Disponível em: https://www.php.net/manual/en/book.pdo.php</li>
   </ul>
 </section>
 

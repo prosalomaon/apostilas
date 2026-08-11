@@ -1,18 +1,140 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Introdução ao MySQL: Linguagens DDL, DML e DQL para manipulação de dados"
+title: "Exercício 01 - DDL, DML e DQL na prática com MySQL"
 exercicio_numero: "01"
 aula_numero: "21"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 21."
+description: "Atividade prática para consolidar a criação de tabelas (DDL), a manipulação de registros (DML) e as consultas (DQL) no MySQL, em um cenário de usuários de um site."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado(a) para estruturar o banco de dados de um portal Web. Em vez de escrever o código PHP
+    diretamente, o objetivo desta atividade é exercitar os três subconjuntos da linguagem SQL vistos na aula:
+    <strong>DDL</strong> (definição), <strong>DML</strong> (manipulação) e <strong>DQL</strong> (consulta).
+  </p>
+  <p>
+    Execute cada bloco no seu servidor MySQL e valide os resultados com consultas antes de prosseguir.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li><strong>Ambiente:</strong> Abra seu terminal ou o MySQL Workbench e conecte-se ao seu servidor local.</li>
+    <li><strong>Script:</strong> Execute o script da seção "1. Script de Preparação" integralmente e confirme que o
+      banco <code class="one-line-code">portal_db</code> foi criado.</li>
+    <li><strong>Resolução:</strong> Escreva cada comando manualmente (não copie tudo de uma vez) para internalizar a
+      sintaxe de cada subconjunto.</li>
+    <li><strong>Validação:</strong> Após cada bloco, execute o <code class="one-line-code">SELECT</code> de conferência
+      indicado e compare com o resultado esperado.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Script de Preparação (MySQL)</h2>
+  <p>Execute o script abaixo para criar o banco e a tabela <code class="one-line-code">usuarios</code> do portal:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE DATABASE portal_db;
+USE portal_db;
+
+CREATE TABLE usuarios (
+    id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    data_cadastro DATE NOT NULL,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO usuarios (nome, email, senha, data_cadastro) VALUES
+('Ana Silva', 'ana@gmail.com', 'hash_123', '2026-02-10'),
+('Bruno Costa', 'bruno@gmail.com', 'hash_456', '2026-03-05'),
+('Carla Souza', 'carla@hotmail.com', 'hash_789', '2026-04-18'),
+('Diego Lima', 'diego@gmail.com', 'hash_321', '2026-05-02');</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: DDL – Definição de Estrutura</h3>
+  <ol>
+    <li>Execute <code class="one-line-code">DESCRIBE usuarios;</code> e anote os tipos de cada coluna.</li>
+    <li>
+      Use <code class="one-line-code">ALTER TABLE</code> para adicionar a coluna
+      <code class="one-line-code">telefone VARCHAR(20)</code> à tabela.
+    </li>
+    <li>
+      Use <code class="one-line-code">ALTER TABLE</code> para adicionar a coluna
+      <code class="one-line-code">ativo TINYINT NOT NULL DEFAULT 1</code>.
+    </li>
+    <li>Confirme a nova estrutura com <code class="one-line-code">DESCRIBE usuarios;</code>.</li>
+  </ol>
+
+  <h3>Bloco 2: DML – Inserção, Atualização e Remoção</h3>
+  <ol>
+    <li>
+      Insira um novo usuário com <code class="one-line-code">INSERT INTO</code>:
+      <div class="code-container">
+        <pre><code class="language-sql">INSERT INTO usuarios (nome, email, senha, data_cadastro) VALUES
+('Erika Rocha', 'erika@gmail.com', 'hash_654', '2026-06-01');</code></pre>
+      </div>
+    </li>
+    <li>
+      Atualize o telefone do usuário "Ana Silva" usando <code class="one-line-code">UPDATE ... WHERE</code>:
+      <div class="code-container">
+        <pre><code class="language-sql">UPDATE usuarios SET telefone = '(11) 99999-0000' WHERE nome = 'Ana Silva';</code></pre>
+      </div>
+    </li>
+    <li>Remova o usuário "Carla Souza" com <code class="one-line-code">DELETE ... WHERE id = 3</code>.</li>
+    <li>
+      Confira com: <div class="code-container">
+        <pre><code class="language-sql">SELECT id, nome, email FROM usuarios;</code></pre>
+      </div>
+      Resultado esperado: 4 registros (Carla Souza deve ter sido removida).
+    </li>
+  </ol>
+
+  <h3>Bloco 3: DQL – Consultas Filtradas e Ordenadas</h3>
+  <ol>
+    <li>
+      Liste apenas nome e email dos usuários com e-mail <code class="one-line-code">@gmail.com</code>, ordenados por
+      nome em ordem alfabética:
+      <div class="code-container">
+        <pre><code class="language-sql">SELECT nome, email FROM usuarios WHERE email LIKE '%@gmail.com' ORDER BY nome ASC;</code></pre>
+      </div>
+    </li>
+    <li>Liste os usuários cadastrados após <code class="one-line-code">'2026-03-01'</code>, do mais recente para o mais
+      antigo (<code class="one-line-code">ORDER BY data_cadastro DESC</code>).</li>
+    <li>Conte quantos usuários possuem e-mail do Gmail usando
+      <code class="one-line-code">COUNT(*)</code> com <code class="one-line-code">LIKE '%@gmail.com'</code>.</li>
+  </ol>
+
+  <h3>Bloco 4: Refletindo sobre a Prática</h3>
+  <ol>
+    <li>
+      Explique, com suas palavras, em qual fase de um projeto Web cada subconjunto é mais utilizado: DDL, DML e DQL.
+    </li>
+    <li>
+      Por que <code class="one-line-code">AUTO_INCREMENT</code> na chave primária facilita o trabalho da aplicação Web
+      ao cadastrar novos usuários?
+    </li>
+    <li>
+      O que aconteceria se o comando <code class="one-line-code">DELETE FROM usuarios</code> fosse executado sem a
+      cláusula <code class="one-line-code">WHERE</code>? O que isso ensina sobre a escrita de comandos DML?
+    </li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>WHERE é obrigatório em UPDATE/DELETE:</strong> sem ele, todos os registros são afetados. No PHP, isso
+      significa sempre filtrar por <code class="one-line-code">id</code> ou outro campo único.</li>
+    <li><strong>Conferência:</strong> depois de cada comando DML, execute um
+      <code class="one-line-code">SELECT</code> para confirmar o efeito esperado.</li>
+    <li><strong>Dicionário de dados:</strong> documente tamanho e regras de cada coluna — isso guiará as validações do
+      PHP na aula seguinte.</li>
+    <li><strong>Tente sozinho:</strong> escreva os comandos de memória; volte à aula apenas se travar em algum
+      conceito.</li>
   </ul>
 </div>
