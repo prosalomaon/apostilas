@@ -1,30 +1,318 @@
 ---
 title: "Primeira Forma Normal (1FN): Eliminação de grupos repetitivos e atomicidade."
+componente: "Banco de Dados I"
 aula_numero: "23"
 subject: "banco-de-dados-i"
-description: "Conteúdo da aula 23 do bimestre 3: Primeira Forma Normal (1FN): Eliminação de grupos repetitivos e atomicidade.."
+description: "Entenda a Primeira Forma Normal (1FN): atomicidade dos atributos, eliminação de atributos compostos e multivalorados e a resolução de grupos repetitivos, utilizando o caso clássico da Nota Fiscal com itens."
 tags:
 - aula
 - bimestre-03
 ---
-aula_numero: "23"
-subject: "banco-de-dados-i"
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 03 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. Definição de 1FN</h3>
+  <p>
+    Uma tabela é considerada em <strong>Primeira Forma Normal</strong> se, e somente se, todas as suas colunas possuem
+    <strong>valores atômicos</strong> (únicos e indivisíveis) e <strong>não existem grupos repetitivos</strong>
+    (múltiplas ocorrências de um dado em uma mesma linha) ou <strong>atributos compostos</strong>.
+  </p>
+  <p>
+    Na prática, estar na 1FN significa que a tabela possui uma estrutura <em>"plana"</em>, sem colunas que funcionem como
+    vetores ou listas internas.
+  </p>
+
+  <h3>2. O Conceito de Atomicidade</h3>
+  <p>
+    Todos os atributos de uma relação devem ser <strong>atômicos</strong>, ou seja, indivisíveis em termos de
+    componentes.
+  </p>
+  <ul>
+    <li>
+      <strong>Atributos Compostos:</strong> São aqueles que podem ser divididos em subpartes com significados
+      independentes (ex: um campo "Endereço" que contém rua, cidade e CEP). Na 1FN, esses atributos devem ser
+      decompostos em colunas elementares para facilitar buscas e filtros específicos.
+    </li>
+    <li>
+      <strong>Atributos Multivalorados:</strong> Ocorrem quando um único campo armazena vários valores do mesmo tipo
+      (ex: uma coluna "Telefones" guardando três números diferentes separados por vírgula). Isso é estritamente proibido
+      na 1FN.
+    </li>
+  </ul>
+
+  <h3>3. Eliminação de Grupos Repetitivos</h3>
+  <p>
+    <strong>Grupos repetitivos</strong> são conjuntos de atributos que se repetem indefinidas vezes para uma mesma
+    entidade. Como resolver? A aplicação da 1FN consiste em <strong>retirar os elementos repetitivos da estrutura
+    original e criar uma nova entidade (tabela)</strong>:
+  </p>
+  <ol>
+    <li>Identifica-se o conjunto de dados que se repete.</li>
+    <li>Cria-se uma segunda tabela para esses dados.</li>
+    <li>
+      A nova tabela herda a Chave Primária da tabela original (que passa a ser parte de sua chave e uma Chave
+      Estrangeira) para manter o vínculo lógico.
+    </li>
+  </ol>
+
+  <h3>4. Por que aplicar a 1FN?</h3>
+  <ul>
+    <li>
+      <strong>Facilidade de Consulta:</strong> Permite usar comandos SQL simples para contar itens ou filtrar produtos,
+      o que seria impossível se os dados estivessem "escondidos" dentro de uma lista em uma única célula.
+    </li>
+    <li>
+      <strong>Integridade:</strong> Garante que cada registro seja distinguível e que não haja perda de informação ao
+      manipular os dados.
+    </li>
+    <li>
+      <strong>Padronização:</strong> Atende aos preceitos da Teoria Relacional de que uma tabela é um conjunto de tuplas
+      com valores de domínios atômicos.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 03 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+
+  <h3>1. Estrutura Não Normalizada (0FN)</h3>
+  <p>
+    Nesta fase, os itens da nota são vistos como um subgrupo repetitivo dentro da mesma linha. Note a coluna
+    <code class="one-line-code">itens</code>, que viola a atomicidade ao armazenar uma lista com vários produtos:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- ATENÇÃO: estrutura NÃO normalizada (0FN)
+CREATE TABLE nota_fiscal_0fn (
+    num_nf      INT PRIMARY KEY,
+    data        DATE NOT NULL,
+    cliente     VARCHAR(100) NOT NULL,
+    itens       VARCHAR(255) NOT NULL -- lista com Código, Descrição e Qtd
+);
+
+INSERT INTO nota_fiscal_0fn VALUES
+(456123, '2026-05-05', 'Davi B.', '{45, Limpadora, 1}, {25, Computador, 1}');</code></pre>
+  </div>
+  <p>
+    Problemas: para contar quantos produtos foram vendidos ou filtrar por um produto específico, seria necessário
+    "quebrar" manualmente a string <code class="one-line-code">itens</code> — uma operação frágil e lenta.
+  </p>
+
+  <h3>2. Estrutura na Primeira Forma Normal (1FN)</h3>
+  <p>
+    Os dados são desdobrados em <strong>duas tabelas distintas</strong>: o cabeçalho da nota e uma tabela de itens, cuja
+    chave é a combinação do <code class="one-line-code">Num_NF</code> (herdado) com o
+    <code class="one-line-code">Cod_Produto</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Tabela de Notas Fiscais: contém os dados do cabeçalho
+CREATE TABLE nota_fiscal (
+    num_nf  INT PRIMARY KEY,
+    data    DATE NOT NULL,
+    cliente VARCHAR(100) NOT NULL
+);
+
+-- Tabela de Itens de Nota: um produto por linha (chave composta)
+CREATE TABLE item_nota (
+    num_nf      INT NOT NULL,
+    cod_produto INT NOT NULL,
+    quantidade  INT NOT NULL,
+    PRIMARY KEY (num_nf, cod_produto),
+    FOREIGN KEY (num_nf) REFERENCES nota_fiscal(num_nf)
+);
+
+INSERT INTO nota_fiscal VALUES
+(456123, '2026-05-05', 'Davi B.');
+
+INSERT INTO item_nota VALUES
+(456123, 45, 1),
+(456123, 25, 1);</code></pre>
+  </div>
+  <p>
+    Agora é possível responder às consultas com SQL simples, por exemplo contando os produtos de uma nota ou filtrando
+    pela quantidade vendida:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Quantos produtos a nota 456123 possui?
+SELECT COUNT(*) AS total_itens
+FROM item_nota
+WHERE num_nf = 456123;
+
+-- Visão completa: cabeçalho + itens
+SELECT nf.num_nf, nf.data, nf.cliente, it.cod_produto, it.quantidade
+FROM nota_fiscal nf
+JOIN item_nota it ON it.num_nf = nf.num_nf;</code></pre>
+  </div>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
 
+  <h3>A. Estrutura Não Normalizada (0FN)</h3>
+  <p>
+    Os itens aparecem como um subgrupo repetitivo dentro da mesma linha:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Num_NF (PK)</th>
+        <th>Data</th>
+        <th>Cliente</th>
+        <th>Itens da Nota (Código, Descrição, Qtd)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>456123</td>
+        <td>05/05/26</td>
+        <td>Davi B.</td>
+        <td>{45, Limpadora, 1}, {25, Computador, 1}</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <h3>B. Estrutura na Primeira Forma Normal (1FN)</h3>
+  <p>
+    Os dados são desdobrados em duas tabelas distintas:
+  </p>
 
+  <h4>Tabela <code class="one-line-code">nota_fiscal</code></h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Num_NF (PK)</th>
+        <th>Data</th>
+        <th>Cliente</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>456123</td>
+        <td>05/05/26</td>
+        <td>Davi B.</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <h4>Tabela <code class="one-line-code">item_nota</code></h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Num_NF (PK/FK)</th>
+        <th>Cod_Produto (PK)</th>
+        <th>Quantidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>456123</td>
+        <td>45</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>456123</td>
+        <td>25</td>
+        <td>1</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <h3>Modelo Entidade-Relacionamento</h3>
+  <div class="mermaid">
+    erDiagram
+    NOTA_FISCAL {
+        int num_nf PK
+        date data
+        varchar cliente
+    }
+    ITEM_NOTA {
+        int num_nf PK, FK
+        int cod_produto PK
+        int quantidade
+    }
+    NOTA_FISCAL ||--o{ ITEM_NOTA : "possui"
+  </div>
 
+  <h3>Fluxo da eliminação de grupos repetitivos</h3>
+  <div class="mermaid">
+    flowchart TD
+    A["Nota Fiscal com grupo repetitivo\n(Itens dentro da mesma linha)"] --> B["Identificar o conjunto que se repete\n(produtos vendidos)"]
+    B --> C["Criar segunda tabela\n(ITEM_NOTA)"]
+    C --> D["Herdar a PK da tabela original\n(Num_NF vira PK/FK)"]
+    D --> E["Cada valor agora é atômico\n(um produto por linha)"]
+  </div>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>Nulos:</strong> A 1FN ajuda a reduzir o uso excessivo de valores nulos, pois dados opcionais ou repetitivos
+      são movidos para tabelas específicas.
+    </li>
+    <li>
+      <strong>Chave Primária:</strong> É primordial definir a Chave Primária antes de iniciar a normalização, pois ela é
+      a âncora para todos os relacionamentos que surgirão.
+    </li>
+    <li>
+      <strong>Spartan Simplicity:</strong> Lembre-se que o modelo relacional preza pela simplicidade: sem ordem de
+      tuplas, sem ponteiros físicos e sem duplicatas.
+    </li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Exercício de Reflexão</h2>
+  <p>
+    Ao modelar uma <strong>"Ficha de Empréstimo de Livros"</strong>, se um livro possui vários autores, onde essa
+    informação deve ficar para respeitar a 1FN?
+  </p>
+  <p>
+    <strong>Resposta:</strong> Deve ser criada uma <strong>tabela separada para autores</strong>, vinculando-os ao ISBN
+    do livro, eliminando a multivaloração na tabela principal de livros.
+  </p>
+  <p>
+    Em outras palavras: um atributo multivalorado (vários autores em uma única célula) viola a atomicidade e precisa ser
+    desdobrado em uma nova entidade — exatamente o mesmo princípio aplicado aos itens da Nota Fiscal.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li>
+      <strong>Desconfie de listas em uma única coluna:</strong> Textos com vírgulas, ponto-e-vírgulas ou delimitadores
+      separando "vários valores" são o sintoma clássico de multivaloração. Quebre-os em linhas de uma tabela filha.
+    </li>
+    <li>
+      <strong>Decomponha atributos compostos:</strong> Um único campo "Endereço" deve virar Rua, Número, Cidade e CEP
+      sempre que cada parte for usada em buscas ou filtros específicos.
+    </li>
+    <li>
+      <strong>Defina a PK antes de normalizar:</strong> A Chave Primária é a âncora dos relacionamentos; sem ela, não é
+      possível herdar a referência para a nova tabela criada na eliminação de grupos repetitivos.
+    </li>
+    <li>
+      <strong>Valide o resultado:</strong> Depois da decomposição, confira se é possível reconstruir a visão original
+      com um <code class="one-line-code">JOIN</code> entre as tabelas — se sim, nenhuma informação foi perdida.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
+    <li>HEUSER, Carlos Alberto. Projeto de Banco de Dados. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
+      Paulo: DCC-IME-USP, 2005.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+  </ul>
+</section>

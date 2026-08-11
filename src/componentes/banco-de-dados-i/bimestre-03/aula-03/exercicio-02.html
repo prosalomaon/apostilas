@@ -1,23 +1,127 @@
 ---
-layout: exercicio
-title: "Modelo Entidade-Relacionamento (MER): Conceitos de Entidades e suas classificações."
+layout: questionario
+title: "Primeira Forma Normal (1FN): Atomicidade e grupos repetitivos"
 exercicio_numero: "02"
-03ero: "03"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 03."
----
+aula_numero: "23"
+sigla_componente: "BDI"
+description: "Questionário sobre a Primeira Forma Normal: valores atômicos, atributos compostos e multivalorados, eliminação de grupos repetitivos e o caso da Nota Fiscal."
+perguntas:
+  - texto: "Quando uma tabela é considerada na Primeira Forma Normal (1FN)?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Quando todas as suas chaves estrangeiras apontam para uma única tabela."
+      - letra: "b"
+        texto: "Quando todas as colunas possuem valores atômicos e não existem grupos repetitivos ou atributos compostos."
+      - letra: "c"
+        texto: "Quando todas as colunas são do tipo texto para evitar conversões."
+      - letra: "d"
+        texto: "Quando a tabela não possui nenhuma chave primária definida."
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+  - texto: "O que significa um atributo ser atômico?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Possuir o menor valor numérico possível entre todos os registros."
+      - letra: "b"
+        texto: "Ser do tipo caractere único, com exatamente uma letra."
+      - letra: "c"
+        texto: "Ser indivisível em termos de componentes, armazenando um único valor por célula."
+      - letra: "d"
+        texto: "Não aceitar valores nulos em nenhuma circunstância."
 
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
+  - texto: "Qual das situações abaixo caracteriza um atributo COMPOSTO?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Um campo \"Endereço\" que contém rua, cidade e CEP em um único valor."
+      - letra: "b"
+        texto: "Uma coluna \"Telefones\" armazenando vários números separados por vírgula."
+      - letra: "c"
+        texto: "Uma coluna \"Itens\" guardando uma lista de produtos vendidos."
+      - letra: "d"
+        texto: "Uma coluna \"Cores\" com três valores diferentes na mesma célula."
 
+  - texto: "Qual das situações abaixo caracteriza um atributo MULTIVALORADO?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Um campo \"Endereço\" contendo rua, cidade e CEP."
+      - letra: "b"
+        texto: "Um campo \"Data de Nascimento\" armazenando dia, mês e ano."
+      - letra: "c"
+        texto: "Uma coluna \"CPF\" que guarda apenas um valor por cliente."
+      - letra: "d"
+        texto: "Uma coluna \"Telefones\" guardando três números diferentes separados por vírgula."
 
+  - texto: "O que são grupos repetitivos em uma tabela?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Colunas que se repetem em diferentes bancos de dados."
+      - letra: "b"
+        texto: "Conjuntos de atributos que se repetem indefinidas vezes para uma mesma entidade dentro de uma única linha."
+      - letra: "c"
+        texto: "Registros duplicados acidentalmente inseridos por falha do usuário."
+      - letra: "d"
+        texto: "Índices criados para acelerar a busca de valores repetidos."
 
+  - texto: "Qual é o passo inicial para eliminar grupos repetitivos na aplicação da 1FN?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Excluir as linhas que contenham valores duplicados."
+      - letra: "b"
+        texto: "Transformar todas as colunas em colunas do tipo texto."
+      - letra: "c"
+        texto: "Identificar o conjunto de dados que se repete para a mesma entidade."
+      - letra: "d"
+        texto: "Criar uma chave estrangeira apontando para a própria tabela."
 
+  - texto: "Na eliminação de grupos repetitivos, o que acontece com a Chave Primária da tabela original?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Ela é herdada pela nova tabela, passando a fazer parte de sua chave e atuando como Chave Estrangeira."
+      - letra: "b"
+        texto: "Ela é excluída do modelo para dar lugar a uma chave sequencial nova."
+      - letra: "c"
+        texto: "Ela é mantida apenas como um atributo comum, sem qualquer papel de chave."
+      - letra: "d"
+        texto: "Ela é duplicada em todas as linhas da nova tabela, sem restrições de integridade."
 
+  - texto: "Na tabela ITEM_NOTA criada a partir da 1FN da Nota Fiscal, qual é a chave primária correta?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Apenas o campo Num_NF."
+      - letra: "b"
+        texto: "A combinação de Num_NF (herdado) com Cod_Produto."
+      - letra: "c"
+        texto: "Apenas o campo Cod_Produto."
+      - letra: "d"
+        texto: "O campo Quantidade, por ser o único numérico."
+
+  - texto: "Qual é um dos benefícios de aplicar a 1FN em relação às consultas?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Permite armazenar listas completas em uma única célula para economizar espaço."
+      - letra: "b"
+        texto: "Elimina a necessidade de chaves primárias em todas as tabelas."
+      - letra: "c"
+        texto: "Garante que todas as consultas retornem apenas um registro."
+      - letra: "d"
+        texto: "Permite usar comandos SQL simples para contar itens ou filtrar produtos, que seriam impossíveis com dados escondidos em listas."
+
+  - texto: "Em uma \"Ficha de Empréstimo de Livros\", se um livro possui vários autores, onde essa informação deve ficar para respeitar a 1FN?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Em uma única célula da tabela de livros, separados por vírgulas."
+      - letra: "b"
+        texto: "No campo do título do livro, como parte do nome."
+      - letra: "c"
+        texto: "Em uma tabela separada para autores, vinculando-os ao ISBN do livro."
+      - letra: "d"
+        texto: "Apenas no cabeçalho do relatório impresso, sem representação na base."

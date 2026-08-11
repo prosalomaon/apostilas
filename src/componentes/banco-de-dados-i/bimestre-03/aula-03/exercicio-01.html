@@ -1,23 +1,78 @@
 ---
 layout: exercicio
-title: "Modelo Entidade-Relacionamento (MER): Conceitos de Entidades e suas classificações."
+title: "Primeira Forma Normal: Atomicidade e eliminação de grupos repetitivos."
 exercicio_numero: "01"
-03ero: "03"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 03."
+aula_numero: "23"
+description: "Primeira atividade prática para consolidar os conhecimentos da aula 23: identificar violações de atomicidade e decompor tabelas para a Primeira Forma Normal."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<p><strong>Atividade 1: Identificando violações da 1FN</strong></p>
+<p>Considere a tabela <code class="one-line-code">FICHA_CLIENTE</code> abaixo:</p>
+<table>
+  <thead>
+    <tr>
+      <th>IdCliente</th>
+      <th>Nome</th>
+      <th>Telefones</th>
+      <th>Endereco</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Davi B.</td>
+      <td>(11) 1111-1111, (11) 2222-2222</td>
+      <td>Rua das Flores, 123, São Paulo, 01234-567</td>
+    </tr>
+  </tbody>
+</table>
+<ol>
+  <li>Identifique o atributo <strong>multivalorado</strong> presente na tabela e explique por que ele viola a 1FN.</li>
+  <li>Identifique o atributo <strong>composto</strong> presente na tabela e liste as subpartes com significado independente que ele contém.</li>
+  <li>Proponha a decomposição da tabela para que ela respeite a 1FN, indicando as novas colunas.</li>
+</ol>
+
+<p><strong>Atividade 2: Decomposição da Nota Fiscal (0FN &rarr; 1FN)</strong></p>
+<p>A tabela abaixo está fora da 1FN, pois os itens aparecem como um grupo repetitivo dentro da mesma linha:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Num_NF (PK)</th>
+      <th>Data</th>
+      <th>Cliente</th>
+      <th>Itens da Nota (Código, Descrição, Qtd)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>456123</td>
+      <td>05/05/26</td>
+      <td>Davi B.</td>
+      <td>{45, Limpadora, 1}, {25, Computador, 1}</td>
+    </tr>
+  </tbody>
+</table>
+<p>Aplicando a 1FN, faça o que se pede:</p>
+<ol>
+  <li>Defina a estrutura da tabela <code class="one-line-code">NOTA_FISCAL</code> (cabeçalho), indicando sua chave primária.</li>
+  <li>Defina a estrutura da tabela <code class="one-line-code">ITEM_NOTA</code>, indicando a chave primária composta e a chave estrangeira herdada.</li>
+  <li>Preencha ambas as tabelas com os dados do exemplo apresentado.</li>
+</ol>
+
+<p><strong>Atividade 3: Livros e Autores</strong></p>
+<p>Em uma "Ficha de Empréstimo de Livros", um mesmo livro pode possuir vários autores. Se o atributo <code class="one-line-code">Autores</code> for armazenado como uma lista em uma única célula, a tabela violará a 1FN.</p>
+<ol>
+  <li>Explique por que a coluna "Autores" com vários nomes em uma única célula fere a atomicidade.</li>
+  <li>Proponha a estrutura que respeita a 1FN, definindo as tabelas <code class="one-line-code">LIVRO</code> e <code class="one-line-code">AUTOR</code> (com o ISBN do livro como referência).</li>
+  <li>Justifique qual é a chave primária e a chave estrangeira de cada tabela criada.</li>
+</ol>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
+    <li>Lembre-se: na 1FN cada célula deve conter um único valor atômico.</li>
+    <li>Grupos repetitivos são resolvidos criando uma nova tabela que herda a chave primária da tabela original.</li>
+    <li>Consulte o conteúdo da aula 23 sobre atomicidade e grupos repetitivos caso tenha dúvidas.</li>
     <li>Tente resolver de forma independente antes de buscar ajuda.</li>
   </ul>
 </div>
-
-
-
-
-

@@ -1,30 +1,304 @@
 ---
 title: "Dependências Funcionais: A base teórica das Formas Normais."
+componente: "Banco de Dados I"
 aula_numero: "22"
 subject: "banco-de-dados-i"
-description: "Conteúdo da aula 22 do bimestre 3: Dependências Funcionais: A base teórica das Formas Normais.."
+description: "Entenda o que é uma Dependência Funcional (DF), como identificar determinantes e dependentes, os três tipos de dependências (total, parcial e transitiva) e o papel dessa base teórica na aplicação das Formas Normais (2FN, 3FN e FNBC)."
 tags:
 - aula
 - bimestre-03
 ---
-aula_numero: "22"
-subject: "banco-de-dados-i"
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 02 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é uma Dependência Funcional (DF)?</h3>
+  <p>
+    A <strong>Dependência Funcional</strong> é uma restrição que descreve a relação entre os atributos de uma tabela.
+    Dizemos que um conjunto de atributos <strong>B</strong> é funcionalmente dependente de um conjunto <strong>A</strong>
+    (denotado por <strong>A&rarr;B</strong>) se, em todas as situações possíveis, o valor de A determinar de forma única
+    o valor de B.
+  </p>
+  <ul>
+    <li>
+      <strong>Determinante:</strong> É o lado esquerdo da seta (<code class="one-line-code">A</code>); o atributo que
+      define o outro.
+    </li>
+    <li>
+      <strong>Dependente:</strong> É o lado direito da seta (<code class="one-line-code">B</code>); o atributo que é
+      definido.
+    </li>
+  </ul>
+
+  <h3>2. Exemplo Prático de Identificação</h3>
+  <p>Considere uma tabela de Funcionários:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Matrícula (PK)</th>
+        <th>Nome</th>
+        <th>Departamento</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1021</td>
+        <td>João Barros</td>
+        <td>900</td>
+      </tr>
+      <tr>
+        <td>1145</td>
+        <td>Pedro Silva</td>
+        <td>700</td>
+      </tr>
+      <tr>
+        <td>1689</td>
+        <td>Antonio Jardim</td>
+        <td>900</td>
+      </tr>
+    </tbody>
+  </table>
+  <ul>
+    <li>
+      <strong>Matrícula &rarr; Nome:</strong> Se conheço a matrícula, sei exatamente quem é o funcionário.
+    </li>
+    <li>
+      <strong>Departamento &not;&rarr; Matrícula:</strong> O departamento não determina a matrícula, pois o departamento
+      900 possui dois funcionários diferentes (João e Antonio).
+    </li>
+  </ul>
+  <p>
+    <strong>Outro Exemplo (ISBN):</strong> Na ficha de um livro, o ISBN determina o Título. Se mudarmos o valor do ISBN,
+    o título obrigatoriamente mudará, caracterizando a dependência funcional.
+  </p>
+
+  <h3>3. Tipos de Dependências Funcionais</h3>
+  <p>
+    Para aplicar as Formas Normais (2FN e 3FN), é preciso distinguir três tipos de dependências:
+  </p>
+
+  <h4>A. Dependência Funcional Total (Plena)</h4>
+  <p>
+    Ocorre quando um atributo depende de uma <strong>chave primária composta inteira</strong>, e não apenas de uma parte
+    dela.
+  </p>
+  <ul>
+    <li>
+      <em>Exemplo:</em> Na tabela <code class="one-line-code">ITEM_PEDIDO(NumPedido, CodProduto, Quantidade)</code>, a
+      Quantidade possui dependência total da chave composta <code class="one-line-code">{NumPedido, CodProduto}</code>.
+    </li>
+  </ul>
+
+  <h4>B. Dependência Funcional Parcial</h4>
+  <p>
+    Ocorre quando um atributo depende de <strong>apenas uma parte</strong> de uma chave primária composta.
+  </p>
+  <ul>
+    <li>
+      <em>Exemplo:</em> Se na tabela acima tivéssemos <code class="one-line-code">DescricaoProduto</code>, ela dependeria
+      apenas de <code class="one-line-code">CodProduto</code>, e não do <code class="one-line-code">NumPedido</code>.
+      Isso viola a <strong>2ª Forma Normal</strong>.
+    </li>
+  </ul>
+
+  <h4>C. Dependência Funcional Transitiva</h4>
+  <p>
+    Ocorre quando um atributo depende de <strong>outro atributo que não é chave</strong>.
+  </p>
+  <ul>
+    <li>
+      <em>Exemplo:</em> Na tabela <code class="one-line-code">NOTAS_FISCAIS(NumNF, CodCliente, NomeCliente)</code>, o
+      NomeCliente depende do CodCliente, que por sua vez depende do NumNF. Logo, o nome tem dependência transitiva da
+      chave <em>via</em> CodCliente.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 02 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+
+  <h3>1. A tabela Funcionários e suas DFs</h3>
+  <p>
+    A estrutura DDL abaixo materializa o exemplo da tabela de Funcionários. Observe que a chave primária
+    (<code class="one-line-code">matricula</code>) determina todos os demais atributos:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE funcionarios (
+    matricula    INT PRIMARY KEY,
+    nome         VARCHAR(100) NOT NULL,
+    departamento INT NOT NULL
+);
+
+INSERT INTO funcionarios VALUES
+(1021, 'João Barros',    900),
+(1145, 'Pedro Silva',    700),
+(1689, 'Antonio Jardim', 900);
+
+-- DF válida: matricula -> nome, departamento
+-- DF inválida: departamento -> matricula (900 tem dois funcionários)</code></pre>
+  </div>
+
+  <h3>2. Violação de dependência parcial (contra a 2FN)</h3>
+  <p>
+    Abaixo, a tabela <code class="one-line-code">ITEM_PEDIDO</code> com a chave composta
+    <code class="one-line-code">{NumPedido, CodProduto}</code>. O atributo <code class="one-line-code">DescricaoProduto</code>
+    depende apenas de <code class="one-line-code">CodProduto</code> — uma dependência <strong>parcial</strong>, que
+    precisa ser eliminada na 2ª Forma Normal:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- ATENÇÃO: estrutura NÃO normalizada (apenas para estudo das DFs)
+CREATE TABLE item_pedido (
+    num_pedido        INT NOT NULL,
+    cod_produto       INT NOT NULL,
+    quantidade        INT NOT NULL,        -- depende da chave TOTAL (NumPedido, CodProduto)
+    descricao_produto VARCHAR(100) NOT NULL, -- depende APENAS de CodProduto (PARCIAL)
+    PRIMARY KEY (num_pedido, cod_produto)
+);
+
+-- DF total:   {num_pedido, cod_produto} -> quantidade
+-- DF parcial: cod_produto -> descricao_produto  (viola a 2FN)</code></pre>
+  </div>
+
+  <h3>3. Violação de dependência transitiva (contra a 3FN)</h3>
+  <p>
+    Na tabela <code class="one-line-code">NOTAS_FISCAIS</code>, o <code class="one-line-code">NomeCliente</code> depende
+    da chave <code class="one-line-code">NumNF</code> <em>por intermédio</em> do
+    <code class="one-line-code">CodCliente</code> — uma dependência <strong>transitiva</strong>, que a 3ª Forma Normal
+    exige decompor:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- ATENÇÃO: estrutura NÃO normalizada (apenas para estudo das DFs)
+CREATE TABLE notas_fiscais (
+    num_nf       INT PRIMARY KEY,
+    data_emissao DATE NOT NULL,
+    cod_cliente  INT NOT NULL,
+    nome_cliente VARCHAR(100) NOT NULL, -- depende de CodCliente (transitivo)
+    valor_total  DECIMAL(10,2) NOT NULL
+);
+
+-- DF direta:  num_nf -> cod_cliente
+-- DF direta:  cod_cliente -> nome_cliente
+-- DF transitiva: num_nf -> nome_cliente  (via cod_cliente, viola a 3FN)</code></pre>
+  </div>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
+  <p>
+    Utiliza-se diagramas de setas para visualizar como os dados "orbitam" a chave primária:
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    PK[Matrícula] -- Determina --> A[Nome]
+    PK -- Determina --> B[Data de Nascimento]
+    A -- Não Determina --> PK
+  </div>
 
+  <h3>Dependência Parcial em ITEM_PEDIDO</h3>
+  <div class="mermaid">
+    flowchart LR
+    NP[NumPedido] --- CHAVE["Chave Composta {NumPedido, CodProduto}"]
+    CP[CodProduto] --- CHAVE
+    CHAVE --> QTD[Quantidade]
+    CP --> DESC[DescricaoProduto]
+    QTD -. "DF Total (OK)" .-> CHAVE
+    DESC -. "DF Parcial (viola 2FN)" .-> CP
+  </div>
 
+  <h3>Dependência Transitiva em NOTAS_FISCAIS</h3>
+  <div class="mermaid">
+    flowchart LR
+    NF[NumNF] --> CC[CodCliente]
+    CC --> NC[NomeCliente]
+    NF -. "DF Transitiva (viola 3FN)" .-> NC
+  </div>
 
+  <h3>As Formas Normais e a Dependência Funcional</h3>
+  <p>
+    A normalização é descrita como o <em>"senso comum formalizado"</em>. O analista utiliza as dependências funcionais
+    para decompor tabelas "inchadas" em estruturas menores e estáveis.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Forma Normal</th>
+        <th>Regra Baseada em Dependência</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>2FN</strong></td>
+        <td>Exige que não existam Dependências Parciais; todo atributo deve depender da chave total.</td>
+      </tr>
+      <tr>
+        <td><strong>3FN</strong></td>
+        <td>Exige que não existam Dependências Transitivas; atributos só devem depender da chave primária.</td>
+      </tr>
+      <tr>
+        <td><strong>FNBC</strong></td>
+        <td>Exige que todo determinante seja uma Chave Candidata.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>Chave Primária e DF:</strong> Por definição, a chave primária de uma tabela deve determinar
+      funcionalmente todos os outros atributos dessa tabela.
+    </li>
+    <li>
+      <strong>Fatos e Tuplas:</strong> Cada linha de uma tabela representa um fato; se a dependência funcional estiver
+      errada, o banco de dados registrará fatos contraditórios (inconsistência).
+    </li>
+    <li>
+      <strong>Superchaves:</strong> Uma superchave é qualquer conjunto de atributos que contém uma chave candidata e, por
+      consequência, determina todos os atributos da relação.
+    </li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li>
+      <strong>Antes de normalizar, liste as DFs:</strong> Ao revisar um modelo lógico, escreva explicitamente todas as
+      dependências funcionais do tipo <code class="one-line-code">X &rarr; Y</code> identificadas nos dados. Essa lista é
+      o "mapa" que guia todas as decomposições.
+    </li>
+    <li>
+      <strong>Chaves compostas &rarr; verifique a 2FN:</strong> Quando uma tabela possui chave primária composta,
+      confira se todo atributo não chave depende da chave <em>inteira</em>. Se algum depender só de uma parte, há uma
+      dependência parcial a corrigir.
+    </li>
+    <li>
+      <strong>Atributos "de outra entidade" &rarr; verifique a 3FN:</strong> Nome de cliente dentro de uma tabela de
+      notas fiscais é um sinal clássico de dependência transitiva. Pergunte-se: "esse atributo depende da chave ou de
+      outro atributo não chave?"
+    </li>
+    <li>
+      <strong>Audite determinantes:</strong> Na FNBC, verifique se todos os determinantes encontrados são chaves
+      candidatas. Um determinante que não é chave indica que a relação ainda precisa ser decomposta.
+    </li>
+  </ul>
+</section>
 
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
+    <li>HEUSER, Carlos Alberto. Projeto de Banco de Dados. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
+      Paulo: DCC-IME-USP, 2005.</li>
+  </ul>
+</section>
 
-
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+  </ul>
+</section>

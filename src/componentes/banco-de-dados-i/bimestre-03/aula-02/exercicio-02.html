@@ -1,23 +1,139 @@
 ---
-layout: exercicio
-title: "O Processo de Abstração: Observação da realidade e definição do Minimundo."
+layout: questionario
+title: "Dependências Funcionais: A base teórica das Formas Normais"
 exercicio_numero: "02"
-02ero: "02"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 02."
----
+aula_numero: "22"
+sigla_componente: "BDI"
+description: "Questionário sobre dependências funcionais: conceito, determinante e dependente, tipos de dependência (total, parcial e transitiva) e sua relação com as Formas Normais."
+perguntas:
+  - texto: "O que é uma Dependência Funcional (DF) em uma tabela?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Uma regra que obriga a criar uma chave estrangeira para cada coluna de texto."
+      - letra: "b"
+        texto: "Um comando SQL que ordena os valores de uma coluna para acelerar consultas."
+      - letra: "c"
+        texto: "Uma restrição em que o valor de um conjunto de atributos A determina de forma única o valor de um conjunto de atributos B (A→B)."
+      - letra: "d"
+        texto: "Uma técnica de armazenamento que duplica os dados em múltiplas tabelas."
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+  - texto: "Na notação A→B, o que representa o termo \"determinante\"?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "O lado esquerdo da seta (A), o atributo que define o outro."
+      - letra: "b"
+        texto: "O lado direito da seta (B), o atributo que é definido."
+      - letra: "c"
+        texto: "A chave estrangeira que liga duas tabelas distintas."
+      - letra: "d"
+        texto: "O índice criado para acelerar buscas por texto completo."
 
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
+  - texto: "Na tabela FUNCIONARIOS (Matrícula PK, Nome, Departamento), qual dependência funcional é VÁLIDA?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Departamento → Matrícula, pois todos os funcionários do departamento 900 são diferentes."
+      - letra: "b"
+        texto: "Matrícula → Nome, pois conhecendo a matrícula sabemos exatamente quem é o funcionário."
+      - letra: "c"
+        texto: "Nome → Matrícula, pois cada funcionário tem apenas um nome."
+      - letra: "d"
+        texto: "Departamento → Nome, pois cada departamento possui um único funcionário."
 
+  - texto: "O que caracteriza uma Dependência Funcional Total (Plena)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "O atributo depende de apenas uma parte da chave primária composta."
+      - letra: "b"
+        texto: "O atributo depende de outro atributo que não é chave."
+      - letra: "c"
+        texto: "O atributo depende da chave primária composta inteira, e não apenas de uma parte dela."
+      - letra: "d"
+        texto: "O atributo não possui nenhuma dependência em relação à chave."
 
+  - texto: "Em ITEM_PEDIDO(NumPedido, CodProduto, Quantidade), a dependência de Quantidade em relação à chave {NumPedido, CodProduto} é um exemplo de:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Dependência Funcional Total."
+      - letra: "b"
+        texto: "Dependência Funcional Parcial."
+      - letra: "c"
+        texto: "Dependência Funcional Transitiva."
+      - letra: "d"
+        texto: "Independência funcional."
 
+  - texto: "Se em ITEM_PEDIDO o atributo DescricaoProduto depende apenas de CodProduto, temos um exemplo de dependência que viola a:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "1ª Forma Normal."
+      - letra: "b"
+        texto: "2ª Forma Normal, pois existe uma dependência parcial da chave composta."
+      - letra: "c"
+        texto: "3ª Forma Normal, pois existe uma dependência transitiva."
+      - letra: "d"
+        texto: "Nenhuma forma normal, pois o atributo ainda depende da chave."
 
+  - texto: "O que é uma Dependência Funcional Transitiva?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Quando um atributo depende de uma chave primária composta inteira."
+      - letra: "b"
+        texto: "Quando um atributo depende de apenas uma parte de uma chave primária composta."
+      - letra: "c"
+        texto: "Quando um atributo é determinado diretamente pela chave primária."
+      - letra: "d"
+        texto: "Quando um atributo depende de outro atributo que não é chave, que por sua vez depende da chave."
 
+  - texto: "Na tabela NOTAS_FISCAIS(NumNF, CodCliente, NomeCliente), o NomeCliente possui dependência transitiva da chave porque:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "NomeCliente depende de CodCliente, que depende de NumNF."
+      - letra: "b"
+        texto: "NomeCliente depende diretamente de NumNF."
+      - letra: "c"
+        texto: "NumNF depende de NomeCliente para ser identificada."
+      - letra: "d"
+        texto: "CodCliente depende de NomeCliente e ambos da chave."
+
+  - texto: "Qual exigência a 3ª Forma Normal impõe em relação às dependências?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Que não existam dependências parciais; todo atributo deve depender da chave total."
+      - letra: "b"
+        texto: "Que todos os valores sejam atômicos e não existam grupos repetitivos."
+      - letra: "c"
+        texto: "Que não existam dependências transitivas; atributos só devem depender da chave primária."
+      - letra: "d"
+        texto: "Que todo determinante seja uma Chave Candidata."
+
+  - texto: "O que a Forma Normal de Boyce-Codd (FNBC) exige?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Que não existam atributos compostos ou multivalorados."
+      - letra: "b"
+        texto: "Que a tabela possua apenas chaves primárias simples."
+      - letra: "c"
+        texto: "Que todas as colunas aceitem valores nulos."
+      - letra: "d"
+        texto: "Que todo determinante seja uma Chave Candidata."
+
+  - texto: "O que é uma superchave em uma relação?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Apenas a coluna que contém os valores numéricos da tabela."
+      - letra: "b"
+        texto: "Qualquer conjunto de atributos que contém uma chave candidata e, por consequência, determina todos os atributos da relação."
+      - letra: "c"
+        texto: "Uma chave estrangeira que aponta para outra tabela."
+      - letra: "d"
+        texto: "Um índice criado para acelerar consultas de agrupamento."

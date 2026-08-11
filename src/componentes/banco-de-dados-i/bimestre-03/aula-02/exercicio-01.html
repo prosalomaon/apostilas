@@ -1,23 +1,75 @@
 ---
 layout: exercicio
-title: "O Processo de Abstração: Observação da realidade e definição do Minimundo."
+title: "Dependências Funcionais: Identificação de determinantes e tipos de dependência."
 exercicio_numero: "01"
-02ero: "02"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 02."
+aula_numero: "22"
+description: "Primeira atividade prática para consolidar os conhecimentos da aula 22: identificar dependências funcionais válidas e classificá-las em totais, parciais e transitivas."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<p><strong>Atividade 1: Identificando DFs na tabela Funcionários</strong></p>
+<p>Considere a tabela <code class="one-line-code">FUNCIONARIOS</code> abaixo:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Matrícula (PK)</th>
+      <th>Nome</th>
+      <th>Departamento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1021</td>
+      <td>João Barros</td>
+      <td>900</td>
+    </tr>
+    <tr>
+      <td>1145</td>
+      <td>Pedro Silva</td>
+      <td>700</td>
+    </tr>
+    <tr>
+      <td>1689</td>
+      <td>Antonio Jardim</td>
+      <td>900</td>
+    </tr>
+  </tbody>
+</table>
+<p>Para cada afirmação abaixo, indique se a dependência funcional é <strong>válida</strong> ou <strong>inválida</strong> e justifique sua resposta com base nos dados apresentados:</p>
+<ul>
+  <li>a) Matrícula &rarr; Nome</li>
+  <li>b) Departamento &rarr; Matrícula</li>
+  <li>c) Matrícula &rarr; Departamento</li>
+</ul>
+
+<p><strong>Atividade 2: Dependência Total x Dependência Parcial</strong></p>
+<p>Considere a tabela <code class="one-line-code">ITEM_PEDIDO(NumPedido, CodProduto, Quantidade, DescricaoProduto)</code>, cuja chave primária é a composta <code class="one-line-code">{NumPedido, CodProduto}</code>.</p>
+<ol>
+  <li>Classifique a dependência <code class="one-line-code">{NumPedido, CodProduto} &rarr; Quantidade</code> como total ou parcial.</li>
+  <li>Classifique a dependência <code class="one-line-code">CodProduto &rarr; DescricaoProduto</code> como total ou parcial.</li>
+  <li>Explique qual das dependências acima viola a 2ª Forma Normal e por quê.</li>
+</ol>
+
+<p><strong>Atividade 3: Dependência Transitiva</strong></p>
+<p>Considere a tabela <code class="one-line-code">NOTAS_FISCAIS(NumNF, Data, CodCliente, NomeCliente, ValorTotal)</code>, com <code class="one-line-code">NumNF</code> como chave primária.</p>
+<ol>
+  <li>Escreva as dependências funcionais diretas existentes entre a chave e os demais atributos.</li>
+  <li>Identifique a dependência funcional transitiva presente nessa tabela.</li>
+  <li>Indique qual Forma Normal é violada por essa dependência.</li>
+</ol>
+
+<p><strong>Atividade 4: Chave Primária e Superchaves</strong></p>
+<p>Responda de forma dissertativa:</p>
+<ol>
+  <li>Por que, por definição, a chave primária de uma tabela deve determinar funcionalmente todos os outros atributos dessa tabela?</li>
+  <li>Utilizando a tabela <code class="one-line-code">FUNCIONARIOS</code> da Atividade 1, cite um exemplo de <strong>superchave</strong> que não seja a própria chave primária.</li>
+</ol>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
+    <li>Antes de julgar uma DF, verifique se existe alguma linha que a contradiz (dois valores diferentes de dependente para o mesmo determinante).</li>
+    <li>Na dependência total, o atributo depende da chave composta inteira; na parcial, depende apenas de uma parte dela.</li>
+    <li>Consulte o conteúdo da aula 22 sobre os tipos de dependência caso tenha dúvidas.</li>
     <li>Tente resolver de forma independente antes de buscar ajuda.</li>
   </ul>
 </div>
-
-
-
-
-
