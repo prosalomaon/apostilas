@@ -1,13 +1,419 @@
 ---
 title: "Introdução às Interfaces Gráficas com Swing"
+componente: "Desenvolvimento de Sistemas"
 aula_numero: "23"
-description: "Criação de janelas e diálogos básicos usando JFrame e JOptionPane para interação visual com o usuário."
+description: "Fundamentos de interfaces gráficas com o Swing: ecossistema GUI, componentes básicos (JFrame, JLabel, JButton, JTextField, JPanel), gerenciadores de layout e o modelo de delegação de eventos, com diagramas da anatomia de uma janela."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em construção.</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é uma GUI e o Ecossistema Swing</h3>
+  <p>
+    Uma <strong>GUI</strong> (Graphical User Interface) oferece um mecanismo amigável para a interação entre o usuário e
+    o aplicativo através de elementos visuais como <strong>botões</strong>, <strong>janelas</strong> e
+    <strong>menus</strong>.
+  </p>
+  <ul>
+    <li>
+      <strong>Swing vs. AWT:</strong> O Java possui dois conjuntos principais de componentes GUI. O
+      <strong>AWT</strong> (<em>Abstract Window Toolkit</em>) é o mais antigo e depende de componentes nativos do sistema
+      operacional (<em>"componentes pesados"</em>). O <strong>Swing</strong> (pacote
+      <code class="one-line-code">javax.swing</code>) é a biblioteca sucessora, cujos componentes são
+      <em>"leves"</em>, pois são escritos e processados inteiramente em Java, garantindo maior portabilidade e uma
+      aparência uniforme entre diferentes plataformas.
+    </li>
+    <li>
+      <strong>Contrato vs. Interface Gráfica:</strong> É importante não confundir o conceito de
+      <em>Interface Java</em> (um contrato de métodos) com uma <em>Interface Gráfica</em> de usuário.
+    </li>
+  </ul>
+
+  <h3>2. Componentes Básicos do Swing</h3>
+  <p>
+    Os componentes Swing são as peças fundamentais (<em>"widgets"</em>) para construir uma tela. Quase todos derivam da
+    classe <code class="one-line-code">JComponent</code> — a exceção são os contêineres de nível superior (top-level),
+    como o <code class="one-line-code">JFrame</code>.
+  </p>
+  <ul>
+    <li>
+      <strong>JFrame:</strong> Representa a <strong>janela principal</strong> do aplicativo, contendo barra de título e
+      botões de controle (minimizar, fechar).
+    </li>
+    <li>
+      <strong>JLabel:</strong> Utilizado para exibir texto ou imagens <strong>não editáveis</strong> (rótulos).
+    </li>
+    <li>
+      <strong>JButton:</strong> Um <strong>botão de comando</strong> que dispara uma ação quando clicado.
+    </li>
+    <li>
+      <strong>JTextField e JPasswordField:</strong> Campos para entrada de texto de uma única linha. O segundo
+      <strong>oculta os caracteres digitados</strong> por segurança.
+    </li>
+    <li>
+      <strong>JPanel:</strong> Uma área genérica usada para <strong>organizar e agrupar</strong> outros componentes.
+    </li>
+  </ul>
+
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Componente</th>
+        <th>Função</th>
+        <th>Uso típico</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">JFrame</code></td>
+        <td>Janela principal (top-level)</td>
+        <td>Base do aplicativo desktop</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">JLabel</code></td>
+        <td>Exibe texto/imagem fixa</td>
+        <td>Rótulos, títulos de campo</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">JButton</code></td>
+        <td>Botão de comando</td>
+        <td>Disparar ações do usuário</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">JTextField</code></td>
+        <td>Entrada de texto de 1 linha</td>
+        <td>Campos de formulário</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">JPasswordField</code></td>
+        <td>Entrada de senha (oculta)</td>
+        <td>Campos de senha</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">JPanel</code></td>
+        <td>Contêiner genérico</td>
+        <td>Agrupar/organizar componentes</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3. Gerenciadores de Layout (Layout Managers)</h3>
+  <p>
+    Em vez de posicionar componentes por coordenadas exatas (o que tornaria a GUI rígida), o Java usa
+    <strong>gerenciadores de layout</strong> para organizar os componentes automaticamente conforme o tamanho da janela
+    muda.
+  </p>
+  <ul>
+    <li>
+      <strong>FlowLayout:</strong> Posiciona os componentes da esquerda para a direita, como palavras em uma página. É o
+      padrão para <code class="one-line-code">JPanel</code>.
+    </li>
+    <li>
+      <strong>BorderLayout:</strong> Divide o contêiner em cinco regiões: <code class="one-line-code">NORTH</code>,
+      <code class="one-line-code">SOUTH</code>, <code class="one-line-code">EAST</code>,
+      <code class="one-line-code">WEST</code> e <code class="one-line-code">CENTER</code>. É o layout padrão para
+      <code class="one-line-code">JFrame</code>.
+    </li>
+    <li>
+      <strong>GridLayout:</strong> Organiza os componentes em uma <strong>grade retangular</strong> de linhas e colunas,
+      onde todos os espaços têm o mesmo tamanho.
+    </li>
+  </ul>
+
+  <h3>4. Tratamento de Eventos (Event Handling)</h3>
+  <p>
+    As GUIs são baseadas em eventos: quando o usuário interage com um componente (clica em um botão ou pressiona Enter),
+    o sistema gera um sinal que o programa deve tratar.
+  </p>
+  <ul>
+    <li>
+      <strong>Modelo de Delegação de Eventos:</strong> Envolve três partes: a <strong>origem do evento</strong> (o
+      botão), o <strong>objeto de evento</strong> (contendo dados sobre o clique) e o
+      <strong>ouvinte (listener)</strong> (o código que responde).
+    </li>
+    <li>
+      <strong>Interfaces Ouvintes:</strong> Para responder a cliques de botão, a classe deve implementar a interface
+      <code class="one-line-code">ActionListener</code> e definir o método
+      <code class="one-line-code">actionPerformed</code>.
+    </li>
+    <li>
+      <strong>Classes Internas e Anônimas:</strong> Frequentemente, os ouvintes são implementados como classes internas
+      para que possam acessar facilmente os atributos da janela principal.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Exemplo de Código</h2>
+
+  <h3>1. Uma Janela Básica</h3>
+  <p>
+    O exemplo abaixo mostra como criar uma janela simples <strong>herdando de JFrame</strong> e configurando um rótulo:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.awt.FlowLayout; // Gerenciador de layout
+import javax.swing.JFrame;   // Base da janela
+import javax.swing.JLabel;   // Rótulo de texto
+
+public class MinhaJanela extends JFrame {
+    private final JLabel label;
+
+    public MinhaJanela() {
+        super("Título da Janela");       // Título da barra superior
+        setLayout(new FlowLayout());     // Define o layout
+
+        label = new JLabel("Bem-vindo ao Swing!");
+        label.setToolTipText("Dica de ferramenta ao passar o mouse");
+        add(label);                      // Anexa o componente à janela
+    }
+
+    public static void main(String[] args) {
+        MinhaJanela janela = new MinhaJanela();
+        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Encerra o app ao fechar
+        janela.setSize(300, 150);        // Define largura e altura em pixels
+        janela.setVisible(true);         // Exibe a janela na tela
+    }
+}</code></pre>
+  </div>
+
+  <h3>2. Janela com Botão e Tratamento de Evento</h3>
+  <p>
+    Para que um botão responda ao clique, registramos um ouvinte com
+    <code class="one-line-code">addActionListener</code> e implementamos
+    <code class="one-line-code">actionPerformed</code> — aqui com uma <strong>classe anônima</strong>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class JanelaComBotao extends JFrame {
+    private final JLabel status;
+
+    public JanelaComBotao() {
+        super("Janela com Evento");
+        setLayout(new FlowLayout());
+
+        status = new JLabel("Aguardando clique...");
+        add(status);
+
+        JButton botao = new JButton("Clique aqui");
+        botao.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                status.setText("Botão clicado!");
+            }
+        });
+        add(botao);
+    }
+
+    public static void main(String[] args) {
+        JanelaComBotao janela = new JanelaComBotao();
+        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        janela.setSize(320, 150);
+        janela.setVisible(true);
+    }
+}</code></pre>
+  </div>
+  <p>
+    Note que a classe anônima do ouvinte acessa diretamente o atributo <code class="one-line-code">status</code> da janela,
+    sem a necessidade de parâmetros extras — essa é a grande vantagem das classes internas.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Representação Gráfica: A Anatomia da Janela Swing</h2>
+  <p>
+    O diagrama abaixo mostra <strong>cada parte da tela</strong> construída com Swing e a
+    <strong>classe + método</strong> responsável por criá-la:
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    subgraph JANELA["JFrame — a janela (MinhaJanela extends JFrame)"]
+        BARRA["Barra de Título\n(título + botões minimizar, maximizar, fechar)\nCriada por: super('Título da Janela')"]
+        subgraph CONTEUDO["ContentPane — área interna da janela"]
+            LAYOUT["Gerenciador de Layout\nsetLayout(new FlowLayout())"]
+            subgraph PAINEL["JPanel — agrupa os componentes"]
+                ROTULO["JLabel\nRótulo de texto\nadd(label)"]
+                BOTAO["JButton\nBotão de comando\nadd(botao)"]
+                CAMPO["JTextField\nCampo de texto\nadd(campo)"]
+            end
+        end
+    end
+    BARRA --- CONTEUDO
+  </div>
+
+  <h3>Mapeamento: parte da tela → classe → método</h3>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Parte da Tela</th>
+        <th>Classe Swing</th>
+        <th>Como construir (métodos)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Janela principal</td>
+        <td><code class="one-line-code">JFrame</code></td>
+        <td><code class="one-line-code">extends JFrame</code>, <code class="one-line-code">setSize(w,h)</code>, <code class="one-line-code">setVisible(true)</code></td>
+      </tr>
+      <tr>
+        <td>Barra de título</td>
+        <td><code class="one-line-code">JFrame</code></td>
+        <td><code class="one-line-code">super("Título da Janela")</code></td>
+      </tr>
+      <tr>
+        <td>Encerrar aplicativo</td>
+        <td><code class="one-line-code">JFrame</code></td>
+        <td><code class="one-line-code">setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)</code></td>
+      </tr>
+      <tr>
+        <td>Rótulo de texto</td>
+        <td><code class="one-line-code">JLabel</code></td>
+        <td><code class="one-line-code">new JLabel("texto")</code>, <code class="one-line-code">add(label)</code></td>
+      </tr>
+      <tr>
+        <td>Botão</td>
+        <td><code class="one-line-code">JButton</code></td>
+        <td><code class="one-line-code">new JButton("texto")</code>, <code class="one-line-code">add(botao)</code></td>
+      </tr>
+      <tr>
+        <td>Campo de texto</td>
+        <td><code class="one-line-code">JTextField</code></td>
+        <td><code class="one-line-code">new JTextField(n)</code>, <code class="one-line-code">add(campo)</code></td>
+      </tr>
+      <tr>
+        <td>Campo de senha</td>
+        <td><code class="one-line-code">JPasswordField</code></td>
+        <td><code class="one-line-code">new JPasswordField(n)</code>, <code class="one-line-code">add(campo)</code></td>
+      </tr>
+      <tr>
+        <td>Área de agrupamento</td>
+        <td><code class="one-line-code">JPanel</code></td>
+        <td><code class="one-line-code">new JPanel()</code>, <code class="one-line-code">setLayout(...)</code>, <code class="one-line-code">add(c)</code></td>
+      </tr>
+      <tr>
+        <td>Organização dos componentes</td>
+        <td><code class="one-line-code">FlowLayout</code> / <code class="one-line-code">BorderLayout</code> / <code class="one-line-code">GridLayout</code></td>
+        <td><code class="one-line-code">setLayout(new Layout())</code></td>
+      </tr>
+      <tr>
+        <td>Resposta ao clique</td>
+        <td><code class="one-line-code">ActionListener</code></td>
+        <td><code class="one-line-code">addActionListener(...)</code> + <code class="one-line-code">actionPerformed(e)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Hierarquia dos Componentes Swing</h3>
+  <p>
+    Quase todos os componentes derivam de <code class="one-line-code">JComponent</code>. O
+    <code class="one-line-code">JFrame</code> é a exceção: por ser um contêiner de nível superior, herda de
+    <code class="one-line-code">java.awt.Frame</code>:
+  </p>
+  <div class="mermaid">
+    classDiagram
+    JComponent <|-- JLabel
+    JComponent <|-- JButton
+    JComponent <|-- JTextField
+    JTextField <|-- JPasswordField
+    JComponent <|-- JPanel
+    note for JFrame "Contêiner top-level: herda de java.awt.Frame\nNão deriva de JComponent"
+  </div>
+
+  <h3>As 5 regiões do BorderLayout</h3>
+  <p>O layout padrão do <code class="one-line-code">JFrame</code> divide o contêiner em cinco regiões:</p>
+  <div class="mermaid">
+    flowchart TB
+    subgraph CONT["Contêiner com BorderLayout"]
+        NORTH["NORTH\n(add(componente, BorderLayout.NORTH))"]
+        subgraph MEIO["meio"]
+            WEST["WEST"]
+            CENTER["CENTER"]
+            EAST["EAST"]
+        end
+        SOUTH["SOUTH"]
+    end
+  </div>
+
+  <h3>Modelo de Delegação de Eventos</h3>
+  <p>
+    Quando o usuário clica no botão, a <strong>origem</strong> gera um <strong>objeto de evento</strong> que é entregue ao
+    <strong>ouvinte</strong> registrado:
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    A["Origem do Evento\n(JButton botao)"] -->|"addActionListener(ouvinte)"| B["Objeto de Evento\n(ActionEvent)\ncontém dados do clique"]
+    B --> C["Ouvinte (Listener)\nactionPerformed(ActionEvent e)"]
+    C --> D["Resposta do programa\n(atualiza um JLabel, abre uma tela, etc.)"]
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes de Herói</h4>
+  <ul>
+    <li>
+      <strong>Encerramento do Programa:</strong> Sempre chame
+      <code class="one-line-code">setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)</code>, caso contrário, a janela sumirá ao
+      fechar, mas o processo Java continuará rodando em segundo plano.
+    </li>
+    <li>
+      <strong>Thread de Despacho de Eventos (EDT):</strong> Toda a manipulação de componentes GUI deve ocorrer na thread
+      correta para garantir a segurança e estabilidade da interface.
+    </li>
+    <li>
+      <strong>Nimbus Look-and-Feel:</strong> O Java moderno oferece o tema <em>Nimbus</em>, que é elegante e
+      multiplataforma. Ele pode ser configurado no arquivo <code class="one-line-code">swing.properties</code> ou via
+      código.
+    </li>
+    <li>
+      <strong>Desenho Personalizado:</strong> Para desenhar formas (linhas, círculos), você deve sobrescrever o método
+      <code class="one-line-code">paintComponent</code> de um <code class="one-line-code">JPanel</code>. A primeira
+      instrução deve ser sempre <code class="one-line-code">super.paintComponent(g)</code> para limpar a área antes de
+      desenhar.
+    </li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li>
+      <strong>Sempre pense em "janela + layout + componentes":</strong> ao iniciar uma tela, defina o
+      <code class="one-line-code">JFrame</code> (com título e tamanho), escolha o layout adequado e só então adicione os
+      componentes com <code class="one-line-code">add()</code>.
+    </li>
+    <li>
+      <strong>Agrupe com JPanel:</strong> para organizar formulários complexos, combine vários
+      <code class="one-line-code">JPanel</code> (cada um com seu próprio layout) dentro da janela.
+    </li>
+    <li>
+      <strong>Não esqueça o evento:</strong> um botão sem <code class="one-line-code">addActionListener</code> é um botão
+      decorativo. Sempre registre o ouvinte e implemente <code class="one-line-code">actionPerformed</code>.
+    </li>
+    <li>
+      <strong>Proteja campos de senha:</strong> utilize <code class="one-line-code">JPasswordField</code> sempre que o
+      dado digitado não puder ser exibido em texto claro.
+    </li>
+    <li>
+      <strong>Teste a aparência:</strong> prefira layouts automáticos (Flow, Border, Grid) em vez de coordenadas fixas —
+      assim a tela se adapta ao redimensionamento da janela.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>DEITEL, Harvey M.; DEITEL, Paul J. Java: como programar. 8. ed. São Paulo: Pearson, 2010.</li>
+    <li>Oracle. Creating a GUI With Swing (Java Tutorials).</li>
+    <li>Oracle. Java Platform SE: Package javax.swing (API Reference).</li>
+  </ul>
 </section>

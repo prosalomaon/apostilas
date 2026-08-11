@@ -1,13 +1,377 @@
 ---
 title: "O Futuro Visual com JavaFX e Scene Builder"
+componente: "Desenvolvimento de Sistemas"
 aula_numero: "24"
-description: "Uso de tecnologia moderna para GUIs, explorando a arquitetura de Palcos e Cenas e o design declarativo via arquivos FXML."
+description: "Introdução ao JavaFX: vantagens sobre o Swing, arquitetura MVC, estrutura de Stage/Scene/Scene Graph, criação de interfaces com Scene Builder e FXML, e a classe de controle com a anotação @FXML."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em construção.</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é JavaFX?</h3>
+  <p>
+    Anunciado originalmente em <strong>2007</strong>, o JavaFX evoluiu de uma linguagem de script para um conjunto
+    robusto de bibliotecas Java. Ele foi projetado para oferecer uma experiência de desenvolvimento superior ao Swing,
+    integrando em uma única API o suporte para <strong>interfaces ricas, animações, áudio e vídeo</strong>.
+  </p>
+  <p><strong>Vantagens sobre o Swing:</strong></p>
+  <ul>
+    <li>
+      <strong>Facilidade de Uso:</strong> API única para GUI e multimídia.
+    </li>
+    <li>
+      <strong>Scene Builder:</strong> Ferramenta visual de "arrastar e soltar" que produz o mesmo código
+      independentemente da IDE utilizada (NetBeans, Eclipse ou IntelliJ).
+    </li>
+    <li>
+      <strong>Estilização com CSS:</strong> Controle total da aparência através de <em>Cascading Style Sheets</em>.
+    </li>
+    <li>
+      <strong>Segurança de Threads:</strong> Projetado para melhor performance em sistemas multiprocessados modernos.
+    </li>
+  </ul>
+
+  <h3>2. Arquitetura Model-View-Controller (MVC)</h3>
+  <p>
+    Aplicativos JavaFX seguem o padrão de design <strong>MVC</strong>, que promove uma separação clara entre os dados e a
+    interface:
+  </p>
+  <ul>
+    <li>
+      <strong>Model (Modelo):</strong> Contém os <strong>dados</strong> do aplicativo.
+    </li>
+    <li>
+      <strong>View (Visualização):</strong> Definida em arquivos <strong>FXML</strong>, descreve <em>como a interface deve
+      parecer</em>.
+    </li>
+    <li>
+      <strong>Controller (Controlador):</strong> Classe <strong>Java</strong> que implementa a lógica para processar as
+      entradas do usuário e atualizar o modelo ou a visualização.
+    </li>
+  </ul>
+
+  <h3>3. Estrutura de um Aplicativo JavaFX</h3>
+  <p>
+    A estrutura de uma janela JavaFX assemelha-se a uma <strong>peça de teatro</strong>:
+  </p>
+  <ul>
+    <li>
+      <strong>Stage (Palco):</strong> A <strong>janela principal</strong> do aplicativo (instância da classe
+      <code class="one-line-code">Stage</code>).
+    </li>
+    <li>
+      <strong>Scene (Cena):</strong> O <strong>contêiner de conteúdo</strong> dentro do palco. Uma cena define a
+      interface como um <em>Grafo de Cena</em>.
+    </li>
+    <li>
+      <strong>Grafo de Cena (Scene Graph):</strong> Uma <strong>estrutura em árvore</strong> que organiza todos os
+      elementos visuais (nós).
+    </li>
+    <li>
+      <strong>Nodes (Nós):</strong> Cada <strong>elemento visual</strong> (botão, rótulo, contêiner de layout) é um nó.
+    </li>
+  </ul>
+
+  <h3>4. Scene Builder e FXML</h3>
+  <p>
+    O <strong>Scene Builder</strong> é uma ferramenta visual que gera arquivos <strong>FXML</strong> (<em>FX Markup
+    Language</em>), um vocabulário XML para definir a interface <em>sem escrever código Java manual</em>. Isso permite que
+    o desenvolvedor se concentre na interface de forma <strong>declarativa</strong>.
+  </p>
+  <p><strong>Contêineres de Layout Comuns:</strong></p>
+  <ul>
+    <li>
+      <strong>VBox:</strong> Organiza os nós <strong>verticalmente</strong>, de cima para baixo.
+    </li>
+    <li>
+      <strong>GridPane:</strong> Organiza os componentes em uma <strong>grade flexível</strong> de linhas e colunas.
+    </li>
+  </ul>
+
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Contêiner</th>
+        <th>Comportamento</th>
+        <th>Uso típico</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">VBox</code></td>
+        <td>Empilha os nós verticalmente</td>
+        <td>Formulários em coluna</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">HBox</code></td>
+        <td>Empilha os nós horizontalmente</td>
+        <td>Linhas de botões</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">GridPane</code></td>
+        <td>Grade flexível de linhas e colunas</td>
+        <td>Formulários com rótulos/campos</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">BorderPane</code></td>
+        <td>Regiões top/bottom/left/right/center</td>
+        <td>Layout principal da tela</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Exemplo de Código</h2>
+
+  <h3>1. Ponto de Partida</h3>
+  <p>
+    A classe principal deve <strong>estender <code class="one-line-code">Application</code></strong>. O método
+    <code class="one-line-code">start</code> é o local onde a "mágica" acontece:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class MeuApp extends Application {
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Carrega o arquivo FXML criado no Scene Builder
+        Parent root = FXMLLoader.load(getClass().getResource("Interface.fxml"));
+
+        Scene scene = new Scene(root);       // Cria a cena com o layout carregado
+        stage.setTitle("Minha Interface JavaFX"); // Título da janela
+        stage.setScene(scene);               // Coloca a cena no palco
+        stage.show();                        // Exibe a janela
+    }
+
+    public static void main(String[] args) {
+        launch(args);                        // Inicia o tempo de execução do JavaFX
+    }
+}</code></pre>
+  </div>
+
+  <h3>2. A Classe de Controle e a Anotação @FXML</h3>
+  <p>
+    Para que o controlador possa manipular os componentes definidos no FXML, utilizamos a anotação
+    <code class="one-line-code">@FXML</code>. Isso vincula variáveis de instância e métodos aos IDs
+    (<code class="one-line-code">fx:id</code>) definidos no Scene Builder:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+
+public class MeuControlador {
+    @FXML
+    private Label meuRotulo; // Vinculado ao fx:id="meuRotulo"
+
+    @FXML
+    private void tratarClique(ActionEvent event) {
+        meuRotulo.setText("Botão Clicado!"); // Lógica de resposta ao evento
+    }
+}</code></pre>
+  </div>
+
+  <h3>3. O Arquivo FXML correspondente</h3>
+  <p>
+    O arquivo gerado pelo Scene Builder referencia o controlador e os <code class="one-line-code">fx:id</code> usados na
+    classe Java:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;?import javafx.scene.control.Button?&gt;
+&lt;?import javafx.scene.control.Label?&gt;
+&lt;?import javafx.scene.layout.VBox?&gt;
+
+&lt;VBox spacing="10" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="MeuControlador"&gt;
+   &lt;Label fx:id="meuRotulo" text="Aguardando clique..." /&gt;
+   &lt;Button text="Clique aqui" onAction="#tratarClique" /&gt;
+&lt;/VBox&gt;</code></pre>
+  </div>
+  <p>
+    Observe a correspondência: o <code class="one-line-code">fx:controller</code> aponta para a classe
+    <code class="one-line-code">MeuControlador</code>, o <code class="one-line-code">fx:id="meuRotulo"</code> do rótulo
+    casa com a variável <code class="one-line-code">@FXML private Label meuRotulo</code> e o
+    <code class="one-line-code">onAction="#tratarClique"</code> do botão chama o método anotado com
+    <code class="one-line-code">@FXML</code>.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
+
+  <h3>1. Arquitetura Model-View-Controller (MVC)</h3>
+  <p>As três camadas trabalham juntas com responsabilidades bem definidas:</p>
+  <div class="mermaid">
+    flowchart TD
+    subgraph MVC["Arquitetura MVC no JavaFX"]
+        V["View — Visualização\n(arquivos FXML)\ncomo a interface deve parecer"]
+        C["Controller — Controlador\n(classe Java)\nprocessa entradas do usuário"]
+        M["Model — Modelo\n(dados do aplicativo)"]
+    end
+    V -->|"interação do usuário"| C
+    C -->|"consulta / atualiza"| M
+    M -->|"notifica mudanças"| C
+    C -->|"atualiza a interface"| V
+  </div>
+
+  <h3>2. Stage, Scene e Grafo de Cena: a peça de teatro</h3>
+  <p>
+    O diagrama abaixo mostra <strong>cada parte da janela</strong> e a <strong>classe/arquivo</strong> que a representa:
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    subgraph STAGE["Stage — Palco (janela principal)\nclasse javafx.stage.Stage"]
+        BARRA["Barra de Título\nstage.setTitle(...)"]
+        subgraph SCENE["Scene — Cena (contêiner de conteúdo)\nclasse javafx.scene.Scene\nnew Scene(root)"]
+            subgraph GRAPH["Grafo de Cena (Scene Graph)\nestrutura em árvore de nós"]
+                ROOT["Root (nó raiz)\nEx.: VBox\ncarregado por FXMLLoader.load(...)"]
+                N1["Node: Label\n(fx:id='meuRotulo')"]
+                N2["Node: Button\n(onAction='#tratarClique')"]
+                N3["Node: TextField"]
+                ROOT --> N1
+                ROOT --> N2
+                ROOT --> N3
+            end
+        end
+    end
+    BARRA --- SCENE
+  </div>
+
+  <h3>3. Fluxo do Scene Builder até a janela exibida</h3>
+  <div class="mermaid">
+    flowchart LR
+    SB["Scene Builder\n(arrastar e soltar)"] -->|"gera"| FXML["Arquivo FXML\n(interface declarativa)"]
+    FXML -->|"FXMLLoader.load(...)"| ROOT["Parent root\n(nó raiz do grafo)"]
+    ROOT --> SCENE["Scene\nnew Scene(root)"]
+    SCENE --> STAGE["Stage\nstage.setScene(scene)\nstage.show()"]
+    CONT["MeuControlador\n(@FXML vincula a lógica)"] -.->|"fx:controller + fx:id"| FXML
+  </div>
+
+  <h3>4. Mapeamento: conceito → classe / arquivo → método</h3>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Conceito</th>
+        <th>Classe / Arquivo</th>
+        <th>Como construir (métodos)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Janela principal (Palco)</td>
+        <td><code class="one-line-code">javafx.stage.Stage</code></td>
+        <td><code class="one-line-code">setTitle(...)</code>, <code class="one-line-code">setScene(...)</code>, <code class="one-line-code">show()</code></td>
+      </tr>
+      <tr>
+        <td>Cena</td>
+        <td><code class="one-line-code">javafx.scene.Scene</code></td>
+        <td><code class="one-line-code">new Scene(root)</code></td>
+      </tr>
+      <tr>
+        <td>Raiz do grafo de cena</td>
+        <td><code class="one-line-code">javafx.scene.Parent</code></td>
+        <td><code class="one-line-code">FXMLLoader.load(getResource("Interface.fxml"))</code></td>
+      </tr>
+      <tr>
+        <td>Interface declarativa</td>
+        <td>Arquivo <code class="one-line-code">.fxml</code></td>
+        <td>Criado no Scene Builder (<code class="one-line-code">fx:controller</code>, <code class="one-line-code">fx:id</code>)</td>
+      </tr>
+      <tr>
+        <td>Lógica / eventos</td>
+        <td>Classe <code class="one-line-code">Controller</code></td>
+        <td><code class="one-line-code">@FXML</code> em variáveis e métodos</td>
+      </tr>
+      <tr>
+        <td>Layout vertical</td>
+        <td><code class="one-line-code">javafx.scene.layout.VBox</code></td>
+        <td>Empilha nós de cima para baixo</td>
+      </tr>
+      <tr>
+        <td>Layout em grade</td>
+        <td><code class="one-line-code">javafx.scene.layout.GridPane</code></td>
+        <td>Organiza em linhas e colunas</td>
+      </tr>
+      <tr>
+        <td>Rótulo</td>
+        <td><code class="one-line-code">javafx.scene.control.Label</code></td>
+        <td>Vinculado via <code class="one-line-code">fx:id</code></td>
+      </tr>
+      <tr>
+        <td>Botão</td>
+        <td><code class="one-line-code">javafx.scene.control.Button</code></td>
+        <td>Evento via <code class="one-line-code">onAction="#metodo"</code></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes de Herói</h4>
+  <ul>
+    <li>
+      <strong>Separação de Preocupações:</strong> Mantenha o FXML apenas para o visual e o Java apenas para a lógica.
+      Isso facilita muito a manutenção.
+    </li>
+    <li>
+      <strong>Foco no Usuário:</strong> Um controle só pode receber entrada do teclado se tiver o "foco". Use o método
+      <code class="one-line-code">requestFocus()</code> para direcionar o cursor quando necessário.
+    </li>
+    <li>
+      <strong>IDs Únicos:</strong> Certifique-se de que os valores de <code class="one-line-code">fx:id</code> na
+      interface correspondam exatamente aos nomes das variáveis no controlador.
+    </li>
+    <li>
+      <strong>Cálculos Precisos:</strong> Ao lidar com valores monetários em interfaces gráficas (como calculadoras),
+      prefira sempre <code class="one-line-code">BigDecimal</code> para garantir a precisão dos centavos.
+    </li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li>
+      <strong>Comece pela View no Scene Builder:</strong> desenhe a tela com "arrastar e soltar", defina os
+      <code class="one-line-code">fx:id</code> dos componentes que o controlador precisará e salve o FXML.
+    </li>
+    <li>
+      <strong>Ligue o FXML ao Java:</strong> no método <code class="one-line-code">start</code>, carregue o arquivo com
+      <code class="one-line-code">FXMLLoader.load(...)</code> e use o atributo
+      <code class="one-line-code">fx:controller</code> para apontar a classe de controle.
+    </li>
+    <li>
+      <strong>Implemente a lógica no Controller:</strong> anote com <code class="one-line-code">@FXML</code> apenas as
+      variáveis e os métodos que precisam ser visíveis para o FXML; o resto da lógica permanece privado em Java.
+    </li>
+    <li>
+      <strong>Escolha o layout certo:</strong> <code class="one-line-code">VBox</code>/<code class="one-line-code">HBox</code>
+      para sequências simples, <code class="one-line-code">GridPane</code> para formulários e
+      <code class="one-line-code">BorderPane</code> para o esqueleto geral da tela.
+    </li>
+    <li>
+      <strong>Não escreva GUI na mão:</strong> para telas complexas, prefira gerar o FXML no Scene Builder e apenas
+      ajustá-lo — o resultado é mais consistente e independente da IDE.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>Oracle. JavaFX Documentation (OpenJFX).</li>
+    <li>Oracle. JavaFX Scene Builder User Guide.</li>
+    <li>Oracle. Getting Started with JavaFX (JavaFX Tutorials).</li>
+  </ul>
 </section>
