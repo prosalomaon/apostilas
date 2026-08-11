@@ -1,63 +1,300 @@
 ---
-title: "Gatilhos (Triggers) II"
+title: "Gatilhos (Triggers) II: Aplicações Avançadas e Estratégias"
+componente: "Banco de Dados II"
 aula_numero: "25"
-description: "Regras de negócio complexas."
+description: "Esta aula apresenta aplicações avançadas de gatilhos, cobrindo gatilhos INSTEAD OF em visões, simulação de funcionalidades como índices baseados em função e timestamps automáticos, saneamento e rejeição de dados, auditoria e logs de alterações e a diferença entre gatilhos de linha e de instrução no PostgreSQL."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    Enquanto a aula anterior focou nos conceitos básicos e sintaxe, esta etapa foca em <strong>como e quando</strong>
+    utilizar gatilhos para resolver problemas reais de arquitetura e performance em ambientes MySQL e PostgreSQL.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
-  <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
+  <h2>1. Gatilhos em Visões (PostgreSQL vs. MySQL)</h2>
+  <p>
+    Uma das aplicações mais poderosas dos gatilhos é tornar as <strong>Visões (Views)</strong> atualizáveis,
+    especialmente quando elas envolvem junções complexas.
+  </p>
+  <ul>
+    <li><strong>PostgreSQL:</strong> Oferece o tipo de gatilho <code class="one-line-code">INSTEAD OF</code>. Quando o
+      usuário tenta um <code class="one-line-code">INSERT</code>, <code class="one-line-code">UPDATE</code> ou
+      <code class="one-line-code">DELETE</code> em uma visão, o PostgreSQL não executa a ação na visão (que é virtual),
+      mas sim o código do gatilho, que redireciona os dados para as tabelas físicas corretas.</li>
+    <li><strong>MySQL:</strong> Tradicionalmente, o MySQL não suporta gatilhos <code class="one-line-code">INSTEAD
+        OF</code> em visões. Para obter esse comportamento, é necessário criar gatilhos nas tabelas base ou utilizar
+      procedimentos armazenados.</li>
+  </ul>
+
+  <h3>Exemplo PostgreSQL (Tornando uma View de Vendas atualizável)</h3>
   <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
+    <pre><code class="language-sql">CREATE OR REPLACE FUNCTION func_venda_view() RETURNS trigger AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        INSERT INTO fatos_vendas (id_produto, qtd) VALUES (NEW.id_produto, NEW.qtd);
+        RETURN NEW;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
 
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
+CREATE TRIGGER tr_venda_view
+INSTEAD OF INSERT ON vw_resumo_vendas
+FOR EACH ROW EXECUTE PROCEDURE func_venda_view();</code></pre>
+  </div>
+
+  <div class="mermaid">
+    flowchart LR
+    subgraph PG ["PostgreSQL"]
+      direction LR
+      A["INSERT INTO vw_resumo_vendas"] --> B["Trigger INSTEAD OF"]
+      B --> C["Redireciona para fatos_vendas"]
+    end
+    subgraph MY ["MySQL"]
+      direction LR
+      D["INSERT INTO vw_resumo_vendas"] --> E["Sem INSTEAD OF\n(gera erro)"]
+      F["Gatilhos nas tabelas base"] --> G["comportamento equivalente"]
+    end
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Diagramação</h2>
-  <p>Representação visual dos conceitos abordados:</p>
-  <div class="mermaid">
-    graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+  <h2>2. Simulação de Funcionalidades</h2>
+  <p>
+    Gatilhos podem ser usados para "emular" recursos que o SGBD não possui nativamente ou para automatizar metadados.
+  </p>
+
+  <h3>A. Índices Baseados em Funções (MySQL)</h3>
+  <p>
+    O MySQL (versões mais antigas) não indexa o resultado de funções. Para acelerar buscas complexas (ex:
+    <code class="one-line-code">WHERE LOG10(valor) &lt; 2</code>), você pode:
+  </p>
+  <ol>
+    <li>Criar uma coluna extra para armazenar o resultado da função.</li>
+    <li>Usar um gatilho <code class="one-line-code">BEFORE INSERT</code> e <code class="one-line-code">BEFORE
+        UPDATE</code> para manter essa coluna atualizada automaticamente.</li>
+  </ol>
+
+  <h3>B. Simulação de Auto-Update (PostgreSQL/MySQL)</h3>
+  <p>
+    Gatilhos <code class="one-line-code">BEFORE UPDATE</code> são ideais para manter colunas de auditoria, como
+    <code class="one-line-code">data_ultima_alteracao</code>, garantindo que o valor mude apenas se os dados da linha
+    forem efetivamente alterados.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- PostgreSQL: mantém a coluna de auditoria sempre atualizada
+CREATE OR REPLACE FUNCTION func_atualiza_alteracao() RETURNS trigger AS $$
+BEGIN
+    IF (TG_OP = 'UPDATE') THEN
+        NEW.data_ultima_alteracao := CURRENT_TIMESTAMP;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_auto_update_produtos
+BEFORE UPDATE ON produtos
+FOR EACH ROW EXECUTE PROCEDURE func_atualiza_alteracao();</code></pre>
   </div>
+</section>
+
+<section class="section-box">
+  <h2>3. Saneamento e Rejeição de Dados</h2>
+  <p>
+    Diferente das restrições (<code class="one-line-code">CHECK constraints</code>), os gatilhos permitem lógica
+    procedimental para tratar dados antes da gravação.
+  </p>
+  <ul>
+    <li><strong>Saneamento:</strong> Um gatilho <code class="one-line-code">BEFORE INSERT</code> pode converter nomes
+      para maiúsculas ou remover espaços em branco indesejados.</li>
+    <li><strong>Rejeição:</strong> Se uma regra complexa for violada (ex: um cliente não pode comprar se tiver débitos em
+      outra tabela), o gatilho pode disparar um erro, cancelando a transação.</li>
+  </ul>
+
+  <h3>Exemplo MySQL (Rejeição de dados fora de faixa)</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TRIGGER bi_valida_estoque
+BEFORE INSERT ON item_pedido
+FOR EACH ROW
+BEGIN
+    IF NEW.quantidade <= 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Quantidade deve ser positiva';
+    END IF;
+END;</code></pre>
+  </div>
+
+  <div class="mermaid">
+    flowchart TD
+    A["BEFORE INSERT\nitem_pedido"] --> B{"NEW.quantidade <= 0?"}
+    B -->|"Sim"| C["SIGNAL SQLSTATE '45000'\n'Quantidade deve ser positiva'\nOperação cancelada"]
+    B -->|"Não"| D["Registro gravado normalmente"]
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. Auditoria e Logs de Alterações</h2>
+  <p>
+    Gatilhos <code class="one-line-code">AFTER</code> são os mais recomendados para auditoria, pois são disparados apenas
+    após o sucesso da operação principal, garantindo que o log reflita a realidade do banco.
+  </p>
+  <ul>
+    <li><strong>INSERT:</strong> Registra o estado inicial (<code class="one-line-code">NEW</code>).</li>
+    <li><strong>UPDATE:</strong> Registra o que mudou (comparando <code class="one-line-code">OLD</code> e
+      <code class="one-line-code">NEW</code>).</li>
+    <li><strong>DELETE:</strong> Salva uma cópia dos dados removidos para histórico (<code class="one-line-code">OLD</code>).</li>
+  </ul>
+  <p>
+    <strong>Estratégia de Tabela de Log:</strong> Recomenda-se criar uma tabela
+    <code class="one-line-code">auditoria_log</code> com colunas para o usuário, data/hora, tipo de operação e os valores
+    afetados.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE auditoria_log (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    tabela VARCHAR(100) NOT NULL,
+    operacao VARCHAR(10) NOT NULL,
+    usuario VARCHAR(100),
+    valor_antigo TEXT,
+    valor_novo TEXT,
+    data_hora DATETIME DEFAULT NOW()
+);
+
+-- Registra uma cópia do registro removido para histórico (MySQL)
+CREATE TRIGGER ad_produto_auditoria
+AFTER DELETE ON produto
+FOR EACH ROW
+BEGIN
+    INSERT INTO auditoria_log (tabela, operacao, usuario, valor_antigo)
+    VALUES ('produto', 'DELETE', CURRENT_USER(), CONCAT(OLD.codigo, ' - ', OLD.descricao_produto));
+END;</code></pre>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Evento</th>
+        <th>Dado registrado</th>
+        <th>Uso típico</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>INSERT</strong></td>
+        <td><code class="one-line-code">NEW</code></td>
+        <td>Registrar o estado inicial do registro.</td>
+      </tr>
+      <tr>
+        <td><strong>UPDATE</strong></td>
+        <td><code class="one-line-code">OLD</code> vs <code class="one-line-code">NEW</code></td>
+        <td>Registrar exatamente o que mudou.</td>
+      </tr>
+      <tr>
+        <td><strong>DELETE</strong></td>
+        <td><code class="one-line-code">OLD</code></td>
+        <td>Salvar cópia dos dados removidos para histórico.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>5. Gatilhos de Instrução vs. Gatilhos de Linha (PostgreSQL)</h2>
+  <p>
+    O PostgreSQL permite distinguir a <strong>frequência de execução</strong> do gatilho:
+  </p>
+  <ul>
+    <li><strong>FOR EACH ROW:</strong> Executa uma vez para cada linha. Se um comando apaga 50 linhas, o gatilho roda 50
+      vezes. É o padrão para auditoria detalhada.</li>
+    <li><strong>FOR EACH STATEMENT:</strong> Executa apenas uma vez por comando SQL, independente de quantas linhas foram
+      afetadas. É ideal para tarefas administrativas pesadas, como atualizar uma tabela de totais apenas uma vez após uma
+      carga massiva de dados.</li>
+  </ul>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Executa UMA vez por comando, mesmo que milhares de linhas sejam afetadas
+CREATE OR REPLACE FUNCTION func_recalcula_totais() RETURNS trigger AS $$
+BEGIN
+    UPDATE resumo_vendas SET total = (SELECT SUM(qtd) FROM fatos_vendas);
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_recalcula_totais
+AFTER INSERT ON fatos_vendas
+FOR EACH STATEMENT EXECUTE PROCEDURE func_recalcula_totais();</code></pre>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Frequência</th>
+        <th>Quando executa</th>
+        <th>Uso ideal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>FOR EACH ROW</strong></td>
+        <td>Uma vez para cada linha afetada</td>
+        <td>Auditoria detalhada (registrar cada alteração).</td>
+      </tr>
+      <tr>
+        <td><strong>FOR EACH STATEMENT</strong></td>
+        <td>Uma vez por comando SQL</td>
+        <td>Tarefas administrativas e recálculo de totais após cargas massivas.</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Dica importante sobre Gatilhos (Triggers) II aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>Cascata de Gatilhos:</strong> Evite que o Gatilho A altere a Tabela B, que por sua vez dispara um gatilho
+      que altera a Tabela A. Isso pode causar loops infinitos ou estouro de pilha de execução.</li>
+    <li><strong>Performance:</strong> Em bancos de dados de alto tráfego (OLTP), gatilhos em excesso podem aumentar a
+      latência das operações de escrita, pois cada comando precisa esperar a finalização de toda a lógica do gatilho
+      antes de confirmar (<code class="one-line-code">COMMIT</code>).</li>
+    <li><strong>Visibilidade:</strong> No PostgreSQL, os gatilhos podem usar a cláusula
+      <code class="one-line-code">WHEN</code> para rodar apenas se uma condição específica for atendida, economizando
+      processamento.</li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
   <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
+    <li><strong>Visões de relatório atualizáveis:</strong> Em vez de manter um sistema separado para escrever dados, use
+      <code class="one-line-code">INSTEAD OF</code> (PostgreSQL) para permitir gravações através de visões de resumo.
+    </li>
+    <li><strong>Normalização automática de texto:</strong> Aplique <code class="one-line-code">UPPER()</code> e
+      <code class="one-line-code">TRIM()</code> em um <code class="one-line-code">BEFORE INSERT</code> para garantir
+      consistência de dados cadastrais.</li>
+    <li><strong>Histórico de preços:</strong> Registre em uma tabela de histórico sempre que um preço mudar, preservando
+      o <code class="one-line-code">OLD.valor</code> para consultas futuras.</li>
+    <li><strong>Totais consolidados:</strong> Após cargas em lote, use um único gatilho
+      <code class="one-line-code">FOR EACH STATEMENT</code> para recalcular tabelas de resumo em vez de executar a soma a
+      cada linha inserida.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.
-    </li>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
     <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
       Paulo: DCC-IME-USP, 2005.</li>
+    <li>MySQL Documentation. CREATE TRIGGER Statement. Disponível em:
+      https://dev.mysql.com/doc/refman/8.0/en/create-trigger.html</li>
+    <li>PostgreSQL Documentation. CREATE TRIGGER — PL/pgSQL Triggers. Disponível em:
+      https://www.postgresql.org/docs/current/plpgsql-trigger.html</li>
   </ul>
 </section>
 

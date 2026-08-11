@@ -1,63 +1,255 @@
 ---
-title: "Gatilhos (Triggers) I"
+title: "Gatilhos (Triggers) I: Automação e Integridade"
+componente: "Banco de Dados II"
 aula_numero: "24"
-description: "Conceitos e automação básica."
+description: "Esta aula apresenta os Gatilhos (Triggers), objetos associados a tabelas que são disparados automaticamente por instruções INSERT, UPDATE ou DELETE, cobrindo os momentos de disparo (BEFORE/AFTER), abrangência (row-level e statement-level), palavras-chave NEW e OLD, implementação em MySQL e PostgreSQL e os cuidados com performance."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é um Gatilho (Trigger)?</h3>
+  <p>
+    Um <strong>trigger</strong> é um objeto de banco de dados associado a uma tabela que é "disparado" (ativado)
+    automaticamente quando ocorre uma instrução <code class="one-line-code">INSERT</code>,
+    <code class="one-line-code">UPDATE</code> ou <code class="one-line-code">DELETE</code>. Ele é utilizado para
+    garantir que regras de negócio complexas sejam aplicadas de forma consistente, independentemente da aplicação que
+    acessa os dados.
+  </p>
+
+  <h4>Principais Finalidades</h4>
+  <ul>
+    <li><strong>Validação de Dados:</strong> Verificar ou rejeitar valores antes que entrem na tabela.</li>
+    <li><strong>Auditoria e Log:</strong> Registrar em tabelas separadas quem alterou um dado e qual era o valor antigo.
+    </li>
+    <li><strong>Sincronização:</strong> Manter tabelas de resumo ou caches atualizados em tempo real.</li>
+    <li><strong>Integridade Semântica:</strong> Implementar regras que o SGBD não suporta via restrições
+      (<em>constraints</em>) estáticas.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
-  <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
+  <h2>Tipos de Disparo e Eventos</h2>
+  <p>
+    Os gatilhos são definidos por <strong>quando</strong> eles ocorrem e <strong>qual evento</strong> os ativa:
+  </p>
 
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
+  <h3>Quanto ao Momento (Timing)</h3>
+  <ul>
+    <li><strong>BEFORE:</strong> Dispara antes da execução da operação. É ideal para validar dados ou modificar valores
+      que estão sendo inseridos (ex: sanitização de strings).</li>
+    <li><strong>AFTER:</strong> Dispara depois que a operação foi concluída com sucesso. É usado para tarefas que
+      dependem da confirmação do dado, como logs de auditoria ou replicação.</li>
+  </ul>
+
+  <h3>Quanto à Abrangência</h3>
+  <ul>
+    <li><strong>Row-Level (Por Linha):</strong> O gatilho executa uma vez para cada linha afetada pelo comando (ex: se um
+      <code class="one-line-code">UPDATE</code> altera 100 linhas, o gatilho roda 100 vezes).</li>
+    <li><strong>Statement-Level (Por Instrução):</strong> O gatilho executa apenas uma vez para o comando inteiro, não
+      importa quantas linhas foram afetadas (recurso comum no PostgreSQL).</li>
+  </ul>
+
+  <div class="mermaid">
+    graph TD
+    A["Comando DML\n(INSERT / UPDATE / DELETE)"] --> B{"Momento"}
+    B -->|"BEFORE"| C["Executa gatilho\nantes da operação"]
+    C --> D["Operação na tabela"]
+    D --> E{"Abrangência"}
+    E -->|"Row-Level"| F["Executa por LINHA\nafetada"]
+    E -->|"Statement-Level"| G["Executa UMA vez\npor comando"]
+    D --> H["AFTER\nExecuta gatilho\ndepois da operação"]
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Diagramação</h2>
-  <p>Representação visual dos conceitos abordados:</p>
+  <h2>Palavras-chave: NEW e OLD</h2>
+  <p>
+    Para manipular os dados dentro do gatilho, utilizamos as palavras-chave <code class="one-line-code">NEW</code> e
+    <code class="one-line-code">OLD</code>:
+  </p>
+  <ul>
+    <li><strong>NEW:</strong> Refere-se aos novos valores que estão sendo inseridos ou atualizados.</li>
+    <li><strong>OLD:</strong> Refere-se aos valores antigos que existiam antes do
+      <code class="one-line-code">UPDATE</code> ou ao registro que está sendo removido no
+      <code class="one-line-code">DELETE</code>.</li>
+  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>Evento</th>
+        <th>OLD</th>
+        <th>NEW</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>INSERT</strong></td>
+        <td>Não disponível</td>
+        <td>Disponível</td>
+      </tr>
+      <tr>
+        <td><strong>UPDATE</strong></td>
+        <td>Disponível</td>
+        <td>Disponível</td>
+      </tr>
+      <tr>
+        <td><strong>DELETE</strong></td>
+        <td>Disponível</td>
+        <td>Não disponível</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Implementação Prática</h2>
+
+  <h3>Exemplo no MySQL: Auditoria Simples</h3>
+  <p>
+    No MySQL, o trigger é criado diretamente sobre a tabela. O exemplo abaixo registra uma mensagem quando um novo
+    produto é inserido:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE TRIGGER ai_produto_log
+AFTER INSERT ON produto
+FOR EACH ROW
+BEGIN
+    -- Insere um registro em uma tabela de log
+    INSERT INTO log_atividades (descricao, data_hora)
+    VALUES (CONCAT('Novo produto inserido: ', NEW.descricao_produto), NOW());
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h3>Exemplo no PostgreSQL: Trigger de Timestamp</h3>
+  <p>
+    No PostgreSQL, o processo é feito em <strong>duas etapas</strong>: primeiro cria-se uma
+    <em>Trigger Function</em> (usando PL/pgSQL) e depois vincula-se essa função à tabela através do comando
+    <code class="one-line-code">CREATE TRIGGER</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- 1. Criando a função do gatilho
+CREATE OR REPLACE FUNCTION func_atualiza_timestamp()
+RETURNS trigger AS $$
+BEGIN
+    NEW.ultima_atualizacao := CURRENT_TIMESTAMP; -- Modifica o registro antes de salvar
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. Vinculando a função à tabela (Evento BEFORE)
+CREATE TRIGGER tr_timestamp_vendedores
+BEFORE UPDATE ON vendedores
+FOR EACH ROW
+EXECUTE PROCEDURE func_atualiza_timestamp();</code></pre>
+  </div>
+
+  <h3>Comparativo entre os SGBDs</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>MySQL</th>
+        <th>PostgreSQL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Criação</strong></td>
+        <td><code class="one-line-code">CREATE TRIGGER ... ON tabela</code></td>
+        <td>Função de gatilho + <code class="one-line-code">CREATE TRIGGER</code></td>
+      </tr>
+      <tr>
+        <td><strong>Abrangência</strong></td>
+        <td>Apenas <code class="one-line-code">FOR EACH ROW</code></td>
+        <td><code class="one-line-code">FOR EACH ROW</code> e <code class="one-line-code">FOR EACH STATEMENT</code></td>
+      </tr>
+      <tr>
+        <td><strong>Corpo</strong></td>
+        <td>Bloco <code class="one-line-code">BEGIN...END</code> direto</td>
+        <td>Lógica na função, retornando <code class="one-line-code">NEW</code> ou <code class="one-line-code">OLD</code></td>
+      </tr>
+      <tr>
+        <td><strong>Delimitador</strong></td>
+        <td>Requer <code class="one-line-code">DELIMITER //</code> no terminal</td>
+        <td>Usa <code class="one-line-code">$$</code> no corpo da função</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Vantagens e Cuidados</h2>
+
+  <h3>Vantagens</h3>
+  <ul>
+    <li><strong>Segurança:</strong> Impede que dados inválidos entrem no banco mesmo que o programador esqueça de validar
+      no código PHP ou Java.</li>
+  </ul>
+
+  <h3>Cuidados</h3>
+  <ul>
+    <li><strong>Performance:</strong> Gatilhos "pesados" (com muitas consultas internas) podem tornar as operações de
+      escrita (<code class="one-line-code">INSERT</code>/<code class="one-line-code">UPDATE</code>) lentas, pois o banco
+      precisa processar o gatilho antes de confirmar a transação.</li>
+    <li><strong>Efeitos Colaterais:</strong> Um gatilho em uma tabela pode disparar outro gatilho em uma segunda tabela,
+      criando uma "cascata" que pode ser difícil de depurar se não for bem planejada.</li>
+  </ul>
+
   <div class="mermaid">
-    graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+    flowchart LR
+    T["UPDATE vendedores"] --> G["Trigger BEFORE UPDATE\ntr_timestamp_vendedores"]
+    G --> F["func_atualiza_timestamp()\nNEW.ultima_atualizacao := CURRENT_TIMESTAMP"]
+    F --> C["Tabela vendedores salva com timestamp atualizado"]
+    C -->|"pode disparar"| O["OUTRO trigger em cascata..."]
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Dica importante sobre Gatilhos (Triggers) I aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>Privilégios:</strong> Para criar gatilhos, o usuário precisa da permissão específica
+      <code class="one-line-code">TRIGGER</code> para aquela tabela.</li>
+    <li><strong>Visões:</strong> Versões modernas do PostgreSQL (9.1+) permitem gatilhos do tipo
+      <code class="one-line-code">INSTEAD OF</code> em Views, permitindo que visões complexas se tornem atualizáveis.</li>
+    <li><strong>Manutenção:</strong> Em métodos ágeis, lembre-se que ao refatorar tabelas, os gatilhos associados também
+      precisam ser revisados e testados para manter a semântica do sistema.</li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
   <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
+    <li><strong>Auditoria de alterações:</strong> Use um trigger <code class="one-line-code">AFTER UPDATE</code> que
+      grava <code class="one-line-code">OLD.valor</code> e <code class="one-line-code">NEW.valor</code> em uma tabela de
+      histórico, permitindo reconstruir o que mudou em cada registro.</li>
+    <li><strong>Sanitização de entrada:</strong> No <code class="one-line-code">BEFORE INSERT</code>, aplique
+      <code class="one-line-code">TRIM()</code> ou capitalização em colunas de texto antes do dado ser salvo.</li>
+    <li><strong>Manutenção de resumos:</strong> Mantenha um contador de pedidos por vendedor atualizado em tempo real
+      com triggers de inserção/exclusão em vez de recalcular tudo a cada consulta.</li>
+    <li><strong>Validação de regras de negócio:</strong> Bloqueie operações inválidas (ex: saldo negativo, desconto
+      acima do limite) com <code class="one-line-code">SIGNAL</code> no MySQL ou
+      <code class="one-line-code">RAISE EXCEPTION</code> no PostgreSQL.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.
-    </li>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
     <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
       Paulo: DCC-IME-USP, 2005.</li>
+    <li>MySQL Documentation. CREATE TRIGGER Statement. Disponível em:
+      https://dev.mysql.com/doc/refman/8.0/en/create-trigger.html</li>
+    <li>PostgreSQL Documentation. CREATE TRIGGER — PL/pgSQL Triggers. Disponível em:
+      https://www.postgresql.org/docs/current/plpgsql-trigger.html</li>
   </ul>
 </section>
 

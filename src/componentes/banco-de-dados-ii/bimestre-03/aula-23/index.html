@@ -1,63 +1,228 @@
 ---
-title: "Stored Functions"
+title: "Stored Functions: Encapsulamento de Cálculos e Lógica"
+componente: "Banco de Dados II"
 aula_numero: "23"
-description: "Encapsulamento de lógica."
+description: "Esta aula apresenta as Stored Functions (Funções Armazenadas), objetos que encapsulam cálculos e lógica no servidor e retornam obrigatoriamente um único valor, cobrindo as diferenças para procedimentos, implementação em MySQL e PostgreSQL, níveis de volatilidade e controle de privilégios."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é uma Stored Function?</h3>
+  <p>
+    Uma <strong>Stored Function</strong> (Função Armazenada) é um conjunto de instruções SQL definido pelo usuário,
+    armazenado no servidor, que realiza uma tarefa ou cálculo e <strong>obrigatoriamente retorna um único valor</strong>.
+    Diferente dos procedimentos, que são invocados pelo comando <code class="one-line-code">CALL</code>, as funções são
+    chamadas diretamente dentro de comandos <code class="one-line-code">SELECT</code>,
+    <code class="one-line-code">WHERE</code> ou <code class="one-line-code">UPDATE</code>, integrando-se perfeitamente às
+    expressões do banco de dados.
+  </p>
+
+  <h4>Principais Vantagens</h4>
+  <ul>
+    <li><strong>Simplificação de Aplicações:</strong> Escreve-se o código do cálculo uma vez e o invoca sempre que
+      necessário, evitando a repetição de fórmulas complexas no código da aplicação.</li>
+    <li><strong>Poder Algorítmico:</strong> Permitem o uso de estruturas condicionais
+      (<code class="one-line-code">IF</code>, <code class="one-line-code">CASE</code>) e laços de repetição
+      (<code class="one-line-code">WHILE</code>, <code class="one-line-code">LOOP</code>) que não seriam possíveis em uma
+      consulta SQL simples.</li>
+    <li><strong>Desempenho:</strong> No PostgreSQL, funções escritas em SQL puro podem ser "otimizadas" pelo planejador de
+      consultas, permitindo o uso de índices e melhorando a performance.</li>
+  </ul>
+
+  <h3>2. Diferença entre Function e Procedure</h3>
+  <p>
+    Embora ambos sejam "programas armazenados", suas aplicações diferem:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>Function</th>
+        <th>Procedure</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Retorno</strong></td>
+        <td>Deve retornar um valor via cláusula <code class="one-line-code">RETURN</code>.</td>
+        <td>Não retorna um valor diretamente (embora possa usar parâmetros OUT).</td>
+      </tr>
+      <tr>
+        <td><strong>Invocação</strong></td>
+        <td>Usada em expressões (ex: <code class="one-line-code">SELECT soma(a, b)</code>).</td>
+        <td>Invocada via <code class="one-line-code">CALL</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Resultados</strong></td>
+        <td>Sempre um único valor escalar.</td>
+        <td>Pode retornar múltiplos conjuntos de resultados ou apenas realizar alterações no banco.</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
-  <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
+  <h2>Implementação no MySQL</h2>
+  <p>
+    No MySQL, a criação de funções exige a definição do <strong>tipo de retorno</strong> e de características como a
+    <em>determinística</em> (se a função sempre retorna o mesmo resultado para os mesmos parâmetros).
+  </p>
 
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
+  <h3>Exemplo Prático: Capitalização de Texto</h3>
+  <p>
+    Este exemplo cria uma função que coloca a primeira letra de uma string em maiúsculo:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+CREATE FUNCTION iniciais_maiusculas (s VARCHAR(255))
+RETURNS VARCHAR(255) DETERMINISTIC
+BEGIN
+    RETURN CONCAT(UPPER(LEFT(s, 1)), MID(s, 2));
+END $$
+
+DELIMITER ;
+
+-- Como utilizar em uma consulta
+SELECT nome_cliente, iniciais_maiusculas(nome_cliente) FROM cliente;</code></pre>
+  </div>
+
+  <div class="tip-box">
+    <h4>Observação Técnica</h4>
+    <p>
+      O uso do comando <code class="one-line-code">DELIMITER</code> é essencial no cliente de linha de comando para que o
+      <code class="one-line-code">;</code> interno do corpo da função não seja interpretado como o fim do comando de
+      criação.
+    </p>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Diagramação</h2>
-  <p>Representação visual dos conceitos abordados:</p>
+  <h2>Implementação no PostgreSQL</h2>
+  <p>
+    O PostgreSQL é extremamente flexível, permitindo funções escritas em <strong>SQL, PL/pgSQL, C, Python e até
+      JavaScript</strong>. Além disso, introduz o conceito de <strong>Volatilidade</strong> para ajudar o otimizador.
+  </p>
+
+  <h3>Níveis de Volatilidade no PostgreSQL</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Nível</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>VOLATILE</strong></td>
+        <td>O valor pode mudar a cada chamada (ex: <code class="one-line-code">random()</code>). Sempre recomputada.</td>
+      </tr>
+      <tr>
+        <td><strong>STABLE</strong></td>
+        <td>O valor é constante dentro de uma mesma consulta para os mesmos argumentos.</td>
+      </tr>
+      <tr>
+        <td><strong>IMMUTABLE</strong></td>
+        <td>O valor é sempre o mesmo para os mesmos argumentos (ideal para cálculos matemáticos fixos).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Exemplo Prático: Inserção com Retorno (SQL puro)</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE OR REPLACE FUNCTION insere_log (usuario_nome VARCHAR, desc_texto TEXT)
+RETURNS INTEGER AS $$
+    INSERT INTO logs (user_name, description)
+    VALUES (usuario_nome, desc_texto)
+    RETURNING log_id;
+$$ LANGUAGE SQL VOLATILE;
+
+-- Como utilizar
+SELECT insere_log('felipe', 'Acesso ao sistema');</code></pre>
+  </div>
+
   <div class="mermaid">
     graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+    subgraph PG ["PostgreSQL: Volatilidade"]
+      direction LR
+      V["VOLATILE\n(random(), NOW())"] --> C["STABLE\n(constante na consulta)"]
+      C --> I["IMMUTABLE\n(sempre igual para os mesmos argumentos)"]
+    end
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Segurança e Privilégios</h2>
+  <p>
+    O gerenciamento de acesso às funções é vital para a integridade do sistema:
+  </p>
+  <ul>
+    <li><strong>GRANT EXECUTE:</strong> Concede a um usuário ou papel (<em>role</em>) a permissão de rodar a função.</li>
+    <li><strong>SECURITY DEFINER:</strong> No PostgreSQL, permite que a função seja executada com os privilégios de quem a
+      criou, e não de quem a está chamando. É útil para permitir que usuários comuns alterem tabelas específicas através
+      da função sem terem acesso direto à tabela.</li>
+  </ul>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Concede o direito de executar a função a um papel
+GRANT EXECUTE ON FUNCTION insere_log(VARCHAR, TEXT) TO usuario_aplicacao;
+
+-- Executa a função com os privilégios de quem a criou (não de quem chama)
+CREATE OR REPLACE FUNCTION atualiza_saldo(conta_id INT, valor DECIMAL(10,2))
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    UPDATE contas SET saldo = saldo + valor WHERE id = conta_id;
+END;
+$$;</code></pre>
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Dica importante sobre Stored Functions aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>Atomicidade:</strong> Toda função deve ter ao menos um comando <code class="one-line-code">RETURN</code>.</li>
+    <li><strong>Parâmetros:</strong> No MySQL, parâmetros de funções são apenas de entrada (IN), ao contrário dos
+      procedimentos que aceitam <code class="one-line-code">OUT</code> e <code class="one-line-code">INOUT</code>.</li>
+    <li><strong>Binary Logging:</strong> Em servidores MySQL com log binário ativo, é necessário ter o privilégio
+      <code class="one-line-code">SUPER</code> e declarar a função como <code class="one-line-code">DETERMINISTIC</code>
+      ou que não modifica dados (<code class="one-line-code">READS SQL DATA</code>) para garantir a segurança da
+      replicação.</li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
   <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
+    <li><strong>Formatação de dados:</strong> Centralize regras de formatação (máscaras de CPF, capitalização de nomes,
+      telas) em funções reutilizáveis em qualquer consulta.</li>
+    <li><strong>Cálculos de negócio:</strong> Encapsule fórmulas como imposto, comissão e desconto em funções
+      <code class="one-line-code">IMMUTABLE</code> no PostgreSQL, permitindo que o otimizador as pré-calcule.</li>
+    <li><strong>Validações em cascata:</strong> Use funções dentro de <code class="one-line-code">WHERE</code> e
+      <code class="one-line-code">CHECK</code> para garantir que a mesma regra seja aplicada em qualquer camada do
+      sistema.</li>
+    <li><strong>Auditoria segura:</strong> Combine <code class="one-line-code">SECURITY DEFINER</code> com
+      <code class="one-line-code">GRANT EXECUTE</code> para expor operações controladas sem liberar acesso às tabelas
+      base.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.
-    </li>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
     <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
       Paulo: DCC-IME-USP, 2005.</li>
+    <li>MySQL Documentation. CREATE FUNCTION Statement. Disponível em:
+      https://dev.mysql.com/doc/refman/8.0/en/create-function.html</li>
+    <li>PostgreSQL Documentation. CREATE FUNCTION — SQL Procedural Language. Disponível em:
+      https://www.postgresql.org/docs/current/sql-createfunction.html</li>
   </ul>
 </section>
 
