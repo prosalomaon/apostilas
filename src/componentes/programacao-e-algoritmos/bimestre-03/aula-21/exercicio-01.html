@@ -3,16 +3,124 @@ layout: exercicio
 title: "Exercício 01 - Vetores (Arrays Unidimensionais)"
 exercicio_numero: "01"
 aula_numero: "21"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 21."
+description: "Atividade Prática: Gestão de Atributos de Equipe RPG."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Você está desenvolvendo um módulo para um jogo de RPG que gerencia os pontos
+    de vida (HP) de uma equipe de 4 aventureiros. O sistema deve permitir a
+    entrada do HP de cada herói e, ao final, informar o HP total da equipe e
+    identificar qual o herói com a maior saúde atual.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li>
+      <strong>Ambiente:</strong> Utilize o VS Code (com extensão Java) ou um
+      compilador Java online (ex: OnlineGDB).
+    </li>
+    <li>
+      <strong>Conhecimento Prévio:</strong> Requer domínio de laços
+      <code class="one-line-code">for</code> e da entrada de dados com
+      <code class="one-line-code">Scanner</code>.
+    </li>
+    <li>
+      <strong>Documentação:</strong> Consulte o conteúdo da aula 21 sobre vetores
+      para relembrar o uso de <code class="one-line-code">.length</code> e da busca de máximo.
+    </li>
+    <li>
+      Certifique-se de importar <code class="one-line-code">java.util.Scanner</code> para entrada de
+      dados e declare um vetor de inteiros com tamanho 4.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Código Base (Exemplo de Demonstração)</h2>
+  <p>
+    Este código já captura o HP de cada aventureiro e o armazena nas posições do
+    vetor. Sua missão é completar a parte comentada.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Scanner;
+
+public class GestaoEquipe {
+    public static void main(String[] args) {
+        Scanner leitor = new Scanner(System.in);
+        int[] aventureirosHP = new int[4];
+
+        // Entrada de dados
+        for (int i = 0; i &lt; aventureirosHP.length; i++) {
+            System.out.print("Digite o HP do aventureiro " + (i + 1) + ": ");
+            aventureirosHP[i] = leitor.nextInt();
+        }
+
+        // Espaço para a lógica do desafio
+
+        leitor.close();
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio</h2>
+  <p>
+    Implemente as seguintes funcionalidades após a entrada de dados:
+  </p>
+  <ul>
+    <li>
+      <strong>Cálculo do Total:</strong> Utilize um laço para somar o HP de todos
+      os aventureiros e exiba o resultado.
+    </li>
+    <li>
+      <strong>Busca de Máximo:</strong> Encontre e exiba o maior valor de HP
+      presente no vetor <code class="one-line-code">aventureiros</code>.
+    </li>
+    <li>
+      <strong>Status de Alerta:</strong> Verifique se algum aventureiro está com
+      HP menor que 10. Se sim, imprima
+      <code class="one-line-code">"Alerta: Herói em perigo!"</code>.
+    </li>
+  </ul>
+
+  <h3>Requisitos técnicos:</h3>
+  <ul>
+    <li>
+      Utilize a propriedade <code class="one-line-code">.length</code> em seus laços para garantir que o
+      código funcione mesmo se o tamanho da equipe mudar.
+    </li>
+    <li>
+      Para encontrar o máximo, assuma que o primeiro elemento é o maior e
+      compare-o com os demais dentro do laço.
+    </li>
+    <li>
+      Faça o commit do seu código caso esteja utilizando Git, documentando a
+      criação do módulo de vetores.
+    </li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>5. Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Teste de Mesa:</strong> antes de rodar, simule a entrada
+      <code class="one-line-code">HP = 25, 8, 40, 12</code> e verifique se o total (85), o máximo (40) e o
+      alerta são exibidos corretamente.
+    </li>
+    <li>
+      <strong>Formatação da saída:</strong> exiba mensagens claras, como
+      <code class="one-line-code">"HP total da equipe: 85"</code> e
+      <code class="one-line-code">"Aventureiro com maior HP: 40"</code>.
+    </li>
+    <li>
+      <strong>Indentação:</strong> mantenha o código organizado para facilitar a
+      leitura e a correção.
+    </li>
   </ul>
 </div>
