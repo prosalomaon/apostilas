@@ -1,0 +1,17 @@
+{
+  "subject": "programacao-web-i",
+  "subject_title": "Programação Web I",
+  "subject_description": "Desenvolvimento front-end para a Web (Diretrizes 2026): HTML5 semântico e acessível, estilização responsiva com CSS, dinamismo com JavaScript e publicação profissional de sites estáticos.",
+  "subject_status": "40 Aulas • 4 Bimestres",
+  "layout": "aula",
+  "tags": [
+    "aula"
+  ],
+  "nav_text": "⮜ VOLTAR",
+  "bimester_titles": {
+    "bimestre-01": "Fundamentos e Estruturação HTML",
+    "bimestre-02": "Estilização Profissional com CSS",
+    "bimestre-03": "Lógica e Dinamismo com JavaScript",
+    "bimestre-04": "Web APIs, Práticas Modernas e Deploy"
+  }
+}

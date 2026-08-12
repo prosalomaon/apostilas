@@ -1,0 +1,92 @@
+---
+title: "Entrega do Projeto II: Landing Page Responsiva"
+aula_numero: "18"
+description: "Especificações e requisitos para a entrega do Projeto II: uma Landing Page responsiva utilizando Flexbox e Grid."
+tags:
+  - aula
+  - bimestre-02
+---
+
+<section class="section-box">
+  <h2>1. Descrição do Projeto</h2>
+  <p>Você foi contratado para criar a <strong>Landing Page</strong> de um produto, serviço ou evento à sua escolha. O
+    objetivo deste projeto é aplicar os conceitos de <strong>layout com Flexbox e Grid</strong>, responsividade
+    mobile-first e o modelo de caixas (Box-Model) aprendidos no 2º Bimestre.
+  </p>
+  <p>A página deve convencer o visitante a realizar uma ação (como assinar uma newsletter, comprar um produto ou se
+    inscrever em um evento), apresentando o conteúdo de forma clara e organizada em qualquer dispositivo.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>2. Requisitos Técnicos (O que será avaliado)</h2>
+  <ul>
+    <li><strong>Flexbox:</strong> Uso de <code class="one-line-code">display: flex</code> para barras de navegação,
+      alinhamento de hero e distribuição de itens.</li>
+    <li><strong>Grid:</strong> Uso de <code class="one-line-code">display: grid</code> com <code
+        class="one-line-code">grid-template-columns</code> para seções como benefícios e depoimentos.</li>
+    <li><strong>Responsividade:</strong> Estratégia <em>mobile-first</em> com <code
+        class="one-line-code">@media</code> (ao menos um breakpoint) adaptando o layout para desktop.</li>
+    <li><strong>Box-Model:</strong> Controle consciente de <code class="one-line-code">margin</code>, <code
+        class="one-line-code">padding</code>, <code class="one-line-code">border</code> e <code
+        class="one-line-code">box-sizing</code>.</li>
+    <li><strong>Custom Properties:</strong> Paleta de cores e espaçamentos definidos como <code
+        class="one-line-code">--variaveis</code>.</li>
+    <li><strong>Formulário Estilizado:</strong> Pelo menos um formulário de captura (ex: e-mail) com campos estilizados,
+      estados de foco e hover.</li>
+    <li><strong>Efeitos Visuais:</strong> Transições, sombras (<code class="one-line-code">box-shadow</code>) e/ou
+      filtros em imagens.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Estrutura de Arquivos Sugerida</h2>
+  <div class="code-container">
+    <pre><code class="one-line-code">/projeto-ii
+  ├── index.html          (estrutura semântica da Landing Page)
+  ├── css/
+  │    └── style.css      (estilos, variáveis e media queries)
+  └── imagens/            (assets otimizados)</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio Prático</h2>
+  <p>Sua Landing Page deve conter:</p>
+  <ol>
+    <li>Um <strong>hero</strong> com chamada principal e botão de ação (CTA).</li>
+    <li>Uma seção de <strong>benefícios</strong> organizada com Grid (3 colunas no desktop, 1 coluna no mobile).</li>
+    <li>Uma seção de <strong>depoimentos ou planos</strong> alinhada com Flexbox.</li>
+    <li>Um <strong>rodapé</strong> com links e informações de contato.</li>
+    <li>Nenhuma <strong>barra de rolagem horizontal</strong> em qualquer largura de tela.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>5. Desafios Bônus <span class="badge badge-warning"
+      style="background-color: var(--color-warning); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-left: 10px;">Opcional</span>
+  </h2>
+  <ul>
+    <li><strong>Menu Responsivo:</strong> Converter a navegação em um menu hambúrguer no mobile (pode usar um checkbox
+      ou JavaScript simples).</li>
+    <li><strong>Animações:</strong> Adicionar animações de entrada com <code class="one-line-code">@keyframes</code>.</li>
+  </ul>
+</section>
+
+<div class="tip-box">
+  <h4>Orientações de Entrega</h4>
+  <ul>
+    <li><strong>Teste Real:</strong> Valide o layout nas larguras de 360px (mobile), 768px (tablet) e 1280px (desktop).
+    </li>
+    <li><strong>Consistência:</strong> Use somente as variáveis definidas para cores e espaçamentos.</li>
+    <li><strong>Performance:</strong> Otimize as imagens e evite estilos repetidos.</li>
+    <li><strong>Prazo:</strong> A entrega ocorre na aula 20, com correção e feedback.</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Requisitos</a></li>
+  </ul>
+</section>

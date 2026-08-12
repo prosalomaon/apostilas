@@ -1,0 +1,90 @@
+---
+title: "Entrega do Projeto III: Site Estático Interativo"
+aula_numero: "28"
+description: "Especificações e requisitos para a entrega do Projeto III: um site estático com componentes interativos."
+tags:
+  - aula
+  - bimestre-03
+---
+
+<section class="section-box">
+  <h2>1. Descrição do Projeto</h2>
+  <p>Você foi contratado para desenvolver um <strong>site estático interativo</strong> à sua escolha, aplicando os
+    conceitos de <strong>JavaScript e manipulação do DOM</strong> aprendidos no 3º Bimestre. O site deve oferecer
+    componentes interativos, como galerias, menus retráteis ou calculadoras.
+  </p>
+  <p>O objetivo é demonstrar que o conteúdo da página pode <strong>reagir às ações do usuário em tempo real</strong>,
+    sem necessidade de recarregar a página.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>2. Requisitos Técnicos (O que será avaliado)</h2>
+  <ul>
+    <li><strong>Separação de Responsabilidades:</strong> HTML estrutural, CSS de estilo e um arquivo externo de
+      JavaScript (<code class="one-line-code">script.js</code>).</li>
+    <li><strong>Seleção e Eventos:</strong> Uso de <code class="one-line-code">querySelector</code>/
+      <code class="one-line-code">querySelectorAll</code> e ao menos 3 tipos de eventos diferentes (clique, envio,
+      teclado, etc.).</li>
+    <li><strong>Manipulação do DOM:</strong> Alteração dinâmica de conteúdo, atributos e/ou classes (<code
+        class="one-line-code">classList</code>).</li>
+    <li><strong>Funções e Estruturas:</strong> Código organizado em funções, com uso de condicionais e laços.</li>
+    <li><strong>Validação:</strong> Pelo menos um formulário com validação via JavaScript e mensagens de erro claras.
+    </li>
+    <li><strong>Boas Práticas:</strong> Uso de <code class="one-line-code">addEventListener</code> (sem atributos
+      inline <code class="one-line-code">onclick</code>) e nomes de funções significativos.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Estrutura de Arquivos Sugerida</h2>
+  <div class="code-container">
+    <pre><code class="one-line-code">/projeto-iii
+  ├── index.html          (estrutura semântica do site)
+  ├── css/
+  │    └── style.css      (estilização responsiva)
+  ├── js/
+  │    └── script.js      (toda a lógica de interação)
+  └── imagens/            (assets otimizados)</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio Prático</h2>
+  <p>Escolha pelo menos <strong>dois</strong> componentes interativos:</p>
+  <ol>
+    <li><strong>Galeria de Imagens:</strong> Navegação entre imagens com botões anterior/próximo e miniaturas.</li>
+    <li><strong>Menu Retrátil:</strong> Menu hambúrguer que abre/fecha com classe de estado alternada.</li>
+    <li><strong>Calculadora:</strong> Calculadora simples com operações básicas e feedback imediato.</li>
+    <li><strong>Lista de Tarefas:</strong> Adicionar e remover itens com validação de entrada vazia.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>5. Desafios Bônus <span class="badge badge-warning"
+      style="background-color: var(--color-warning); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-left: 10px;">Opcional</span>
+  </h2>
+  <ul>
+    <li><strong>Modo Escuro:</strong> Toggle que alterna um tema claro/escuro via <code
+        class="one-line-code">classList</code>.</li>
+    <li><strong>Persistência:</strong> Salvar o estado da lista de tarefas no <code
+        class="one-line-code">localStorage</code>.</li>
+  </ul>
+</section>
+
+<div class="tip-box">
+  <h4>Orientações de Entrega</h4>
+  <ul>
+    <li><strong>Sem Erros no Console:</strong> O site deve rodar sem exceções no console do navegador.</li>
+    <li><strong>Depuração:</strong> Use o DevTools para inspecionar o comportamento dos eventos.</li>
+    <li><strong>Responsividade:</strong> Os componentes devem funcionar bem em mobile e desktop.</li>
+    <li><strong>Prazo:</strong> A entrega ocorre na aula 30, com correção e feedback.</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Requisitos</a></li>
+  </ul>
+</section>
