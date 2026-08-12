@@ -8,42 +8,132 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 04 em desenvolvimento...</p>
+  <h2>1. Teoria & Conceitos</h2>
+  <p>O HTML não é uma linguagem de programação, mas sim uma linguagem de marcação que descreve a estrutura de um site
+    de forma semântica. Nesta aula, aprenderemos a codificar elementos de texto com foco no seu significado, e não
+    apenas na sua aparência visual.
+  </p>
+  <p>A <strong>semântica na web</strong> refere-se ao uso de tags HTML que descrevem o significado do conteúdo que elas
+    envolvem. Enquanto o HTML cuida da estrutura, a estilização visual (como cores e negritos) é responsabilidade do
+    CSS.
+  </p>
+
+  <h3>Importância da Estruturação Semântica</h3>
+  <ul>
+    <li><strong>SEO (Search Engine Optimization):</strong> Motores de busca como Google e Bing usam a hierarquia das
+      tags (como os títulos <code class="one-line-code">&lt;h1&gt;</code>) para indexar e ranquear a relevância do seu
+      conteúdo. O uso de microdados e tags corretas ajuda a promover páginas nos resultados de busca.</li>
+    <li><strong>Acessibilidade:</strong> Pessoas com deficiência visual utilizam softwares leitores de tela que navegam
+      pelo documento baseando-se nas tags semânticas. Uma marcação correta permite que o usuário salte diretamente para
+      o conteúdo principal ou identifique o papel de cada imagem.</li>
+    <li><strong>Manutenção:</strong> Páginas semânticas são mais fáceis de ler e atualizar por outros desenvolvedores.
+    </li>
+  </ul>
+
+  <h3>Elementos Fundamentais de Texto</h3>
+  <ul>
+    <li><strong>Cabeçalhos (<code class="one-line-code">&lt;h1&gt;</code> a <code
+          class="one-line-code">&lt;h6&gt;</code>):</strong> Definem a hierarquia de importância, sendo o <code
+        class="one-line-code">&lt;h1&gt;</code> o título principal e os demais subtítulos.</li>
+    <li><strong>Parágrafos (<code class="one-line-code">&lt;p&gt;</code>):</strong> Utilizados para blocos de texto
+      comum.</li>
+    <li><strong>Ênfase (<code class="one-line-code">&lt;strong&gt;</code> e <code
+          class="one-line-code">&lt;em&gt;</code>):</strong> O <code class="one-line-code">&lt;strong&gt;</code> indica
+      importância forte (exibido em negrito), enquanto o <code class="one-line-code">&lt;em&gt;</code> indica uma ênfase
+      acentuada no sentido do texto (exibido em itálico).</li>
+    <li><strong>Endereço (<code class="one-line-code">&lt;address&gt;</code>):</strong> Usado especificamente para
+      informações de contato.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>2. Exemplo de Código</h2>
+  <p>Abaixo, um exemplo de documento semântico que agrupa conteúdos de forma lógica.</p>
   <div class="code-container">
-    <pre><code class="language-html">// Em breve...</code></pre>
+    <pre><code class="language-html">&lt;!doctype html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;Aula de Semântica&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;h1 class="titulo"&gt;Sobre a Empresa&lt;/h1&gt; &lt;!-- Título principal [17] --&gt;
+  &lt;/header&gt;
+
+  &lt;main&gt;
+    &lt;p&gt;A MusicDot é a maior escola de música online.&lt;/p&gt; &lt;!-- Parágrafo [14] --&gt;
+
+    &lt;h2 id="historia"&gt;Nossa História&lt;/h2&gt; &lt;!-- Subtítulo hierárquico [13] --&gt;
+    &lt;p&gt;Fundada em &lt;strong&gt;1932&lt;/strong&gt;, a empresa revolucionou o ensino.&lt;/p&gt;
+
+    &lt;section id="contato"&gt;
+      &lt;h3 class="contato_subtitulo"&gt;Correspondência&lt;/h3&gt;
+      &lt;address class="contato_info"&gt; &lt;!-- Tag específica para endereços [16] --&gt;
+        Rua Vergueiro, 3185, 8º andar&lt;br&gt;
+        São Paulo - SP
+      &lt;/address&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>3. Representação Gráfica</h2>
+  <h3>A Árvore do DOM (Document Object Model)</h3>
+  <p>O navegador interpreta o HTML como uma estrutura hierárquica de árvore.</p>
   <div class="mermaid">
     graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    html((html)) --> head(head - Metadados)
+    html --> body(body - Visível)
+    body --> header[header]
+    body --> main[main]
+    header --> h1[h1 - Título Principal]
+    main --> h2[h2 - Subtítulo]
+    main --> p[p - Parágrafo]
+    p --> strong[strong - Destaque]
   </div>
 </section>
 
 <div class="tip-box">
   <h4>Dicas & Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li><strong>Regra do H1:</strong> Utilize apenas um único <code class="one-line-code">&lt;h1&gt;</code> por
+      página, representando o conteúdo mais importante.</li>
+    <li><strong>Semântica vs. Visual:</strong> Escolha as tags pelo que elas representam e não por como elas aparecem
+      na tela; o negrito do <code class="one-line-code">&lt;strong&gt;</code> é apenas um padrão que o CSS pode
+      alterar.</li>
+    <li><strong>Indentação:</strong> Mantenha elementos "filhos" recuados em relação aos "mães" para facilitar a
+      leitura do código.</li>
+    <li><strong>SEO:</strong> Use títulos relevantes e descrições meta descritivas para ajudar os robôs de busca.</li>
   </ul>
 </div>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <h2>4. Como aplicar na Prática</h2>
+  <p>O domínio da semântica é essencial em projetos reais para:</p>
+  <ul>
+    <li><strong>Páginas Institucionais:</strong> Organizar a história e diferenciais de uma empresa em uma página
+      "Sobre".</li>
+    <li><strong>Blogs e Portais:</strong> Garantir que cada notícia tenha uma hierarquia de títulos que facilite o
+      escaneamento visual e por motores de busca.</li>
+    <li><strong>Formulários Acessíveis:</strong> Usar rótulos (<code class="one-line-code">&lt;label&gt;</code>)
+      vinculados corretamente aos campos de texto para que usuários de leitores de tela saibam o que digitar.</li>
+    <li><strong>Localização:</strong> Marcar endereços de lojas físicas com a tag <code
+        class="one-line-code">&lt;address&gt;</code> para que sistemas GPS ou mapas identifiquem a informação de
+      contato.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Referências</h2>
+  <h2>5. Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>CENTRO PAULA SOUZA. Plano de Curso nº 1062 (2026).</li>
+    <li>GRANT, Keith J. <em>CSS in Depth</em>. Manning, 2018.</li>
+    <li>HAVERBEKE, Marijn. <em>Eloquent JavaScript</em>. 3rd ed., 2018.</li>
+    <li>CAELUM. <em>Apostila HTML, CSS e JavaScript</em>.</li>
   </ul>
 </section>
 

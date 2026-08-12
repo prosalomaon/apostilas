@@ -8,40 +8,167 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 11 em desenvolvimento...</p>
+  <h2>1. Teoria & Conceitos</h2>
+  <p>Nesta aula, iniciamos o estudo das <strong>Folhas de Estilo em Cascata (CSS - Cascading Style Sheets)</strong>, a
+    linguagem fundamental para descrever a aparência e a formatação de documentos escritos em linguagens de marcação
+    como o HTML.
+  </p>
+  <p>O CSS surgiu para resolver um problema crítico do HTML antigo: a mistura de conteúdo com formatação visual, o que
+    tornava a manutenção de sites impraticável. Enquanto o HTML cuida da estrutura e semântica, o CSS foca
+    exclusivamente na estilização.
+  </p>
+
+  <h3>A Anatomia de uma Regra CSS</h3>
+  <p>Uma "regra" CSS (ou <em>ruleset</em>) é composta por dois elementos principais:</p>
+  <ul>
+    <li><strong>Seletor:</strong> Identifica qual elemento HTML será estilizado.</li>
+    <li><strong>Bloco de Declaração:</strong> O grupo de instruções entre chaves <code
+        class="one-line-code">{}</code> que define o estilo.</li>
+  </ul>
+  <p>Cada declaração dentro do bloco consiste em uma propriedade (como <code class="one-line-code">color</code> ou
+    <code class="one-line-code">font-size</code>) e um valor (como <code class="one-line-code">blue</code> ou <code
+      class="one-line-code">16px</code>), separados por dois pontos <code class="one-line-code">:</code> e finalizados
+    com ponto e vírgula <code class="one-line-code">;</code>.
+  </p>
+
+  <h3>Métodos de Inclusão</h3>
+  <p>Existem três formas de aplicar CSS a um documento, seguindo uma hierarquia de precedência:</p>
+  <ul>
+    <li><strong>CSS Inline:</strong> Aplicado diretamente no elemento através do atributo <code
+        class="one-line-code">style=""</code>. Possui a maior precedência, mas é considerado uma má prática por
+      misturar conteúdo e estilo.</li>
+    <li><strong>CSS Interno (ou Incorporado):</strong> Declarado dentro da tag <code
+        class="one-line-code">&lt;style&gt;</code> no <code class="one-line-code">&lt;head&gt;</code> do documento. É
+      útil para estilos específicos de uma única página.</li>
+    <li><strong>CSS Externo:</strong> O estilo é escrito em um arquivo separado (ex: <code
+        class="one-line-code">estilos.css</code>) e vinculado via tag <code class="one-line-code">&lt;link&gt;</code> no
+      HTML. É o padrão de mercado, pois permite o reaproveitamento de código em múltiplas páginas e mantém o HTML
+      limpo.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
-  <div class="code-container">
-    <pre><code class="language-css">// Em breve...</code></pre>
+  <h2>2. Seletores Básicos</h2>
+  <p>Os seletores permitem buscar elementos na página de forma precisa:</p>
+  <ul>
+    <li><strong>Seletor de Tipo (ou Tag):</strong> Aplica o estilo a todas as ocorrências de uma tag específica (ex:
+      <code class="one-line-code">p { ... }</code> afeta todos os parágrafos).</li>
+    <li><strong>Seletor de Classe:</strong> Identificado por um ponto <code class="one-line-code">.</code> (ex: <code
+        class="one-line-code">.destaque</code>). Pode ser aplicado a vários elementos diferentes e é o preferido para
+      estilização profissional.</li>
+    <li><strong>Seletor de ID:</strong> Identificado por uma cerquilha <code class="one-line-code">#</code> (ex: <code
+        class="one-line-code">#cabecalho</code>). Deve ser único na página. Embora poderoso, seu uso para CSS é
+      desencorajado em favor das classes para manter a especificidade baixa.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Unidades de Medida</h2>
+  <p>O CSS suporta diversas unidades para definir tamanhos de fontes, margens e dimensões:</p>
+  <ul>
+    <li><strong>Absolutas:</strong> O Pixel (<code class="one-line-code">px</code>) é a mais comum, baseada nos pontos
+      da tela do monitor.</li>
+    <li><strong>Relativas:</strong>
+      <ul>
+        <li><strong>EM:</strong> Relativa ao tamanho da fonte do elemento pai.</li>
+        <li><strong>REM:</strong> Relativa ao tamanho da fonte do elemento raiz (<code
+            class="one-line-code">&lt;html&gt;</code>).</li>
+        <li><strong>Porcentagem (%):</strong> Relativa ao tamanho do container pai.</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>4. Representação Gráfica</h2>
+  <h3>Estrutura de uma Regra CSS</h3>
+  <div class="mermaid">
+    graph LR
+    A[Seletor] --> B{Bloco de Declaração}
+    B --> C[Propriedade]
+    C --> D[Valor]
+    style A fill:#f9f,stroke:#333
+    style B fill:#e1f5fe,stroke:#01579b
+  </div>
+
+  <h3>Hierarquia de Inclusão (Precedência)</h3>
+  <div class="mermaid">
+    graph TD
+    A(Browser Default) --> B(Externo)
+    B --> C(Interno)
+    C --> D(Inline)
+    D --> E{Estilo Final}
+    style D fill:#f96,stroke:#333
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
-  <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+  <h2>5. Exemplo de Código</h2>
+  <h3>HTML (index.html)</h3>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;head&gt;
+  &lt;!-- Método Externo (Recomendado) --&gt;
+  &lt;link rel="stylesheet" href="css/estilo.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1 class="titulo-principal"&gt;Bem-vindo à MusicDot&lt;/h1&gt;
+  &lt;p&gt;Aprenda música de forma &lt;strong id="destaque-unico"&gt;online&lt;/strong&gt;.&lt;/p&gt;
+&lt;/body&gt;</code></pre>
+  </div>
+
+  <h3>CSS (css/estilo.css)</h3>
+  <div class="code-container">
+    <pre><code class="language-css">/* Seletor de Tipo */
+body {
+  font-family: Arial, sans-serif; /* Fonte herdada por cascata */ [41]
+}
+
+/* Seletor de Classe */
+.titulo-principal {
+  color: #2D5377;
+  font-size: 2rem; /* Unidade relativa */ [38]
+}
+
+/* Seletor de ID */
+#destaque-unico {
+  color: red;
+  border-bottom: 1px solid black; /* Shorthand property */ [42, 43]
+}</code></pre>
   </div>
 </section>
 
 <div class="tip-box">
   <h4>Dicas & Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li><strong>Separação de Responsabilidades:</strong> HTML para conteúdo, CSS para visual e JavaScript para
+      comportamento.</li>
+    <li><strong>Problema N+1 de Performance:</strong> No contexto de CSS, evite o uso excessivo de <code
+        class="one-line-code">@import</code> dentro de arquivos CSS, pois eles podem retardar o carregamento da página;
+      prefira tags <code class="one-line-code">&lt;link&gt;</code> no HTML.</li>
+    <li><strong>Ponto e Vírgula:</strong> Sempre finalize suas declarações com <code
+        class="one-line-code">;</code>. Omitir o último ponto e vírgula de um bloco é permitido, mas gera erros difíceis
+      de encontrar ao adicionar novas linhas.</li>
+    <li><strong>Cores:</strong> Embora existam nomes de cores (como <code class="one-line-code">red</code>), o padrão
+      profissional é usar códigos Hexadecimais (ex: <code class="one-line-code">#FF0000</code>) ou RGB.</li>
   </ul>
 </div>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <h2>6. Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>Identidade Visual:</strong> Definir as cores institucionais de uma empresa (como o azul da MusicDot) em
+      um único arquivo CSS para que todo o site seja atualizado instantaneamente.</li>
+    <li><strong>Acessibilidade:</strong> Usar unidades relativas (<code class="one-line-code">rem</code> ou <code
+        class="one-line-code">em</code>) para permitir que o usuário aumente o tamanho da fonte no navegador sem quebrar
+      o layout.</li>
+    <li><strong>Organização Modular:</strong> Criar arquivos CSS separados para componentes como <code
+        class="one-line-code">cabecalho.css</code> e <code class="one-line-code">rodape.css</code>, facilitando a
+      manutenção em projetos grandes.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Referências</h2>
+  <h2>7. Referências</h2>
   <ul>
     <li>Material de apoio em breve.</li>
   </ul>
