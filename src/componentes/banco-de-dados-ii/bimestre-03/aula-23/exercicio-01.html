@@ -1,18 +1,154 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Stored Functions"
+title: "Stored Functions na Prática: Encapsulando Cálculos no Banco"
 exercicio_numero: "01"
 aula_numero: "23"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 23."
+description: "Atividade prática para consolidar a criação de Stored Functions no MySQL e no PostgreSQL, uso de DETERMINISTIC, níveis de volatilidade, SECURITY DEFINER e GRANT EXECUTE."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado(a) para centralizar as regras de <strong>cálculo e formatação</strong> da empresa
+    <strong>Clínica Vida</strong>. Em vez de a aplicação repetir fórmulas e validações, todas devem ser encapsuladas em
+    <strong>Stored Functions</strong> e invocadas dentro das consultas.
+  </p>
+  <p>
+    Seu objetivo é criar funções no MySQL e no PostgreSQL, executá-las dentro de
+    <code class="one-line-code">SELECT</code> e entender os conceitos de <em>determinismo</em>, <em>volatilidade</em> e
+    <em>privilégios</em>.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li><strong>Ambiente MySQL:</strong> Abra seu terminal ou o MySQL Workbench e execute o script de preparação
+      abaixo.</li>
+    <li><strong>Ambiente PostgreSQL:</strong> Se disponível, abra o <code class="one-line-code">psql</code> ou o
+      pgAdmin para os blocos específicos da linguagem PL/pgSQL.</li>
+    <li><strong>Resolução:</strong> Crie cada função com <code class="one-line-code">DELIMITER $$</code> e
+      <code class="one-line-code">DELIMITER ;</code> no MySQL, ou com <code class="one-line-code">$$</code> e
+      <code class="one-line-code">LANGUAGE plpgsql</code> no PostgreSQL.</li>
+    <li><strong>Validação:</strong> Chame as funções dentro de consultas e confira os valores retornados.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Script de Preparação</h2>
+  <p>Execute o script abaixo para criar o banco e a massa de dados do cenário:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- MySQL
+CREATE DATABASE clinica_vida_db;
+USE clinica_vida_db;
+
+CREATE TABLE cliente (
+    codigo INT AUTO_INCREMENT PRIMARY KEY,
+    nome_cliente VARCHAR(100) NOT NULL,
+    data_nascimento DATE NOT NULL
+);
+
+CREATE TABLE consultas (
+    id_consulta INT AUTO_INCREMENT PRIMARY KEY,
+    codigo_cliente INT NOT NULL,
+    valor_consulta DECIMAL(10,2) NOT NULL,
+    data_consulta DATE NOT NULL,
+    FOREIGN KEY (codigo_cliente) REFERENCES cliente(codigo)
+);
+
+INSERT INTO cliente (nome_cliente, data_nascimento) VALUES
+('maria da silva', '1990-05-12'),
+('joao pereira', '2001-11-03'),
+('ana souza', '1985-02-27');
+
+INSERT INTO consultas (codigo_cliente, valor_consulta, data_consulta) VALUES
+(1, 200.00, '2026-03-10'),
+(1, 250.00, '2026-04-15'),
+(2, 180.00, '2026-04-20'),
+(3, 300.00, '2026-05-02');</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Função de formatação de texto (MySQL)</h3>
+  <ol>
+    <li>Crie a função <code class="one-line-code">iniciais_maiusculas(s VARCHAR(255))</code> que retorna uma
+      <code class="one-line-code">VARCHAR(255)</code> <code class="one-line-code">DETERMINISTIC</code> e coloca a
+      primeira letra da string em maiúsculo (use <code class="one-line-code">UPPER</code>,
+      <code class="one-line-code">LEFT</code> e <code class="one-line-code">MID</code>, como no exemplo da aula).</li>
+    <li>Use a função para exibir os nomes dos clientes formatados:
+      <div class="code-container">
+        <pre><code class="language-sql">SELECT nome_cliente, iniciais_maiusculas(nome_cliente) FROM cliente;</code></pre>
+      </div>
+    </li>
+    <li>Explique por que essa função foi declarada como <code class="one-line-code">DETERMINISTIC</code>.</li>
+  </ol>
+
+  <h3>Bloco 2: Função de cálculo de negócio (MySQL)</h3>
+  <ol>
+    <li>Crie a função <code class="one-line-code">CalcularDesconto(valor DECIMAL(10,2), percentual DECIMAL(5,2))</code>
+      que retorna o valor com o desconto aplicado.</li>
+    <li>Crie a função <code class="one-line-code">CalcularIdade(data_nascimento DATE)</code> que retorna a idade da
+      pessoa em anos (dica: use <code class="one-line-code">TIMESTAMPDIFF(YEAR, ...)</code> ou a lógica que preferir).
+    </li>
+    <li>Utilize as funções dentro de uma única consulta que mostre: nome, idade e valor da última consulta de cada
+      cliente com 10% de desconto.
+      <div class="code-container">
+        <pre><code class="language-sql">SELECT
+    iniciais_maiusculas(c.nome_cliente) AS nome,
+    CalcularIdade(c.data_nascimento) AS idade,
+    CalcularDesconto(MAX(con.valor_consulta), 10) AS valor_com_desconto
+FROM cliente c
+JOIN consultas con ON con.codigo_cliente = c.codigo
+GROUP BY c.codigo;</code></pre>
+      </div>
+    </li>
+    <li>Justifique por que funções podem ser usadas dentro de <code class="one-line-code">SELECT</code>, mas procedures
+      não.</li>
+  </ol>
+
+  <h3>Bloco 3: Funções no PostgreSQL e volatilidade</h3>
+  <p>Execute os desafios abaixo no PostgreSQL (PL/pgSQL ou SQL puro):</p>
+  <ol>
+    <li>Crie a função <code class="one-line-code">soma_dois(a INT, b INT)</code> em SQL puro que retorna a soma, e
+      declare-a como <code class="one-line-code">IMMUTABLE</code>. Explique o motivo dessa classificação.</li>
+    <li>Crie a função <code class="one-line-code">agora_no_banco()</code> que retorna
+      <code class="one-line-code">CURRENT_TIMESTAMP</code> e classifique-a corretamente entre
+      <code class="one-line-code">VOLATILE</code>, <code class="one-line-code">STABLE</code> e
+      <code class="one-line-code">IMMUTABLE</code>. Justifique.</li>
+    <li>Crie uma função em SQL puro chamada <code class="one-line-code">insere_log(usuario_nome VARCHAR, desc_texto
+        TEXT)</code> que insere um registro em uma tabela <code class="one-line-code">logs</code> e retorna o
+      <code class="one-line-code">log_id</code> gerado (use a cláusula <code class="one-line-code">RETURNING</code>, como
+      no exemplo da aula).</li>
+  </ol>
+
+  <h3>Bloco 4: Segurança e privilégios (PostgreSQL)</h3>
+  <ol>
+    <li>Crie a função <code class="one-line-code">atualiza_saldo(conta_id INT, valor DECIMAL(10,2))</code> que atualiza o
+      saldo de uma tabela <code class="one-line-code">contas</code> e não retorna valor
+      (<code class="one-line-code">RETURNS VOID</code>), declarada com <code class="one-line-code">SECURITY DEFINER</code>.
+    </li>
+    <li>Conceda permissão de execução ao papel da aplicação:
+      <div class="code-container">
+        <pre><code class="language-sql">GRANT EXECUTE ON FUNCTION atualiza_saldo(INT, DECIMAL(10,2)) TO usuario_aplicacao;</code></pre>
+      </div>
+    </li>
+    <li>Explique, com suas palavras, a diferença prática entre <code class="one-line-code">SECURITY DEFINER</code> e o
+      comportamento padrão <code class="one-line-code">SECURITY INVOKER</code>.</li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Retorno:</strong> Toda função deve ter ao menos um comando <code class="one-line-code">RETURN</code>.</li>
+    <li><strong>Parâmetros:</strong> No MySQL, os parâmetros de funções são apenas de entrada (IN), ao contrário dos
+      procedimentos.</li>
+    <li><strong>Determinismo:</strong> Em servidores MySQL com log binário ativo, declare funções como
+      <code class="one-line-code">DETERMINISTIC</code> ou que não modifiquem dados.</li>
+    <li><strong>Volatilidade:</strong> Classifique corretamente as funções PostgreSQL para ajudar o otimizador de
+      consultas.</li>
+    <li><strong>Tente sozinho:</strong> Resolva os blocos sem consultar a aula primeiro; volte a ela somente se travar em
+      algum conceito.</li>
   </ul>
 </div>

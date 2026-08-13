@@ -1,18 +1,94 @@
 ---
 layout: exercicio
-title: "Exercício 02 - Entrega de Projeto 3"
+title: "Projeto StreamFlow em Produção – Roteiro de Entrega da Parte 2 (Triggers, Exceções e ORM)"
 exercicio_numero: "02"
 aula_numero: "28"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 28."
+description: "Checklist de entrega da Parte 2 do Projeto 3: Triggers (RN01, RN03, auditoria, timestamps, saneamento), tratamento de exceções consistente e documento de mapeamento ORM."
 ---
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Objetivo</h2>
+  <p>
+    Entregar a <strong>Parte 2</strong> do Projeto 3: os gatilhos que automatizam e protegem o banco do StreamFlow, a
+    revisão do tratamento de exceções e o documento de mapeamento ORM. Siga o roteiro abaixo e use o checklist final
+    antes de submeter.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>O que implementar</h2>
+  <ol>
+    <li>
+      <strong>Gatilho RN01 – saldo nunca negativo:</strong> gatilhos <code class="one-line-code">BEFORE INSERT</code> /
+      <code class="one-line-code">BEFORE UPDATE</code> que rejeitem operações que deixem o saldo negativo
+      (com <code class="one-line-code">SIGNAL</code> ou <code class="one-line-code">RAISE EXCEPTION</code>).
+    </li>
+    <li>
+      <strong>Gatilho RN03 – imutabilidade do histórico:</strong> gatilhos <code class="one-line-code">BEFORE UPDATE</code>
+      e <code class="one-line-code">BEFORE DELETE</code> em <code class="one-line-code">reproducoes</code> que bloqueiem
+      alterações e exclusões.
+    </li>
+    <li>
+      <strong>Gatilho de auditoria:</strong> <code class="one-line-code">AFTER UPDATE</code> em
+      <code class="one-line-code">perfis</code> (ou <code class="one-line-code">videos</code>) gravando usuário, operação
+      e valores <code class="one-line-code">OLD</code>/<code class="one-line-code">NEW</code> em
+      <code class="one-line-code">auditoria_log</code>.
+    </li>
+    <li>
+      <strong>Gatilhos de manutenção:</strong> <code class="one-line-code">BEFORE UPDATE</code> atualizando
+      <code class="one-line-code">data_ultima_alteracao</code> e <code class="one-line-code">BEFORE INSERT</code>
+      normalizando nomes com <code class="one-line-code">UPPER(TRIM(nome))</code>.
+    </li>
+    <li>
+      <strong>Gatilho de instrução (bônus PostgreSQL):</strong> <code class="one-line-code">AFTER INSERT ON reproducoes
+      FOR EACH STATEMENT</code> atualizando <code class="one-line-code">resumo_reproducao</code>, com justificativa de
+      eficiência comparada ao <code class="one-line-code">FOR EACH ROW</code>.
+    </li>
+    <li>
+      <strong>Revisão de exceções:</strong> todas as procedures da Parte 1 com tratamento de exceções consistente e com
+      documentação de quais erros podem ocorrer e qual mensagem o usuário final recebe.
+    </li>
+    <li>
+      <strong>Mapeamento ORM (diferencial):</strong> documento com entidades, relações (1:N, associação com atributos,
+      especialização filme/episódio) e como as procedures/functions são chamadas pela aplicação.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Validações obrigatórias</h2>
+  <ol>
+    <li>Tente inserir/atualizar um assinante com saldo negativo e confirme o erro disparado pelo gatilho.</li>
+    <li>Tente <code class="one-line-code">UPDATE</code> e <code class="one-line-code">DELETE</code> em
+      <code class="one-line-code">reproducoes</code> e confirme que ambos são bloqueados.</li>
+    <li>Altere um perfil e confira a nova linha em <code class="one-line-code">auditoria_log</code> com o usuário e os
+      valores antigo/novo.</li>
+    <li>Altere um registro e confirme que <code class="one-line-code">data_ultima_alteracao</code> foi atualizada.</li>
+    <li>Insira um assinante com nome em minúsculas e espaços e confirme a normalização.</li>
+    <li>Teste novamente todas as procedures da Parte 1 com casos de erro e sucesso, registrando as mensagens recebidas.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Checklist de submissão</h2>
+  <ul>
+    <li>[ ] Script com todos os gatilhos, comentado e com testes que comprovem cada comportamento.</li>
+    <li>[ ] Justificativa do momento (BEFORE/AFTER) e do uso de NEW/OLD para cada gatilho.</li>
+    <li>[ ] Comparação escrita entre gatilho e restrição <code class="one-line-code">CHECK</code> para a RN01.</li>
+    <li>[ ] Documento de revisão do tratamento de exceções das procedures da Parte 1.</li>
+    <li>[ ] Documento de mapeamento ORM (Parte 4), se optou pelo diferencial.</li>
+    <li>[ ] Declaração do SGBD utilizado e adaptações de sintaxe aplicadas.</li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Aplique os conceitos de lógica e sintaxe aprendidos.</li>
-    <li>Verifique se o resultado atende aos requisitos propostos.</li>
-    <li>Documente seu código para facilitar o entendimento.</li>
+    <li>Gatilhos rodam no servidor: teste sempre com acesso direto às tabelas, como se um aplicativo "esquecesse" a
+      validação.</li>
+    <li>No MySQL, gatilhos só podem ser <code class="one-line-code">FOR EACH ROW</code>; no PostgreSQL é possível
+      <code class="one-line-code">FOR EACH STATEMENT</code>.</li>
+    <li>No PostgreSQL, um gatilho precisa de uma função <code class="one-line-code">RETURNS TRIGGER</code> de suporte.</li>
+    <li>Compare os resultados do gatilho com o comportamento esperado da regra de negócio original (RNs e RFs).</li>
   </ul>
 </div>

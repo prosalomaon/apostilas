@@ -1,18 +1,150 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Gatilhos (Triggers) II"
+title: "Gatilhos Avançados na Prática: Visões, Saneamento e Auditoria"
 exercicio_numero: "01"
 aula_numero: "25"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 25."
+description: "Atividade prática para consolidar aplicações avançadas de gatilhos: INSTEAD OF em visões, simulação de índices baseados em função, saneamento e rejeição de dados, auditoria com OLD/NEW e gatilhos FOR EACH STATEMENT."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi promovido(a) a <strong>engenheiro(a) de banco de dados</strong> da empresa <strong>MegaShop</strong>. Agora,
+    o desafio é usar <strong>gatilhos avançados</strong> para resolver problemas reais de arquitetura e performance,
+    tanto no MySQL quanto no PostgreSQL.
+  </p>
+  <p>
+    Seu objetivo é implementar gatilhos que tornam visões atualizáveis, emulam índices baseados em função, fazem
+    saneamento e rejeição de dados, geram auditoria e mantêm totais consolidados.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li><strong>Ambiente MySQL:</strong> Execute o script da seção "1. Script de Preparação" no MySQL.</li>
+    <li><strong>Ambiente PostgreSQL:</strong> Execute os blocos indicados no PostgreSQL (psql ou pgAdmin).</li>
+    <li><strong>Resolução:</strong> Crie cada gatilho seguindo a sintaxe de cada SGBD, conforme os exemplos da aula.</li>
+    <li><strong>Validação:</strong> Após cada gatilho, execute operações de escrita e confira os efeitos nas tabelas de
+      destino, log e resumo.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Script de Preparação</h2>
+  <p>Execute o script abaixo para criar as tabelas do cenário:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- MySQL
+CREATE DATABASE megashop_db;
+USE megashop_db;
+
+CREATE TABLE fatos_vendas (
+    id_venda INT AUTO_INCREMENT PRIMARY KEY,
+    id_produto INT NOT NULL,
+    qtd INT NOT NULL
+);
+
+CREATE TABLE produtos (
+    codigo INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    valor DECIMAL(10,2) NOT NULL,
+    valor_log10 DECIMAL(10,4) DEFAULT NULL
+);
+
+CREATE TABLE resumo_vendas (
+    id_resumo INT AUTO_INCREMENT PRIMARY KEY,
+    total INT DEFAULT 0
+);
+
+CREATE TABLE auditoria_log (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    tabela VARCHAR(100) NOT NULL,
+    operacao VARCHAR(10) NOT NULL,
+    usuario VARCHAR(100),
+    valor_antigo TEXT,
+    valor_novo TEXT,
+    data_hora DATETIME DEFAULT NOW()
+);
+
+INSERT INTO produtos (nome, valor) VALUES
+('Notebook', 2999.90),
+('Monitor', 899.90),
+('Teclado', 149.90);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Visão atualizável com INSTEAD OF (PostgreSQL)</h3>
+  <ol>
+    <li>Crie uma visão <code class="one-line-code">vw_resumo_vendas</code> que resuma as vendas por produto
+      (agrupando por <code class="one-line-code">id_produto</code> e somando <code class="one-line-code">qtd</code>).</li>
+    <li>Crie a função de gatilho <code class="one-line-code">func_venda_view()</code> que, quando um
+      <code class="one-line-code">INSERT</code> for feito na visão, insira os dados na tabela física
+      <code class="one-line-code">fatos_vendas</code> e retorne <code class="one-line-code">NEW</code>.</li>
+    <li>Vincule a função à visão com:
+      <div class="code-container">
+        <pre><code class="language-sql">CREATE TRIGGER tr_venda_view
+INSTEAD OF INSERT ON vw_resumo_vendas
+FOR EACH ROW EXECUTE PROCEDURE func_venda_view();</code></pre>
+      </div>
+    </li>
+    <li>Teste inserindo na visão e confirme que a linha foi gravada em
+      <code class="one-line-code">fatos_vendas</code>.</li>
+    <li>Explique por que esse recurso não existe nativamente no MySQL e o que se pode fazer para obter um
+      comportamento equivalente.</li>
+  </ol>
+
+  <h3>Bloco 2: Simulação de índice baseado em função (MySQL)</h3>
+  <ol>
+    <li>Crie um gatilho <code class="one-line-code">bi_produto_log10</code> que, antes de inserir um produto, preencha a
+      coluna <code class="one-line-code">valor_log10</code> com <code class="one-line-code">LOG10(NEW.valor)</code>.</li>
+    <li>Crie um segundo gatilho <code class="one-line-code">bu_produto_log10</code> que faça o mesmo antes de um
+      <code class="one-line-code">UPDATE</code>.</li>
+    <li>Insira e depois atualize um produto e confirme que <code class="one-line-code">valor_log10</code> sempre reflete o
+      valor atual.</li>
+    <li>Explique por que essa coluna extra permite acelerar consultas como
+      <code class="one-line-code">WHERE valor_log10 &lt; 2</code> no MySQL.</li>
+  </ol>
+
+  <h3>Bloco 3: Saneamento e rejeição de dados (MySQL)</h3>
+  <ol>
+    <li>Crie o gatilho <code class="one-line-code">bi_produto_saneia</code> que, antes de inserir um produto, aplique
+      <code class="one-line-code">UPPER(TRIM(NEW.nome))</code> para normalizar o nome.</li>
+    <li>Crie o gatilho <code class="one-line-code">bi_venda_valida</code> que, antes de inserir em
+      <code class="one-line-code">fatos_vendas</code>, rejeite vendas com <code class="one-line-code">qtd &lt;= 0</code>
+      usando <code class="one-line-code">SIGNAL SQLSTATE '45000'</code>.</li>
+    <li>Teste os dois comportamentos: insira um nome com espaços e letras minúsculas (deve ser normalizado) e tente
+      inserir uma venda com quantidade negativa (deve ser rejeitada).</li>
+    <li>Diferencie <em>saneamento</em> de <em>rejeição</em> com base no que você implementou.</li>
+  </ol>
+
+  <h3>Bloco 4: Auditoria com OLD/NEW e gatilho de instrução (MySQL)</h3>
+  <ol>
+    <li>Crie o gatilho <code class="one-line-code">ad_produto_auditoria</code> que, após um
+      <code class="one-line-code">DELETE</code> em <code class="one-line-code">produtos</code>, registre na tabela
+      <code class="one-line-code">auditoria_log</code> o valor antigo removido
+      (<code class="one-line-code">CONCAT(OLD.codigo, ' - ', OLD.nome)</code>).</li>
+    <li>Remova um produto e confirme o registro de auditoria.</li>
+    <li>No PostgreSQL, crie a função de gatilho <code class="one-line-code">func_recalcula_totais()</code> e o gatilho
+      <code class="one-line-code">tr_recalcula_totais</code> do tipo
+      <code class="one-line-code">AFTER INSERT ON fatos_vendas FOR EACH STATEMENT</code>, que atualiza a tabela
+      <code class="one-line-code">resumo_vendas</code> com o total de <code class="one-line-code">qtd</code>.</li>
+    <li>Compare <code class="one-line-code">FOR EACH ROW</code> e <code class="one-line-code">FOR EACH STATEMENT</code>:
+      qual usaria para auditoria detalhada e qual para recálculo após uma carga massiva? Justifique.</li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>INSTEAD OF:</strong> Só existe em visões no PostgreSQL; no MySQL, use gatilhos nas tabelas base ou
+      procedures para comportamento equivalente.</li>
+    <li><strong>Saneamento:</strong> Aplique normalizações (UPPER/TRIM) em <code class="one-line-code">BEFORE
+        INSERT/UPDATE</code>.</li>
+    <li><strong>Rejeição:</strong> Para regras complexas, dispare <code class="one-line-code">SIGNAL</code> no MySQL ou
+      <code class="one-line-code">RAISE EXCEPTION</code> no PostgreSQL para cancelar a transação.</li>
+    <li><strong>Cascata:</strong> Evite gatilhos que se disparem em ciclo, causando loops infinitos.</li>
+    <li><strong>Tente sozinho:</strong> Resolva os blocos sem consultar a aula primeiro; volte a ela somente se travar em
+      algum conceito.</li>
   </ul>
 </div>

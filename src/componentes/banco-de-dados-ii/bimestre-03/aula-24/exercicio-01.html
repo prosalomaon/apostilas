@@ -1,18 +1,151 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Gatilhos (Triggers) I"
+title: "Gatilhos na Prática: Automatizando Integridade e Auditoria"
 exercicio_numero: "01"
 aula_numero: "24"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 24."
+description: "Atividade prática para consolidar a criação de gatilhos (triggers) no MySQL e no PostgreSQL, usando BEFORE/AFTER, NEW/OLD, auditoria, timestamps automáticos e validação de dados."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado(a) para garantir a <strong>integridade e a auditoria</strong> do banco de dados da loja
+    <strong>TechLivre</strong>. As regras de negócio devem ser aplicadas diretamente no servidor, através de
+    <strong>gatilhos (triggers)</strong>, independentemente da aplicação que acessa os dados.
+  </p>
+  <p>
+    Seu objetivo é criar gatilhos no MySQL (e alguns no PostgreSQL) que validam dados, mantêm timestamps atualizados e
+    registram auditoria das alterações.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li><strong>Ambiente:</strong> Abra seu terminal ou o MySQL Workbench e conecte-se ao seu servidor local.</li>
+    <li><strong>Script:</strong> Execute o script da seção "1. Script de Preparação" integralmente.</li>
+    <li><strong>Resolução:</strong> Crie cada gatilho com <code class="one-line-code">DELIMITER //</code> e
+      <code class="one-line-code">DELIMITER ;</code> ao final.</li>
+    <li><strong>Validação:</strong> Após cada gatilho, execute operações de escrita e consulte as tabelas de auditoria
+      para confirmar o comportamento esperado.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Script de Preparação (MySQL)</h2>
+  <p>Execute o script abaixo para criar o banco, as tabelas e a massa de dados do cenário:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE DATABASE techlivre_db;
+USE techlivre_db;
+
+CREATE TABLE produto (
+    codigo INT AUTO_INCREMENT PRIMARY KEY,
+    descricao_produto VARCHAR(150) NOT NULL,
+    preco_venda DECIMAL(10,2) NOT NULL,
+    saldo_estoque INT NOT NULL DEFAULT 0,
+    ultima_atualizacao DATETIME
+);
+
+CREATE TABLE log_atividades (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    descricao VARCHAR(255),
+    data_hora DATETIME DEFAULT NOW()
+);
+
+CREATE TABLE auditoria_produto (
+    id_auditoria INT AUTO_INCREMENT PRIMARY KEY,
+    codigo_produto INT,
+    operacao VARCHAR(10),
+    valor_antigo TEXT,
+    valor_novo TEXT,
+    usuario VARCHAR(100),
+    data_hora DATETIME DEFAULT NOW()
+);
+
+INSERT INTO produto (descricao_produto, preco_venda, saldo_estoque) VALUES
+('Notebook', 2999.90, 10),
+('Monitor', 899.90, 15),
+('Teclado', 149.90, 30);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Gatilho de auditoria AFTER INSERT (MySQL)</h3>
+  <ol>
+    <li>Crie o gatilho <code class="one-line-code">ai_produto_log</code> que, após a inserção de um produto, registra
+      uma mensagem na tabela <code class="one-line-code">log_atividades</code> contendo o texto
+      <code class="one-line-code">CONCAT('Novo produto inserido: ', NEW.descricao_produto)</code> e a data/hora atual.
+    </li>
+    <li>Teste inserindo um novo produto (ex: "Mouse") e confirme que o log foi criado.</li>
+    <li>Por que esse gatilho foi criado como <code class="one-line-code">AFTER INSERT</code> e não
+      <code class="one-line-code">BEFORE INSERT</code>?</li>
+  </ol>
+
+  <h3>Bloco 2: Gatilho de timestamp BEFORE UPDATE (MySQL)</h3>
+  <ol>
+    <li>Crie o gatilho <code class="one-line-code">bu_produto_timestamp</code> que, antes de uma atualização em
+      <code class="one-line-code">produto</code>, define <code class="one-line-code">NEW.ultima_atualizacao</code> com o
+      <code class="one-line-code">NOW()</code>.</li>
+    <li>Atualize o preço do produto de código 2 e confirme que a coluna
+      <code class="one-line-code">ultima_atualizacao</code> foi preenchida automaticamente.</li>
+    <li>Explique a função da palavra-chave <code class="one-line-code">NEW</code> nesse gatilho.</li>
+  </ol>
+
+  <h3>Bloco 3: Auditoria com OLD e NEW (MySQL)</h3>
+  <ol>
+    <li>Crie o gatilho <code class="one-line-code">au_produto_auditoria</code> que, após um
+      <code class="one-line-code">UPDATE</code> em <code class="one-line-code">produto</code>, insere na tabela
+      <code class="one-line-code">auditoria_produto</code>:
+      <ul>
+        <li>o código do produto;</li>
+        <li>a operação <code class="one-line-code">'UPDATE'</code>;</li>
+        <li>o valor antigo (<code class="one-line-code">CONCAT(OLD.codigo, ' - ', OLD.descricao_produto)</code>);</li>
+        <li>o valor novo (<code class="one-line-code">CONCAT(NEW.codigo, ' - ', NEW.descricao_produto)</code>);</li>
+        <li>o usuário (<code class="one-line-code">CURRENT_USER()</code>).</li>
+      </ul>
+    </li>
+    <li>Atualize o saldo em estoque do produto 3 e confirme o registro de auditoria.</li>
+    <li>No evento <code class="one-line-code">INSERT</code>, por que <code class="one-line-code">OLD</code> não está
+      disponível?</li>
+  </ol>
+
+  <h3>Bloco 4: Gatilho de validação BEFORE INSERT (MySQL)</h3>
+  <ol>
+    <li>Crie o gatilho <code class="one-line-code">bi_produto_valida</code> que, antes da inserção de um produto, rejeita
+      (com <code class="one-line-code">SIGNAL SQLSTATE '45000'</code>) as inserções em que o
+      <code class="one-line-code">preco_venda</code> seja menor ou igual a zero.</li>
+    <li>Teste inserindo um produto com preço inválido (ex: 0.00) e confirme que a operação é cancelada com a mensagem
+      personalizada.</li>
+    <li>Compare esse comportamento com o de uma restrição <code class="one-line-code">CHECK</code>: quando faz sentido
+      preferir o gatilho?</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>3. Desafio Extra (PostgreSQL)</h2>
+  <p>Se tiver acesso a um PostgreSQL, adapte o gatilho de timestamp em <strong>duas etapas</strong>:</p>
+  <ol>
+    <li>Crie a função de gatilho <code class="one-line-code">func_atualiza_timestamp()</code> que define
+      <code class="one-line-code">NEW.ultima_atualizacao := CURRENT_TIMESTAMP</code> e retorna
+      <code class="one-line-code">NEW</code>.</li>
+    <li>Vincule a função à tabela com <code class="one-line-code">CREATE TRIGGER tr_timestamp_vendedores BEFORE UPDATE
+        ON vendedores FOR EACH ROW EXECUTE PROCEDURE func_atualiza_timestamp();</code>.</li>
+    <li>Explique por que no PostgreSQL o processo é dividido entre função de gatilho e comando
+      <code class="one-line-code">CREATE TRIGGER</code>.</li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Momento:</strong> Use <code class="one-line-code">BEFORE</code> para validar ou modificar valores antes
+      da gravação e <code class="one-line-code">AFTER</code> para tarefas dependentes da confirmação (auditoria/log).
+    </li>
+    <li><strong>NEW e OLD:</strong> <code class="one-line-code">NEW</code> existe em INSERT/UPDATE;
+      <code class="one-line-code">OLD</code> existe em UPDATE/DELETE.</li>
+    <li><strong>Performance:</strong> Evite consultas pesadas dentro do gatilho; elas tornam as escritas lentas.</li>
+    <li><strong>Cascata:</strong> Lembre-se de que um gatilho pode disparar outro gatilho em cascata.</li>
+    <li><strong>Tente sozinho:</strong> Resolva os blocos sem consultar a aula primeiro; volte a ela somente se travar em
+      algum conceito.</li>
   </ul>
 </div>

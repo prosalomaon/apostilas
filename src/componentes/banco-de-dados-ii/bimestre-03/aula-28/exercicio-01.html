@@ -1,18 +1,103 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Entrega de Projeto 3"
+title: "Projeto StreamFlow em Produção – Roteiro de Entrega da Parte 1 (Procedures e Functions)"
 exercicio_numero: "01"
 aula_numero: "28"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 28."
+description: "Checklist de entrega da Parte 1 do Projeto 3: Stored Procedures (cobrança mensal, registro de reprodução e faturamento com cursor) e Stored Functions (minutos assistidos e idade LGPD)."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Objetivo</h2>
+  <p>
+    Entregar a <strong>Parte 1</strong> do Projeto 3: todas as Stored Procedures e Stored Functions do StreamFlow,
+    encapsulando as regras de negócio no servidor. Siga o roteiro abaixo e use o checklist final antes de submeter.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>O que implementar</h2>
+  <ol>
+    <li>
+      <strong>Procedure</strong> <code class="one-line-code">realizar_cobranca_mensal</code> (RN01):
+      <ul>
+        <li>Parâmetros: <code class="one-line-code">IN id_assinante INT</code>, <code class="one-line-code">IN valor_mensalidade DECIMAL(10,2)</code>
+          e <code class="one-line-code">OUT novo_saldo DECIMAL(10,2)</code>.</li>
+        <li>Leitura do saldo em variável local com <code class="one-line-code">SELECT ... INTO</code>.</li>
+        <li>Erro customizado quando o saldo for insuficiente, sem alterar o banco.</li>
+        <li>Débito e retorno do novo saldo no parâmetro <code class="one-line-code">OUT</code>.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Procedure</strong> <code class="one-line-code">registrar_reproducao</code> (RF02):
+      <ul>
+        <li>Parâmetros de entrada: perfil, vídeo, IP e dispositivo.</li>
+        <li>Transação com <code class="one-line-code">COMMIT</code>/<code class="one-line-code">ROLLBACK</code> e
+          manipulador de exceção.</li>
+        <li>Retorno do <code class="one-line-code">id</code> do registro criado.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Procedure</strong> <code class="one-line-code">gerar_faturamento_mensal</code> (RF04):
+      <ul>
+        <li>Cursor sobre as produtoras (DECLARE, OPEN, FETCH, CLOSE).</li>
+        <li>Soma dos minutos consumidos no mês por produtora.</li>
+        <li>Fim do cursor detectado com <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code>.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Function</strong> <code class="one-line-code">minutos_assistidos_por_produtora</code>:
+      <ul>
+        <li>Recebe <code class="one-line-code">id_produtora</code> e competência, retorna os minutos totais.</li>
+        <li>Classificada quanto a determinismo/volatilidade e justificada.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Function</strong> <code class="one-line-code">calcular_idade</code>:
+      <ul>
+        <li>Recebe a data de nascimento e retorna a idade, usada pela visão LGPD.</li>
+      </ul>
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Validações obrigatórias</h2>
+  <ol>
+    <li>Execute <code class="one-line-code">CALL realizar_cobranca_mensal(...)</code> para um assinante com saldo
+      suficiente e confirme o débito e o novo saldo no <code class="one-line-code">OUT</code>.</li>
+    <li>Repita a chamada para um assinante sem saldo e confirme que o erro customizado é exibido e que
+      <strong>nenhum dado foi alterado</strong>.</li>
+    <li>Chame <code class="one-line-code">CALL registrar_reproducao(...)</code> e confirme a nova linha em
+      <code class="one-line-code">reproducoes</code> com IP, dispositivo e timestamps corretos.</li>
+    <li>Execute <code class="one-line-code">CALL gerar_faturamento_mensal('2026-07-01')</code> com dados de teste e
+      confira os valores em <code class="one-line-code">faturamento_produtoras</code>.</li>
+    <li>Use <code class="one-line-code">SELECT minutos_assistidos_por_produtora(1, '2026-07-01');</code> e confira se o
+      resultado bate com uma consulta manual equivalente.</li>
+    <li>Atualize a visão LGPD para usar <code class="one-line-code">calcular_idade</code> e confirme que a data de
+      nascimento não aparece mais.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Checklist de submissão</h2>
+  <ul>
+    <li>[ ] Script com todas as procedures e functions, comentado e com <code class="one-line-code">DELIMITER</code>
+      correto.</li>
+    <li>[ ] Comandos <code class="one-line-code">CALL</code>/<code class="one-line-code">SELECT</code> de teste
+      documentados com seus resultados esperados.</li>
+    <li>[ ] Parágrafo de justificativa para cada objeto (parâmetros IN/OUT/INOUT, cursor, volatilidade, exceções).</li>
+    <li>[ ] Prova de que a RN01 (saldo não negativo) é garantida pela procedure.</li>
+    <li>[ ] Declaração do SGBD utilizado e adaptações de sintaxe aplicadas.</li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Utilize a estrutura do projeto anterior, adaptando os nomes das tabelas se necessário.</li>
+    <li>Confirme os efeitos de cada procedure com um <code class="one-line-code">SELECT</code> após a execução.</li>
+    <li>Se usar MySQL, lembre-se do <code class="one-line-code">DELIMITER $$</code>; se usar PostgreSQL, das variáveis
+      declaradas <code class="one-line-code">AS $$</code> e de <code class="one-line-code">LANGUAGE plpgsql</code>.</li>
+    <li>Tente resolver sem consultar as aulas; volte a elas apenas se travar em algum conceito.</li>
   </ul>
 </div>

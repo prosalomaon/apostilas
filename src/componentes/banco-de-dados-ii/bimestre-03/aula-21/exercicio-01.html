@@ -1,18 +1,162 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Blocos de Linguagem SQL"
+title: "Blocos de Linguagem SQL na Prática: Lógica Procedural no Banco"
 exercicio_numero: "01"
 aula_numero: "21"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 21."
+description: "Atividade prática para consolidar a criação de blocos SQL com DECLARE, condicionais IF, laços WHILE/REPEAT/LOOP, cursores e tratamento de exceções no MySQL."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado(a) para implementar rotinas de <strong>lógica procedural</strong> no banco de dados da
+    empresa <strong>Núcleo Dados</strong>. Em vez de a aplicação executar vários comandos SQL soltos, toda a regra deve
+    ser encapsulada em <strong>blocos SQL</strong> no servidor MySQL.
+  </p>
+  <p>
+    Seu objetivo é criar procedures com variáveis locais, condicionais, laços de repetição, cursores e manipuladores de
+    condição, executá-las e validar os resultados diretamente no banco.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li><strong>Ambiente:</strong> Abra seu terminal ou o MySQL Workbench e conecte-se ao seu servidor local.</li>
+    <li><strong>Script:</strong> Execute o script da seção "1. Script de Preparação" integralmente e confirme que o
+      banco <code class="one-line-code">nucleo_dados_db</code> foi criado.</li>
+    <li><strong>Resolução:</strong> Escreva cada procedure com <code class="one-line-code">DELIMITER $$</code> e
+      <code class="one-line-code">DELIMITER ;</code> ao final, como nos exemplos da aula.</li>
+    <li><strong>Validação:</strong> Depois de cada <code class="one-line-code">CALL</code>, consulte as tabelas para
+      confirmar que os dados foram alterados conforme o esperado.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Script de Preparação (MySQL)</h2>
+  <p>Execute o script abaixo para criar o banco, as tabelas e a massa de dados do cenário:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE DATABASE nucleo_dados_db;
+USE nucleo_dados_db;
+
+CREATE TABLE vendedores (
+    codigo_vendedor INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    salario_fixo DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE numeros_sorteio (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    valor INT
+);
+
+CREATE TABLE vendedores_auditoria (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codigo_vendedor INT NOT NULL,
+    salario_anterior DECIMAL(10,2),
+    salario_novo DECIMAL(10,2),
+    data_registro DATETIME DEFAULT NOW()
+);
+
+INSERT INTO vendedores (nome, salario_fixo) VALUES
+('Carlos Souza', 1800.00),
+('Mariana Lima', 2500.00),
+('Fernanda Alves', 3200.00);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Variáveis locais e condicional IF</h3>
+  <ol>
+    <li>Crie a procedure <code class="one-line-code">CalculaBonus</code> com um parâmetro
+      <code class="one-line-code">IN id_vendedor INT</code>. Dentro de um bloco
+      <code class="one-line-code">BEGIN ... END</code>:
+      <ul>
+        <li>Declare uma variável local <code class="one-line-code">salario_atual DECIMAL(10,2)</code>.</li>
+        <li>Atribua a ela o <code class="one-line-code">salario_fixo</code> do vendedor (use
+          <code class="one-line-code">SET salario_atual = (SELECT ...)</code>).</li>
+        <li>Se o salário for menor que <code class="one-line-code">2000</code>, aplique um reajuste de
+          <code class="one-line-code">10%</code>; caso contrário, aplique <code class="one-line-code">5%</code>.</li>
+      </ul>
+    </li>
+    <li>Chame <code class="one-line-code">CALL CalculaBonus(1)</code> e confirme que o salário do vendedor Carlos passou
+      de 1800.00 para 1980.00.</li>
+    <li>Explique por que a variável <code class="one-line-code">salario_atual</code> existe apenas durante a execução da
+      procedure.</li>
+  </ol>
+
+  <h3>Bloco 2: Laços de repetição</h3>
+  <p>
+    Crie <strong>três procedures</strong> que preenchem a tabela
+    <code class="one-line-code">numeros_sorteio</code> com a sequência de 1 até a quantidade informada, usando cada uma
+    das formas de laço:
+  </p>
+  <ol>
+    <li><code class="one-line-code">GeraSorteioWhile(IN qtd INT)</code> usando
+      <code class="one-line-code">WHILE ... DO ... END WHILE</code>.</li>
+    <li><code class="one-line-code">GeraSorteioRepeat(IN qtd INT)</code> usando
+      <code class="one-line-code">REPEAT ... UNTIL ... END REPEAT</code>.</li>
+    <li><code class="one-line-code">GeraSorteioLoop(IN qtd INT)</code> usando
+      <code class="one-line-code">LOOP ... END LOOP</code> com um rótulo e a instrução
+      <code class="one-line-code">LEAVE</code> para interromper.</li>
+  </ol>
+  <p>Chame cada uma com 10 e valide com <code class="one-line-code">SELECT COUNT(*) FROM numeros_sorteio;</code>.</p>
+
+  <h3>Bloco 3: Cursor para processar linha por linha</h3>
+  <ol>
+    <li>Crie a procedure <code class="one-line-code">AtualizaSalarios</code> que:
+      <ul>
+        <li>Declara um <strong>cursor</strong> que percorre <code class="one-line-code">codigo_vendedor</code> e
+          <code class="one-line-code">salario_fixo</code> de <code class="one-line-code">vendedores</code>.</li>
+        <li>Declara um manipulador <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code> para detectar o fim
+          da leitura.</li>
+        <li>Executa as etapas do cursor: <code class="one-line-code">OPEN</code>,
+          <code class="one-line-code">FETCH</code> em um laço <code class="one-line-code">LOOP</code> e
+          <code class="one-line-code">CLOSE</code>.</li>
+        <li>Dentro do laço, registra a alteração na tabela <code class="one-line-code">vendedores_auditoria</code> para
+          cada vendedor cujo salário atual seja menor que <code class="one-line-code">2600</code>.</li>
+      </ul>
+    </li>
+    <li>Chame <code class="one-line-code">CALL AtualizaSalarios()</code> e confirme que os vendedores 1 e 2 foram
+      registrados na auditoria (salário abaixo de 2600), mas o vendedor 3 não.</li>
+    <li>Explique o papel do <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code> nesse processo.</li>
+  </ol>
+
+  <h3>Bloco 4: Tratamento de exceções com SIGNAL</h3>
+  <ol>
+    <li>Crie a procedure <code class="one-line-code">RegistraPromocao</code> com
+      <code class="one-line-code">IN id_vendedor INT</code>, <code class="one-line-code">IN percentual DECIMAL(5,2)</code>.
+      Dentro dela:
+      <ul>
+        <li>Declare um <code class="one-line-code">EXIT HANDLER FOR SQLEXCEPTION</code> que executa
+          <code class="one-line-code">ROLLBACK</code> e dispara um erro customizado com
+          <code class="one-line-code">SIGNAL SQLSTATE '45000'</code>.</li>
+        <li>Valide que o percentual informado é maior que zero. Se não for, dispare o erro com a mensagem
+          "Percentual inválido".</li>
+        <li>Se válido, aplique o aumento e confirme a transação com <code class="one-line-code">COMMIT</code>.</li>
+      </ul>
+    </li>
+    <li>Chame <code class="one-line-code">CALL RegistraPromocao(3, 15)</code> e confirme o aumento no salário de
+      Fernanda.</li>
+    <li>Chame <code class="one-line-code">CALL RegistraPromocao(3, -5)</code> e observe que a operação é cancelada com a
+      mensagem personalizada.</li>
+    <li>Compare <code class="one-line-code">EXIT HANDLER</code> e <code class="one-line-code">CONTINUE HANDLER</code>:
+      o que muda no fluxo do bloco em cada caso?</li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Delimitador:</strong> No MySQL, todo bloco de múltiplas linhas precisa ser criado entre
+      <code class="one-line-code">DELIMITER $$</code> e <code class="one-line-code">DELIMITER ;</code>.</li>
+    <li><strong>Terminadores:</strong> Cada comando interno do bloco deve terminar com ponto e vírgula
+      (<code class="one-line-code">;</code>).</li>
+    <li><strong>Cursores:</strong> Sempre feche o cursor com <code class="one-line-code">CLOSE</code> antes do
+      <code class="one-line-code">END</code> para liberar recursos do servidor.</li>
+    <li><strong>Validação:</strong> Confirme os efeitos (salários, contagens, auditoria) com um
+      <code class="one-line-code">SELECT</code> após cada <code class="one-line-code">CALL</code>.</li>
+    <li><strong>Tente sozinho:</strong> Resolva os blocos sem consultar a aula primeiro; volte a ela somente se travar em
+      algum conceito.</li>
   </ul>
 </div>

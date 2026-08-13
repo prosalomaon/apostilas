@@ -1,70 +1,268 @@
 ---
-title: "Entrega de Projeto 3"
+title: "Projeto Integrador de Banco de Dados III: StreamFlow em Produção"
+componente: "Banco de Dados II"
 aula_numero: "28"
-description: "Banco de dados inteligente."
+description: "Foco: Programabilidade e Automação. Continuação do projeto StreamFlow, aplicando Stored Procedures, Stored Functions, Gatilhos (Triggers), Tratamento de Exceções e Mapeamento ORM sobre o banco já construído."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
-</section>
-
-<section class="section-box">
-  <h2>Exemplo de Código</h2>
-  <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
-
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
-  </div>
-</section>
-
-<section class="section-box">
-  <h2>Diagramação</h2>
-  <p>Representação visual dos conceitos abordados:</p>
+  <h2>1. Cenário e Contexto de Negócio</h2>
+  <p>
+    O projeto do bimestre anterior evoluiu! A <strong>StreamFlow</strong> já tem sua base de dados relacional
+    projetada, implementada e otimizada (estrutura física, integridade, índices, visões de conformidade com a LGPD e os
+    relatórios de BI aprovados pela diretoria). O sistema foi homologado e entrou em <strong>produção</strong>.
+  </p>
+  <p>
+    Agora, com milhares de assinantes assistindo diariamente, a empresa percebeu que a regra de negócio está espalhada
+    pelo código das aplicações e que operações críticas (cobranças, registro de reproduções, fechamento de faturamento e
+    auditoria) são lentas, repetitivas e sujeitas a inconsistências.
+  </p>
+  <p>
+    Você foi promovido(a) a <strong>Engenheiro(a) de Banco de Dados</strong> e recebeu a missão de mover toda essa
+    inteligência <strong>para dentro do servidor</strong>, transformando o StreamFlow em um banco
+    <strong>programável e automatizado</strong>, com os objetos da disciplina <em>Programabilidade e Automação</em>:
+    <strong>blocos SQL, Stored Procedures, Stored Functions, Gatilhos (Triggers) e Tratamento de Exceções</strong>.
+  </p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+    flowchart LR
+    subgraph Antes ["Bimestre Anterior"]
+      A1["DDL + Integridade"] --> A2["Índices e Consultas de BI"]
+      A2 --> A3["Views LGPD"]
+    end
+    subgraph Agora ["Projeto Atual"]
+      B1["Procedures + Functions"] --> B2["Triggers"]
+      B2 --> B3["Exceções + Auditoria"]
+    end
+    Antes -->|"base pronta"| Agora
   </div>
 </section>
 
-<div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+<section class="section-box">
+  <h2>2. Recapitulando a Estrutura (Referência)</h2>
+  <p>
+    Para que este projeto seja coerente, utilize a estrutura que você criou no bimestre anterior (adapte os nomes às
+    tabelas que você de fato implementou). Como referência mínima, as procedures, funções e gatilhos deste projeto
+    devem operar sobre entidades equivalentes às seguintes:
+  </p>
   <ul>
-    <li>Dica importante sobre Entrega de Projeto 3 aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>assinantes</strong> (id, nome, cpf, email, data_nascimento, uf, saldo_creditos, data_ultima_alteracao)</li>
+    <li><strong>perfis</strong> (id, assinante_id, nome, avatar, criado_em)</li>
+    <li><strong>produtoras</strong> (id, nome)</li>
+    <li><strong>videos</strong> (id, produtora_id, titulo, duracao_segundos, tipo) — com a especialização
+      filme/episódio que você modelou</li>
+    <li><strong>reproducoes</strong> (id, perfil_id, video_id, ip_conexao, dispositivo, iniciado_em, concluido)</li>
+    <li><strong>faturamento_produtoras</strong> (id, produtora_id, competencia, minutos_consumidos)</li>
+    <li><strong>auditoria_log</strong> (id, tabela, operacao, usuario, valor_antigo, valor_novo, data_hora)</li>
+    <li><strong>resumo_reproducao</strong> (id, total_acessos)</li>
   </ul>
-</div>
+  <p>
+    Mantenha as convenções da disciplina: tabelas no plural e chave primária padronizada como
+    <code class="one-line-code">id</code>.
+  </p>
+</section>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
+  <h2>3. O Desafio – Parte 1: Stored Procedures e Stored Functions</h2>
+  <p>
+    Encapsule no servidor toda a lógica operacional solicitada abaixo. As procedures e funções devem ser escritas com
+    blocos <code class="one-line-code">BEGIN ... END</code>, variáveis locais (<code class="one-line-code">DECLARE</code>),
+    condicionais (<code class="one-line-code">IF</code>) e, quando necessário, laços e cursores.
+  </p>
+
+  <h3>Procedimento 1.1 – Cobrança mensal com controle de saldo (RN01)</h3>
+  <p>
+    A <strong>RN01</strong> do projeto original exige que o saldo do assinante nunca fique negativo. Crie uma procedure
+    <code class="one-line-code">realizar_cobranca_mensal</code> que:
+  </p>
   <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
+    <li>Receba como <strong>IN</strong> o <code class="one-line-code">id</code> do assinante e o valor da mensalidade.</li>
+    <li>Leia o saldo atual em uma variável local (use <code class="one-line-code">SELECT ... INTO</code> ou
+      <code class="one-line-code">SET ... = (SELECT ...)</code>).</li>
+    <li>Se o saldo for insuficiente, <strong>dispare um erro customizado</strong> (SIGNAL no MySQL / RAISE EXCEPTION no
+      PostgreSQL) e cancele a operação, sem alterar o banco.</li>
+    <li>Caso contrário, debite o valor e retorne o novo saldo em um parâmetro <strong>OUT</strong>.</li>
+  </ul>
+
+  <h3>Procedimento 1.2 – Registro automático de reprodução (RF02)</h3>
+  <p>
+    Crie a procedure <code class="one-line-code">registrar_reproducao</code> que encapsule o registro de um "Play" na
+    tabela <code class="one-line-code">reproducoes</code>, recebendo (IN) o perfil, o vídeo, o IP e o dispositivo.
+    A procedure deve:
+  </p>
+  <ul>
+    <li>Abrir uma transação (<code class="one-line-code">START TRANSACTION</code>).</li>
+    <li>Inserir o registro com o timestamp gerado pelo servidor.</li>
+    <li>Tratar erros com um <strong>manipulador de exceção</strong> que desfaz a transação
+      (<code class="one-line-code">ROLLBACK</code>) e devolve uma mensagem amigável.</li>
+    <li>Confirmar com <code class="one-line-code">COMMIT</code> e retornar o <code class="one-line-code">id</code> do
+      registro criado (dica: <code class="one-line-code">LAST_INSERT_ID()</code> no MySQL /
+      <code class="one-line-code">RETURNING id</code> no PostgreSQL).</li>
+  </ul>
+
+  <h3>Procedimento 1.3 – Faturamento mensal das produtoras com cursor (RF04)</h3>
+  <p>
+    O faturamento dos estúdios baseia-se nos minutos consumidos. Crie uma procedure
+    <code class="one-line-code">gerar_faturamento_mensal</code> (IN competencia) que:
+  </p>
+  <ul>
+    <li>Percorra as <strong>produtoras</strong> com um <strong>cursor</strong> (etapas DECLARE, OPEN, FETCH, CLOSE).</li>
+    <li>Para cada produtora, some os minutos assistidos no período (considerando apenas reproduções
+      concluídas/pausadas daquele mês).</li>
+    <li>Insira ou atualize a linha correspondente em <code class="one-line-code">faturamento_produtoras</code>.</li>
+    <li>Detecte o fim do cursor com um <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code> (ou
+      <code class="one-line-code">EXIT WHEN NOT FOUND</code> no PostgreSQL).</li>
+  </ul>
+
+  <h3>Função 1.4 – Cálculo de minutos assistidos</h3>
+  <p>
+    Crie a função <code class="one-line-code">minutos_assistidos_por_produtora(id_produtora INT, competencia DATE)</code>
+    que retorna a soma dos minutos consumidos de todos os vídeos da produtora no período. Classifique-a corretamente
+    quanto ao <em>determinismo</em> (MySQL: <code class="one-line-code">DETERMINISTIC</code>) ou à
+    <em>volatilidade</em> (PostgreSQL: <code class="one-line-code">STABLE</code>) e justifique.
+  </p>
+
+  <h3>Função 1.5 – Idade para a visão LGPD</h3>
+  <p>
+    A visão de mascaramento da LGPD (criada no bimestre anterior) precisa calcular a idade do assinante sem expor a data
+    de nascimento. Crie a função <code class="one-line-code">calcular_idade(data_nascimento DATE)</code> e atualize a
+    view para usá-la.
+  </p>
+
+  <h3>Entregáveis da Parte 1:</h3>
+  <ul>
+    <li>Script com todas as procedures e funções acima, comentado e com os <code class="one-line-code">CALL</code> /
+      <code class="one-line-code">SELECT</code> de teste para cada uma.</li>
+    <li>Para cada objeto, um <strong>parágrafo justificando</strong> as escolhas (parâmetros IN/OUT/INOUT, uso de cursor,
+      classificação de volatilidade, tratamento de erros).</li>
+    <li>Demonstração de que a procedure de cobrança <strong>rejeita</strong> saldo insuficiente sem corromper o banco.</li>
   </ul>
 </section>
 
 <section class="section-box">
-  <h2>Referências</h2>
+  <h2>4. O Desafio – Parte 2: Gatilhos (Triggers)</h2>
+  <p>
+    Automatize as regras no servidor para que nenhuma aplicação consiga burlar a integridade do StreamFlow, mesmo que o
+    programador "esqueça" de validar no código.
+  </p>
+
+  <h3>Gatilho 2.1 – Saldo nunca negativo (RN01)</h3>
+  <p>
+    Crie um gatilho <code class="one-line-code">BEFORE INSERT</code> / <code class="one-line-code">BEFORE UPDATE</code>
+    na tabela financeira (ou de assinantes) que rejeite com <code class="one-line-code">SIGNAL</code> (ou
+    <code class="one-line-code">RAISE EXCEPTION</code>) qualquer operação que deixe o saldo negativo. Compare: por que
+    um gatilho pode reforçar a RN01 além da procedure da Parte 1?
+  </p>
+
+  <h3>Gatilho 2.2 – Imutabilidade do histórico (RN03)</h3>
+  <p>
+    A <strong>RN03</strong> proíbe apagar ou editar o histórico de reproduções. Crie gatilhos
+    <code class="one-line-code">BEFORE UPDATE</code> e <code class="one-line-code">BEFORE DELETE</code> na tabela
+    <code class="one-line-code">reproducoes</code> que bloqueiem essas operações com um erro, mantendo os logs
+    definitivos.
+  </p>
+
+  <h3>Gatilho 2.3 – Auditoria de alterações (AFTER UPDATE com OLD/NEW)</h3>
+  <p>
+    Crie um gatilho <code class="one-line-code">AFTER UPDATE</code> na tabela <code class="one-line-code">perfis</code>
+    (ou <code class="one-line-code">videos</code>) que grave na <code class="one-line-code">auditoria_log</code> o
+    usuário (<code class="one-line-code">CURRENT_USER()</code>), a operação e os valores antigo e novo
+    (<code class="one-line-code">OLD</code> e <code class="one-line-code">NEW</code>).
+  </p>
+
+  <h3>Gatilho 2.4 – Timestamp automático e saneamento</h3>
+  <p>
+    Crie um gatilho <code class="one-line-code">BEFORE UPDATE</code> que mantenha
+    <code class="one-line-code">data_ultima_alteracao</code> atualizado e um gatilho
+    <code class="one-line-code">BEFORE INSERT</code> que normalize os nomes dos assinantes
+    (<code class="one-line-code">UPPER(TRIM(nome))</code>).
+  </p>
+
+  <h3>Gatilho 2.5 – Gatilho de instrução para recálculo (PostgreSQL – bônus)</h3>
+  <p>
+    Crie um gatilho <code class="one-line-code">AFTER INSERT ON reproducoes FOR EACH STATEMENT</code> que atualize a
+    tabela <code class="one-line-code">resumo_reproducao</code> com o total de acessos. Explique por que, em uma carga
+    massiva, esse gatilho é mais eficiente do que um <code class="one-line-code">FOR EACH ROW</code>.
+  </p>
+
+  <h3>Entregáveis da Parte 2:</h3>
   <ul>
-    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.
+    <li>Script com todos os gatilhos, comentado e acompanhado de <strong>testes</strong> que comprovem cada
+      comportamento (inserções válidas e inválidas, updates, deletes bloqueados, auditoria preenchida).</li>
+    <li>Para cada gatilho, justificativa do <strong>momento</strong> (BEFORE/AFTER) e do uso de NEW/OLD.</li>
+    <li>Comparação escrita entre o comportamento de um gatilho e uma restrição
+      <code class="one-line-code">CHECK</code> para o caso da RN01.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>5. O Desafio – Parte 3: Qualidade com Tratamento de Exceções</h2>
+  <p>
+    Revise todas as procedures criadas na Parte 1 e garanta que elas possuam tratamento de exceções consistente:
+  </p>
+  <ul>
+    <li>No MySQL, use <code class="one-line-code">DECLARE EXIT HANDLER FOR SQLEXCEPTION</code> combinado com
+      <code class="one-line-code">ROLLBACK</code> e <code class="one-line-code">SIGNAL</code> para mensagens
+      personalizadas.</li>
+    <li>No PostgreSQL, use sub-blocos <code class="one-line-code">EXCEPTION WHEN ... THEN</code> com exceções nomeadas
+      (ex: <code class="one-line-code">foreign_key_violation</code>, <code class="one-line-code">unique_violation</code>).
     </li>
-    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
-      Paulo: DCC-IME-USP, 2005.</li>
+    <li>Documente, para cada procedure, <strong>quais erros podem ocorrer</strong> e como o banco se comporta em cada
+      caso (qual mensagem o usuário final recebe).</li>
   </ul>
 </section>
 
 <section class="section-box">
-  <h2>Para Praticar</h2>
+  <h2>6. O Desafio – Parte 4 (Diferencial): Mapeamento ORM</h2>
+  <p>
+    A equipe de desenvolvimento vai consumir o banco através de uma aplicação que utiliza um <strong>ORM</strong>.
+    Entregue um documento de <strong>mapeamento objeto-relacional</strong> contendo:
+  </p>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li>As entidades (classes/modelos) equivalentes às tabelas centrais (Assinante, Perfil, Video, Reproducao).</li>
+    <li>O mapeamento das <strong>relações</strong>: 1:N (assinante → perfis), N:N ou associação com atributos
+      (reproducoes), e a herança/ especialização filme vs. episódio.</li>
+    <li>A indicação de como as <strong>Stored Procedures e Functions</strong> da Parte 1 são chamadas pela aplicação
+      (via ORM ou camada de dados), preservando o encapsulamento.</li>
+    <li>Se possível, o código de pelo menos uma entidade mapeada no ORM estudado em sala.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>7. Orientações Gerais e Critérios de Avaliação</h2>
+  <p>O projeto será avaliado simulando uma entrega de produção. Os critérios englobam:</p>
+  <ul>
+    <li><strong>Continuidade Arquitetural:</strong> As procedures, funções e gatilhos operam sobre a estrutura do
+      projeto anterior sem conflitos e respeitando as RNs e RFs?</li>
+    <li><strong>Encapsulamento:</strong> As regras de negócio estão de fato no servidor (procedures/functions) e não
+      esperadas apenas na aplicação?</li>
+    <li><strong>Qualidade do Código:</strong> Blocos BEGIN...END, variáveis locais, condicionais e cursores usados com
+      clareza; delimitadores corretos (DELIMITER / $$).</li>
+    <li><strong>Tratamento de Exceções:</strong> Erros são capturados, mensagens são amigáveis e transações não deixam
+      dados pela metade?</li>
+    <li><strong>Automação por Gatilhos:</strong> RN01 e RN03 estão garantidas mesmo com acesso direto à tabela?</li>
+    <li><strong>Testes Comprovando Tudo:</strong> Cada objeto possui um teste executado e documentado com o resultado
+      esperado.</li>
+    <li><strong>Nomenclatura e Padrões:</strong> Tabelas no plural, chaves <code class="one-line-code">id</code>, nomes
+      de procedures/functions coerentes com a disciplina.</li>
+  </ul>
+
+  <h3>Checklist Final de Entrega</h3>
+  <ul>
+    <li>Arquivo único (ou pasta) com os scripts SQL de todas as partes, organizados e comentados.</li>
+    <li>Documento explicando decisões, testes executados e capturas dos resultados.</li>
+    <li>Declaração explícita de qual SGBD foi utilizado (MySQL ou PostgreSQL) e as adaptações de sintaxe feitas.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Material de Apoio</h2>
+  <ul>
+    <li><a href="../../bimestre-02/aula-18/">Projeto do bimestre anterior – Desafio StreamFlow</a></li>
+    <li><a href="../../bimestre-02/aula-18/requisitos/">Engenharia de Requisitos do Sistema (RNs, RFs e RNFs)</a></li>
+    <li><a href="./exercicio-01.html">Roteiro de Entrega – Parte 1 (Procedures e Functions)</a></li>
+    <li><a href="./exercicio-02.html">Roteiro de Entrega – Parte 2 (Triggers, Exceções e ORM)</a></li>
   </ul>
 </section>
