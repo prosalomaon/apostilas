@@ -1,0 +1,274 @@
+---
+layout: exercicio
+title: "Atividade Prática: Sistema Bancário com Tratamento de Exceções"
+exercicio_numero: "01"
+aula_numero: "22"
+description: "Construção de um sistema bancário que aplica try, catch e finally, exceções personalizadas, throw/throws e múltiplos catches para proteger a regra de negócio."
+---
+
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Nesta atividade você construirá um <strong>sistema bancário</strong> que protege sua regra de negócio com o
+    tratamento de exceções visto na aula. Uma conta só pode sacar ou transferir valores que estejam disponíveis — e, se a
+    regra for violada, o sistema deve falhar de forma <strong>explicita</strong> lançando uma exceção personalizada, em
+    vez de simplesmente imprimir um texto solto ou retornar um código de erro.
+  </p>
+
+  <h3>Arquitetura do Projeto</h3>
+  <div class="mermaid">
+    flowchart LR
+    subgraph PROJETO ["Pacote src/aula22/"]
+      A["SaldoInsuficienteException.java\n(exceção personalizada)"]
+      B["ContaBancaria.java\n(regra de negócio: throw/throws)"]
+      C["Main.java\n(menu: try/catch/finally)"]
+    end
+    C --> B
+    B -.->|"lança"| A
+    C -.->|"captura"| A
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li><strong>Localização:</strong> crie os arquivos dentro da sua pasta de projetos Java (ex:
+      <code class="one-line-code">src/aula22/</code>).</li>
+    <li><strong>Arquivos Necessários:</strong>
+      <ul>
+        <li><code class="one-line-code">SaldoInsuficienteException.java</code>: a exceção personalizada de negócio.</li>
+        <li><code class="one-line-code">ContaBancaria.java</code>: a regra de negócio com
+          <code class="one-line-code">throw</code>/<code class="one-line-code">throws</code>.</li>
+        <li><code class="one-line-code">Main.java</code>: o menu interativo que captura as exceções.</li>
+      </ul>
+    </li>
+    <li><strong>Versão do Java:</strong> o código usa apenas recursos do <strong>Java 8</strong>, sendo compatível com os
+      LTS atuais (11, 17 e 21).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Passo a Passo</h2>
+
+  <h3>Passo 1: A Exceção Personalizada (SaldoInsuficienteException.java)</h3>
+  <p>
+    Como a regra de negócio <em>"não pode sacar mais do que tem"</em> não existe na API Java, criamos nossa própria
+    exceção. Ela herda de <code class="one-line-code">RuntimeException</code> (unchecked), então os métodos que a lançam
+    <strong>não</strong> são obrigados a capturá-la — mas declarar <code class="one-line-code">throws</code> documenta a
+    intenção.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class SaldoInsuficienteException extends RuntimeException {
+
+    public SaldoInsuficienteException(String mensagem) {
+        super(mensagem);
+    }
+}</code></pre>
+  </div>
+
+  <h3>Passo 2: A Regra de Negócio (ContaBancaria.java)</h3>
+  <p>
+    Repare nos três pontos da aula: <strong>throw</strong> é usado no <em>imperativo</em> para lançar a exceção quando a
+    regra é violada, <strong>throws</strong> é usado na assinatura para delegar a responsabilidade, e o
+    <code class="one-line-code">IllegalArgumentException</code> (unchecked padrão) rejeita valores inválidos.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.ArrayList;
+import java.util.List;
+
+public class ContaBancaria {
+
+    private final String titular;
+    private double saldo;
+    private final List&lt;String&gt; extrato = new ArrayList&lt;&gt;();
+
+    public ContaBancaria(String titular, double saldoInicial) {
+        this.titular = titular;
+        if (saldoInicial &lt; 0) {
+            throw new IllegalArgumentException("Saldo inicial não pode ser negativo.");
+        }
+        this.saldo = saldoInicial;
+    }
+
+    public void depositar(double valor) {
+        if (valor &lt;= 0) {
+            throw new IllegalArgumentException("Valor de depósito deve ser positivo.");
+        }
+        this.saldo += valor;
+        extrato.add("Depósito de R$ " + valor);
+    }
+
+    public void sacar(double valor) throws SaldoInsuficienteException {
+        if (valor &lt;= 0) {
+            throw new IllegalArgumentException("Valor de saque deve ser positivo.");
+        }
+        if (valor &gt; this.saldo) {
+            // LANÇA a exceção quando a regra de negócio é violada
+            throw new SaldoInsuficienteException(
+                "Saldo insuficiente! Disponível: R$ " + this.saldo);
+        }
+        this.saldo -= valor;
+        extrato.add("Saque de R$ " + valor);
+    }
+
+    public void transferir(double valor, ContaBancaria destino)
+            throws SaldoInsuficienteException {
+        if (destino == null) {
+            throw new NullPointerException("Conta de destino não pode ser nula.");
+        }
+        this.sacar(valor);   // valida e debita desta conta
+        destino.depositar(valor); // credita na conta de destino
+        extrato.add("Transferência de R$ " + valor + " para " + destino.getTitular());
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public String getTitular() {
+        return titular;
+    }
+
+    public void exibirExtrato() {
+        System.out.println("=== EXTRATO DE " + titular + " ===");
+        for (String operacao : extrato) {
+            System.out.println(" - " + operacao);
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>Passo 3: O Menu com try, catch e finally (Main.java)</h3>
+  <p>
+    O menu captura exceções <strong>específicas</strong> em vez do genérico <code class="one-line-code">Exception</code>:
+    cada <code class="one-line-code">catch</code> sabe exatamente como recuperar o sistema.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        ContaBancaria conta = new ContaBancaria("João", 1000.0);
+        ContaBancaria destino = new ContaBancaria("Maria", 0.0);
+        Scanner scanner = new Scanner(System.in);
+        scanner.useLocale(java.util.Locale.US); // ponto decimal (8.5)
+
+        int opcao;
+        do {
+            System.out.println();
+            System.out.println("=== SISTEMA BANCÁRIO ===");
+            System.out.println("1 - Depositar");
+            System.out.println("2 - Sacar");
+            System.out.println("3 - Transferir para " + destino.getTitular());
+            System.out.println("4 - Consultar saldo");
+            System.out.println("5 - Exibir extrato");
+            System.out.println("0 - Sair");
+            System.out.print("Opção: ");
+
+            try {
+                opcao = scanner.nextInt();
+                scanner.nextLine(); // consome o Enter deixado pelo nextInt
+
+                switch (opcao) {
+                    case 1: depositar(conta, scanner); break;
+                    case 2: sacar(conta, scanner); break;
+                    case 3: transferir(conta, destino, scanner); break;
+                    case 4: System.out.println("Saldo de " + conta.getTitular()
+                            + ": R$ " + conta.getSaldo()); break;
+                    case 5: conta.exibirExtrato(); break;
+                    case 0: System.out.println("Encerrando..."); break;
+                    default: System.out.println("Opção inválida!"); break;
+                }
+            } catch (InputMismatchException e) {
+                // catch específico: o usuário digitou algo que não é número
+                System.out.println("ERRO: digite um número de opção válido.");
+                scanner.nextLine(); // descarta a entrada inválida
+                opcao = -1; // impede o laço de encerrar
+            }
+        } while (opcao != 0);
+
+        scanner.close();
+        System.out.println("Programa finalizado.");
+    }
+
+    private static void depositar(ContaBancaria conta, Scanner scanner) {
+        try {
+            System.out.print("Valor do depósito: ");
+            double valor = scanner.nextDouble();
+            scanner.nextLine();
+            conta.depositar(valor);
+            System.out.println("Depósito realizado! Saldo: R$ " + conta.getSaldo());
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+    }
+
+    private static void sacar(ContaBancaria conta, Scanner scanner) {
+        try {
+            System.out.print("Valor do saque: ");
+            double valor = scanner.nextDouble();
+            scanner.nextLine();
+            conta.sacar(valor);
+            System.out.println("Saque realizado! Saldo: R$ " + conta.getSaldo());
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        } catch (SaldoInsuficienteException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+    }
+
+    private static void transferir(ContaBancaria origem, ContaBancaria destino,
+                                   Scanner scanner) {
+        try {
+            System.out.print("Valor da transferência: ");
+            double valor = scanner.nextDouble();
+            scanner.nextLine();
+            origem.transferir(valor, destino);
+            System.out.println("Transferência realizada!");
+            System.out.println("Saldo de " + origem.getTitular() + ": R$ "
+                    + origem.getSaldo());
+            System.out.println("Saldo de " + destino.getTitular() + ": R$ "
+                    + destino.getSaldo());
+        } catch (SaldoInsuficienteException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        } finally {
+            System.out.println("Operação de transferência concluída.");
+        }
+    }
+}</code></pre>
+  </div>
+  <p>
+    <strong>Teste sugerido:</strong> João inicia com R$ 1000. Tente sacar R$ 1500 (deve lançar
+    <code class="one-line-code">SaldoInsuficienteException</code>), depois transfira R$ 300 para Maria (deve funcionar) e
+    confira os saldos no menu.
+  </p>
+</section>
+
+<div class="tip-box">
+  <h4>4. Desafios de Fixação</h4>
+  <ul>
+    <li><strong>Veja a stacktrace:</strong> comente o <code class="one-line-code">catch (SaldoInsuficienteException e)</code>
+      do método <code class="one-line-code">sacar()</code> e execute o saque inválido. Observe a exceção não tratada
+      aparecer no console e a pilha de chamadas exibida pela JVM.</li>
+    <li><strong>Checked vs. Unchecked:</strong> mude <code class="one-line-code">SaldoInsuficienteException</code> para
+      herdar de <code class="one-line-code">Exception</code> em vez de <code class="one-line-code">RuntimeException</code>.
+      O que o compilador passa a exigir? Compile e explique a diferença.</li>
+    <li><strong>Nova exceção de domínio:</strong> crie uma <code class="one-line-code">ValorInvalidoException</code> e
+      substitua o <code class="one-line-code">IllegalArgumentException</code> nos métodos de depósito e saque. Mantenha o
+      menu capturando apenas as exceções de negócio.</li>
+    <li><strong>try-with-resources:</strong> substitua o <code class="one-line-code">scanner.close()</code> do final pelo
+      uso de <code class="one-line-code">try (Scanner scanner = new Scanner(System.in))</code>. Como o
+      <code class="one-line-code">Scanner</code> implementa <code class="one-line-code">AutoCloseable</code>, ele será
+      fechado automaticamente.</li>
+    <li><strong>Preserve a causa:</strong> crie um construtor em <code class="one-line-code">SaldoInsuficienteException</code>
+      que receba <code class="one-line-code">(String mensagem, Throwable causa)</code> e chame
+      <code class="one-line-code">super(mensagem, causa)</code>. Relance uma exceção dentro do try e confirme que
+      <code class="one-line-code">getCause()</code> retorna o erro original.</li>
+    <li><strong>Multicatch:</strong> no método <code class="one-line-code">sacar()</code> do menu, troque os dois
+      <code class="one-line-code">catch</code> por um único <code class="one-line-code">catch (IllegalArgumentException |
+      SaldoInsuficienteException e)</code>. As duas classes são "irmãs" (nenhuma herda da outra), então o agrupamento é
+      permitido.</li>
+  </ul>
+</div>

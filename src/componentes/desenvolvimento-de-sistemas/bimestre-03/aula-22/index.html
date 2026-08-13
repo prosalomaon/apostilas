@@ -1,5 +1,6 @@
 ---
 title: "Tratamento de Exceções: try, catch e finally"
+componente: "Desenvolvimento de Sistemas"
 aula_numero: "22"
 description: "Criação de aplicações robustas que tratam erros em tempo de execução, prevenindo interrupções abruptas do sistema."
 tags:
@@ -8,6 +9,649 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em construção.</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é uma Exceção?</h3>
+  <p>
+    Uma <strong>exceção</strong> representa uma situação que normalmente não ocorre e indica algo estranho ou inesperado
+    no sistema, como uma <strong>divisão por zero</strong> ou o <strong>acesso a um índice inválido</strong> de um
+    array. No Java, as exceções são objetos que herdam da classe <code class="one-line-code">Throwable</code>.
+  </p>
+  <ul>
+    <li>
+      <strong>Exception:</strong> situações que o aplicativo pode capturar e tratar para tentar se recuperar.
+    </li>
+    <li>
+      <strong>Error:</strong> problemas graves na Máquina Virtual Java (JVM), como falta de memória
+      (<code class="one-line-code">OutOfMemoryError</code>), que geralmente não devem ser tratados pelo programador.
+    </li>
+  </ul>
+  <p>
+    O grande benefício do tratamento de exceções é separar a <strong>detecção do erro</strong> (feita nos métodos que
+    lançam a exceção) da <strong>recuperação do erro</strong> (feita por quem captura). Sem esse mecanismo, o programador
+    precisaria poluir a lógica de negócio com dezenas de <code class="one-line-code">if</code> para verificar retornos de
+    cada método.
+  </p>
+
+  <h3>2. A Hierarquia de Exceções no Java</h3>
+  <p>
+    Toda exceção ou erro em Java descende da classe raiz <code class="one-line-code">Throwable</code>, que define os
+    métodos mais importantes usados no tratamento:
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">getMessage()</code>: retorna a mensagem descritiva cadastrada no momento do lançamento.
+    </li>
+    <li>
+      <code class="one-line-code">printStackTrace()</code>: imprime no console o rastro completo da pilha de chamadas.
+    </li>
+    <li>
+      <code class="one-line-code">getCause()</code>: retorna a exceção que originou esta (usado no encadeamento de erros).
+    </li>
+  </ul>
+  <div class="mermaid">
+    classDiagram
+    class Throwable {
+    +String getMessage()
+    +void printStackTrace()
+    +Throwable getCause()
+    }
+    class Error {
+    Problemas graves da JVM
+    }
+    class Exception {
+    Recuperável pela aplicação
+    }
+    class RuntimeException {
+    Unchecked: lógica do programador
+    }
+    class IOException {
+    Checked: falha de I/O
+    }
+    class SQLException {
+    Checked: acesso a banco
+    }
+    class ArithmeticException
+    class NullPointerException
+    class ArrayIndexOutOfBoundsException
+    class OutOfMemoryError
+    class StackOverflowError
+
+    Throwable <|-- Error
+    Throwable <|-- Exception
+    Exception <|-- RuntimeException
+    Exception <|-- IOException
+    Exception <|-- SQLException
+    RuntimeException <|-- ArithmeticException
+    RuntimeException <|-- NullPointerException
+    RuntimeException <|-- ArrayIndexOutOfBoundsException
+    Error <|-- OutOfMemoryError
+    Error <|-- StackOverflowError
+  </div>
+  <p>
+    Perceba que <code class="one-line-code">RuntimeException</code> (e suas subclasses) fica abaixo de
+    <code class="one-line-code">Exception</code> na hierarquia — mas, conceitualmente, ela representa as exceções
+    <strong>unchecked</strong>. Já as classes <code class="one-line-code">IOException</code> e
+    <code class="one-line-code">SQLException</code> são <strong>checked</strong>, pois não herdam de
+    <code class="one-line-code">RuntimeException</code>.
+  </p>
+
+  <h3>3. Conhecendo a Stacktrace</h3>
+  <p>
+    Quando ocorre um erro não tratado, o Java exibe a <strong>Stacktrace</strong> (rastro da pilha). Ela fornece
+    informações fundamentais para a resolução de problemas, listando o <strong>nome da exceção</strong>, o
+    <strong>erro ocorrido</strong> e a <strong>sequência de chamadas de métodos</strong> até o ponto exato da falha.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">Exception in thread "main" java.lang.ArithmeticException: / by zero
+    at Aplicacao.dividir(Aplicacao.java:12)
+    at Aplicacao.calcularMedia(Aplicacao.java:22)
+    at Aplicacao.main(Aplicacao.java:30)</code></pre>
+  </div>
+  <p>
+    A leitura deve ser feita <strong>de cima para baixo</strong>: a primeira linha informa a exceção e a mensagem, e as
+    linhas seguintes mostram a cadeia de chamadas — o primeiro frame (<code class="one-line-code">Aplicacao.java:12</code>)
+    é onde o erro realmente aconteceu. Cada método chamado antes aparece logo abaixo.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A["main (Aplicacao.java:30)"] --> B["calcularMedia (Aplicacao.java:22)"]
+    B --> C["dividir (Aplicacao.java:12)"]
+    C --> D["Exceção lançada: / by zero"]
+    D --> E{JVM procura um catch}
+    E -->|"Não encontrou em dividir"| F["Desempilha para calcularMedia"]
+    F --> G{JVM procura um catch}
+    G -->|"Não encontrou"| H["Desempilha para main"]
+    H --> I{Existe catch?}
+    I -->|"Não"| J["JVM encerra o programa"]
+    J --> K["Stacktrace impresso no console"]
+    I -->|"Sim"| L["Tratamento executado"]
+  </div>
+
+  <h3>4. Os Blocos try, catch e finally</h3>
+
+  <h5>A. O Bloco try (Tentar)</h5>
+  <p>
+    O bloco <code class="one-line-code">try</code> delimita o <em>"código de risco"</em>, ou seja, instruções que podem
+    disparar uma exceção. Se uma exceção ocorrer dentro dele, o restante das instruções do bloco é ignorado e o
+    controle é passado para o respectivo tratamento.
+  </p>
+
+  <h5>B. O Bloco catch (Capturar)</h5>
+  <p>
+    O bloco <code class="one-line-code">catch</code> contém o código que será executado apenas se uma exceção específica
+    ocorrer no bloco <code class="one-line-code">try</code> correspondente. A exceção é capturada na variável declarada
+    entre parênteses (no exemplo, <code class="one-line-code">e</code>).
+  </p>
+
+  <p><strong>Exemplo Prático: tratando divisão por zero</strong></p>
+  <div class="code-container">
+    <pre><code class="language-java">try {
+    int quociente = 100 / 0; // Código de risco
+    System.out.println("Resultado: " + quociente); // Não é executado!
+} catch (ArithmeticException e) {
+    // Trata a exceção específica de erro matemático
+    System.err.println("Erro: Não é possível dividir por zero!");
+}</code></pre>
+  </div>
+  <p>
+    Quando a linha <code class="one-line-code">100 / 0</code> é avaliada, a JVM lança uma
+    <code class="one-line-code">ArithmeticException</code>. A instrução seguinte (<code class="one-line-code">println</code>)
+    é pulada e o controle salta direto para o <code class="one-line-code">catch</code>.
+  </p>
+
+  <h5>C. Multicatch (Java 7+)</h5>
+  <p>
+    Desde o Java 7, é possível capturar <strong>vários tipos de exceção</strong> em um único bloco
+    <code class="one-line-code">catch</code> caso a tratativa seja a mesma, separando as classes pelo caractere
+    <code class="one-line-code">|</code>. As exceções agrupadas <strong>não podem ter relação de herança</strong> entre
+    si — o compilador impede, por exemplo, <code class="one-line-code">Exception | ArithmeticException</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">try {
+    String valor = entrada.nextLine();
+    int numero = Integer.parseInt(valor);   // pode lançar NumberFormatException
+    System.out.println(valor.toUpperCase()); // pode lançar NullPointerException
+} catch (NumberFormatException | NullPointerException e) {
+    System.err.println("Ocorreu um erro matemático ou de referência nula.");
+}</code></pre>
+  </div>
+
+  <h5>D. O Bloco finally (Finalmente)</h5>
+  <p>
+    O bloco <code class="one-line-code">finally</code> é <strong>opcional</strong> e, se presente, será executado
+    <strong>sempre</strong>, independentemente de ter ocorrido uma exceção ou não. É o local ideal para liberar
+    recursos <em>"caros"</em>, como fechar conexões com bancos de dados ou arquivos abertos, garantindo que não
+    ocorram vazamentos de memória.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">try {
+    abrirConexao();
+    processarDados();
+} catch (Exception e) {
+    System.err.println("Erro no processamento.");
+} finally {
+    fecharConexao(); // Sempre executa para limpar recursos
+}</code></pre>
+  </div>
+  <p>
+    O diagrama abaixo resume a ordem de execução dos três blocos:
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A[Início do bloco try] --> B[Tenta executar as instruções]
+    B --> C{Exceção lançada?}
+    C -->|Não| D[Pula os blocos catch]
+    C -->|Sim| E[Procura um catch compatível]
+    E --> F{Encontrou?}
+    F -->|Sim| G[Executa o catch]
+    F -->|Não| H[Exceção sobe para o método chamador]
+    D --> I[Executa o finally, se existir]
+    G --> I
+    H --> I
+    I --> J[Programa continua ou método encerra]
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Exceções Checked vs. Unchecked</h2>
+  <p>
+    Essa é a distinção mais importante para decidir <strong>quando</strong> e <strong>como</strong> tratar uma exceção. A
+    regra é definida pelo compilador: exceções <strong>checked</strong> obrigam o tratamento; as
+    <strong>unchecked</strong> não.
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Característica</th>
+        <th>Exemplos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">Unchecked</code> (<code class="one-line-code">RuntimeException</code>)</td>
+        <td>Erros causados geralmente por falhas de lógica do programador. O compilador não obriga a tratar com <code class="one-line-code">try/catch</code>.</td>
+        <td><code class="one-line-code">NullPointerException</code>, <code class="one-line-code">ArithmeticException</code>, <code class="one-line-code">ArrayIndexOutOfBoundsException</code></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">Checked</code></td>
+        <td>Condições fora do controle direto do programa. O compilador obriga o desenvolvedor a tratar a exceção ou declarar que o método pode lançá-la.</td>
+        <td><code class="one-line-code">IOException</code> (arquivo não encontrado), <code class="one-line-code">SQLException</code></td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Exemplo comparativo — o que o compilador exige em cada caso:</strong></p>
+  <div class="code-container">
+    <pre><code class="language-java">// UNCHECKED: compila sem try/catch. O erro só aparece em tempo de execução.
+int[] numeros = {1, 2, 3};
+System.out.println(numeros[10]); // ArrayIndexOutOfBoundsException
+
+// CHECKED: NÃO compila sem tratamento ou declaração throws
+FileReader arquivo = new FileReader("dados.txt"); // erro de compilação!</code></pre>
+  </div>
+  <p>Para a linha do <code class="one-line-code">FileReader</code> compilar, duas opções são válidas:</p>
+  <div class="code-container">
+    <pre><code class="language-java">// Opção 1: tratar no próprio método
+try {
+    FileReader arquivo = new FileReader("dados.txt");
+} catch (FileNotFoundException e) {
+    System.err.println("Arquivo não encontrado: " + e.getMessage());
+}
+
+// Opção 2: delegar com throws (quem chamar assume a responsabilidade)
+public void lerArquivo(String caminho) throws IOException {
+    FileReader arquivo = new FileReader(caminho);
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Exemplos Funcionais</h2>
+
+  <h3>1. Calculadora protegida contra erros</h3>
+  <p>
+    Um programa completo que captura múltiplas exceções: divisão por zero e entrada inválida do usuário.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class Calculadora {
+    public static void main(String[] args) {
+        Scanner entrada = new Scanner(System.in);
+
+        try {
+            System.out.print("Digite o numerador: ");
+            int numerador = entrada.nextInt();
+
+            System.out.print("Digite o denominador: ");
+            int denominador = entrada.nextInt();
+
+            int quociente = numerador / denominador;
+            System.out.println("Resultado: " + quociente);
+
+        } catch (ArithmeticException e) {
+            System.err.println("Erro: divisão por zero não é permitida.");
+        } catch (InputMismatchException e) {
+            System.err.println("Erro: você deve digitar números inteiros.");
+        } finally {
+            entrada.close();
+            System.out.println("Fim do programa.");
+        }
+    }
+}</code></pre>
+  </div>
+  <p>
+    Observe que o <code class="one-line-code">finally</code> fecha o <code class="one-line-code">Scanner</code> mesmo
+    quando o usuário digita um valor inválido e uma exceção é capturada.
+  </p>
+
+  <h3>2. Exceção personalizada + regra de negócio</h3>
+  <p>
+    Quando as exceções da API Java não representam bem o problema do domínio, criamos nossa própria exceção. Primeiro, a
+    classe da exceção:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class SaldoInsuficienteException extends RuntimeException {
+    public SaldoInsuficienteException(String mensagem) {
+        super(mensagem);
+    }
+}</code></pre>
+  </div>
+  <p>Agora, a classe de negócio que usa <code class="one-line-code">throw</code> e <code class="one-line-code">throws</code>:</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class ContaBancaria {
+    private double saldo;
+
+    public void depositar(double valor) {
+        if (valor &lt;= 0) {
+            throw new IllegalArgumentException("Depósito deve ser positivo.");
+        }
+        this.saldo += valor;
+    }
+
+    public void sacar(double valor) throws SaldoInsuficienteException {
+        if (valor &gt; this.saldo) {
+            throw new SaldoInsuficienteException(
+                "Saldo insuficiente! Disponível: R$ " + this.saldo);
+        }
+        this.saldo -= valor;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+}</code></pre>
+  </div>
+  <p>Por fim, o cliente que captura e reage à exceção de negócio:</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Principal {
+    public static void main(String[] args) {
+        ContaBancaria conta = new ContaBancaria();
+        conta.depositar(100);
+
+        try {
+            conta.sacar(150);
+            System.out.println("Saque realizado com sucesso!");
+        } catch (SaldoInsuficienteException e) {
+            System.err.println("Operação negada: " + e.getMessage());
+        }
+
+        System.out.println("Saldo final: R$ " + conta.getSaldo());
+    }
+}</code></pre>
+  </div>
+
+  <h3>3. Lendo arquivos com try-with-resources</h3>
+  <p>
+    O bloco <code class="one-line-code">try-with-resources</code> (Java 7+) simplifica a
+    <strong>desalocação de recursos</strong> que implementam a interface <code class="one-line-code">AutoCloseable</code>.
+    O Java fecha automaticamente o recurso ao final do bloco <code class="one-line-code">try</code>, dispensando o uso
+    explícito do <code class="one-line-code">finally</code> para dar <code class="one-line-code">.close()</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class LeitorArquivo {
+    public static void main(String[] args) {
+        String caminho = "notas.txt";
+
+        try (BufferedReader leitor = new BufferedReader(
+                new FileReader(caminho))) { // recurso declarado nos parênteses
+            String linha;
+            while ((linha = leitor.readLine()) != null) {
+                System.out.println(linha);
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao ler o arquivo: " + e.getMessage());
+        }
+        // Nenhum finally necessário: o leitor foi fechado automaticamente
+    }
+}</code></pre>
+  </div>
+  <p>Vários recursos podem ser declarados nos parênteses, separados por <code class="one-line-code">;</code>:</p>
+  <div class="code-container">
+    <pre><code class="language-java">try (Connection con = DriverManager.getConnection(url);
+     PreparedStatement stmt = con.prepareStatement(sql)) {
+    stmt.setString(1, "João");
+    stmt.executeUpdate();
+} catch (SQLException e) {
+    e.printStackTrace();
+}</code></pre>
+  </div>
+  <div class="mermaid">
+    flowchart TD
+    A[Declara o recurso nos parênteses] --> B[Abre o recurso]
+    B --> C[Executa o corpo do try]
+    C --> D{Exceção lançada?}
+    D -->|Não| E[Fecha recursos automaticamente]
+    D -->|Sim| F[Catch trata a exceção]
+    F --> E
+    E --> G[Programa continua]
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Lançando e Delegando Exceções: throw e throws</h2>
+  <ul>
+    <li>
+      <strong>throw:</strong> palavra-chave usada no <em>imperativo</em> para lançar efetivamente uma exceção quando uma
+      regra de negócio é violada. Sempre acompanhada de <code class="one-line-code">new</code>:
+      <code class="one-line-code">throw new MinhaExcecao("mensagem")</code>.
+    </li>
+    <li>
+      <strong>throws:</strong> usada na assinatura do método para avisar ao compilador e a quem chama o método que ele
+      pode disparar certas exceções, <strong>delegando a responsabilidade</strong> do tratamento.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-java">public void saca(double valor) throws SaldoInsuficienteException {
+    if (this.saldo &lt; valor) {
+        throw new SaldoInsuficienteException("Saldo insuficiente!"); // Lança a exceção
+    }
+    this.saldo -= valor;
+}</code></pre>
+  </div>
+  <p>
+    A regra de ouro: <strong>throw lança</strong>, <strong>throws delega</strong>. Quem não quer (ou não pode) tratar a
+    exceção, declara <code class="one-line-code">throws</code> na assinatura e empurra a responsabilidade para o
+    chamador. Para exceções checked, essa cadeia de delegação precisa terminar em algum <code class="one-line-code">catch</code>
+    — ou o programa nem compila.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Exceções e Padrões de Projeto</h2>
+  <p>
+    As exceções são uma peça importante em vários padrões de projeto, seja para <strong>sinalizar falhas de regra de
+    negócio</strong>, seja para <strong>garantir a execução de etapas obrigatórias</strong>. Veja como elas aparecem em
+    quatro padrões clássicos.
+  </p>
+
+  <h3>1. Factory Method — rejeitando tipos desconhecidos</h3>
+  <p>
+    Em uma fábrica, quando o parâmetro pede algo que a fábrica não conhece, o padrão é lançar uma
+    <code class="one-line-code">IllegalArgumentException</code> para deixar claro que a entrada é inválida:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class FabricaDeFormas {
+
+    public static Forma criar(String tipo) {
+        return switch (tipo.toLowerCase()) {
+            case "circulo"   -&gt; new Circulo(5.0);
+            case "quadrado"  -&gt; new Quadrado(4.0);
+            case "triangulo" -&gt; new Triangulo(3.0, 4.0, 5.0);
+            default -&gt; throw new IllegalArgumentException(
+                "Tipo de forma desconhecido: " + tipo);
+        };
+    }
+}</code></pre>
+  </div>
+  <p>
+    O padrão garante que a fábrica <strong>só retorna objetos válidos</strong> — se não consegue, falha de forma
+    explícita em vez de retornar <code class="one-line-code">null</code>.
+  </p>
+
+  <h3>2. Template Method — garantindo etapas com try/finally</h3>
+  <p>
+    O <strong>Template Method</strong> define o esqueleto de um algoritmo e permite que subclasses preencham partes. Como
+    a etapa de limpeza é obrigatória, o esqueleto usa <code class="one-line-code">try/finally</code> para executá-la
+    sempre, mesmo que a implementação da subclasse falhe:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public abstract class Relatorio {
+
+    public final void gerar() {          // esqueleto do algoritmo
+        try {
+            abrirArquivo();
+            escreverCabecalho();
+            escreverCorpo();             // hook: implementado pela subclasse
+            escreverRodape();
+        } finally {
+            fecharArquivo();             // executa SEMPRE
+        }
+    }
+
+    protected abstract void escreverCorpo();
+
+    private void abrirArquivo()  { System.out.println("Abrindo arquivo..."); }
+    private void fecharArquivo() { System.out.println("Fechando arquivo..."); }
+    private void escreverCabecalho() { System.out.println("Cabeçalho"); }
+    private void escreverRodape()    { System.out.println("Rodapé"); }
+}
+
+public class RelatorioAlunos extends Relatorio {
+    @Override
+    protected void escreverCorpo() {
+        // se algo falhar aqui, o finally do método gerar() ainda executa
+        System.out.println("Lista de alunos...");
+    }
+}</code></pre>
+  </div>
+
+  <h3>3. Strategy — validação que lança exceção de domínio</h3>
+  <p>
+    No <strong>Strategy</strong>, cada algoritmo encapsulado pode rejeitar sua entrada lançando uma exceção específica.
+    Quem usa a estratégia não precisa conhecer os detalhes de cada regra:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public interface EstrategiaPagamento {
+    void pagar(double valor) throws SaldoInsuficienteException;
+}
+
+public class CartaoCredito implements EstrategiaPagamento {
+    private double limite;
+
+    public CartaoCredito(double limite) {
+        this.limite = limite;
+    }
+
+    @Override
+    public void pagar(double valor) throws SaldoInsuficienteException {
+        if (valor &gt; limite) {
+            throw new SaldoInsuficienteException(
+                "Limite insuficiente no cartão. Disponível: R$ " + limite);
+        }
+        limite -= valor;
+    }
+}
+
+public class CarteiraDigital implements EstrategiaPagamento {
+    private double saldo;
+
+    public CarteiraDigital(double saldo) {
+        this.saldo = saldo;
+    }
+
+    @Override
+    public void pagar(double valor) throws SaldoInsuficienteException {
+        if (valor &gt; saldo) {
+            throw new SaldoInsuficienteException(
+                "Saldo insuficiente na carteira. Disponível: R$ " + saldo);
+        }
+        saldo -= valor;
+    }
+}</code></pre>
+  </div>
+  <p>
+    O <code class="one-line-code">checkout</code> não muda quando novas estratégias são adicionadas — ele apenas captura a
+    exceção comum:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Checkout {
+    private EstrategiaPagamento estrategia;
+
+    public Checkout(EstrategiaPagamento estrategia) {
+        this.estrategia = estrategia;
+    }
+
+    public void finalizar(double valor) {
+        try {
+            estrategia.pagar(valor);
+            System.out.println("Pagamento aprovado!");
+        } catch (SaldoInsuficienteException e) {
+            System.err.println("Pagamento recusado: " + e.getMessage());
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>4. DAO — isolando a camada com RuntimeException</h3>
+  <p>
+    No padrão <strong>DAO (Data Access Object)</strong>, a camada de negócio não deve conhecer exceções de infraestrutura
+    como <code class="one-line-code">SQLException</code>. A prática comum é capturar a checked e relançá-la como uma
+    exceção <strong>unchecked</strong> do domínio, mantendo o desacoplamento entre camadas:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class PersistenciaException extends RuntimeException {
+    public PersistenciaException(String mensagem, Throwable causa) {
+        super(mensagem, causa);
+    }
+}</code></pre>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-java">public class ProdutoDAOImpl implements ProdutoDAO {
+    @Override
+    public void salvar(Produto produto) {
+        try (Connection con = Conexao.abrir();
+             PreparedStatement stmt = con.prepareStatement(
+                 "INSERT INTO produtos (nome, preco) VALUES (?, ?)")) {
+
+            stmt.setString(1, produto.getNome());
+            stmt.setBigDecimal(2, produto.getPreco());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            // checked -> unchecked, sem vazar detalhes do JDBC
+            throw new PersistenciaException("Falha ao salvar o produto", e);
+        }
+    }
+}</code></pre>
+  </div>
+  <p>
+    Repare no <code class="one-line-code">throw new PersistenciaException(..., e)</code>: o segundo argumento preserva a
+    causa original (<code class="one-line-code">getCause()</code>), o que é essencial para depuração. A camada de
+    negócio captura apenas <code class="one-line-code">PersistenciaException</code> e continua independente do banco.
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    A["Camada de negócio\n(trata PersistenciaException)"] --> B["DAO\n(interface)"]
+    B --> C["DAOImpl\n(try/catch do SQL)"]
+    C -->|"checked: SQLException"| D["Captura e relança"]
+    D -->|"unchecked: PersistenciaException"| A
+    C --> E["Banco de dados"]
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>Nunca ignore uma exceção:</strong> deixar um bloco <code class="one-line-code">catch</code> vazio pode
+      esconder bugs críticos e dificultar a depuração. No mínimo, registre o erro com
+      <code class="one-line-code">e.printStackTrace()</code> ou um log.</li>
+    <li><strong>Especifique o erro:</strong> evite capturar apenas o tipo genérico <code class="one-line-code">Exception</code>;
+      tente tratar os erros específicos para saber exatamente como recuperar o sistema.</li>
+    <li><strong>Crie suas próprias exceções:</strong> se as exceções da API Java não representarem bem o seu problema,
+      crie classes que herdam de <code class="one-line-code">RuntimeException</code> ou
+      <code class="one-line-code">Exception</code> para personalizar suas mensagens de erro.</li>
+    <li><strong>Preserve a causa original:</strong> ao relançar uma exceção, sempre passe a exceção capturada como
+      segundo argumento do construtor (<code class="one-line-code">new MinhaExcecao("msg", causa)</code>) para não
+      perder o rastro do erro real.</li>
+    <li><strong>Prefira try-with-resources:</strong> para recursos <code class="one-line-code">AutoCloseable</code>
+      (arquivos, conexões, statements), use <code class="one-line-code">try-with-resources</code> em vez de
+      <code class="one-line-code">finally</code> manual — o código fica menor e à prova de esquecimento.</li>
+    <li><strong>Não use exceções para controle de fluxo:</strong> exceções são para situações excepcionais. Estruturas de
+      repetição e condições normais devem usar <code class="one-line-code">if/else</code> e laços.</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Atividade Prática - Sistema Bancário com Tratamento de Exceções</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>
