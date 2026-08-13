@@ -1,50 +1,339 @@
 ﻿---
 title: "Transição da Análise para o Projeto"
 aula_numero: "21"
-description: "Conteúdo da aula 21 : Transição da Análise para o Projeto"
+description: "Esta aula aborda a transição da análise para o projeto de sistemas: a mudança de perspectiva entre as necessidades do negócio (O quê?) e a viabilização técnica da solução (Como?), incluindo as atividades-chave do projeto, a fisicalização dos modelos lógicos, a Especificação do Sistema e as estratégias de aquisição (make vs. buy)."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 21 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O Objetivo da Transição</h3>
+  <p>
+    A transição da <strong>Análise</strong> para o <strong>Projeto</strong> marca a mudança de perspectiva entre as
+    necessidades do negócio e a viabilização técnica da solução. É nesse momento que o <em>"quê"</em> se transforma em
+    <em>"como"</em>.
+  </p>
+  <ul>
+    <li>
+      <strong>Análise (O Quê?):</strong> Foca em descobrir os <strong>requisitos de negócio</strong> e entender o
+      domínio do problema. O resultado é o <strong>modelo lógico</strong>, independente de tecnologia.
+    </li>
+    <li>
+      <strong>Projeto (Como?):</strong> Foca em decidir <strong>como construir</strong> o sistema. Os requisitos de
+      negócio são convertidos em <strong>requisitos de sistema</strong>, descrevendo detalhes técnicos e o
+      <strong>modelo físico</strong>.
+    </li>
+  </ul>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Dimensão</th>
+          <th>Análise</th>
+          <th>Projeto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pergunta central</td>
+          <td>O quê?</td>
+          <td>Como?</td>
+        </tr>
+        <tr>
+          <td>Foco</td>
+          <td>Necessidades do negócio e domínio do problema</td>
+          <td>Viabilização técnica da solução</td>
+        </tr>
+        <tr>
+          <td>Modelo produzido</td>
+          <td>Modelo lógico (independente de tecnologia)</td>
+          <td>Modelo físico (dependente de tecnologia)</td>
+        </tr>
+        <tr>
+          <td>Produtos típicos</td>
+          <td>Casos de uso, diagramas de classes de análise, DFD lógico, MER lógico</td>
+          <td>DFD físico, modelo físico de dados, arquitetura, leiautes, especificações</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. Atividades-Chave da Fase de Projeto</h3>
+  <p>
+    O projeto realiza um <strong>refinamento pormenorizado</strong> dos artefatos da análise e conclui a arquitetura do
+    sistema. As principais atividades incluem:
+  </p>
+
+  <h4>A. Estratégia de Aquisição</h4>
+  <p>
+    Decidir entre <strong>desenvolvimento sob encomenda</strong> (custom), <strong>compra de pacotes de software</strong>
+    (packaged) ou <strong>terceirização</strong> (outsourcing). Essa decisão impacta custo, prazo, controle e risco de
+    todo o projeto.
+  </p>
+
+  <h4>B. Design da Arquitetura</h4>
+  <p>
+    Define o <strong>ambiente de hardware, software e rede</strong> que sustentará o sistema, por exemplo arquiteturas
+    <strong>cliente-servidor</strong> ou <strong>computação em nuvem</strong> (cloud).
+  </p>
+
+  <h4>C. Refinamento dos Aspectos Estáticos e Estruturais</h4>
+  <p>
+    Detalhamento das <strong>classes de análise</strong> em <strong>classes de projeto</strong>, definindo tipos de
+    dados, visibilidade, métodos específicos e relacionamentos complexos.
+  </p>
+
+  <h4>D. Projeto da Interface com o Usuário</h4>
+  <p>
+    Criação de <strong>leiautes</strong>, <strong>navegação</strong> e <strong>protótipos</strong> para garantir uma
+    identidade visual e a usabilidade do sistema.
+  </p>
+
+  <h4>E. Projeto de Banco de Dados</h4>
+  <p>
+    Conversão do <strong>modelo de dados lógico (ERD)</strong> para o <strong>físico</strong>, otimizando o
+    armazenamento e o desempenho em um SGBD específico.
+  </p>
+
+  <h3>3. De Modelos Lógicos para Modelos Físicos</h3>
+  <p>
+    Uma parte essencial da transição é a <strong>"fisicalização"</strong> dos diagramas produzidos na análise.
+  </p>
+  <ul>
+    <li>
+      <strong>Diagrama de Fluxo de Dados (DFD) Físico:</strong> mostra a implementação real, incluindo referências a
+      tecnologias específicas (ex: MySQL, HTML/PHP), formatos de dados e a <strong>fronteira homem-máquina</strong>
+      (partes manuais vs. automáticas).
+    </li>
+    <li>
+      <strong>Modelo de Dados Físico:</strong> traduz entidades e relacionamentos em <strong>tabelas, colunas, chaves
+        primárias e estrangeiras</strong> dentro de um SGBD específico.
+    </li>
+  </ul>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Artefato Lógico (Análise)</th>
+          <th>Artefato Físico (Projeto)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>DFD Lógico (processos, fluxos, depósitos)</td>
+          <td>DFD Físico (tecnologias, formatos de dados, fronteira homem-máquina)</td>
+        </tr>
+        <tr>
+          <td>MER Lógico (entidades e relacionamentos)</td>
+          <td>Modelo físico (tabelas, colunas, PKs, FKs, índices)</td>
+        </tr>
+        <tr>
+          <td>Classes de análise (conceituais)</td>
+          <td>Classes de projeto (tipos, visibilidade, métodos)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4. O Entregável Final: Especificação do Sistema</h3>
+  <p>
+    Ao final da transição e das atividades de design, a equipe compila a <strong>Especificação do Sistema</strong>.
+    Este documento funciona como o <strong>"blueprint"</strong> (planta baixa) final para os programadores e inclui:
+  </p>
+  <ul>
+    <li>Modelos de <strong>processos</strong> e <strong>dados físicos</strong>.</li>
+    <li><strong>Design da arquitetura</strong> e especificações de hardware/software.</li>
+    <li><strong>Design da interface</strong> e especificações dos programas.</li>
+    <li><strong>Design de armazenamento de dados</strong> e a <strong>matriz CRUD</strong> atualizada.</li>
+  </ul>
+
+  <h3>5. Estratégias de Aquisição (Make vs. Buy)</h3>
+  <p>
+    A decisão de <strong>como obter</strong> o sistema impacta todo o projeto:
+  </p>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Estratégia</th>
+          <th>Vantagens</th>
+          <th>Desvantagens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Desenvolvimento Customizado</strong> (make)</td>
+          <td>Maior controle e flexibilidade; ideal para necessidades exclusivas e estratégicas.</td>
+          <td>Mais caro e demorado; exige equipe especializada.</td>
+        </tr>
+        <tr>
+          <td><strong>Software de Prateleira</strong> (buy / pacotes)</td>
+          <td>Mais rápido e barato para necessidades comuns.</td>
+          <td>Exige que a empresa se adapte à funcionalidade do pacote ou crie "workarounds".</td>
+        </tr>
+        <tr>
+          <td><strong>Outsourcing</strong> (terceirização)</td>
+          <td>Útil quando a empresa não possui expertise interna.</td>
+          <td>Riscos de controle e perda de conhecimento técnico.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>6. Dica de Estudo</h3>
+  <p>
+    Lembre-se de que a <strong>fronteira entre análise e projeto é, muitas vezes, tênue</strong>. Erros de análise não
+    resolvidos nesta fase custarão até <strong>10 vezes mais</strong> para serem corrigidos durante a implementação.
+  </p>
 </section>
 
 <section class="section-box">
   <h2>Exemplo Prático</h2>
-  <p>Exemplos e demonstrações da aula 21 em desenvolvimento...</p>
+  <p>
+    A <strong>Livraria do Saber</strong> contratou uma equipe para desenvolver um sistema de controle de vendas e
+    estoque. A <em>análise</em> já foi concluída: os requisitos foram levantados, o DFD lógico e o MER lógico foram
+    aprovados com o cliente. Agora começa o <em>projeto</em>. Acompanhe a transição:
+  </p>
+
+  <h3>1. Estratégia de Aquisição</h3>
+  <p>
+    A livraria tem operações simples e comuns ao varejo. A equipe comparou um pacote pronto de frente de loja com o
+    desenvolvimento customizado e concluiu: as necessidades de <strong>gestão de estoque e comissão de vendedores</strong>
+    são específicas do negócio, então o sistema será <strong>desenvolvido sob encomenda</strong>, aproveitando uma
+    biblioteca de autenticação pronta.
+  </p>
+
+  <h3>2. Design da Arquitetura</h3>
+  <p>
+    Escolheu-se uma arquitetura <strong>cliente-servidor em 3 camadas</strong>:
+  </p>
+  <ul>
+    <li><strong>Apresentação:</strong> aplicação web em HTML/PHP.</li>
+    <li><strong>Lógica:</strong> servidor PHP processando as regras de negócio.</li>
+    <li><strong>Dados:</strong> banco de dados MySQL em um servidor dedicado.</li>
+  </ul>
+
+  <h3>3. Fisicalização dos Modelos</h3>
+  <p>
+    O processo <em>"Emitir Venda"</em> do DFD lógico foi detalhado no <strong>DFD físico</strong>, indicando que a tela
+    <code class="one-line-code">catalogo.php</code> consulta a tabela <code class="one-line-code">produtos</code> do
+    MySQL e grava a venda em <code class="one-line-code">vendas_itens</code>. A entidade <em>CLIENTE</em> do MER lógico
+    virou a tabela:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(120) UNIQUE,
+    telefone VARCHAR(20),
+    data_cadastro DATE
+);</code></pre>
+  </div>
+
+  <h3>4. Projeto da Interface e do Banco</h3>
+  <p>
+    Foram produzidos <strong>protótipos de alta fidelidade</strong> das telas de venda e de consulta de estoque,
+    aprovados pelo cliente. Em paralelo, o modelo físico foi otimizado com índices em
+    <code class="one-line-code">clientes.email</code> e <code class="one-line-code">vendas.data_venda</code> para
+    garantir desempenho nas consultas de faturamento.
+  </p>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
-  <p>Diagramas e esquemas visuais em construção...</p>
+
+  <div class="mermaid">
+    flowchart LR
+      subgraph ANALISE["Fase de Análise"]
+        A1["Requisitos de Negócio"] --> A2["Modelo Lógico"]
+        A2 --> A3["DFD Lógico + MER Lógico"]
+      end
+      subgraph TRANSICAO["Transição"]
+        T1["O QUÊ -> COMO"]
+      end
+      subgraph PROJETO["Fase de Projeto"]
+        P1["Estratégia de Aquisição"] --> P2["Arquitetura"]
+        P2 --> P3["DFD Físico + Modelo Físico"]
+        P3 --> P4["Especificação do Sistema"]
+      end
+      ANALISE --> TRANSICAO --> PROJETO
+  </div>
+
+  <div class="mermaid">
+    flowchart TD
+      N["Necessidade de um Sistema"] --> D{"A necessidade é exclusiva / estratégica?"}
+      D -->|"Sim"| MAKE["Desenvolvimento Customizado"]
+      D -->|"Não"| D2{"Existe pacote pronto adequado?"}
+      D2 -->|"Sim"| BUY["Software de Prateleira"]
+      D2 -->|"Não / falta expertise interna"| OUT["Outsourcing"]
+  </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Conteúdo em breve.</li>
+    <li>
+      <strong>Análise responde "o quê"; projeto responde "como".</strong> Ao apresentar um artefato, pergunte-se em qual
+      fase ele pertence.
+    </li>
+    <li>
+      <strong>Fisicalização:</strong> o DFD físico e o modelo físico de dados são os dois grandes "tradutores" da
+      análise para a implementação.
+    </li>
+    <li>
+      <strong>Matriz CRUD</strong> (Create, Read, Update, Delete) deve ser atualizada no projeto para refletir os novos
+      detalhes técnicos e as regras de cada programa.
+    </li>
+    <li>
+      <strong>Make vs. Buy:</strong> pacotes são mais baratos e rápidos, mas exigem que a empresa se adapte; o
+      customizado dá controle, porém custa mais caro.
+    </li>
+    <li>
+      <strong>Erros de análise não resolvidos custam até 10 vezes mais</strong> para corrigir na implementação — revise
+      a análise antes de prosseguir.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Cenários de aplicação profissional em breve...</p>
+  <ul>
+    <li>
+      <strong>Em um projeto real:</strong> apresente a Especificação do Sistema como contrato entre a equipe de
+      desenvolvimento e o cliente, garantindo que todos os detalhes técnicos estejam documentados antes da codificação.
+    </li>
+    <li>
+      <strong>Na decisão de compra vs. desenvolvimento:</strong> crie uma matriz comparativa (custo, prazo, risco,
+      controle, adequação) para embasar a escolha da estratégia de aquisição diante da diretoria.
+    </li>
+    <li>
+      <strong>Na separação de responsabilidades:</strong> ao revisar artefatos, classifique-os em lógicos (da análise)
+      ou físicos (do projeto) para evitar misturar decisões de negócio com decisões técnicas.
+    </li>
+    <li>
+      <strong>Na validação de requisitos:</strong> aproveite a fronteira da transição para fechar pendências de análise,
+      lembrando que correções aqui custam muito menos do que na implementação.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Documentação oficial e bibliografia recomendada.</li>
+    <li>KENDALL, Kenneth E.; KENDALL, Julie E. <em>Análise e Projeto de Sistemas</em>.</li>
+    <li>PRESSMAN, Roger S. <em>Engenharia de Software: Uma Abordagem Profissional</em>.</li>
+    <li>SOMMERVILLE, Ian. <em>Engenharia de Software</em>.</li>
+    <li>WAZLAWICK, Raul Sidnei. <em>Análise e Design Orientados a Objeto para Sistemas de Informação</em>.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Atividade Prática</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Questionário</a></li>
+    <li><a href="./exercicio-01.html">Exercício 01: Atividade Prática</a></li>
+    <li><a href="./exercicio-02.html">Exercício 02: Questionário</a></li>
   </ul>
 </section>

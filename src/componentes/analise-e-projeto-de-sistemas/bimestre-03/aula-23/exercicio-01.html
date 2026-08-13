@@ -3,18 +3,78 @@ layout: exercicio
 title: "Exercício 01 - Diagrama de Sequência - Operadores de Controle"
 exercicio_numero: "01"
 aula_numero: "23"
-description: "Atividade prática para a aula 23."
+description: "Atividade prática: construir um Diagrama de Sequência com Fragmentos Combinados (loop, alt, opt, par, break) e escolher o operador adequado para cada situação de controle de fluxo."
 ---
 
 <section class="section-box">
   <h2>Enunciado</h2>
-  <p>Atividade em desenvolvimento...</p>
+  <p>
+    O sistema da <strong>Livraria do Saber</strong> precisa documentar o cenário <em>"Efetuar Login"</em>. A equipe de
+    projeto deve produzir um Diagrama de Sequência que represente com precisão as regras de autenticação, usando os
+    operadores de controle da UML 2.0.
+  </p>
+
+  <h3>Parte 1 – Construir o Diagrama de Sequência</h3>
+  <p>
+    Desenhe (à mão ou com ferramenta) o Diagrama de Sequência do cenário abaixo, usando os Fragmentos Combinados:
+  </p>
+  <ol>
+    <li>O ator <strong>Usuário</strong> envia <code class="one-line-code">autenticar(usuário, senha)</code> para o
+      objeto <code class="one-line-code">sistema : Sistema</code>.</li>
+    <li>Operador <code class="one-line-code">alt</code>:
+      <ul>
+        <li><code class="one-line-code">[senha válida]</code>: o sistema envia <code class="one-line-code">criarSessão()</code>
+          a <code class="one-line-code">sessão : Sessão</code> e retorna "Acesso liberado".</li>
+        <li><code class="one-line-code">[else]</code>: o sistema incrementa as tentativas e retorna "Senha inválida".</li>
+      </ul>
+    </li>
+    <li>Após o <code class="one-line-code">alt</code>, um operador <code class="one-line-code">opt</code>: se
+      <code class="one-line-code">[usuário é administrador]</code>, o sistema executa a auto-chamada
+      <code class="one-line-code">registrarAuditoriaAdmin()</code>.</li>
+    <li>Um operador <code class="one-line-code">loop</code> com limites
+      <code class="one-line-code">loop(0, 3)</code>: enquanto a senha for inválida e ainda houver tentativas, o sistema
+      solicita nova senha ao usuário.</li>
+    <li>Um operador <code class="one-line-code">break</code> <code class="one-line-code">[tentativas esgotadas]</code>:
+      o sistema bloqueia a conta (<code class="one-line-code">bloquearConta()</code>) e o restante do diagrama é
+      ignorado.</li>
+    <li>Ao final, se não houve interrupção, o sistema envia <code class="one-line-code">mensagem de boas-vindas</code> ao
+      usuário.</li>
+  </ol>
+
+  <h3>Parte 2 – Escolha o operador adequado</h3>
+  <p>Para cada situação abaixo, indique qual operador (<code class="one-line-code">alt</code>,
+    <code class="one-line-code">opt</code>, <code class="one-line-code">loop</code>, <code class="one-line-code">par</code>,
+    <code class="one-line-code">break</code>, <code class="one-line-code">ref</code>) é o mais adequado e justifique:</p>
+  <ol>
+    <li>Uma interação de <strong>autenticação</strong> reutilizada em vários cenários do sistema.</li>
+    <li>Executar <strong>simultaneamente</strong> a gravação do log e o envio do e-mail de confirmação.</li>
+    <li>Aplicar um <strong>desconto apenas se</strong> o cliente for VIP.</li>
+    <li>Percorrer <strong>todos os itens</strong> de uma lista para calcular o total.</li>
+    <li>Escolher entre <code class="one-line-code">[estoque disponível]</code> reservar o item ou
+      <code class="one-line-code">[else]</code> informar indisponibilidade.</li>
+    <li>Encerrar o processamento <strong>antes da confirmação</strong> quando o pagamento é negado.</li>
+  </ol>
+
+  <h3>Parte 3 – Análise e melhoria</h3>
+  <ol>
+    <li>Identifique no seu diagrama as <strong>guardas</strong> e os <strong>operandos</strong> de cada fragmento.</li>
+    <li>Justifique por que, no bloco <code class="one-line-code">alt</code> da Parte 1, foi usado
+      <code class="one-line-code">[else]</code> como sentinela.</li>
+    <li>Explique por que o operador <code class="one-line-code">loop(0, 3)</code> limita as tentativas mesmo que a
+      guarda ainda seja verdadeira.</li>
+  </ol>
 </section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
+    <li>Releia a aula antes de começar; a tabela dos operadores principais ajuda na escolha correta.</li>
+    <li>Não use quadros de interação em excesso: represente apenas a lógica <strong>crucial</strong> do fluxo.</li>
+    <li>Use a guarda <code class="one-line-code">[else]</code> nos blocos <code class="one-line-code">alt</code> para
+      manter o modelo bem-formado.</li>
+    <li>Confira se as mensagens dentro de cada fragmento estão na ordem correta e se as linhas de vida estão
+      conectadas.</li>
+    <li>Para representar <code class="one-line-code">ref</code>, basta indicar o nome do diagrama referenciado dentro de
+      um quadro com a tag <code class="one-line-code">ref</code>.</li>
   </ul>
 </div>

@@ -3,18 +3,58 @@ layout: exercicio
 title: "Exercício 01 - Transição da Análise para o Projeto"
 exercicio_numero: "01"
 aula_numero: "21"
-description: "Atividade prática para a aula 21."
+description: "Atividade prática: aplicar a transição da análise para o projeto em um estudo de caso, produzindo estratégia de aquisição, arquitetura, DFD físico, modelo físico de dados e Especificação do Sistema."
 ---
 
 <section class="section-box">
   <h2>Enunciado</h2>
-  <p>Atividade em desenvolvimento...</p>
+  <p>
+    A <strong>Oficina Mecânica Rodas &amp; Cia</strong> contratou sua equipe para o desenvolvimento de um sistema de
+    <strong>agendamento de serviços e controle de peças</strong>. A fase de <strong>análise</strong> já foi concluída:
+    os requisitos de negócio foram levantados e os artefatos lógicos (casos de uso, DFD lógico e MER lógico) foram
+    aprovados pelo cliente.
+  </p>
+  <p>
+    Seu papel agora é conduzir a <strong>transição para a fase de projeto</strong>, transformando as decisões de negócio
+    em decisões técnicas concretas.
+  </p>
+
+  <h3>Parte 1 – Estratégia de Aquisição (make vs. buy)</h3>
+  <ol>
+    <li>Analise as necessidades da oficina: agendamento de serviços, gestão de peças e emissão de ordens de serviço.</li>
+    <li>Recomende uma das três estratégias (desenvolvimento customizado, software de prateleira ou outsourcing)
+      justificando com base nas vantagens e desvantagens de cada uma.</li>
+  </ol>
+
+  <h3>Parte 2 – Design da Arquitetura</h3>
+  <ol>
+    <li>Proponha uma arquitetura para o sistema (ex: cliente-servidor em 3 camadas) e descreva o papel de cada camada.</li>
+    <li>Indique as tecnologias de apresentação, lógica e banco de dados que você utilizaria e por quê.</li>
+  </ol>
+
+  <h3>Parte 3 – Fisicalização dos Modelos</h3>
+  <ol>
+    <li>Converta o processo <em>"Emitir Ordem de Serviço"</em> (do DFD lógico) em um <strong>DFD físico</strong>,
+      indicando as tecnologias envolvidas (telas, scripts, tabelas) e a fronteira homem-máquina.</li>
+    <li>Converta a entidade <em>CLIENTE</em> do MER lógico em uma <strong>tabela física</strong> com
+      <code class="one-line-code">CREATE TABLE</code>, definindo tipos, chave primária e restrições
+      (<code class="one-line-code">NOT NULL</code>, <code class="one-line-code">UNIQUE</code>, etc.).</li>
+  </ol>
+
+  <h3>Parte 4 – Especificação do Sistema</h3>
+  <ol>
+    <li>Liste as seções que devem constar na Especificação do Sistema para este caso.</li>
+    <li>Apresente a <strong>matriz CRUD</strong> para as entidades principais (Cliente, Veículo, Serviço, Peça, Ordem de
+      Serviço), indicando quem realiza cada operação (cliente, atendente, mecânico).</li>
+  </ol>
 </section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
+    <li>Releia o conteúdo da aula antes de começar; as tabelas comparativas ajudam a justificar as decisões.</li>
+    <li>Toda decisão técnica deve ser <strong>justificada</strong> — não basta escolher, é preciso explicar o porquê.</li>
+    <li>Ao criar o <code class="one-line-code">CREATE TABLE</code>, considere integridade (PK, FK, unicidade).</li>
+    <li>Ao final, revise se algum erro de análise ficou pendente: corrigir agora custa menos do que na implementação.</li>
   </ul>
 </div>

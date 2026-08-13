@@ -1,50 +1,438 @@
 ﻿---
 title: "Diagrama de Sequência - Operadores de Controle"
 aula_numero: "23"
-description: "Conteúdo da aula 23 : Diagrama de Sequência - Operadores de Controle"
+description: "Esta aula aborda os operadores de controle dos Diagramas de Sequência da UML 2.0 (Fragmentos Combinados): alt, opt, loop, par, break, ref e operadores avançados como critical, neg, assert, ignore/consider, além do sequenciamento fraco (seq) e estrito (strict)."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 23 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que são Operadores de Controle?</h3>
+  <p>
+    Na UML 2.0, o fluxo puramente sequencial de mensagens pode ser estendido para representar comportamentos
+    <strong>condicionais ou repetitivos</strong> através dos <strong>Fragmentos Combinados</strong>. Eles permitem que o
+    projetista expresse algoritmos de forma detalhada diretamente no diagrama, <strong>aproximando o modelo do
+    código-fonte</strong>.
+  </p>
+  <ul>
+    <li>
+      <strong>Estrutura Visual:</strong> um operador é representado por um <strong>quadro (frame) retangular</strong>
+      que envolve uma parte da interação.
+    </li>
+    <li>
+      <strong>Tag de Operador:</strong> no canto superior esquerdo, há um pequeno pentágono contendo uma
+      <strong>palavra-chave</strong> (tag) que define o comportamento do quadro (ex: <code class="one-line-code">alt</code>,
+      <code class="one-line-code">loop</code>, <code class="one-line-code">opt</code>).
+    </li>
+    <li>
+      <strong>Operandos e Guardas:</strong> o quadro pode ser dividido em regiões (operandos) por
+      <strong>linhas tracejadas</strong>. Cada região pode ter uma <strong>condição de guarda</strong>
+      <code class="one-line-code">[condição]</code>, uma expressão booleana que deve ser verdadeira para que aquele
+      fragmento seja executado.
+    </li>
+  </ul>
+
+  <h3>2. Principais Operadores de Controle</h3>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Tag</th>
+          <th>Nome</th>
+          <th>Descrição Técnica e Exemplo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="one-line-code">alt</code></td>
+          <td>Alternativas</td>
+          <td>
+            Equivale a uma estrutura <strong>if-then-else</strong>. Contém múltiplos operandos; apenas aquele cuja guarda
+            for verdadeira será executado. Se mais de uma for verdadeira, a escolha é <strong>não-determinística</strong>.
+          </td>
+        </tr>
+        <tr>
+          <td><code class="one-line-code">opt</code></td>
+          <td>Opção</td>
+          <td>
+            Equivale a um <strong>if sem o else</strong>. O fragmento só executa se a guarda for verdadeira; caso
+            contrário, é ignorado.
+          </td>
+        </tr>
+        <tr>
+          <td><code class="one-line-code">loop</code></td>
+          <td>Laço</td>
+          <td>
+            Representa <strong>repetição</strong>. Pode incluir limites numéricos como
+            <code class="one-line-code">loop(min, max)</code>. O fragmento repete enquanto a guarda for verdadeira e os
+            limites forem respeitados.
+          </td>
+        </tr>
+        <tr>
+          <td><code class="one-line-code">par</code></td>
+          <td>Paralelo</td>
+          <td>
+            Indica que as mensagens dentro dos diferentes operandos podem ocorrer <strong>simultaneamente ou em qualquer
+            ordem</strong> (intercaladas), sem que uma dependa do término da outra.
+          </td>
+        </tr>
+        <tr>
+          <td><code class="one-line-code">break</code></td>
+          <td>Interrupção</td>
+          <td>
+            Se a condição for atendida, o fragmento executa e o <strong>restante do diagrama (ou do quadro pai) é
+            ignorado</strong>, funcionando como um <code class="one-line-code">return</code> ou tratamento de exceção.
+          </td>
+        </tr>
+        <tr>
+          <td><code class="one-line-code">ref</code></td>
+          <td>Referência</td>
+          <td>
+            Permite <strong>modularidade</strong>. O quadro aponta para outro diagrama de sequência já definido,
+            facilitando o <strong>reuso de interações comuns</strong> (como uma "Autenticação").
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3. Operadores Avançados e Especializados</h3>
+  <ul>
+    <li>
+      <strong>critical (Região Crítica):</strong> garante que a sequência de eventos dentro do fragmento seja
+      <strong>atômica</strong>, ou seja, não pode ser intercalada por outras mensagens de regiões paralelas.
+    </li>
+    <li>
+      <strong>neg (Negativo):</strong> descreve uma interação que é explicitamente <strong>proibida ou considerada
+      inválida</strong>.
+    </li>
+    <li>
+      <strong>assert (Asserção):</strong> indica que o comportamento descrito é o <strong>único válido</strong> naquele
+      ponto; qualquer outra variação é um erro.
+    </li>
+    <li>
+      <strong>ignore / consider:</strong> filtram <strong>quais mensagens são relevantes</strong> para aquela visão do
+      diagrama, permitindo omitir detalhes irrelevantes para focar em uma lógica específica.
+    </li>
+  </ul>
+
+  <h3>4. Sequenciamento Fraco (seq) vs. Estrito (strict)</h3>
+  <p>
+    Nem todo diagrama de sequência precisa exibir a ordem das mensagens de forma rígida. A UML distingue dois modos de
+    interpretar a ordem vertical das mensagens:
+  </p>
+  <ul>
+    <li>
+      <strong>seq (sequenciamento fraco) — padrão:</strong> mensagens em <strong>diferentes linhas de vida podem
+      intercalar</strong>; a ordem é preservada apenas entre mensagens de uma mesma linha de vida ou que possuam
+      dependência direta.
+    </li>
+    <li>
+      <strong>strict (sequenciamento estrito):</strong> a <strong>ordem vertical de cima para baixo deve ser seguida
+      rigidamente</strong> por todos os participantes.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplos e demonstrações da aula 23 em desenvolvimento...</p>
+  <h2>Exemplo Prático: Processamento de Pedido</h2>
+  <p>
+    Considere o cenário <em>"Fechar Pedido"</em>. Os operadores de controle são usados em conjunto para expressar a
+    lógica completa do fluxo:
+  </p>
+  <ul>
+    <li>
+      Operador <code class="one-line-code">loop</code>: o sistema percorre cada item do pedido para
+      <strong>verificar estoque</strong>.
+    </li>
+    <li>
+      Operador <code class="one-line-code">alt</code>:
+      <ul>
+        <li><code class="one-line-code">[estoque disponível]</code>: reserva o item.</li>
+        <li><code class="one-line-code">[else]</code>: envia mensagem de "Item indisponível" ao cliente.</li>
+      </ul>
+    </li>
+    <li>
+      Operador <code class="one-line-code">opt</code>: se o cliente for <strong>VIP</strong>, o sistema aplica um
+      desconto especial automaticamente.
+    </li>
+    <li>
+      Operador <code class="one-line-code">par</code>: simultaneamente, o sistema solicita a
+      <strong>autorização do cartão de crédito</strong> e inicia a <strong>preparação da nota fiscal</strong>.
+    </li>
+  </ul>
+
+  <div class="mermaid">
+    sequenceDiagram
+      actor Cliente
+      participant Sistema
+      participant Estoque
+      participant Pagamento
+      participant Fiscal
+
+      Cliente->>Sistema: fecharPedido()
+      activate Sistema
+      loop para cada item do pedido
+          Sistema->>Estoque: verificarEstoque(item)
+          alt [estoque disponível]
+              Estoque-->>Sistema: disponível
+              Sistema->>Estoque: reservarItem(item)
+          else [else]
+              Sistema-->>Cliente: "Item indisponível"
+          end
+      end
+      opt [cliente VIP]
+          Sistema->>Sistema: aplicarDescontoEspecial()
+      end
+      par [paralelo]
+          Sistema->>Pagamento: autorizarCartão(valor)
+          Sistema->>Fiscal: prepararNotaFiscal(pedido)
+      end
+      Sistema-->>Cliente: pedidoConfirmado
+      deactivate Sistema
+  </div>
+  <p>
+    O mesmo fluxo traduzido para código: cada operador do diagrama encontra um equivalente direto na linguagem de
+    programação.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public void fecharPedido(Pedido pedido, Cliente cliente) {
+    for (Item item : pedido.getItens()) {                       // loop
+        if (estoque.verificarEstoque(item)) {                   // alt [estoque disponível]
+            estoque.reservarItem(item);
+        } else {                                                // else
+            enviarMensagem(cliente, "Item indisponível");
+        }
+    }
+
+    if (cliente.isVip()) {                                      // opt [cliente VIP]
+        this.aplicarDescontoEspecial(pedido);
+    }
+
+    // par: as duas tarefas podem ocorrer simultaneamente
+    CompletableFuture.allOf(
+        CompletableFuture.runAsync(() -> pagamento.autorizarCartao(pedido.getValor())),
+        CompletableFuture.runAsync(() -> fiscal.prepararNotaFiscal(pedido))
+    ).join();
+
+    enviarMensagem(cliente, "pedidoConfirmado");                // retorno ao ator
+}</code></pre>
+  </div>
+
+  <h3>Break como tratamento de exceção</h3>
+  <p>
+    O operador <code class="one-line-code">break</code> interrompe o restante do diagrama. No fluxo do pedido, se a
+    autorização do cartão falhar, o processamento é encerrado antes da confirmação:
+  </p>
+  <div class="mermaid">
+    sequenceDiagram
+      participant Sistema
+      participant Pagamento
+
+      Sistema->>Pagamento: autorizarCartão(valor)
+      break [pagamento negado]
+          Sistema->>Pagamento: cancelarReserva(item)
+          Sistema-->>Sistema: registrarErro("pagamento negado")
+      end
+      Sistema->>Sistema: confirmarPedido()
+  </div>
+  <div class="code-container">
+    <pre><code class="language-java">try {
+    pagamento.autorizarCartao(valor);
+} catch (PagamentoNegadoException e) {     // break [pagamento negado]
+    pagamento.cancelarReserva(item);
+    this.registrarErro("pagamento negado");
+    return;                                 // ignora o restante do diagrama
+}
+this.confirmarPedido();                     // só executa se não houve interrupção</code></pre>
+  </div>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
-  <p>Diagramas e esquemas visuais em construção...</p>
+
+  <h3>Fragmento combinado: estrutura do quadro</h3>
+  <div class="mermaid">
+    sequenceDiagram
+      participant A as A
+      participant B as B
+
+      alt [guarda 1]
+          A->>B: mensagem1()
+      else [guarda 2]
+          A->>B: mensagem2()
+      end
+      opt [condição opcional]
+          B->>A: resposta()
+      end
+      loop(min, max) [repetição]
+          A->>B: processar()
+      end
+  </div>
+  <p>
+    Tradução direta dos operadores para código:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">if (guarda1) {                    // alt [guarda 1]
+    b.mensagem1();
+} else if (guarda2) {             // else [guarda 2]
+    b.mensagem2();
+}
+
+if (condicaoOpcional) {           // opt [condição opcional]
+    b.resposta();
+}
+
+for (int i = 0; i < max; i++) {   // loop(min, max)
+    b.processar();
+}</code></pre>
+  </div>
+
+  <h3>Referência (ref) para reuso de interação</h3>
+  <div class="mermaid">
+    sequenceDiagram
+      participant Usuario
+      participant Portal
+
+      Usuario->>Portal: acessarSistema()
+      rect rgb(230, 240, 255)
+          note over Portal: ref Autenticação(usuário, senha)
+      end
+      Usuario->>Portal: executarFuncionalidade()
+  </div>
+  <p>
+    No quadro <code class="one-line-code">ref</code>, o nome "Autenticação" aponta para outro diagrama de sequência já
+    definido, que descreve o detalhamento daquela interação.
+  </p>
+  <p>
+    Em código, o <code class="one-line-code">ref</code> corresponde a uma <strong>delegação</strong>: a interação
+    detalhada vive em outro método (ou serviço), reutilizado por vários cenários:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public void acessarSistema(String usuario, String senha) {
+    autenticar(usuario, senha);           // ref Autenticação(usuário, senha)
+    executarFuncionalidade();
+}
+
+// Método que detalha o diagrama referenciado
+private boolean autenticar(String usuario, String senha) {
+    return repositorioDeUsuarios.validar(usuario, senha);
+}</code></pre>
+  </div>
+
+  <h3>Região crítica dentro de um fluxo paralelo</h3>
+  <div class="mermaid">
+    sequenceDiagram
+      participant T as Thread A
+      participant D as Dado Compartilhado
+      participant S as Thread B
+
+      par [paralelo]
+          T->>D: atualizar(valor)
+      and
+          S->>D: ler()
+      end
+      critical [região crítica]
+          T->>D: atualizar(valor)
+          D-->>T: ok
+      end
+  </div>
+  <p>
+    Em código, a região crítica corresponde a um bloco <strong>atômico</strong> que não pode ser intercalado por outras
+    threads — no exemplo, um bloco <code class="one-line-code">synchronized</code> que protege o dado compartilhado:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class DadoCompartilhado {
+    private int valor;
+
+    // par: leitura e escrita podem ocorrer em qualquer ordem entre threads
+    public synchronized void atualizar(int novoValor) {  // critical
+        this.valor = novoValor;                          // não pode ser intercalada
+    }
+
+    public synchronized int ler() {
+        return this.valor;
+    }
+}</code></pre>
+  </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Conteúdo em breve.</li>
+    <li>
+      <strong>Legibilidade:</strong> Martin Fowler alerta que o uso excessivo de quadros de interação pode tornar o
+      diagrama mais confuso que o próprio código; use-os para <strong>clarificar o design</strong>, não para documentar
+      cada linha de lógica.
+    </li>
+    <li>
+      <strong>Sentinela [else]:</strong> é recomendável usar a guarda <code class="one-line-code">[else]</code> em blocos
+      <code class="one-line-code">alt</code> para garantir que o modelo seja <strong>bem-formado</strong> caso as
+      condições primárias falhem.
+    </li>
+    <li>
+      <strong>Seqüenciamento:</strong> no <code class="one-line-code">seq</code> (padrão), mensagens em diferentes
+      linhas de vida podem intercalar; no <code class="one-line-code">strict</code>, a ordem vertical de cima para baixo
+      deve ser seguida rigidamente por todos os participantes.
+    </li>
+    <li>
+      <strong>Guarda com limites:</strong> o <code class="one-line-code">loop(min, max)</code> combina a condição
+      booleana com limites numéricos de repetição.
+    </li>
+    <li>
+      <strong>Reuso:</strong> utilize <code class="one-line-code">ref</code> para interações comuns (autenticação,
+      auditoria) em vez de duplicar o diagrama em vários cenários.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Cenários de aplicação profissional em breve...</p>
+  <ul>
+    <li>
+      <strong>Especificação de fluxos alternativos:</strong> use <code class="one-line-code">alt</code> e
+      <code class="one-line-code">opt</code> para registrar os fluxos alternativos e de exceção dos casos de uso,
+      entregando uma especificação completa à equipe de desenvolvimento.
+    </li>
+    <li>
+      <strong>Modelagem de concorrência:</strong> use <code class="one-line-code">par</code> para representar
+      processamentos paralelos reais (pagamento + emissão de nota) e <code class="one-line-code">critical</code> para
+      proteger trechos que não podem ser intercalados.
+    </li>
+    <li>
+      <strong>Tratamento de erros:</strong> use <code class="one-line-code">break</code> e
+      <code class="one-line-code">neg</code> para documentar interrupções e interações inválidas que o sistema deve
+      impedir.
+    </li>
+    <li>
+      <strong>Reuso de interações:</strong> extraia interações comuns para <code class="one-line-code">ref</code>,
+      mantendo os diagramas enxutos e facilitando a manutenção da documentação.
+    </li>
+    <li>
+      <strong>Controle da leitura:</strong> use <code class="one-line-code">ignore</code>/<code class="one-line-code">consider</code>
+      para focar o leitor nas mensagens relevantes de uma visão específica do diagrama.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Documentação oficial e bibliografia recomendada.</li>
+    <li>BOOCH, Grady; RUMBAUGH, James; JACOBSON, Ivar. <em>UML: Guia do Usuário</em>.</li>
+    <li>FOWLER, Martin. <em>UML Essencial: Um Breve Guia para a Linguagem-Padrão de Modelagem de Objetos</em>.</li>
+    <li>WAZLAWICK, Raul Sidnei. <em>Análise e Design Orientados a Objeto para Sistemas de Informação</em>.</li>
+    <li>SOMMERVILLE, Ian. <em>Engenharia de Software</em>.</li>
+    <li>OMG. <em>Unified Modeling Language Specification, Version 2.5.1</em>.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Atividade Prática</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Questionário</a></li>
+    <li><a href="./exercicio-01.html">Exercício 01: Atividade Prática</a></li>
+    <li><a href="./exercicio-02.html">Exercício 02: Questionário</a></li>
   </ul>
 </section>

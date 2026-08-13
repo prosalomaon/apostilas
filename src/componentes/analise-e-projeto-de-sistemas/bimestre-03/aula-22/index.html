@@ -1,50 +1,380 @@
 ﻿---
 title: "Diagrama de Sequência - Fundamentos"
 aula_numero: "22"
-description: "Conteúdo da aula 22 : Diagrama de Sequência - Fundamentos"
+description: "Esta aula aborda o Diagrama de Sequência da UML: um diagrama de interação que enfatiza a ordenação temporal das mensagens trocadas entre objetos, incluindo participantes, linhas de vida, foco de controle, mensagens síncronas e assíncronas, criação e destruição."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 22 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. Visão Geral e Propósito</h3>
+  <p>
+    O <strong>Diagrama de Sequência</strong> é um diagrama de <strong>interação</strong> que enfatiza a
+    <strong>ordenação temporal</strong> das mensagens trocadas entre os objetos. Ele descreve como os objetos colaboram
+    em um <strong>cenário específico de um Caso de Uso</strong>, mostrando o fluxo de controle e a comunicação ao longo
+    do tempo.
+  </p>
+  <ul>
+    <li>
+      <strong>Objetivo:</strong> capturar o <strong>comportamento dinâmico</strong>, detalhando "quem faz o quê e em
+      qual ordem" para realizar uma funcionalidade.
+    </li>
+    <li>
+      <strong>Perspectiva:</strong> oferece uma visão holística do comportamento, focando nos
+      <strong>papéis</strong> desempenhados pelos participantes na interação.
+    </li>
+  </ul>
+
+  <h3>2. Elementos Fundamentais</h3>
+  <ul>
+    <li>
+      <strong>Participantes (Atores e Objetos):</strong> são dispostos horizontalmente no topo do diagrama.
+      <ul>
+        <li><strong>Atores:</strong> representam papéis externos que iniciam a interação.</li>
+        <li>
+          <strong>Objetos:</strong> instâncias das classes. A sintaxe comum é
+          <code class="one-line-code">nomeObjeto : NomeClasse</code>
+          (ex: <code class="one-line-code">umPedido : Pedido</code>).
+        </li>
+      </ul>
+    </li>
+    <li>
+      <strong>Linha da Vida (Lifeline):</strong> uma linha tracejada vertical que desce de cada participante,
+      representando sua <strong>existência durante a interação</strong>.
+    </li>
+    <li>
+      <strong>Foco de Controle / Ativação (Execution Specification):</strong> um retângulo fino e vertical sobreposto à
+      linha da vida. Indica o período em que um objeto está <strong>executando uma operação</strong> ou esperando o
+      retorno de uma chamada.
+    </li>
+  </ul>
+
+  <h3>3. Mensagens e Comunicação</h3>
+  <p>
+    As mensagens são representadas por <strong>setas horizontais</strong> que ligam as linhas de vida dos participantes,
+    organizadas <strong>de cima para baixo</strong> conforme a ordem de ocorrência.
+  </p>
+
+  <h4>A. Mensagem Síncrona</h4>
+  <p>
+    Representada por uma <strong>seta com ponta preenchida</strong>. O chamador <strong>para sua execução</strong> e
+    espera que o receptor processe a mensagem antes de continuar.
+  </p>
+
+  <h4>B. Mensagem Assíncrona</h4>
+  <p>
+    Representada por uma <strong>seta com ponta aberta</strong> ("pé de galinha"). O chamador envia a mensagem e
+    <strong>continua seu processamento sem esperar resposta</strong>.
+  </p>
+
+  <h4>C. Mensagem de Retorno (Reply)</h4>
+  <p>
+    Uma <strong>seta tracejada com ponta aberta</strong>, usada para indicar a devolução de informação ao chamador após
+    uma mensagem síncrona. Frequentemente é <strong>omitida se o retorno for óbvio</strong>, para evitar poluir o
+    diagrama.
+  </p>
+
+  <h4>D. Criação e Destruição</h4>
+  <ul>
+    <li>
+      <strong>Criação:</strong> uma seta de mensagem apontando diretamente para o retângulo de um novo objeto, com o
+      estereótipo <code class="one-line-code">&lt;&lt;create&gt;&gt;</code>.
+    </li>
+    <li>
+      <strong>Destruição:</strong> marcada por um <strong>X grande</strong> no final da linha da vida, indicando que o
+      objeto deixou de existir ou que a sessão foi encerrada.
+    </li>
+  </ul>
+
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Elemento</th>
+          <th>Representação</th>
+          <th>Finalidade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Participante (ator/objeto)</td>
+          <td>Retângulo no topo do diagrama</td>
+          <td>Papel que participa da interação</td>
+        </tr>
+        <tr>
+          <td>Linha da vida</td>
+          <td>Linha tracejada vertical</td>
+          <td>Existência do participante no tempo</td>
+        </tr>
+        <tr>
+          <td>Foco de controle</td>
+          <td>Retângulo fino sobre a linha da vida</td>
+          <td>Período de execução de uma operação</td>
+        </tr>
+        <tr>
+          <td>Mensagem síncrona</td>
+          <td>Seta de ponta preenchida</td>
+          <td>Chamada que bloqueia o chamador</td>
+        </tr>
+        <tr>
+          <td>Mensagem assíncrona</td>
+          <td>Seta de ponta aberta</td>
+          <td>Envio sem esperar resposta</td>
+        </tr>
+        <tr>
+          <td>Retorno (reply)</td>
+          <td>Seta tracejada de ponta aberta</td>
+          <td>Devolução de informação ao chamador</td>
+        </tr>
+        <tr>
+          <td>Criação</td>
+          <td>Seta com <code class="one-line-code">&lt;&lt;create&gt;&gt;</code> até o objeto</td>
+          <td>Instanciação de um novo objeto</td>
+        </tr>
+        <tr>
+          <td>Destruição</td>
+          <td>X no fim da linha da vida</td>
+          <td>Fim da existência do objeto</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplos e demonstrações da aula 22 em desenvolvimento...</p>
+  <h2>Exemplo Prático: Cálculo de Preço de um Pedido</h2>
+  <p>
+    Considere o cenário <em>"Calcular Preço"</em> de um pedido com base em suas linhas de item. Os participantes são um
+    ator externo, o objeto <code class="one-line-code">umPedido : Pedido</code>, suas linhas
+    (<code class="one-line-code">umaLinhaDePedido : LinhaDePedido</code>) e o
+    <code class="one-line-code">umCliente : Cliente</code>:
+  </p>
+  <ol>
+    <li>
+      O ator envia a mensagem <strong>síncrona</strong> <code class="one-line-code">calcularPreço()</code> para
+      <code class="one-line-code">umPedido</code>.
+    </li>
+    <li>
+      <code class="one-line-code">umPedido</code> entra em <strong>foco de controle</strong>. Ele percorre seus itens,
+      enviando <code class="one-line-code">obterQuantidade()</code> e <code class="one-line-code">obterProduto()</code>
+      para cada <code class="one-line-code">umaLinhaDePedido</code>.
+    </li>
+    <li>
+      <code class="one-line-code">umaLinhaDePedido</code> <strong>devolve as informações</strong> (mensagens de retorno).
+    </li>
+    <li>
+      <code class="one-line-code">umPedido</code> realiza uma <strong>auto-chamada</strong> (mensagem enviada para si
+      mesmo) chamada <code class="one-line-code">calcularPreçoBase()</code> para consolidar os valores.
+    </li>
+    <li>
+      Por fim, <code class="one-line-code">umPedido</code> envia <code class="one-line-code">obterInformaçãoDeDesconto()</code>
+      para <code class="one-line-code">umCliente</code> para aplicar a regra final antes de retornar o preço total ao
+      ator.
+    </li>
+  </ol>
+
+  <div class="mermaid">
+    sequenceDiagram
+      actor Usuario
+      participant umPedido as umPedido : Pedido
+      participant linha as umaLinhaDePedido : LinhaDePedido
+      participant umCliente as umCliente : Cliente
+
+      Usuario->>umPedido: calcularPreço()
+      activate umPedido
+      loop para cada linha do pedido
+        umPedido->>linha: obterQuantidade()
+        linha-->>umPedido: quantidade
+        umPedido->>linha: obterProduto()
+        linha-->>umPedido: produto
+      end
+      umPedido->>umPedido: calcularPreçoBase()
+      umPedido->>umCliente: obterInformaçãoDeDesconto()
+      umCliente-->>umPedido: desconto
+      umPedido-->>Usuario: preço total
+      deactivate umPedido
+  </div>
+  <p>
+    O mesmo cenário traduzido para código: cada seta do diagrama corresponde a uma chamada de método, e o foco de
+    controle corresponde ao bloco de execução do método chamado.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Ator envia a mensagem síncrona calcularPreco()
+double preco = umPedido.calcularPreco();
+
+// Método executado por umPedido (foco de controle)
+public double calcularPreco() {
+    double total = 0;
+    for (LinhaDePedido linha : this.linhas) {          // percorre cada linha
+        int qtd = linha.obterQuantidade();             // seta -> quantidade (retorno)
+        Produto produto = linha.obterProduto();        // seta -> produto (retorno)
+        total += qtd * produto.getPreco();
+    }
+    total = this.calcularPrecoBase(total);             // auto-chamada
+    double desconto = this.cliente.obterInformacaoDeDesconto(total);
+    return total - desconto;                           // retorno ao ator
+}</code></pre>
+  </div>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
-  <p>Diagramas e esquemas visuais em construção...</p>
+
+  <h3>Participantes, linha da vida e foco de controle</h3>
+  <div class="mermaid">
+    sequenceDiagram
+      participant umPedido as umPedido : Pedido
+      participant item as umItem : Item
+
+      umPedido->>item: consultar()
+      activate item
+      item-->>umPedido: dados
+      deactivate item
+      umPedido->>umPedido: processar()
+  </div>
+  <p>
+    Em código, a linha da vida de <code class="one-line-code">umItem</code> fica ativa apenas durante a chamada
+    <code class="one-line-code">consultar()</code>; a auto-chamada <code class="one-line-code">processar()</code>
+    mantém ativo apenas o foco do próprio <code class="one-line-code">umPedido</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">DadosItem dados = umItem.consultar();   // chamada síncrona -> foco em umItem
+umPedido.processar(dados);              // auto-chamada   -> foco apenas em umPedido
+
+public void processar(DadosItem dados) {
+    this.estado = Estado.PROCESSADO;    // instruções executadas sob o foco de controle
+}</code></pre>
+  </div>
+
+  <h3>Síncrona vs. Assíncrona vs. Retorno</h3>
+  <div class="mermaid">
+    sequenceDiagram
+      participant A as Chamador
+      participant B as Receptor
+      participant C as ServiçoExterno
+
+      A->>B: mensagem síncrona()
+      activate B
+      B-->>A: retorno síncrono
+      deactivate B
+      A--)C: mensagem assíncrona()
+      A->>B: criarTrabalho()
+  </div>
+  <p>
+    Na chamada <strong>síncrona</strong>, o chamador aguarda o retorno; na <strong>assíncrona</strong>, ele dispara a
+    mensagem e segue seu fluxo imediatamente:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Síncrona: o chamador espera o processamento e recebe a resposta (reply)
+Resposta resposta = receptor.mensagemSincrona();
+
+// Assíncrona: o chamador envia e continua sem esperar resposta
+executor.submit(() -> servicoExterno.mensagemAssincrona());
+
+// Fluxo do chamador prossegue imediatamente, sem bloquear
+receptor.criarTrabalho();</code></pre>
+  </div>
+
+  <h3>Criação e destruição de objetos</h3>
+  <p>
+    A criação é representada por uma seta que aponta diretamente para o retângulo do novo objeto (estereótipo
+    <code class="one-line-code">&lt;&lt;create&gt;&gt;</code>); a destruição, por um <strong>X</strong> no final da
+    linha da vida.
+  </p>
+  <div class="mermaid">
+    sequenceDiagram
+      participant App as Aplicação
+      participant S as Sessão
+
+      App->>S: criarSessão()
+      activate S
+      App->>S: autenticar(usuario, senha)
+      S-->>App: token
+      App->>S: encerrar()
+      deactivate S
+      destroy S
+  </div>
+  <div class="code-container">
+    <pre><code class="language-java">// Criação (estereótipo &lt;&lt;create&gt;&gt;): seta apontando para o novo objeto
+Sessao sessao = new Sessao();
+
+// Mensagem síncrona com retorno (reply)
+Token token = sessao.autenticar(usuario, senha);
+
+// Encerramento da sessão
+sessao.encerrar();
+
+// Destruição (X no fim da linha da vida): o objeto deixa de existir
+sessao = null;</code></pre>
+  </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Conteúdo em breve.</li>
+    <li>
+      <strong>Sequência vs. Comunicação:</strong> enquanto o Diagrama de Sequência foca no <strong>tempo</strong>, o
+      Diagrama de Comunicação foca nos <strong>vínculos (links)</strong> entre os objetos.
+    </li>
+    <li>
+      <strong>Seletividade:</strong> não tente mostrar cada detalhe do código. Foque nas chamadas entre participantes
+      que são <strong>cruciais</strong> para entender a lógica do design.
+    </li>
+    <li>
+      <strong>Lógica de Controle:</strong> diagramas de sequência são ótimos para visualizar interações, mas não são
+      ideais para <strong>algoritmos complexos</strong> com muitos laços e condições; para esses casos, prefira o código
+      ou os <strong>Diagramas de Atividades</strong>.
+    </li>
+    <li>
+      <strong>Retornos implícitos:</strong> quando a devolução é óbvia, omita a seta de retorno para manter o diagrama
+      limpo.
+    </li>
+    <li>
+      <strong>Nomes de objeto:</strong> use a sintaxe <code class="one-line-code">nomeObjeto : NomeClasse</code> para
+      deixar claro qual instância participa.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Cenários de aplicação profissional em breve...</p>
+  <ul>
+    <li>
+      <strong>Do caso de uso ao design:</strong> para cada cenário principal do Caso de Uso, crie um Diagrama de
+      Sequência que mostre a colaboração entre as classes de projeto para realizar a funcionalidade.
+    </li>
+    <li>
+      <strong>Validação de lógica:</strong> use o diagrama para verificar se as mensagens estão na ordem correta e se
+      todos os retornos de dados necessários estão contemplados antes da implementação.
+    </li>
+    <li>
+      <strong>Comunicação com a equipe:</strong> apresente o diagrama nas reuniões de design para alinhar o fluxo da
+      interação entre desenvolvedores, evitando implementações divergentes.
+    </li>
+    <li>
+      <strong>Modelagem de integrações:</strong> use mensagens assíncronas para representar envios de eventos, filas e
+      notificações, e síncronas para chamadas de serviços que exigem resposta imediata.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Documentação oficial e bibliografia recomendada.</li>
+    <li>BOOCH, Grady; RUMBAUGH, James; JACOBSON, Ivar. <em>UML: Guia do Usuário</em>.</li>
+    <li>WAZLAWICK, Raul Sidnei. <em>Análise e Design Orientados a Objeto para Sistemas de Informação</em>.</li>
+    <li>SOMMERVILLE, Ian. <em>Engenharia de Software</em>.</li>
+    <li>FOWLER, Martin. <em>UML Essencial: Um Breve Guia para a Linguagem-Padrão de Modelagem de Objetos</em>.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Atividade Prática</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Questionário</a></li>
+    <li><a href="./exercicio-01.html">Exercício 01: Atividade Prática</a></li>
+    <li><a href="./exercicio-02.html">Exercício 02: Questionário</a></li>
   </ul>
 </section>

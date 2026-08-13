@@ -3,18 +3,66 @@ layout: exercicio
 title: "Exercício 01 - Diagrama de Sequência - Fundamentos"
 exercicio_numero: "01"
 aula_numero: "22"
-description: "Atividade prática para a aula 22."
+description: "Atividade prática: construir e analisar Diagramas de Sequência UML, identificando participantes, linhas de vida, foco de controle e mensagens síncronas, assíncronas e de retorno."
 ---
 
 <section class="section-box">
   <h2>Enunciado</h2>
-  <p>Atividade em desenvolvimento...</p>
+  <p>
+    Uma loja virtual deseja documentar o comportamento dinâmico do cenário
+    <em>"Finalizar Compra"</em> do sistema de vendas. A análise já definiu as classes
+    <code class="one-line-code">CarrinhoDeCompras</code>, <code class="one-line-code">Pedido</code>,
+    <code class="one-line-code">Pagamento</code> e <code class="one-line-code">Cliente</code>. Agora a equipe precisa do
+    Diagrama de Sequência para orientar a implementação.
+  </p>
+
+  <h3>Parte 1 – Construir o Diagrama de Sequência</h3>
+  <p>
+    Desenhe (à mão ou com ferramenta de modelagem) o Diagrama de Sequência do cenário abaixo:
+  </p>
+  <ol>
+    <li>O ator <strong>Cliente</strong> envia a mensagem síncrona <code class="one-line-code">finalizarCompra()</code>
+      para o objeto <code class="one-line-code">umCarrinho : CarrinhoDeCompras</code>.</li>
+    <li><code class="one-line-code">umCarrinho</code> entra em <strong>foco de controle</strong> e cria um
+      <code class="one-line-code">umPedido : Pedido</code> com o estereótipo
+      <code class="one-line-code">&lt;&lt;create&gt;&gt;</code>.</li>
+    <li><code class="one-line-code">umCarrinho</code> envia <code class="one-line-code">calcularTotal()</code> ao
+      <code class="one-line-code">umPedido</code>, que devolve o valor total (mensagem de retorno).</li>
+    <li><code class="one-line-code">umCarrinho</code> cria <code class="one-line-code">umPagamento : Pagamento</code> e
+      envia a mensagem <strong>assíncrona</strong> <code class="one-line-code">processarCartão(dadosCartão)</code> para
+      o serviço externo de pagamento, sem esperar resposta para continuar.</li>
+    <li><code class="one-line-code">umCarrinho</code> executa uma <strong>auto-chamada</strong>
+      <code class="one-line-code">confirmarPedido()</code> e, ao final, retorna ao ator
+      <code class="one-line-code">compraConcluída</code>.</li>
+    <li>O objeto <code class="one-line-code">umPedido</code> é <strong>destruído</strong> (marcado com um X) ao final da
+      interação, pois a sessão de compra foi encerrada.</li>
+  </ol>
+
+  <h3>Parte 2 – Análise do Diagrama</h3>
+  <ol>
+    <li>Identifique em seu diagrama: atores, objetos, linhas de vida e focos de controle.</li>
+    <li>Explique a diferença entre as mensagens enviadas em (3) e (4): por que a mensagem do pagamento é assíncrona e a
+      <code class="one-line-code">calcularTotal()</code> é síncrona?</li>
+    <li>Explique por que a mensagem de retorno em (3) é representada por uma seta tracejada de ponta aberta.</li>
+    <li>O que representa o X no final da linha da vida do objeto <code class="one-line-code">umPedido</code>?</li>
+  </ol>
+
+  <h3>Parte 3 – Revisão crítica</h3>
+  <ol>
+    <li>Compare seu Diagrama de Sequência com um possível <strong>Diagrama de Comunicação</strong> do mesmo cenário:
+      destaque uma semelhança e uma diferença entre os dois.</li>
+    <li>Proponha uma mudança que você faria no diagrama para dar destaque ao fluxo de controle, sem mostrar detalhes de
+      implementação do código.</li>
+  </ol>
 </section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
+    <li>Releia o conteúdo da aula antes de começar; a tabela de elementos fundamentais ajuda na construção.</li>
+    <li>Use a sintaxe <code class="one-line-code">nomeObjeto : NomeClasse</code> para nomear os objetos.</li>
+    <li>Organize as mensagens <strong>de cima para baixo</strong>, na ordem de ocorrência.</li>
+    <li>Não polua o diagrama: mostre apenas as chamadas cruciais para entender a lógica do design.</li>
+    <li>Para cenários com laços e condições complexas, lembre-se de que o Diagrama de Atividades é mais adequado.</li>
   </ul>
 </div>
