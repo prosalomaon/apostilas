@@ -463,6 +463,25 @@ footer {
   opacity: 0.6;
 }
 
+.report-btn {
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #fff;
+  background: #c00;
+  border: 2px solid #c00;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.report-btn:hover {
+  background: var(--bg);
+  color: #c00;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .container {
