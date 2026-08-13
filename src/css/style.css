@@ -402,7 +402,6 @@ th,
 td {
   border: 1px solid var(--border);
   padding: 0.75rem 1rem;
-  word-wrap: anywhere;
 }
 
 th {
