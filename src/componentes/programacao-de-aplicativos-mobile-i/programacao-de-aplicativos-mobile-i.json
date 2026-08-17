@@ -1,0 +1,17 @@
+{
+  "subject": "programacao-de-aplicativos-mobile-i",
+  "subject_title": "Programação de Aplicativos Mobile I",
+  "subject_description": "Esta disciplina introduz o desenvolvimento de aplicativos Android com Kotlin e Jetpack Compose, abordando desde a configuração do ambiente e fundamentos da linguagem até interfaces modernas, persistência de dados, sensores, consumo de APIs e boas práticas de publicação.",
+  "subject_status": "40 Aulas • 4 Bimestres",
+
+  "layout": "aula",
+
+  "tags": ["aula"],
+  "nav_text": "⮜ VOLTAR",
+  "bimester_titles": {
+    "bimestre-01": "Fundamentos e Ambiente de Desenvolvimento",
+    "bimestre-02": "Design de Interface e Experiência do Usuário (UX)",
+    "bimestre-03": "Persistência de Dados e Recursos do Dispositivo",
+    "bimestre-04": "Conectividade e Publicação"
+  }
+}
