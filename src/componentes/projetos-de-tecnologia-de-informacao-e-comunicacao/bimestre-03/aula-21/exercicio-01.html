@@ -1,21 +1,160 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Algoritmos e Lógica de Programação I"
+title: "Criando o Algoritmo de Aprovação de Crédito no Google Planilhas"
 exercicio_numero: "01"
 aula_numero: "21"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 21."
+description: "Construir no Google Planilhas um algoritmo que usa células como variáveis, operadores relacionais e a função SE para decidir automaticamente a aprovação de crédito de empresas."
 ---
 
 <section class="section-box">
   <h2>Enunciado</h2>
-  <p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+  <p>
+    Você é analista de crédito da consultoria <strong>CrediTech</strong>. A diretoria quer automatizar a decisão de
+    liberação de empréstimos, que hoje é feita manualmente. Sua missão é criar um "script" no
+    <strong>Google Planilhas</strong> que aplique a seguinte regra:
+  </p>
+  <p>
+    <strong>Se o Faturamento for maior que as Dívidas, a empresa está "PRÉ-APROVADA". Caso contrário, o status deve
+    ser "NEGADO".</strong>
+  </p>
+  <p>Execute os passos abaixo e, em seguida, responda às questões.</p>
+</section>
+
+<section class="section-box">
+  <h2>Passos da Construção</h2>
+  <ol>
+    <li>Abra o Google Planilhas e crie uma nova planilha.</li>
+    <li>Renomeie a aba para <code class="one-line-code">Algoritmo_Credito</code>.</li>
+    <li>
+      Monte o cabeçalho na linha 1:
+      <em>Empresa | Faturamento | Dívidas | Anos de Mercado | Status da Aprovação</em>.
+    </li>
+    <li>
+      Preencha os dados de 3 empresas fictícias nas colunas A, B, C e D (invente valores coerentes).
+    </li>
+    <li>
+      Na célula <code class="one-line-code">E2</code>, insira a fórmula com a função
+      <code class="one-line-code">SE</code> conforme a lógica de negócio descrita no enunciado.
+    </li>
+    <li>
+      Use a <strong>alça de preenchimento</strong> para replicar a fórmula para as células
+      <code class="one-line-code">E3</code> e <code class="one-line-code">E4</code>.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: A Estrutura da Fórmula</h3>
+  <p>Escreva abaixo a fórmula digitada na célula <code class="one-line-code">E2</code>, separando cada parte:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Parte</th>
+        <th>O que foi escrito</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Teste lógico</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Valor se VERDADEIRO</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Valor se FALSO</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 2: Tabela de Resultados</h3>
+  <p>Complete a tabela com os dados que você usou e o status calculado automaticamente:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Empresa</th>
+        <th>Faturamento (B)</th>
+        <th>Dívidas (C)</th>
+        <th>Anos de Mercado (D)</th>
+        <th>Status (E)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Empresa 1</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Empresa 2</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Empresa 3</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <strong>Desafio:</strong> insira pelo menos uma empresa em que o Faturamento seja <em>igual</em> às Dívidas e
+    verifique o resultado. O operador utilizado é <code class="one-line-code">&gt;</code> (maior) ou
+    <code class="one-line-code">&gt;=</code> (maior ou igual)? O que essa escolha muda na resposta?
+  </p>
+
+  <h3>Questão 3: Pensamento Computacional</h3>
+  <p>Relacione cada pilar do pensamento computacional ao passo da atividade que o exemplifica:</p>
+  <ul>
+    <li><strong>a)</strong> Decomposição</li>
+    <li><strong>b)</strong> Reconhecimento de Padrões</li>
+    <li><strong>c)</strong> Abstração</li>
+    <li><strong>d)</strong> Algoritmo</li>
+  </ul>
+  <p>
+    Explique com suas palavras: <em>"Na célula E2, a função SE funciona como uma estrutura de decisão de um programa.
+    Qual dado é a entrada, qual é o processamento e qual é a saída?"</em>
+  </p>
+
+  <h3>Questão 4: Tratamento de Erros</h3>
+  <ul>
+    <li>
+      <strong>a)</strong> O que acontece se o aluno digitar a fórmula sem o <code class="one-line-code">=</code> no
+      início? Por quê?
+    </li>
+    <li>
+      <strong>b)</strong> O que ocorre se as mensagens <code class="one-line-code">"PRÉ-APROVADO"</code> e
+      <code class="one-line-code">"NEGADO"</code> forem digitadas <strong>sem</strong> aspas duplas?
+    </li>
+    <li>
+      <strong>c)</strong> Explique o que é um <em>erro de referência circular</em> e por que ele deve ser evitado.
+    </li>
+  </ul>
+
+  <h3>Questão 5: Testando a Automação</h3>
+  <p>
+    Após usar a alça de preenchimento, observe a fórmula da célula <code class="one-line-code">E3</code>. Ela é
+    idêntica à da célula <code class="one-line-code">E2</code>? Qual a diferença nas referências e por que isso é
+    importante para o processo automatizado de análise de crédito?
+  </p>
 </section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Revise o conteúdo da aula antes de começar: células como variáveis, operadores relacionais e a sintaxe da função <code class="one-line-code">SE</code>.</li>
+    <li>Lembre-se: toda fórmula começa com <code class="one-line-code">=</code> e os textos vão entre aspas duplas.</li>
+    <li>Na Questão 2, teste também o caso-limite (Faturamento igual a Dívidas) para refletir sobre a escolha do operador.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>

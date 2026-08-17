@@ -1,19 +1,232 @@
 ---
 layout: exercicio
-title: "Técnicas de Caixa Branca e Complexidade Ciclomática"
+title: "Atividade Prática: Construindo CFG e Calculando a Complexidade Ciclomática"
 exercicio_numero: "01"
-aula_numero: "03"
+aula_numero: "23"
 subject: "qualidade-e-teste-de-software"
-description: "Exercício 01 da aula 03 do bimestre 03: Técnicas de Caixa Branca e Complexidade Ciclomática."
+description: "Construir o Grafo de Fluxo de Controle de um módulo de classificação de alunos, calcular a Complexidade Ciclomática de McCabe, enumerar os caminhos independentes e aplicar os critérios de cobertura de código."
 ---
 
-<p>Conteúdo do exercício 01 da aula 03 em desenvolvimento...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    A escola <strong>ETEC Online</strong> desenvolveu o módulo <em>classificar_aluno</em> que define a situação
+    final de cada aluno a partir de duas entradas: <code class="one-line-code">nota</code> (0 a 10) e
+    <code class="one-line-code">presenca</code> (0 a 100, em %). O código abaixo foi escrito em
+    pseudocódigo e ainda <strong>não possui nenhum teste</strong>:
+  </p>
+  <hr>
+  <pre><code>1.  FUNCAO classificar_aluno(nota, presenca):
+2.      SE nota &gt;= 6 ENTAO
+3.          SE presenca &gt;= 75 ENTAO
+4.              resultado = "Aprovado"
+5.          SENAO
+6.              resultado = "Reprovado por frequência"
+7.          FIM SE
+8.      SENAO
+9.          SE nota &gt;= 4 ENTAO
+10.             resultado = "Recuperação"
+11.         SENAO
+12.             resultado = "Reprovado por nota"
+13.         FIM SE
+14.     FIM SE
+15.     RETORNAR resultado
+16. FIM FUNCAO</code></pre>
+  <p>
+    Seu papel é aplicar o <strong>Teste de Caixa Branca</strong> a esse módulo.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Construção do Grafo de Fluxo de Controle (CFG)</h3>
+  <p>
+    Construa o <strong>CFG</strong> do módulo <em>classificar_aluno</em> no espaço indicado, seguindo as
+    convenções:
+  </p>
+  <ul>
+    <li>Use <strong>nós de processamento</strong> para atribuições e para a entrada/saída do módulo.</li>
+    <li>Use <strong>nós de decisão</strong> para cada <code class="one-line-code">SE</code>, rotulando cada aresta
+      de saída com a condição (<strong>V</strong> / <strong>F</strong>).</li>
+    <li>Use <strong>nós de junção</strong> onde os fluxos voltam a se encontrar.</li>
+  </ul>
+  <p>Em seguida, preencha a tabela com a contagem do seu grafo:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Quantidade</th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Nós de processamento</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Nós de decisão</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Nós de junção</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Total de nós (n)</strong></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Total de arestas (e)</strong></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 2: Cálculo da Complexidade Ciclomática</h3>
+  <p>
+    Com os valores de <code class="one-line-code">e</code> e <code class="one-line-code">n</code> da Questão 1,
+    calcule a complexidade ciclomática usando a fórmula de McCabe:
+  </p>
+  <p><code class="one-line-code">v = e - n + 2</code></p>
+  <p>Mostre o cálculo passo a passo e, em seguida, confira o resultado usando a regra prática:</p>
+  <p><code class="one-line-code">v = (número de decisões binárias) + 1</code></p>
+
+  <h3>Questão 3: Caminhos Independentes</h3>
+  <p>
+    Enumere os <strong>caminhos independentes</strong> do CFG (a quantidade deve ser igual ao valor de
+    <code class="one-line-code">v</code> calculado). Para cada caminho, descreva a sequência de nós percorrida e o
+    resultado esperado:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Caminho</th>
+        <th>Sequência de nós</th>
+        <th>Resultado Esperado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>CP-01</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>CP-02</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>CP-03</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>CP-04</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 4: Projeto de Casos de Teste</h3>
+  <p>
+    Transforme cada caminho independente em um <strong>caso de teste executável</strong>, definindo as entradas e
+    o resultado esperado:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Caso de Teste</th>
+        <th>Caminho</th>
+        <th>nota</th>
+        <th>presenca</th>
+        <th>Resultado Esperado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>CT-01</td>
+        <td>CP-01</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>CT-02</td>
+        <td>CP-02</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>CT-03</td>
+        <td>CP-03</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>CT-04</td>
+        <td>CP-04</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <strong>Desafio:</strong> para cada caso, identifique também os <strong>valores-limite</strong> das fronteiras
+    (<code class="one-line-code">nota = 6</code> e <code class="one-line-code">presenca = 75</code>) que podem
+    revelar defeitos nas comparações <code class="one-line-code">&gt;=</code>.
+  </p>
+
+  <h3>Questão 5: Critérios de Cobertura</h3>
+  <p>Responda com base no CFG e nos casos de teste projetados:</p>
+  <ul>
+    <li>
+      <strong>a)</strong> Qual é o <strong>menor conjunto de casos de teste</strong> capaz de atingir 100% de
+      <em>Cobertura de Instrução</em>? Justifique apontando quais nós ficam descobertos se um dos caminhos for
+      omitido.
+    </li>
+    <li>
+      <strong>b)</strong> Verifique se o conjunto de casos da Questão 4 garante a <em>Cobertura de Desvio</em>
+      (cada decisão avaliada como V <em>e</em> como F). Indique, para cada decisão, em quais casos de teste ela é
+      avaliada como Verdadeira e como Falsa.
+    </li>
+    <li>
+      <strong>c)</strong> Explique por que a <em>Cobertura de Instrução</em> é considerada o critério
+      <strong>mais fraco</strong> e qual risco ela pode esconder.
+    </li>
+  </ul>
+
+  <h3>Questão 6: Análise de Risco e Refatoração</h3>
+  <p>
+    Suponha que uma segunda versão do módulo adicione <strong>mais 8 condições</strong> e passe a ter complexidade
+    ciclomática <code class="one-line-code">12</code>.
+  </p>
+  <ul>
+    <li>Compare com a <strong>Regra de Ouro</strong> do material e explique o alerta que essa métrica representa.</li>
+    <li>Proponha uma estratégia de <strong>refatoração</strong> para reduzir a complexidade (ex: dividir em
+      sub-funções) e indique quantos casos de teste seriam necessários <em>antes</em> e <em>depois</em> da
+      refatoração.</li>
+  </ul>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia o enunciado com atenção antes de começar.</li>
-    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Revise o conteúdo da aula antes de começar: tipos de nós do CFG, fórmula <code class="one-line-code">v = e - n + 2</code> e a Regra de Ouro (complexidade &gt; 10).</li>
+    <li>Na Questão 1, lembre-se de que grupos sequenciais de instruções podem ser representados por um único nó de processamento.</li>
+    <li>Na Questão 2, o resultado de <code class="one-line-code">v</code> deve ser o mesmo pelas duas formas de cálculo — confira!</li>
+    <li>Na Questão 5, lembre-se: cobertura de instrução &ne; cobertura de desvio. 100% das linhas executadas não garante que todos os V/F foram avaliados.</li>
     <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>

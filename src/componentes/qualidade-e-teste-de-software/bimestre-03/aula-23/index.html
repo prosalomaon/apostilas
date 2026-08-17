@@ -2,18 +2,321 @@
 title: "Técnicas de Caixa Branca e Complexidade Ciclomática"
 aula_numero: "23"
 subject: "qualidade-e-teste-de-software"
-description: "Conteúdo da aula 03 do bimestre 03: Técnicas de Caixa Branca e Complexidade Ciclomática."
+description: "Esta aula apresenta o Teste de Caixa Branca (estrutural), a construção e interpretação do Grafo de Fluxo de Controle (CFG), o cálculo da Complexidade Ciclomática de McCabe e os critérios de cobertura de código (instruções, desvios e caminhos)."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 03 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. Objetivos da Aula</h3>
+  <ul>
+    <li>Compreender a perspectiva e os fundamentos do <strong>Teste de Caixa Branca</strong> (estrutural).</li>
+    <li>Aprender a construir e interpretar um <strong>Grafo de Fluxo de Controle</strong> (CFG).</li>
+    <li>Calcular a <strong>Complexidade Ciclomática</strong> de McCabe para mensurar o esforço de teste.</li>
+    <li>Aplicar critérios de <strong>cobertura de código</strong> (instruções, desvios e caminhos).</li>
+  </ul>
+
+  <h3>2. O que é Teste de Caixa Branca?</h3>
+  <p>
+    Também conhecido como <strong>teste estrutural</strong> ou <em>"caixa de vidro"</em>, esta abordagem
+    verifica a <strong>implementação interna</strong> de unidades de software, como instruções, estruturas de
+    dados e caminhos lógicos.
+  </p>
+  <ul>
+    <li>
+      <strong>Responsabilidade:</strong> Geralmente é realizado pelos <em>próprios programadores</em> durante a
+      fase de teste de unidade, dado o conhecimento íntimo necessário do código-fonte.
+    </li>
+    <li>
+      <strong>Foco:</strong> Reduzir falhas internas para que o sistema seja <em>robusto</em> independentemente
+      do ambiente de entrada.
+    </li>
+  </ul>
+  <p>
+    Diferentemente da caixa preta — que enxerga apenas entradas e saídas —, a caixa branca permite
+    <strong>analisar o que acontece dentro do programa</strong>: cada desvio, cada laço e cada caminho de execução
+    passa a ser alvo de verificação.
+  </p>
+
+  <h3>3. Grafo de Fluxo de Controle (CFG)</h3>
+  <p>
+    O CFG é uma <strong>representação gráfica detalhada</strong> de uma unidade de programa utilizada para
+    visualizar <strong>todos os caminhos possíveis de execução</strong>.
+  </p>
+  <ul>
+    <li>
+      <strong>Nós de Processamento:</strong> Correspondem a <em>atribuições de variáveis</em> ou
+      <em>chamadas de funções</em>.
+    </li>
+    <li>
+      <strong>Nós de Decisão/Desvio:</strong> Representam comandos condicionais (ex: <code class="one-line-code">if</code>,
+      <code class="one-line-code">switch-case</code>). Cada saída é marcada com sua condição específica
+      (ex: <em>Verdadeiro</em>/<em>Falso</em>).
+    </li>
+    <li>
+      <strong>Nós de Junção:</strong> Pontos onde diferentes fluxos de controle se <em>encontram novamente</em>.
+    </li>
+  </ul>
+  <p>
+    A partir do CFG, o testador consegue enxergar quantas rotas distintas o programa pode percorrer e, assim,
+    planejar os testes para percorrê-las.
+  </p>
+
+  <h3>4. Complexidade Ciclomática de McCabe</h3>
+  <p>
+    É uma <strong>métrica baseada na teoria dos grafos</strong> que define o número de
+    <strong>caminhos independentes</strong> de fluxo de controle para um determinado programa.
+  </p>
+  <p>
+    <strong>Fórmula:</strong> <code class="one-line-code">v = e - n + 2</code>
+  </p>
+  <ul>
+    <li><code class="one-line-code">v</code> = complexidade ciclomática.</li>
+    <li><code class="one-line-code">e</code> = número de <em>arestas</em> (links entre os nós).</li>
+    <li><code class="one-line-code">n</code> = número de <em>nós</em> (grupos sequenciais de instruções).</li>
+  </ul>
+  <p>
+    <strong>Regra de Ouro:</strong> Módulos com complexidade <strong>maior que 10</strong> são considerados
+    extremamente difíceis de serem testados adequadamente e podem esconder um número maior de defeitos.
+  </p>
+
+  <h3>5. Critérios de Cobertura (Testing Coverage)</h3>
+  <p>
+    Os testes de caixa branca utilizam <strong>métricas</strong> para determinar <em>quando parar de testar</em>:
+  </p>
+  <ul>
+    <li>
+      <strong>Cobertura de Instrução (Statement Coverage):</strong> 100% de cobertura significa que
+      <em>todas as linhas de código</em> foram executadas pelo menos uma vez. É considerado o critério
+      <strong>mais fraco</strong>.
+    </li>
+    <li>
+      <strong>Cobertura de Desvio (Branch Coverage):</strong> Garante que cada condição (como um
+      <code class="one-line-code">if</code>) foi avaliada como <em>Verdadeira</em> e como <em>Falsa</em> em
+      diferentes execuções.
+    </li>
+    <li>
+      <strong>Cobertura de Predicado:</strong> Explora <em>todas as combinações possíveis</em> de valores de
+      verdade que afetam um caminho.
+    </li>
+    <li>
+      <strong>Cobertura de Caminho (All-Path Coverage):</strong> Testa todos os caminhos independentes do CFG.
+      É o <em>mais completo</em>, porém difícil de alcançar em sistemas complexos devido à
+      <em>explosão combinatória</em>.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 03 em desenvolvimento...</p>
+  <h2>Exemplos Práticos</h2>
+
+  <h3>1. Construção de CFG: Cálculo da Média de Alunos</h3>
+  <p>
+    Imagine um código simples de cálculo de média de alunos. Se a nota for maior que 6, o aluno passa; caso
+    contrário, vai para recuperação.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A([Início]) --> B[Ler nota]
+    B --> C{nota &gt; 6?}
+    C -->|V| D[Aprovado]
+    C -->|F| E[Recuperação]
+    D --> F([Fim])
+    E --> F
+  </div>
+  <p>
+    No CFG, o <strong>nó de decisão</strong> (<code class="one-line-code">if nota &gt; 6</code>) terá duas arestas
+    saindo dele: uma para o nó <em>"Aprovado"</em> (V) e outra para o nó <em>"Recuperação"</em> (F).
+  </p>
+
+  <h3>2. Cálculo da Métrica</h3>
+  <p>
+    Se esse grafo tiver <strong>9 arestas</strong> e <strong>8 nós</strong>, sua complexidade será:
+  </p>
+  <p>
+    <code class="one-line-code">v = e - n + 2 = 9 - 8 + 2 = 3</code>
+  </p>
+  <p>
+    Isso indica que são necessários, <strong>no mínimo, 3 casos de teste</strong> para cobrir os caminhos
+    independentes básicos.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Caso de Teste</th>
+        <th>Caminho Percorrido</th>
+        <th>Entrada</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>CT-01</td>
+        <td>Início &rarr; nota &gt; 6 (V) &rarr; Aprovado &rarr; Fim</td>
+        <td>nota = 8</td>
+      </tr>
+      <tr>
+        <td>CT-02</td>
+        <td>Início &rarr; nota &gt; 6 (F) &rarr; Recuperação &rarr; Fim</td>
+        <td>nota = 5</td>
+      </tr>
+      <tr>
+        <td>CT-03</td>
+        <td>Caso adicional para validar a fronteira do desvio</td>
+        <td>nota = 6</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3. Identificação de Riscos</h3>
+  <p>
+    Um método com <strong>muitos loops aninhados</strong> e <strong>dezenas de ifs</strong> terá uma complexidade
+    muito alta (ex: <code class="one-line-code">25</code>). Isso sinaliza que o código precisa de
+    <strong>refatoração</strong> para ser decomposto em unidades menores e mais testáveis.
+  </p>
+  <p>
+    A complexidade ciclomática atua, assim, como um <strong>termômetro de manutenibilidade</strong>: valores
+    acima de 10 apontam a necessidade de simplificar o módulo antes de ampliar a suíte de testes.
+  </p>
+
+  <h3>4. Limitações e Desafios</h3>
+  <ul>
+    <li>
+      <strong>Omissões:</strong> O teste de caixa branca <em>não detecta</em> caminhos ou funcionalidades que
+      <strong>deveriam existir</strong>, mas foram esquecidos no código (problemas de design ou especificação).
+    </li>
+    <li>
+      <strong>Caminhos Inviáveis:</strong> Alguns caminhos lógicos no CFG podem ser
+      <em>impossíveis de executar</em> com dados reais, o que exige que o testador selecione outros caminhos para
+      satisfazer os critérios de cobertura.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Diagramação</h2>
+  <p>Representação visual dos principais conceitos abordados nesta aula:</p>
+
+  <h3>1. Caixa Branca vs. Caixa Preta</h3>
+  <p>
+    Enquanto a caixa preta enxerga apenas o que entra e o que sai, a caixa branca (de vidro) permite
+    <strong>enxergar e percorrer o interior do programa</strong>.
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    subgraph BP ["CAIXA PRETA"]
+      direction LR
+      B1["Entradas"] --> B2["Sistema (opaco)"]
+      B2 --> B3["Saídas"]
+    end
+    subgraph BB ["CAIXA BRANCA"]
+      direction LR
+      C1["Entradas"] --> C2["Sistema (transparente)"]
+      C2 --> C3["Saídas"]
+    end
+    C2 --> D["Análise de nós,\ndesvios e caminhos"]
+    D --> E["CFG + Complexidade Ciclomática"]
+
+    style B2 fill:#212529,color:#fff,stroke:#495057,stroke-width:2px
+    style C2 fill:#cfe2ff,stroke:#084298
+    style D fill:#fff3cd,stroke:#664d03
+    style E fill:#d1e7dd,stroke:#0f5132
+  </div>
+
+  <h3>2. Passo a Passo do Teste de Caixa Branca</h3>
+  <div class="mermaid">
+    flowchart TD
+    A([Código-fonte da unidade]) --> B[Construir o Grafo\nde Fluxo de Controle]
+    B --> C[Calcular a Complexidade\nCiclomática v = e - n + 2]
+    C --> D{Complexidade\nmaior que 10?}
+    D -->|Sim| E[Refatorar o código\nem unidades menores]
+    E --> B
+    D -->|Não| F[Derivar os caminhos\nindependentes]
+    F --> G[Projetar um caso de teste\npara cada caminho]
+    G --> H[Executar e medir a\ncobertura de código]
+    H --> I([Atingir os critérios\nde cobertura definidos])
+
+    style A fill:#d1e7dd,stroke:#0f5132
+    style C fill:#cfe2ff,stroke:#084298
+    style D fill:#fff3cd,stroke:#664d03
+    style I fill:#d1e7dd,stroke:#0f5132
+  </div>
+
+  <h3>3. Hierarquia dos Critérios de Cobertura</h3>
+  <p>
+    Da cobertura mais fraca para a mais completa (e mais cara de alcançar):
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A["Cobertura de Instrução\n(Statement Coverage)\nmais fraco"] --> B["Cobertura de Desvio\n(Branch Coverage)"]
+    B --> C["Cobertura de Predicado\n(combinações de condições)"]
+    C --> D["Cobertura de Caminho\n(All-Path Coverage)\nmais completo"]
+
+    style A fill:#f8d7da,stroke:#721c24
+    style B fill:#fff3cd,stroke:#664d03
+    style C fill:#cfe2ff,stroke:#084298
+    style D fill:#d1e7dd,stroke:#0f5132
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>Fórmula sempre à mão:</strong> <code class="one-line-code">v = e - n + 2</code>. A complexidade
+      ciclomática equivale ao <em>número mínimo de caminhos independentes</em> que devem ser testados.
+    </li>
+    <li>
+      <strong>Regra do 10:</strong> complexidade acima de 10 é um sinal de alerta — refatore antes de ampliar os
+      testes.
+    </li>
+    <li>
+      <strong>Cobertura de instrução não basta:</strong> executar 100% das linhas não garante que todos os
+      <em>desvios</em> (V/F) foram avaliados. Prefira a cobertura de desvio como meta mínima.
+    </li>
+    <li>
+      <strong>Quem executa:</strong> o teste de caixa branca é realizado, em geral, pelos próprios programadores
+      durante o <em>teste de unidade</em>.
+    </li>
+    <li>
+      <strong>Cuidado com caminhos inviáveis:</strong> alguns caminhos do CFG nunca serão executados com dados
+      reais — escolha caminhos alternativos para satisfazer a cobertura.
+    </li>
+    <li>
+      <strong>Ferramentas ajudam:</strong> depuradores da IDE, frameworks xUnit (JUnit) e análise estática
+      (SonarQube) automatizam o cálculo da complexidade e a medição de cobertura.
+    </li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>
+      PRESSMAN, Roger S. <em>Engenharia de Software: Uma Abordagem Profissional</em>. 8. ed. Porto Alegre: AMGH,
+      2016.
+    </li>
+    <li>
+      MCCABE, Thomas J. <em>A Complexity Measure</em>. IEEE Transactions on Software Engineering, v. SE-2, n. 4,
+      1976.
+    </li>
+    <li>
+      MYERS, Glenford J.; SANDLER, Corey; BADGETT, Tom. <em>The Art of Software Testing</em>. 3. ed. Hoboken: John
+      Wiley &amp; Sons, 2012.
+    </li>
+    <li>
+      ISTQB. <em>Certified Tester Foundation Level Syllabus</em>. International Software Testing Qualifications
+      Board. Disponível em: https://www.istqb.org
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Construindo CFG e Calculando a Complexidade Ciclomática</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>

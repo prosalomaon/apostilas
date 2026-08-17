@@ -1,23 +1,196 @@
 ---
-layout: exercicio
-title: "Atributos: Classificações (simples, compostos, multivalorados) e representações."
+layout: questionario
+title: "Questionário - Segunda Forma Normal (2FN)"
 exercicio_numero: "02"
-04ero: "04"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 04."
+aula_numero: "24"
+sigla_componente: "BD1"
+description: "Questionário de fixação sobre a 2FN, dependências funcionais totais e parciais, decomposição de tabelas com chave composta e tabelas associativas."
+perguntas:
+  - texto: "Uma tabela está na 2FN quando:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Todos os seus atributos são do tipo texto."
+      - letra: "b"
+        texto: "Está na 1FN e todos os atributos não-chave dependem totalmente de toda a chave primária composta."
+      - letra: "c"
+        texto: "Possui apenas uma tabela com todos os dados."
+      - letra: "d"
+        texto: "Todos os seus atributos são not NULL."
+  - texto: "A 2FN aplica-se essencialmente a tabelas que:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Possuem chave primária simples (apenas uma coluna)."
+      - letra: "b"
+        texto: "Não possuem chaves estrangeiras."
+      - letra: "c"
+        texto: "Possuem chave primária composta (formada por duas ou mais colunas)."
+      - letra: "d"
+        texto: "Possuem apenas atributos multivalorados."
+  - texto: "Se uma tabela tem chave primária simples e já está na 1FN, ela:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Não pode estar na 2FN sem normalização adicional."
+      - letra: "b"
+        texto: "Precisa de uma tabela associativa para atingir a 2FN."
+      - letra: "c"
+        texto: "Deve ser decomposta em duas tabelas."
+      - letra: "d"
+        texto: "Está automaticamente na 2FN."
+  - texto: "O que é uma Dependência Funcional Total?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Um atributo não-chave depende de todos os componentes da chave primária composta."
+      - letra: "b"
+        texto: "Um atributo não-chave depende de apenas uma parte da chave composta."
+      - letra: "c"
+        texto: "A chave primária depende de um atributo não-chave."
+      - letra: "d"
+        texto: "Dois atributos não-chave dependem um do outro."
+  - texto: "O que é uma Dependência Funcional Parcial?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Um atributo depende de todos os componentes da PK composta."
+      - letra: "b"
+        texto: "Um atributo não-chave depende de apenas uma parte da chave primária composta."
+      - letra: "c"
+        texto: "A PK depende de um atributo que não faz parte dela."
+      - letra: "d"
+        texto: "Um atributo depende de outro atributo não-chave."
+  - texto: "Na tabela ITEM_PEDIDO(ID_Pedido*, ID_Produto*, Nome_Produto, Preco_Unitario, Quantidade, Subtotal), qual dependência é PARCIAL?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "(ID_Pedido, ID_Produto) → Quantidade"
+      - letra: "b"
+        texto: "(ID_Pedido, ID_Produto) → Subtotal"
+      - letra: "c"
+        texto: "ID_Produto → Nome_Produto"
+      - letra: "d"
+        texto: "(ID_Pedido, ID_Produto) → ID_Produto"
+  - texto: "A presença de dependências parciais em uma tabela gera:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Apenas melhoria no desempenho de consultas."
+      - letra: "b"
+        texto: "Redução de espaço em disco."
+      - letra: "c"
+        texto: "Facilidade na criação de relatórios."
+      - letra: "d"
+        texto: "Anomalias de inserção, alteração e exclusão."
+  - texto: "No processo de normalização para a 2FN, o que fazemos com os atributos que possuem dependência parcial?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Removemos esses atributos e criamos novas tabelas para armazená-los com a parte da chave do qual dependem."
+      - letra: "b"
+        texto: "Mantemos na mesma tabela e ignoramos a dependência."
+      - letra: "c"
+        texto: "Excluímos os atributos do banco de dados."
+      - letra: "d"
+        texto: "Tornamos esses atributos parte da chave primária."
+  - texto: "Uma Tabela Associativa resultante de uma decomposição 2FN contém:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Apenas atributos com dependência parcial."
+      - letra: "b"
+        texto: "A chave composta do relacionamento original e os atributos com Dependência Funcional Total dessa chave."
+      - letra: "c"
+        texto: "Apenas chaves estrangeiras sem atributos de dados."
+      - letra: "d"
+        texto: "Todos os atributos da tabela original, sem nenhuma alteração."
+  - texto: "Qual o papel da Chave Estrangeira (FK) na tabela ITEM_PEDIDO após a decomposição para a 2FN?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "ID_Produto em ITEM_PEDIDO referencia a tabela PRODUTO, garantindo integridade referencial."
+      - letra: "b"
+        texto: "ID_Pedido em ITEM_PEDIDO é a única chave da tabela."
+      - letra: "c"
+        texto: "A FK substitui a chave primária composta."
+      - letra: "d"
+        texto: "A FK não é necessária após a decomposição."
+  - texto: "Na tabela ALOCACAO(ID_Professor*, Codigo_Disciplina*, Nome_Professor, Nome_Disciplina, Carga_Horaria, Semestre_Ano), Nome_Professor depende:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "De ambos: ID_Professor e Codigo_Disciplina (dependência total)."
+      - letra: "b"
+        texto: "Apenas de Codigo_Disciplina."
+      - letra: "c"
+        texto: "Apenas de ID_Professor (dependência parcial)."
+      - letra: "d"
+        texto: "De Semestre_Ano."
+  - texto: "Após decompor ALOCACAO para a 2FN, a tabela resultante que mantém o relacionamento professor-disciplina é:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "PROFESSOR"
+      - letra: "b"
+        texto: "DISCIPLINA"
+      - letra: "c"
+        texto: "ALOCACAO (sem alterações)"
+      - letra: "d"
+        texto: "TURMA_ALOCACAO (tabela associativa com chave composta)"
+  - texto: "A/anomalia de inserção causada por dependência parcial pode ser exemplificada por:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Não é possível cadastrar um produto sem que ele apareça em um pedido."
+      - letra: "b"
+        texto: "Não é possível cadastrar uma disciplina sem que ela tenha um professor alocado."
+      - letra: "c"
+        texto: "Apagar um pedido deleta os dados do cliente."
+      - letra: "d"
+        texto: "Alterar o nome de um professor exige alterar múltiplas linhas."
+  - texto: "O que acontece se uma tabela já estiver na 2FN e ainda apresentar dependências transitivas?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "A tabela precisa ser normalizada para a 3FN."
+      - letra: "b"
+        texto: "A tabela está completamente normalizada."
+      - letra: "c"
+        texto: "A tabela deve ser desnormalizada."
+      - letra: "d"
+        texto: "Não há mais problemas de normalização."
+  - texto: "Na decomposição para a 2FN, o que acontece com a tabela original de relacionamento M:N?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Ela é excluída do banco de dados."
+      - letra: "b"
+        texto: "Ela passa a ter chave primária simples."
+      - letra: "c"
+        texto: "Ela se torna uma tabela associativa com chave composta e FKs."
+      - letra: "d"
+        texto: "Ela é mesclada com a tabela de domínio."
+  - texto: "Qual é a condição que a tabela DEVE atender antes de verificar se está na 2FN?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Estar na Terceira Forma Normal (3FN)."
+      - letra: "b"
+        texto: "Estar na Primeira Forma Normal (1FN)."
+      - letra: "c"
+        texto: "Não possuir chaves estrangeiras."
+      - letra: "d"
+        texto: "Ter pelo menos 5 atributos."
 ---
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+<p>Responda as questões abaixo para consolidar os conhecimentos sobre a 2FN, dependências funcionais e tabelas associativas.</p>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Leia o enunciado com atenção antes de começar.</li>
+    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
-
-
-
-
-

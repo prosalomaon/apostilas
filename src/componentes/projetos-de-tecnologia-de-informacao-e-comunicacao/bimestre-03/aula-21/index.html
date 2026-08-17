@@ -1,56 +1,298 @@
 ---
 title: "Algoritmos e Lógica de Programação I"
 aula_numero: "21"
-description: "Representação de sequências lógicas por meio de pseudocódigo e fluxogramas."
+description: "Introdução a algoritmos e ao pensamento computacional usando o Google Planilhas como ambiente de desenvolvimento: células como variáveis, operadores e a função SE (IF)."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 21 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos: A Lógica por Trás das Células</h2>
+
+  <h3>1. O que é um Algoritmo e o Pensamento Computacional?</h3>
+  <p>
+    Um <strong>algoritmo</strong> é um conjunto de instruções que o computador interpreta e executa para realizar
+    tarefas. No contexto contábil, um algoritmo pode ser o passo a passo para calcular um imposto ou classificar um
+    risco de crédito. Para criar soluções eficientes, aplicamos os pilares do
+    <strong>Pensamento Computacional</strong>:
+  </p>
+  <ul>
+    <li>
+      <strong>Decomposição:</strong> Dividir um problema contábil complexo em partes menores (ex: separar receita,
+      custo e despesa).
+    </li>
+    <li>
+      <strong>Reconhecimento de Padrões:</strong> Identificar regularidades (ex: todo vencimento após o dia 10 gera
+      multa).
+    </li>
+    <li>
+      <strong>Abstração:</strong> Filtrar detalhes irrelevantes e focar no que é essencial para o cálculo.
+    </li>
+    <li>
+      <strong>Algoritmo:</strong> Criar a sequência lógica de passos e fórmulas para resolver o problema.
+    </li>
+  </ul>
+
+  <h3>2. A Célula como "Variável"</h3>
+  <p>
+    Na programação, uma <strong>variável</strong> armazena um dado que pode mudar. No Google Sheets, cada célula
+    funciona como uma variável.
+  </p>
+  <ul>
+    <li>
+      <strong>Nome da Variável:</strong> É o endereço da célula (ex: <code class="one-line-code">A1</code>,
+      <code class="one-line-code">B5</code>).
+    </li>
+    <li>
+      <strong>Conteúdo/Tipo de Dado:</strong> Pode ser Texto (String), Número (Integer/Float), Valor Lógico ou uma
+      Fórmula.
+    </li>
+  </ul>
+
+  <h3>3. Estrutura Sequencial e Operadores</h3>
+  <p>
+    O processamento segue uma ordem lógica (geralmente de cima para baixo ou conforme as referências das fórmulas).
+    Para processar esses dados, utilizamos:
+  </p>
+  <ul>
+    <li>
+      <strong>Operadores Aritméticos:</strong>
+      <code class="one-line-code">+</code>, <code class="one-line-code">-</code>,
+      <code class="one-line-code">*</code>, <code class="one-line-code">/</code>,
+      <code class="one-line-code">%</code> e <code class="one-line-code">^</code>.
+    </li>
+    <li>
+      <strong>Operadores Relacionais (Comparação):</strong>
+      <code class="one-line-code">=</code> (Igual), <code class="one-line-code">&gt;</code> (Maior),
+      <code class="one-line-code">&lt;</code> (Menor), <code class="one-line-code">&gt;=</code> (Maior ou igual),
+      <code class="one-line-code">&lt;=</code> (Menor ou igual) e <code class="one-line-code">&lt;&gt;</code>
+      (Diferente).
+    </li>
+  </ul>
+
+  <h3>4. Estrutura de Decisão: A Função SE (IF)</h3>
+  <p>
+    A base da inteligência de um algoritmo é a capacidade de tomar decisões. A função
+    <code class="one-line-code">SE</code> verifica uma condição e retorna um resultado se for
+    <strong>VERDADEIRO</strong> e outro se for <strong>FALSO</strong>.
+  </p>
+  <ul>
+    <li>
+      <strong>Sintaxe:</strong>
+      <code class="one-line-code">=SE(teste_logico; valor_se_verdadeiro; valor_se_falso)</code>.
+    </li>
+    <li>
+      <strong>Exemplo:</strong>
+      <code class="one-line-code">=SE(B2&gt;1000; "Alto Risco"; "Baixo Risco")</code>.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+  <p>
+    Compare as duas formas abaixo. A primeira calcula um valor com operadores aritméticos e a segunda toma uma
+    decisão com a função <code class="one-line-code">SE</code>:
+  </p>
   <div class="code-container">
-    <pre><code class="language-plaintext">// Em breve...</code></pre>
+    <pre><code class="language-plaintext">=B2 - C2 + D2 * 0.05
+
+=SE(B2&gt;1000; "Alto Risco"; "Baixo Risco")</code></pre>
   </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Parte da Fórmula</th>
+        <th>Significado no Algoritmo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">SE(</code></td>
+        <td>Início da estrutura de decisão (if)</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">B2&gt;1000</code></td>
+        <td>Teste lógico que retorna VERDADEIRO ou FALSO</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">"Alto Risco"</code></td>
+        <td>Valor retornado se o teste for VERDADEIRO</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">"Baixo Risco"</code></td>
+        <td>Valor retornado se o teste for FALSO</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
-  <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+  <h2>Aplicação Prática: Criando um "Script" de Validação</h2>
+  <p>
+    Para exercitar a lógica, vamos construir um algoritmo que decide automaticamente se uma empresa pode receber um
+    empréstimo.
+  </p>
+
+  <h3>1. Preparação</h3>
+  <ol>
+    <li>Abra o Google Planilhas.</li>
+    <li>Renomeie a aba para <code class="one-line-code">Algoritmo_Credito</code>.</li>
+    <li>
+      Monte o cabeçalho na linha 1: <em>Empresa | Faturamento | Dívidas | Anos de Mercado | Status da
+      Aprovação</em>.
+    </li>
+  </ol>
+
+  <h3>2. O Desafio (O Algoritmo)</h3>
+  <p>
+    Você deve programar a coluna <strong>Status da Aprovação</strong> (Coluna E) para que ela siga a seguinte lógica
+    de negócio:
+  </p>
+  <ul>
+    <li>
+      <strong>Entrada de Dados:</strong> Preencha os dados de 3 empresas fictícias nas colunas A, B, C e D.
+    </li>
+    <li>
+      <strong>Processamento Lógico:</strong> Na célula <code class="one-line-code">E2</code>, insira uma função
+      <code class="one-line-code">SE</code> que avalie:
+      <ul>
+        <li><strong>Teste Lógico:</strong> O Faturamento (<code class="one-line-code">B2</code>) deve ser maior que
+          as Dívidas (<code class="one-line-code">C2</code>).</li>
+        <li><strong>Se Verdadeiro:</strong> Escreva <code class="one-line-code">"PRÉ-APROVADO"</code>.</li>
+        <li><strong>Se Falso:</strong> Escreva <code class="one-line-code">"NEGADO"</code>.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Automação:</strong> Utilize a <em>alça de preenchimento</em> (clique no quadradinho no canto inferior
+      direito da célula <code class="one-line-code">E2</code> e arraste para baixo) para replicar a lógica para as
+      outras empresas.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-plaintext">=SE(B2&gt;C2; "PRÉ-APROVADO"; "NEGADO")</code></pre>
   </div>
+  <p>Exemplo de resultado esperado:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Empresa</th>
+        <th>Faturamento (B)</th>
+        <th>Dívidas (C)</th>
+        <th>Anos de Mercado (D)</th>
+        <th>Status (E)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>TechNova</td>
+        <td>500.000</td>
+        <td>120.000</td>
+        <td>5</td>
+        <td>PRÉ-APROVADO</td>
+      </tr>
+      <tr>
+        <td>Comercial Silva</td>
+        <td>80.000</td>
+        <td>95.000</td>
+        <td>2</td>
+        <td>NEGADO</td>
+      </tr>
+      <tr>
+        <td>AgroVerde</td>
+        <td>200.000</td>
+        <td>200.000</td>
+        <td>8</td>
+        <td>NEGADO</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Diagramação</h2>
+  <p>Representação gráfica do algoritmo de validação de crédito construído na aula:</p>
+  <div class="mermaid">
+    flowchart TD
+    A([Início]) --> B[Ler Empresa, Faturamento,\nDívidas e Anos de Mercado]
+    B --> C{SE Faturamento &gt; Dívidas?}
+    C -->|Verdadeiro| D["Escrever PRÉ-APROVADO"]
+    C -->|Falso| E["Escrever NEGADO"]
+    D --> F([Fim])
+    E --> F
+  </div>
+  <p>
+    Note que o nó de decisão <code class="one-line-code">SE(B2&gt;C2)</code> funciona exatamente como um
+    <code class="one-line-code">if</code> de programação: duas saídas possíveis, uma para cada resposta do teste
+    lógico.
+  </p>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes Profissionais</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Toda fórmula deve começar com "=":</strong> Sem isso, o Sheets entende como um texto comum.
+    </li>
+    <li>
+      <strong>Aspas para Textos:</strong> Ao programar mensagens como <code class="one-line-code">"APROVADO"</code>,
+      elas devem estar sempre entre aspas duplas.
+    </li>
+    <li>
+      <strong>Erro de Referência Circular:</strong> Evite criar uma fórmula em uma célula que aponte para ela mesma;
+      isso gera erro de processamento.
+    </li>
+    <li>
+      <strong>Limpeza de Código:</strong> Use a tecla <kbd>Delete</kbd> para apagar o conteúdo de uma célula sem
+      perder a formatação/estrutura configurada.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <h2>O que vem por aí: Aula 22 - Lógica de Programação II</h2>
+  <p>
+    Na próxima aula, vamos evoluir este algoritmo para lidar com decisões complexas. Aprenderemos:
+  </p>
+  <ul>
+    <li>
+      <strong>Lógica Combinada (Funções E / OU):</strong> Como aprovar um crédito apenas se o faturamento for alto
+      <em>E</em> o tempo de mercado for superior a 3 anos.
+    </li>
+    <li>
+      <strong>SE Aninhado:</strong> Como criar categorias (ex: Risco A, B, C ou D) usando funções
+      <code class="one-line-code">SE</code> dentro de outras.
+    </li>
+    <li>
+      <strong>Introdução às Macros:</strong> Como gravar sequências de ações para automatizar tarefas repetitivas com
+      um clique.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      GOOGLE. <em>Função SE - Editores do Google Docs</em>. Disponível em:
+      https://support.google.com/docs
+    </li>
+    <li>
+      FORBELLONE, André Luiz Villar; EBERSPÄCHER, Henri Frederico. <em>Lógica de Programação: A Construção de
+      Algoritmos e Estruturas de Dados</em>. 3. ed. São Paulo: Pearson Prentice Hall, 2005.
+    </li>
+    <li>
+      MANZANO, José Augusto N. G.; OLIVEIRA, Jayr Figueiredo de. <em>Algoritmos: Lógica para Desenvolvimento de
+      Programação de Computadores</em>. 28. ed. São Paulo: Érica, 2016.
+    </li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Criando o Algoritmo de Aprovação de Crédito no Google Planilhas</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
   </ul>
 </section>

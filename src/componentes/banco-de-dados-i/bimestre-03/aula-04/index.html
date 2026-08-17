@@ -1,30 +1,323 @@
 ---
-title: "Segunda Forma Normal (2FN): Dependência funcional total e tabelas associativas."
+title: "Segunda Forma Normal (2FN): Dependência Funcional Total e Tabelas Associativas"
 aula_numero: "24"
-subject: "banco-de-dados-i"
-description: "Conteúdo da aula 24 do bimestre 3: Segunda Forma Normal (2FN): Dependência funcional total e tabelas associativas.."
+description: "Compreender a 2FN, distinguir dependências funcionais totais e parciais, decompor tabelas com chave composta e implementar tabelas associativas em SQL."
 tags:
-- aula
-- bimestre-03
+  - aula
+  - bimestre-03
 ---
-aula_numero: "24"
-subject: "banco-de-dados-i"
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 04 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é a Segunda Forma Normal (2FN)?</h3>
+  <p>
+    Uma tabela/relação está na <strong>Segunda Forma Normal (2FN)</strong> quando atende a duas condições
+    fundamentais:
+  </p>
+  <ul>
+    <li>Estar na <strong>Primeira Forma Normal (1FN)</strong> (não conter atributos multivalorados, compostos ou
+      repetitivos).</li>
+    <li>Todos os atributos não-chave dependerem <strong>TOTALMENTE</strong> de <strong>toda</strong> a Chave Primária
+      (PK), e não apenas de parte dela.</li>
+  </ul>
+  <div class="tip-box">
+    <h4>Atenção</h4>
+    <ul>
+      <li>A 2FN aplica-se essencialmente a tabelas que possuem <strong>Chave Primária Composta</strong> (formada por
+        duas ou mais colunas).</li>
+      <li>Se a Chave Primária de uma tabela for <strong>simples</strong> (apenas uma coluna), e a tabela já estiver na
+        1FN, ela estará <strong>automaticamente na 2FN</strong>.</li>
+    </ul>
+  </div>
+
+  <h3>2. Dependência Funcional Total vs. Dependência Funcional Parcial</h3>
+
+  <h4>Dependência Funcional Total</h4>
+  <p>
+    Ocorre quando um atributo não-chave depende de <strong>todos os componentes</strong> de uma chave primária composta
+    para ter um sentido completo e único.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">(Chave_A, Chave_B) → Atributo_X</code></pre>
+  </div>
+
+  <h4>Dependência Funcional Parcial</h4>
+  <p>
+    Ocorre quando um atributo não-chave depende de <strong>apenas uma parte</strong> da chave primária composta.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">Chave_A → Atributo_Y
+Chave_B → Atributo_Z</code></pre>
+  </div>
+  <p>
+    A presença de dependências parciais gera <strong>anomalias de inserção, alteração e exclusão</strong>.
+  </p>
+
+  <h3>3. Resolução e o Conceito de Tabelas Associativas</h3>
+  <p>Quando identificamos atributos com dependência parcial em uma chave composta:</p>
+  <ol>
+    <li>Removemos esses atributos com dependência parcial da tabela original.</li>
+    <li>Criamos <strong>novas tabelas</strong> para armazenar esses atributos juntamente com o pedaço da chave do qual
+      eles dependem funcionalmente.</li>
+    <li>A tabela resultante do relacionamento original passa a atuar como uma <strong>Tabela Associativa</strong> (ou
+      tabela de junção/pivô), mantendo a chave composta e os atributos que possuem Dependência Funcional Total dessa
+      chave.</li>
+  </ol>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 04 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+
+  <h3>1. Tabela Original (na 1FN) — versão NÃO normalizada</h3>
+  <p>
+    Considere a seguinte estrutura de dados onde um mesmo pedido pode conter vários produtos. A tabela possui chave
+    primária composta <code class="one-line-code">(ID_Pedido, ID_Produto)</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE ITEM_PEDIDO(
+    ID_Pedido      INT,
+    ID_Produto     INT,
+    Nome_Produto   VARCHAR(100),
+    Preco_Unitario DECIMAL(10,2),
+    Quantidade     INT,
+    Subtotal       DECIMAL(10,2),
+
+    PRIMARY KEY (ID_Pedido, ID_Produto)
+)</code></pre>
+  </div>
+
+  <h3>2. Versão NORMALIZADA — decomposta para a 2FN</h3>
+  <p>
+    Os atributos com dependência parcial (<code class="one-line-code">Nome_Produto</code> e
+    <code class="one-line-code">Preco_Unitario</code>) são isolados em uma nova tabela
+    <code class="one-line-code">PRODUTO</code>. A tabela original torna-se a
+    <strong>Tabela Associativa</strong> <code class="one-line-code">ITEM_PEDIDO</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- 1. Criação da tabela PRODUTO (Atributos com dependência parcial foram isolados aqui)
+CREATE TABLE PRODUTO (
+    ID_Produto INT PRIMARY KEY,
+    Nome_Produto VARCHAR(100) NOT NULL,
+    Preco_Unitario DECIMAL(10, 2) NOT NULL
+);
+
+-- 2. Criação da tabela PEDIDO (Entidade relacionada)
+CREATE TABLE PEDIDO (
+    ID_Pedido INT PRIMARY KEY,
+    Data_Pedido DATE NOT NULL,
+    ID_Cliente INT NOT NULL
+);
+
+-- 3. Criação da Tabela Associativa (Garante Dependência Funcional Total na 2FN)
+CREATE TABLE ITEM_PEDIDO (
+    ID_Pedido INT NOT NULL,
+    ID_Produto INT NOT NULL,
+    Quantidade INT NOT NULL,
+    Subtotal DECIMAL(10, 2) NOT NULL,
+
+    -- Definindo a Chave Primária Composta
+    PRIMARY KEY (ID_Pedido, ID_Produto),
+
+    -- Restrições de Chave Estrangeira (Integridade Referencial)
+    FOREIGN KEY (ID_Pedido) REFERENCES PEDIDO(ID_Pedido),
+    FOREIGN KEY (ID_Produto) REFERENCES PRODUTO(ID_Produto)
+);</code></pre>
+  </div>
+
+  <h3>3. Inserção de Dados e Consulta com JOIN</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">INSERT INTO PRODUTO VALUES
+(1, 'Limpadora',  600.00),
+(2, 'Computador', 1800.00),
+(3, 'Rádio',      150.00);
+
+INSERT INTO PEDIDO VALUES
+(1458, '2026-05-05', 1),
+(2730, '2026-06-05', 2);
+
+INSERT INTO ITEM_PEDIDO VALUES
+(1458, 1, 2, 1200.00),
+(2730, 2, 1, 1800.00),
+(1458, 3, 1,  150.00);
+
+-- Reconstrói a visão original a partir das tabelas normalizadas
+SELECT I.ID_Pedido,
+       P.Nome_Produto,
+       P.Preco_Unitario,
+       I.Quantidade,
+       I.Subtotal
+FROM ITEM_PEDIDO I
+JOIN PRODUTO P ON P.ID_Produto = I.ID_Produto;</code></pre>
+  </div>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
 
+  <h3>Tabela de Exemplo — ITEM_PEDIDO (antes da decomposição)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>ID_Pedido</th>
+        <th>ID_Produto</th>
+        <th>Nome_Produto</th>
+        <th>Preco_Unitario</th>
+        <th>Quantidade</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1458</td>
+        <td>1</td>
+        <td>Limpadora</td>
+        <td>600,00</td>
+        <td>2</td>
+        <td>1.200,00</td>
+      </tr>
+      <tr>
+        <td>1458</td>
+        <td>3</td>
+        <td>Rádio</td>
+        <td>150,00</td>
+        <td>1</td>
+        <td>150,00</td>
+      </tr>
+      <tr>
+        <td>2730</td>
+        <td>2</td>
+        <td>Computador</td>
+        <td>1.800,00</td>
+        <td>1</td>
+        <td>1.800,00</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <h3>Análise das Dependências Funcionais</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Dependência</th>
+        <th>Tipo</th>
+        <th>Explicação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <code class="one-line-code">(ID_Pedido, ID_Produto)</code> → <code class="one-line-code">Quantidade</code>
+        </td>
+        <td><strong>TOTAL</strong></td>
+        <td>Para saber a quantidade vendida, precisamos saber qual é o pedido e qual é o produto.</td>
+      </tr>
+      <tr>
+        <td>
+          <code class="one-line-code">(ID_Pedido, ID_Produto)</code> → <code class="one-line-code">Subtotal</code>
+        </td>
+        <td><strong>TOTAL</strong></td>
+        <td>Depende de ambos.</td>
+      </tr>
+      <tr>
+        <td>
+          <code class="one-line-code">ID_Produto</code> → <code class="one-line-code">Nome_Produto</code>
+        </td>
+        <td><span style="color: #dc3545;"><strong>PARCIAL</strong></span></td>
+        <td>O nome do produto depende apenas do ID_Produto, independentemente do pedido em que foi vendido.</td>
+      </tr>
+      <tr>
+        <td>
+          <code class="one-line-code">ID_Produto</code> → <code class="one-line-code">Preco_Unitario</code>
+        </td>
+        <td><span style="color: #dc3545;"><strong>PARCIAL</strong></span></td>
+        <td>O preço base do produto depende apenas do ID_Produto.</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <h3>Diagrama ER — Esquema Normalizado (2FN)</h3>
+  <div class="mermaid">
+    erDiagram
+    PRODUTO {
+        int ID_Produto PK
+        varchar Nome_Produto
+        decimal Preco_Unitario
+    }
+    PEDIDO {
+        int ID_Pedido PK
+        date Data_Pedido
+        int ID_Cliente FK
+    }
+    ITEM_PEDIDO {
+        int ID_Pedido PK_FK
+        int ID_Produto PK_FK
+        int Quantidade
+        decimal Subtotal
+    }
+    PRODUTO ||--o{ ITEM_PEDIDO : "vendido em"
+    PEDIDO ||--o{ ITEM_PEDIDO : "contém"
+  </div>
 
+  <h3>Fluxo da Decomposição (1FN → 2FN)</h3>
+  <div class="mermaid">
+    flowchart TD
+    A["Tabela na 1FN\nChave Composta + atributos"] --> B{Identificar\nDependências\nParciais?}
+    B -->|Sim| C["Remover atributos com\ndependência parcial"]
+    C --> D["Criar tabela de domínio\npara cada grupo parcial"]
+    C --> E["Tabela Associativa\n(chave composta + dependentes totais)"]
+    D --> F["Todas as tabelas\nna 2FN"]
+    E --> F
+    B -->|Não| G["Tabela já está\nna 2FN"]
+  </div>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>Regra prática:</strong> Se a tabela tem chave composta e algum atributo não-chave depende de apenas
+      <em>uma</em> coluna da PK, ela não está na 2FN.</li>
+    <li><strong>Dependência Parcial = problema:</strong> Gera redundância e anomalias, assim como na tabela não
+      normalizada.</li>
+    <li><strong>Tabela Associativa:</strong> É o resultado natural de um relacionamento M:N normalizado — mantém apenas
+      os atributos que dependem de <em>toda</em> a chave composta.</li>
+    <li><strong>Chave simples:</strong> Se a PK tem apenas uma coluna e a tabela está na 1FN, ela já está na 2FN
+      automaticamente.</li>
+    <li><strong>Próxima aula:</strong> Aula 25 — Terceira Forma Normal (3FN): dependências transitivas e eliminação de
+      atributos não-chave dependentes de outros não-chave.</li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>E-commerce:</strong> Separe <em>Produtos</em> (nome, preço) da tabela de <em>Itens do Pedido</em>
+      (quantidade, subtotal). Assim, um mesmo produto pode aparecer em vários pedidos sem duplicar nome e preço.</li>
+    <li><strong>Universidade:</strong> Cadastre <em>Disciplinas</em> (nome, carga horária) e <em>Professores</em>
+      separadamente da tabela de <em>Alocação</em> (semestre/ano). Evita repetir dados de disciplina a cada alocação.
+    </li>
+    <li><strong>Revisão de modelos legados:</strong> Use a normalização como <em>checklist</em> para auditar tabelas
+      existentes — identifique chave composta e verifique se há atributos que dependem de apenas uma parte dela.</li>
+    <li><strong>Data Warehouse:</strong> Ao construir cubos analíticos, avalie conscientemente a desnormalização
+      (tabelas fato e dimensão) para priorizar a performance de leitura.</li>
+  </ul>
+</section>
 
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>MACHADO, Felipe Nery Rodrigues. <em>Projeto e implementação de banco de dados</em>. 3. ed. São Paulo: Érica,
+      2014.</li>
+    <li>HEUSER, Carlos Alberto. <em>Projeto de Banco de Dados</em>. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. <em>Introdução a Banco de Dados</em>.
+      São Paulo: DCC-IME-USP, 2005.</li>
+  </ul>
+</section>
 
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Normalização de Tabela com Dependências Parciais</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
+</section>

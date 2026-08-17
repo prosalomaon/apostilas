@@ -1,23 +1,198 @@
 ---
 layout: exercicio
-title: "Atributos: Classificações (simples, compostos, multivalorados) e representações."
+title: "Normalização de Tabela com Dependências Parciais"
 exercicio_numero: "01"
-04ero: "04"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 04."
+aula_numero: "24"
+description: "Identificar dependências funcionais parciais, decompor tabelas com chave composta até a 2FN e implementar o esquema resultante em SQL."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Uma universidade possui a seguinte tabela referente à alocação de professores em turmas de disciplinas. A tabela
+    encontra-se na <strong>Primeira Forma Normal (1FN)</strong>, mas apresenta problemas de projeto:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">ALOCACAO(
+    ID_Professor      INT,
+    Codigo_Disciplina INT,
+    Nome_Professor    VARCHAR(100),
+    Nome_Disciplina   VARCHAR(100),
+    Carga_Horaria     INT,
+    Semestre_Ano      VARCHAR(10)
+)</code></pre>
+  </div>
+  <p>
+    Chave Primária Composta: <code class="one-line-code">(ID_Professor, Codigo_Disciplina)</code>
+  </p>
+
+  <h3>Dados de Exemplo</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>ID_Professor</th>
+        <th>Codigo_Disciplina</th>
+        <th>Nome_Professor</th>
+        <th>Nome_Disciplina</th>
+        <th>Carga_Horaria</th>
+        <th>Semestre_Ano</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>BD1</td>
+        <td>Prof. Ana</td>
+        <td>Banco de Dados I</td>
+        <td>80</td>
+        <td>2026-1</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>ALG</td>
+        <td>Prof. Ana</td>
+        <td>Algoritmos</td>
+        <td>60</td>
+        <td>2026-1</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>BD1</td>
+        <td>Prof. Carlos</td>
+        <td>Banco de Dados I</td>
+        <td>80</td>
+        <td>2026-2</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>RED</td>
+        <td>Prof. Beatriz</td>
+        <td>Redes de Computadores</td>
+        <td>60</td>
+        <td>2026-1</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Identificação de Dependências Funcionais</h3>
+  <p>Analise a tabela <code class="one-line-code">ALOCACAO</code> e complete a tabela abaixo identificando todas as
+    dependências funcionais (tanto totais quanto parciais):</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Dependência</th>
+        <th>Tipo (Total / Parcial)</th>
+        <th>Justificativa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">(ID_Professor, Codigo_Disciplina)</code> → <code
+            class="one-line-code">Nome_Professor</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">(ID_Professor, Codigo_Disciplina)</code> → <code
+            class="one-line-code">Semestre_Ano</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">ID_Professor</code> → <code class="one-line-code">Nome_Professor</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">Codigo_Disciplina</code> → <code class="one-line-code">Nome_Disciplina</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">Codigo_Disciplina</code> → <code class="one-line-code">Carga_Horaria</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 2: Violação da 2FN</h3>
+  <ul>
+    <li><strong>a)</strong> Explique com suas palavras por que a tabela <code class="one-line-code">ALOCACAO</code>
+      <strong>viola</strong> a Segunda Forma Normal.</li>
+    <li><strong>b)</strong> Quais problemas (anomalias) essa violação pode causar na prática? Dê pelo menos dois
+      exemplos concretos com os dados da tabela.</li>
+  </ul>
+
+  <h3>Questão 3: Decomposição para a 2FN</h3>
+  <p>Escreva os esquemas das tabelas resultantes após a decomposição. Cada tabela deve indicar sua chave primária
+    (sublinhada) e eventuais chaves estrangeiras (marcadas com FK).</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Tabela</th>
+        <th>Atributos</th>
+        <th>PK</th>
+        <th>FK</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 4: Implementação em SQL</h3>
+  <p>
+    Escreva as instruções <code class="one-line-code">CREATE TABLE</code> em SQL para o esquema resultante da
+    Questão 3. Inclua as restrições de Chave Primária Composta e Chave Estrangeira.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Escreva seu código SQL aqui</code></pre>
+  </div>
+
+  <h3>Questão 5: Verificação</h3>
+  <p>
+    Após criar as tabelas, insira os dados de exemplo fornecidos no enunciado e execute a consulta abaixo para
+    reconstruir a visão original. Confirme que o resultado é idêntico à tabela original:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">SELECT P.ID_Professor, D.Codigo_Disciplina,
+       P.Nome_Professor, D.Nome_Disciplina,
+       D.Carga_Horaria, T.Semestre_Ano
+FROM TURMA_ALOCACAO T
+JOIN PROFESSOR P ON P.ID_Professor = T.ID_Professor
+JOIN DISCIPLINA D ON D.Codigo_Disciplina = T.Codigo_Disciplina;</code></pre>
+  </div>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Revise o conteúdo da aula antes de começar: dependência funcional total vs. parcial e o processo de decomposição.</li>
+    <li>Na Questão 1, lembre-se: se um atributo depende de apenas <em>uma</em> coluna da PK composta, é dependência parcial.</li>
+    <li>Na Questão 4, use <code class="one-line-code">PRIMARY KEY (col1, col2)</code> para definir chaves compostas.</li>
+    <li>Na Questão 5, a consulta deve retornar exatamente as mesmas 4 linhas da tabela original.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
-
-
-
-
-
