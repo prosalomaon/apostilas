@@ -425,7 +425,7 @@ try {
 
     // Regra de negócio: não permitir e-mails duplicados
     public void cadastrarContato(Contato contato) {
-        List&lt;Contato&gt; existentes = contatoDao.Lista();
+        List&lt;Contato&gt; existentes = contatoDao.listarTodos();
 
         for (Contato c : existentes) {
             if (c.getEmail().equals(contato.getEmail())) {
