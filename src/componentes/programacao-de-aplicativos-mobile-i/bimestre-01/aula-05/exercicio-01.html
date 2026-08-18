@@ -1,19 +1,78 @@
 ---
 layout: exercicio
-title: "Ciclo de Vida de um App"
+title: "Atividade Prática: Monitorando o Ciclo de Vida"
 exercicio_numero: "01"
 aula_numero: "05"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 05."
+description: "Atividade prática de implementação e observação do ciclo de vida de uma Activity Android com persistência de estado via Bundle."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Você deve criar um aplicativo que funcione como um <strong>monitor visual do ciclo de vida</strong>. O app deve exibir na tela a lista de callbacks que estão sendo executados em tempo real, permitindo que o aluno observe o comportamento do sistema ao interagir com o dispositivo (girar a tela, enviar para segundo plano, etc.).
+  </p>
+</section>
 
-<div class="tip-box">
-  <h4>Orientações</h4>
+<section class="section-box">
+  <h2>2. Preparação do Ambiente</h2>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Android Studio:</strong> Versão Ladybug (2024.2.1) ou superior.</li>
+    <li><strong>Projeto:</strong> Crie um novo projeto Empty Activity (Compose) com as configurações:
+      <ul>
+        <li>Name: <code class="one-line-code">LifecycleMonitor</code></li>
+        <li>Packagename: <code class="one-line-code">com.exercicio.lifecycle</code></li>
+        <li>Linguagem: Kotlin</li>
+        <li>Build configuration: Kotlin DSL (.kts)</li>
+        <li>Minimum SDK: API 24 (Android 7.0)</li>
+      </ul>
+    </li>
+    <li><strong>Conhecimento Prévio:</strong> Ter concluído a Aula 05 sobre Ciclo de Vida de um App.</li>
   </ul>
-</div>
+</section>
+
+<section class="section-box">
+  <h2>3. O Desafio</h2>
+
+  <h4>Desafio 1: Implementar os Callbacks</h4>
+  <p>
+    Sobrescreva todos os métodos de ciclo de vida (<code class="one-line-code">onCreate</code>, <code class="one-line-code">onStart</code>, <code class="one-line-code">onResume</code>, <code class="one-line-code">onPause</code>, <code class="one-line-code">onStop</code>, <code class="one-line-code">onRestart</code>, <code class="one-line-code">onDestroy</code>) na sua <code class="one-line-code">MainActivity</code>. Em cada um, adicione uma mensagem à lista de logs que será exibida na tela. Use a palavra-chave <code class="one-line-code">override</code> e chame <code class="one-line-code">super</code> em cada um.
+  </p>
+
+  <h4>Desafio 2: Criar a Tela de Logs</h4>
+  <p>
+    Utilize Compose para criar uma interface que exiba a lista de logs em tempo real. Cada mensagem deve mostrar o nome do callback e uma breve descrição do que está acontecendo. Utilize <code class="one-line-code">LazyColumn</code> para renderizar a lista de forma performática.
+  </p>
+
+  <h4>Desafio 3: Persistência com Bundle</h4>
+  <p>
+    Implemente o <code class="one-line-code">onSaveInstanceState()</code> para salvar a quantidade total de callbacks registrados. Ao recriar a Activity (girando a tela), recupere esse valor dentro do <code class="one-line-code">onCreate()</code> e exiba uma mensagem indicando que os dados foram restaurados.
+  </p>
+
+  <h4>Desafio 4 (Bônus): Contador de Rotações</h4>
+  <p>
+    Implemente um contador que registra quantas vezes a tela foi rotacionada (Activity destruída e recriada). Salve o valor no Bundle e exiba-o no topo da tela junto com o título.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>4. Testes a Realizar</h2>
+  <p>Após implementar o app, execute os seguintes testes e observe o comportamento:</p>
+  <ul>
+    <li><strong>Teste 1:</strong> Abra o app pela primeira vez. Qual é a sequência de callbacks exibida?</li>
+    <li><strong>Teste 2:</strong> Gire o dispositivo 90 graus. Quantos callbacks são disparados? O contador de rotações é incrementado?</li>
+    <li><strong>Teste 3:</strong> Pressione o botão Home e volte ao app. Observe a sequência onPause → onStop → onRestart → onStart → onResume.</li>
+    <li><strong>Teste 4:</strong> Abra uma notificação e volte ao app. O comportamento é igual ao Teste 3?</li>
+    <li><strong>Teste 5:</strong> Feche o app pelo menu de tarefas e reabra. Observe que onCreate é chamado novamente sem savedInstanceState.</li>
+  </ul>
+</section>
+
+<section class="tip-box">
+  <h4>Orientações Finais</h4>
+  <ul>
+    <li>Lembre-se de que <code class="one-line-code">onCreate()</code> só recebe <code class="one-line-code">savedInstanceState</code> não-nulo quando a Activity está sendo <strong>recriada</strong>, não na primeira execução.</li>
+    <li>Não coloque código pesado dentro de <code class="one-line-code">onPause()</code> — ele bloqueia a transição para a próxima tela.</li>
+    <li>Para visualizar melhor os logs, utilize <code class="one-line-code">Log.d()</code> no Logcat do Android Studio em paralelo à exibição na tela.</li>
+    <li>Certifique-se de que cada callback chama <code class="one-line-code">super.onXxx()</code> para não comprometer o funcionamento do sistema.</li>
+  </ul>
+</section>

@@ -1,19 +1,83 @@
 ---
 layout: exercicio
-title: "Estrutura de um Projeto Android"
+title: "Atividade Prática: Explorando a Estrutura de um Projeto Android"
 exercicio_numero: "01"
 aula_numero: "04"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 04."
+description: "Atividade prática de exploração e análise da hierarquia de pastas, AndroidManifest.xml e configuração Gradle em um projeto Android."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Você recebeu a tarefa de auditar a estrutura de um projeto Android recém-criado. A empresa precisa que você identifique os principais arquivos e pastas, compreenda suas funções e documente possíveis configurações incorretas que devem ser ajustadas antes do desenvolvimento.
+  </p>
+</section>
 
-<div class="tip-box">
-  <h4>Orientações</h4>
+<section class="section-box">
+  <h2>2. Preparação do Ambiente</h2>
+  <p>Para realizar esta atividade, você precisará:</p>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Android Studio:</strong> Versão Ladybug (2024.2.1) ou superior instalada.</li>
+    <li><strong>Projeto Base:</strong> Crie um novo projeto Empty Activity (Compose) com as seguintes configurações:
+      <ul>
+        <li>Name: <code class="one-line-code">AuditoriaProjeto</code></li>
+        <li>Packagename: <code class="one-line-code">com.exercicio.auditoria</code></li>
+        <li>Linguagem: Kotlin</li>
+        <li>Build configuration: Kotlin DSL (.kts)</li>
+        <li>Minimum SDK: API 24 (Android 7.0)</li>
+      </ul>
+    </li>
+    <li><strong>Conhecimento Prévio:</strong> Ter concluído a Aula 04 sobre Estrutura de um Projeto Android.</li>
   </ul>
-</div>
+</section>
+
+<section class="section-box">
+  <h2>3. O Desafio</h2>
+  <p>Com o projeto criado, responda as questões abaixo e execute as tarefas solicitadas:</p>
+
+  <h4>Tarefa 1: Mapeamento da Hierarquia (Teórica)</h4>
+  <p>Liste e descreva brevemente a função de cada pasta principal visível na aba "Android" do Android Studio. Identifique em qual pasta estão localizados:</p>
+  <ul>
+    <li>O arquivo <code class="one-line-code">AndroidManifest.xml</code>.</li>
+    <li>O arquivo <code class="one-line-code">MainActivity.kt</code>.</li>
+    <li>O arquivo <code class="one-line-code">build.gradle.kts</code> do módulo.</li>
+    <li>O arquivo <code class="one-line-code">strings.xml</code>.</li>
+  </ul>
+
+  <h4>Tarefa 2: Análise do Manifesto</h4>
+  <p>Abra o arquivo <code class="one-line-code">AndroidManifest.xml</code> e responda:</p>
+  <ul>
+    <li>Qual Activity está configurada como LAUNCHER?</li>
+    <li>O manifesto declara alguma permissão? Se sim, qual?</li>
+    <li>Qual é o <code class="one-line-code">applicationId</code> definido para o app?</li>
+    <li>Adicione uma nova permissão de Internet (<code class="one-line-code">android.permission.INTERNET</code>) ao manifesto.</li>
+  </ul>
+
+  <h4>Tarefa 3: Configuração do Gradle</h4>
+  <p>Abra o arquivo <code class="one-line-code">build.gradle.kts (Module: app)</code> e responda:</p>
+  <ul>
+    <li>Qual é a versão do <code class="one-line-code">compileSdk</code>?</li>
+    <li>Qual é a versão do <code class="one-line-code">minSdk</code>?</li>
+    <li>Quantas dependências o projeto possui? Liste pelo menos 3 delas.</li>
+    <li>Adicione a dependência <code class="one-line-code">implementation("com.google.code.gson:gson:2.10.1")</code> e execute o Sync.</li>
+  </ul>
+
+  <h4>Tarefa 4: Explorando a Pasta res</h4>
+  <p>Navegue pela pasta <code class="one-line-code">res</code> e:</p>
+  <ul>
+    <li>Altere o valor de <code class="one-line-code">&lt;string name="app_name"&gt;</code> no <code class="one-line-code">strings.xml</code> para "Minha Auditoria".</li>
+    <li>Verifique se o nome do app mudou no emulador ou dispositivo de teste após a alteração.</li>
+    <li>Identifique quantos arquivos existem na pasta <code class="one-line-code">mipmap</code> e qual sua função.</li>
+  </ul>
+</section>
+
+<section class="tip-box">
+  <h4>Orientações Finais</h4>
+  <ul>
+    <li>Documente suas respostas em um arquivo de texto ou no próprio Android Studio usando comments.</li>
+    <li>Cuidado ao editar o AndroidManifest.xml: erros de sintaxe podem impedir que o app abra.</li>
+    <li>Sempre execute o "Sync Now" após alterar arquivos Gradle.</li>
+    <li>Se encontrar alguma configuração inesperada, compare com o que foi estudado na aula e tente explicar o motivo.</li>
+  </ul>
+</section>

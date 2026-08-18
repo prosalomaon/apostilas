@@ -1,23 +1,152 @@
 ---
-layout: exercicio
-title: "Relacionamentos: Definições e grau de relacionamento (binário e ternário)."
+layout: questionario
+title: "Questionário - Terceira Forma Normal (3FN)"
 exercicio_numero: "02"
-05ero: "05"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 05."
+aula_numero: "25"
+sigla_componente: "BD1"
+description: "Questionário de fixação sobre a 3FN, dependências transitivas, decomposição de tabelas e integridade referencial."
+perguntas:
+  - texto: "Uma tabela está na 3FN quando:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Todos os seus atributos são do tipo texto."
+      - letra: "b"
+        texto: "Está na 2FN e não possui dependências transitivas — todos os atributos não-chave dependem apenas da chave primária."
+      - letra: "c"
+        texto: "Possui apenas uma tabela com todos os dados."
+      - letra: "d"
+        texto: "Todos os seus atributos são NOT NULL."
+  - texto: "O que é uma Dependência Transitiva?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Um atributo não-chave depende de todos os componentes da chave primária composta."
+      - letra: "b"
+        texto: "Um atributo não-chave depende de apenas uma parte da chave composta."
+      - letra: "c"
+        texto: "Um atributo não-chave depende de outro atributo não-chave, que por sua vez depende da chave primária."
+      - letra: "d"
+        texto: "A chave primária depende de um atributo que não faz parte dela."
+  - texto: "Na tabela NOTA_FISCAL(NumNF, Data_Emissao, Cod_Cliente, Nome_Cliente, Cidade_Cliente), qual a cadeia de dependência transitiva?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "NumNF → Cod_Cliente → Nome_Cliente (e Cidade_Cliente)"
+      - letra: "b"
+        texto: "Nome_Cliente → NumNF → Data_Emissao"
+      - letra: "c"
+        texto: "NumNF → Data_Emissao → Cod_Cliente"
+      - letra: "d"
+        texto: "Cidade_Cliente → Cod_Cliente → NumNF"
+  - texto: "A 3FN aplica-se a tabelas que:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Ainda não estão na 1FN."
+      - letra: "b"
+        texto: "Possuem chave primária composta com dependências parciais."
+      - letra: "c"
+        texto: "Não possuem chaves estrangeiras."
+      - letra: "d"
+        texto: "Já estão na 2FN e apresentam atributos não-chave dependentes de outros atributos não-chave."
+  - texto: "O que devemos fazer para normalizar uma tabela que viola a 3FN?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Excluir os atributos com dependência transitiva do banco de dados."
+      - letra: "b"
+        texto: "Remover os atributos com dependência transitiva da tabela original e criá-los em uma nova tabela com sua própria chave primária."
+      - letra: "c"
+        texto: "Tornar os atributos transitivos parte da chave primária."
+      - letra: "d"
+        texto: "Ignorar a dependência, pois não causa problemas."
+  - texto: "Se a mesma tabela NOTA_FISCAL armazena o nome do cliente repetido em 50 linhas, o problema causado é:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Apenas consumo desnecessário de processamento."
+      - letra: "b"
+        texto: "Impossibilidade de inserir novos dados."
+      - letra: "c"
+        texto: "Redundância de dados e risco de inconsistência se o nome ou cidade do cliente for alterado."
+      - letra: "d"
+        texto: "Violação da Primeira Forma Normal."
+  - texto: "Após decompor uma tabela para a 3FN, como reconstituímos a visão original?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Utilizando um JOIN entre a tabela original e a nova tabela de domínio, usando a chave estrangeira."
+      - letra: "b"
+        texto: "Criando uma visualização (VIEW) sem usar JOIN."
+      - letra: "c"
+        texto: "É impossível reconstituir a visão original após a decomposição."
+      - letra: "d"
+        texto: "Mesclando as duas tabelas novamente com um UNION."
+  - texto: "A tabela CLIENTE(Cod_Cliente, Nome_Cliente, Cidade_Cliente) está na 3FN porque:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Possui chave primária composta."
+      - letra: "b"
+        texto: "Possui uma chave estrangeira."
+      - letra: "c"
+        texto: "A PK é simples e todos os atributos não-chave (Nome_Cliente, Cidade_Cliente) dependem apenas da PK."
+      - letra: "d"
+        texto: "Não possui nenhuma dependência funcional."
+  - texto: "Em qual situação a 3FN pode ser intencionalmente revertida (desnormalização)?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Em bancos de dados transacionais (OLTP) para garantir integridade."
+      - letra: "b"
+        texto: "Quando a tabela possui muitas chaves estrangeiras."
+      - letra: "c"
+        texto: "Quando a tabela não possui dependências transitivas."
+      - letra: "d"
+        texto: "Em Data Warehouses (ambientes analíticos/OLAP) para acelerar a leitura de grandes massas de dados."
+  - texto: "Qual é a sequência correta do processo de normalização?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "3FN → 2FN → 1FN"
+      - letra: "b"
+        texto: "1FN → 2FN → 3FN"
+      - letra: "c"
+        texto: "2FN → 1FN → 3FN"
+      - letra: "d"
+        texto: "3FN → 1FN → 2FN"
+  - texto: "A Regra do Determinante na 3FN afirma que cada coluna deve depender:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "De qualquer outra coluna da tabela."
+      - letra: "b"
+        texto: "Apenas de colunas com o mesmo tipo de dado."
+      - letra: "c"
+        texto: "Da chave, de toda a chave, e de nada mais que a chave."
+      - letra: "d"
+        texto: "De todas as outras colunas não-chave da tabela."
+  - texto: "Na tabela ITEM_PEDIDO se Cod_Produto → Nome_Produto, e ITEM_PEDIDO tem PK composta (Cod_Pedido, Cod_Produto), qual forma normal está violada?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "2FN (dependência parcial), não 3FN."
+      - letra: "b"
+        texto: "3FN (dependência transitiva)."
+      - letra: "c"
+        texto: "1FN (atributo multivalorado)."
+      - letra: "d"
+        texto: "Nenhuma forma normal está violada."
 ---
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+<p>Responda as questões abaixo para consolidar os conhecimentos sobre a 3FN, dependências transitivas e decomposição de tabelas.</p>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Leia o enunciado com atenção antes de começar.</li>
+    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
-
-
-
-
-

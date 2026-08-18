@@ -1,23 +1,200 @@
 ---
 layout: exercicio
-title: "Relacionamentos: Definições e grau de relacionamento (binário e ternário)."
+title: "Normalização de Tabela com Dependências Transitivas"
 exercicio_numero: "01"
-05ero: "05"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 05."
+aula_numero: "25"
+description: "Identificar dependências transitivas, decompor tabelas até a 3FN e implementar o esquema resultante em SQL."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Uma livraria possui a seguinte tabela referente às vendas realizadas. A tabela encontra-se na <strong>Segunda Forma
+      Normal (2FN)</strong>, pois a chave primária é simples e não há dependências parciais. Porém, apresenta um problema
+    de dependência transitiva:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">VENDA(
+    Cod_Venda       INT,
+    Data_Venda      DATE,
+    Cod_Livro       INT,
+    Titulo_Livro    VARCHAR(150),
+    Genero_Livro    VARCHAR(50),
+    Preco_Livro     DECIMAL(10,2),
+    Quantidade      INT
+)</code></pre>
+  </div>
+  <p>
+    Chave Primária: <code class="one-line-code">Cod_Venda</code>
+  </p>
+
+  <h3>Dados de Exemplo</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Cod_Venda</th>
+        <th>Data_Venda</th>
+        <th>Cod_Livro</th>
+        <th>Titulo_Livro</th>
+        <th>Genero_Livro</th>
+        <th>Preco_Livro</th>
+        <th>Quantidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>2026-08-10</td>
+        <td>101</td>
+        <td>Dom Casmurro</td>
+        <td>Romance</td>
+        <td>35,00</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>2026-08-11</td>
+        <td>102</td>
+        <td>O Cortiço</td>
+        <td>Romance</td>
+        <td>28,00</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>2026-08-12</td>
+        <td>101</td>
+        <td>Dom Casmurro</td>
+        <td>Romance</td>
+        <td>35,00</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>2026-08-13</td>
+        <td>103</td>
+        <td>Memórias Póstumas</td>
+        <td>Romance</td>
+        <td>30,00</td>
+        <td>1</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Identificação de Dependências Transitivas</h3>
+  <p>Analise a tabela <code class="one-line-code">VENDA</code> e identifique todas as dependências funcionais:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Dependência</th>
+        <th>Tipo (Direta / Transitiva)</th>
+        <th>Justificativa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">Cod_Venda</code> → <code class="one-line-code">Data_Venda</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">Cod_Venda</code> → <code class="one-line-code">Cod_Livro</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">Cod_Livro</code> → <code class="one-line-code">Titulo_Livro</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">Cod_Livro</code> → <code class="one-line-code">Genero_Livro</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">Cod_Livro</code> → <code class="one-line-code">Preco_Livro</code></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 2: Violação da 3FN</h3>
+  <ul>
+    <li><strong>a)</strong> Explique com suas palavras por que a tabela <code class="one-line-code">VENDA</code>
+      <strong>viola</strong> a Terceira Forma Normal.</li>
+    <li><strong>b)</strong> Qual é a cadeia de dependência transitiva que existe na tabela?</li>
+    <li><strong>c)</strong> Quais problemas (anomalias) essa violação pode causar na prática? Dê pelo menos dois
+      exemplos concretos com os dados da tabela.</li>
+  </ul>
+
+  <h3>Questão 3: Decomposição para a 3FN</h3>
+  <p>Escreva os esquemas das tabelas resultantes após a decomposição. Cada tabela deve indicar sua chave primária
+    (sublinhada) e eventuais chaves estrangeiras (marcadas com FK).</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Tabela</th>
+        <th>Atributos</th>
+        <th>PK</th>
+        <th>FK</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 4: Implementação em SQL</h3>
+  <p>
+    Escreva as instruções <code class="one-line-code">CREATE TABLE</code> em SQL para o esquema resultante da
+    Questão 3. Inclua as restrições de Chave Primária e Chave Estrangeira.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Escreva seu código SQL aqui</code></pre>
+  </div>
+
+  <h3>Questão 5: Verificação</h3>
+  <p>
+    Após criar as tabelas, insira os dados de exemplo fornecidos no enunciado e execute a consulta abaixo para
+    reconstruir a visão original. Confirme que o resultado é idêntico à tabela original:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">SELECT V.Cod_Venda, V.Data_Venda,
+       L.Titulo_Livro, L.Genero_Livro,
+       L.Preco_Livro, V.Quantidade
+FROM VENDA V
+JOIN LIVRO L ON L.Cod_Livro = V.Cod_Livro;</code></pre>
+  </div>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Revise o conteúdo da aula antes de começar: dependência transitiva e o processo de decomposição para a
+      3FN.</li>
+    <li>Na Questão 1, lembre-se: se um atributo depende de outro atributo não-chave (que depende da PK), é
+      dependência transitiva.</li>
+    <li>Na Questão 3, a tabela original deve manter apenas os atributos com dependência <strong>direta</strong> da PK e
+      uma FK para a nova tabela.</li>
+    <li>Na Questão 4, use <code class="one-line-code">FOREIGN KEY</code> para definir a referência entre tabelas.</li>
+    <li>Na Questão 5, a consulta deve retornar exatamente as mesmas 4 linhas da tabela original.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
-
-
-
-
-

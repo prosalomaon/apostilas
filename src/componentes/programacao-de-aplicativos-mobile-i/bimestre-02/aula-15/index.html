@@ -2,7 +2,7 @@
 title: "Navegação entre Telas"
 aula_numero: "15"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Conteúdo da aula 15 do 2o bimestre: Navegação entre Telas."
+description: "Implementação de fluxos de navegação em aplicativos Android, abordando a criação de novas atividades (ou rotas), o uso de Intents para transição e a técnica de passagem de parâmetros entre telas para exibição de dados dinâmicos."
 tags:
 - aula
 - bimestre-02
@@ -10,10 +10,595 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 15 em desenvolvimento...</p>
+
+  <h3>1. O Papel das Activities</h3>
+  <p>
+    Em Android, as aplicações são organizadas em torno de <strong>Activities</strong>, que representam uma única tela com uma interface gráfica. Cada Activity é uma classe que herda de <code class="one-line-code">AppCompatActivity</code> e é responsável por gerenciar uma tela específica do fluxo de trabalho do usuário.
+  </p>
+  <p>
+    Pense em cada Activity como uma "página" de um livro. O usuário navega de uma página para outra, e o sistema Android gerencia uma <strong>pilha de Activities</strong> (Back Stack) para controlar a ordem de exibição e permitir a navegação com o botão voltar.
+  </p>
+  <p>
+    Existem dois modelos principais de navegação no desenvolvimento Android moderno:
+  </p>
+  <ul>
+    <li><strong>Navegação por Activities (Clássica):</strong> Cada tela é uma Activity diferente, e a transição entre elas é feita através de <strong>Intents</strong>.</li>
+    <li><strong>Navegação por Composables (Moderna):</strong> Diferentes telas são apenas funções <code class="one-line-code">@Composable</code> diferentes, e o <code class="one-line-code">NavController</code> gerencia uma pilha de rotas (Backstack) dentro de uma única Activity.</li>
+  </ul>
+
+  <h3>2. Intents: O Mecanismo de Transição</h3>
+  <p>
+    Um <strong>Intent</strong> é o mecanismo padrão do Android para solicitar uma ação de outro componente do app. Na navegação entre Activities, o Intent funciona como uma "carta de apresentação" que diz ao sistema: <i>"Quero abrir esta outra tela, e aqui estão os dados que ela precisa"</i>.
+  </p>
+  <p>
+    Intents são classificados em dois tipos:
+  </p>
+  <ul>
+    <li><strong>Intent Explícito:</strong> Especifica exatamente qual componente deve ser aberto (ex: abrir a <code class="one-line-code">DetailActivity</code> a partir da <code class="one-line-code">MainActivity</code>).</li>
+    <li><strong>Intent Implícito:</strong> Declara uma ação genérica (ex: abrir o navegador, tirar uma foto) e o sistema escolhe qual componente pode atender à solicitação.</li>
+  </ul>
+  <p>Para navegação dentro do nosso app, utilizamos exclusivamente <strong>Intents Explícitos</strong>.</p>
+
+  <h3>3. Navegação Declarativa com Compose</h3>
+  <p>
+    Seguindo as recomendações LTS (Long Term Support) do Google, a navegação moderna em Android utiliza a biblioteca <code class="one-line-code">androidx.navigation</code> junto com o Jetpack Compose. O <code class="one-line-code">NavController</code> é o componente central que gerencia uma pilha de telas (Backstack) através de <strong>rotas definidas por strings</strong>.
+  </p>
+  <p>A vantagem desta abordagem é que toda a navegação acontece dentro de uma única Activity, o que resulta em:</p>
+  <ul>
+    <li>Transições mais fluidas e animadas</li>
+    <li>Compartilhamento de estado entre telas de forma simplificada</li>
+    <li>Testes mais fáceis, já que a navegação é apenas uma mudança de rota</li>
+    <li>Menos overhead de criação e destruição de Activities pelo sistema</li>
+  </ul>
+
+  <h3>4. Ciclo de Vida e Navegação</h3>
+  <p>
+    É crucial entender como o sistema gerencia a memória durante a navegação. Quando uma Activity é suspensa ou destruída (por exemplo, quando o usuário navega para uma nova tela), o sistema pode liberar recursos para a nova Activity ativa. Cada Activity passa por um ciclo de vida com estados como <code class="one-line-code">onCreate()</code>, <code class="one-line-code">onPause()</code>, <code class="one-line-code">onStop()</code> e <code class="one-line-code">onDestroy()</code>.
+  </p>
+  <p>
+    No modelo Compose, como a navegação ocorre dentro de uma única Activity, o ciclo de vida da Activity se mantém estável, e apenas as composições são recompostas conforme o usuário navega entre as rotas.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 15 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+
+  <h3>Abordagem 1: Navegação por Activities com Intents (Tradicional)</h3>
+  <p>
+    Esta é a abordagem clássica do Android. Cada tela é uma Activity separada registrada no <code class="one-line-code">AndroidManifest.xml</code>.
+  </p>
+
+  <h4>A. Definindo a Activity de Destino</h4>
+  <p>Crie uma nova classe que herde de <code class="one-line-code">AppCompatActivity</code>:</p>
+
+  <div class="code-container">
+    <pre><code class="language-kotlin">// DetailActivity.kt
+class DetailActivity : AppCompatActivity() {
+
+    companion object {
+        const val EXTRA_ITEM_ID = "DetailActivity:item_id"
+        const val EXTRA_ITEM_NAME = "DetailActivity:item_name"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_detail)
+
+        // Recuperando os parâmetros enviados pela Intent
+        val itemId = intent.getLongExtra(EXTRA_ITEM_ID, -1)
+        val itemName = intent.getStringExtra(EXTRA_ITEM_NAME) ?: "Sem nome"
+
+        // Utilizando os dados para exibir informações na tela
+        findViewById&lt;TextView&gt;(R.id.tvDetail).text =
+            "Item: $itemName (ID: $itemId)"
+    }
+}</code></pre>
+  </div>
+
+  <h4>B. Registrando no AndroidManifest.xml</h4>
+  <p>Toda Activity precisa ser declarada no manifesto do aplicativo para que o sistema a reconheça:</p>
+
+  <div class="code-container">
+    <pre><code class="language-xml">&lt;activity
+    android:name=".DetailActivity"
+    android:label="Detalhes do Item"
+    android:parentActivityName=".MainActivity" /&gt;</code></pre>
+  </div>
+
+  <h4>C. Iniciando a Activity de Destino</h4>
+  <p>Na Activity de origem (geralmente a <code class="one-line-code">MainActivity</code>), utilize o <code class="one-line-code">Intent</code> para iniciar a nova tela:</p>
+
+  <div class="code-container">
+    <pre><code class="language-kotlin">// Na Activity de origem (MainActivity)
+val intent = Intent(this, DetailActivity::class.java).apply {
+    putExtra(DetailActivity.EXTRA_ITEM_ID, item.id)
+    putExtra(DetailActivity.EXTRA_ITEM_NAME, item.name)
+}
+startActivity(intent)</code></pre>
+  </div>
+
+  <p>
+    <strong>Boa Prática:</strong> Defina as chaves de identificação como constantes no <code class="one-line-code">companion object</code> da Activity de destino. Isso evita erros de digitação e facilita a manutenção do código.
+  </p>
+
+  <hr>
+
+  <h3>Abordagem 2: Navegação com Compose Navigation (Moderna)</h3>
+  <p>
+    Esta é a abordagem recomendada pelo Google para novos projetos. Utilizamos o <code class="one-line-code">NavHost</code> e o <code class="one-line-code">NavController</code> para gerenciar as rotas.
+  </p>
+
+  <h4>A. Configurando o NavHost</h4>
+  <div class="code-container">
+    <pre><code class="language-kotlin">// MainActivity.kt
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            val navController = rememberNavController()
+
+            NavHost(
+                navController = navController,
+                startDestination = "home"
+            ) {
+                composable("home") {
+                    HomeScreen(
+                        onItemClick = { itemId, itemName -&gt;
+                            navController.navigate("detail/$itemId/$itemName")
+                        }
+                    )
+                }
+                composable(
+                    route = "detail/{itemId}/{itemName}",
+                    arguments = listOf(
+                        navArgument("itemId") { type = NavType.LongType },
+                        navArgument("itemName") { type = NavType.StringType }
+                    )
+                ) { backStackEntry -&gt;
+                    val itemId = backStackEntry.arguments?.getLong("itemId") ?: 0L
+                    val itemName = backStackEntry.arguments?.getString("itemName") ?: ""
+                    DetailScreen(itemId = itemId, itemName = itemName)
+                }
+            }
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h4>B. Criando as Telas (Composables)</h4>
+  <div class="code-container">
+    <pre><code class="language-kotlin">// HomeScreen.kt
+@Composable
+fun HomeScreen(onItemClick: (Long, String) -> Unit) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Lista de Itens",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Simulando uma lista de itens
+        val items = listOf(
+            Pair(1L, "Notebook"),
+            Pair(2L, "Mouse"),
+            Pair(3L, "Teclado")
+        )
+
+        items.forEach { (id, name) -&gt;
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable { onItemClick(id, name) }
+            ) {
+                Text(
+                    text = name,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+    }
+}
+
+// DetailScreen.kt
+@Composable
+fun DetailScreen(itemId: Long, itemName: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Detalhes do Item",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Nome: $itemName")
+        Text(text = "ID: $itemId")
+    }
+}</code></pre>
+  </div>
+
+  <h4>C. Passagem de Parâmetros com Tipos Seguros</h4>
+  <p>
+    Para evitar erros de digitação nas rotas, é recomendado criar um objeto <code class="one-line-code">sealed class</code> ou uma classe <code class="one-line-code">object</code> que centraliza todas as rotas do app:
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-kotlin">// Routes.kt
+object Routes {
+    const val HOME = "home"
+    fun detail(itemId: Long, itemName: String): String {
+        return "detail/$itemId/$itemName"
+    }
+}
+
+// Uso no NavHost:
+navController.navigate(Routes.detail(itemId = 5, itemName = "Notebook"))</code></pre>
+  </div>
+
+  <h4>D. Navegação com Argumentos Opcionais</h4>
+  <div class="code-container">
+    <pre><code class="language-kotlin">// Rota com argumento opcional (default value)
+composable(
+    route = "detail/{itemId}/{itemName}",
+    arguments = listOf(
+        navArgument("itemId") { type = NavType.LongType },
+        navArgument("itemName") {
+            type = NavType.StringType
+            defaultValue = "Sem nome"
+        }
+    )
+) { backStackEntry -&gt;
+    val itemId = backStackEntry.arguments?.getLong("itemId") ?: 0L
+    val itemName = backStackEntry.arguments?.getString("itemName") ?: "Sem nome"
+    DetailScreen(itemId = itemId, itemName = itemName)
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
+
+  <h3>1. Fluxo de Navegação entre Activities (Modelo Tradicional)</h3>
+  <p>
+    Observe como o sistema gerencia a pilha de Activities durante a navegação. Ao pressionar o botão voltar, a Activity do topo é destruída e a anterior é restaurada.
+  </p>
+
+  <div class="mermaid">
+    graph TD
+    A["MainActivity<br/>(onCreate)"] -->|"startActivity(Intent)"| B["DetailActivity<br/>(onCreate)"]
+    B -->|" Botão Voltar"| C["MainActivity<br/>(onResume)"]
+    B -->|"startActivity(Intent)"| D["SettingsActivity<br/>(onCreate)"]
+    D -->|" Botão Voltar"| B
+
+    style A fill:#dfd,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#f9f,stroke:#333,stroke-width:2px
+  </div>
+
+  <hr>
+
+  <h3>2. Fluxo de Navegação com Compose Navigation</h3>
+  <p>
+    No modelo Compose, o <code class="one-line-code">NavController</code> gerencia uma pilha de rotas internamente, sem a necessidade de criar novas Activities.
+  </p>
+
+  <div class="mermaid">
+    graph TD
+    A["NavHost<br/>startDestination = home"] -->|"navigate('home')"| B["HomeScreen<br/>(@Composable)"]
+    B -->|"navigate('detail/1/Notebook')"| C["DetailScreen<br/>(@Composable)"]
+    C -->|"navigateBack()"| B
+    C -->|"navigate('settings')"| D["SettingsScreen<br/>(@Composable)"]
+    D -->|"navigateBack()"| C
+
+    style A fill:#f0f0f0,stroke:#333,stroke-width:2px
+    style B fill:#dfd,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#f9f,stroke:#333,stroke-width:2px
+  </div>
+
+  <hr>
+
+  <h3>3. Estrutura de um Intent com Extras (Mestre-Detalhe)</h3>
+  <p>
+    Diagrama mostrando como os dados fluem entre a tela de origem e a tela de destino através de Extras no Bundle da Intent.
+  </p>
+
+  <div class="mermaid">
+    sequenceDiagram
+    autonumber
+    participant U as Usuário
+    participant M as MainActivity
+    participant I as Intent (Bundle)
+    participant D as DetailActivity
+
+    U->>M: Clica em um item da lista
+    M->>M: Cria Intent com putExtra()
+    M->>I: Envia dados: {id: 1, name: "Notebook"}
+    I->>D: Sistema abre DetailActivity
+    D->>D: onCreate() recupera extras
+    D->>D: intent.getLongExtra("id", -1)
+    D->>U: Exibe detalhes do item
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Laboratório Prático: Fluxo Mestre-Detalhe</h2>
+  <p>
+    Vamos implementar um fluxo completo de navegação onde o usuário seleciona um item de uma lista e é redirecionado para uma tela de detalhes com as informações do item escolhido.
+  </p>
+
+  <h3>1. Modelo de Dados</h3>
+  <p>Primeiro, definimos a classe que representa nossos itens:</p>
+
+  <div class="code-container">
+    <pre><code class="language-kotlin">// data/Item.kt
+data class Item(
+    val id: Long,
+    val name: String,
+    val description: String,
+    val category: String
+)
+
+// Lista simulada de dados (em um app real, viria de uma API ou banco de dados)
+val sampleItems = listOf(
+    Item(1, "Notebook Dell", "Notebook para desenvolvimento", "Eletrônicos"),
+    Item(2, "Mouse Logitech", "Mouse ergonômico", "Periféricos"),
+    Item(3, "Teclado Mecânico", "Switch Blue, ABNT2", "Periféricos"),
+    Item(4, "Monitor 27\"", "4K IPS, 60Hz", "Eletrônicos"),
+    Item(5, "Cadeira Gamer", "Ajuste lombar e braços", "Móveis")
+)</code></pre>
+  </div>
+
+  <h3>2. Tela de Lista (Mestre)</h3>
+  <p>
+    A tela principal exibe uma lista de itens. Ao clicar em um item, o app navega para a tela de detalhes, passando o ID e o nome como parâmetros.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-kotlin">// ui/HomeScreen.kt
+@Composable
+fun HomeScreen(navController: NavHostController) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        items(sampleItems) { item -&gt;
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable {
+                        navController.navigate(
+                            "detail/${item.id}/${item.name}"
+                        )
+                    },
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = item.name,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = item.category,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = "Ver detalhes"
+                    )
+                }
+            }
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>3. Tela de Detalhes (Detalhe)</h3>
+  <p>
+    A tela de detalhes recebe os parâmetros pela URL da rota e exibe as informações completas do item.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-kotlin">// ui/DetailScreen.kt
+@Composable
+fun DetailScreen(
+    itemId: Long,
+    itemName: String,
+    onBack: () -> Unit
+) {
+    // Em um app real, buscaríamos os dados completos pelo ID
+    val item = sampleItems.find { it.id == itemId }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Botão voltar
+        IconButton(onClick = onBack) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Voltar"
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (item != null) {
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            AssistChip(
+                onClick = {},
+                label = { Text(item.category) }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = item.description,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        } else {
+            Text(text = "Item não encontrado (ID: $itemId)")
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>4. Configuração da Navegação</h3>
+  <p>
+    Por fim, conectamos todas as telas no <code class="one-line-code">NavHost</code>:
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-kotlin">// navigation/AppNavigation.kt
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "home"
+    ) {
+        composable("home") {
+            HomeScreen(navController = navController)
+        }
+        composable(
+            route = "detail/{itemId}/{itemName}",
+            arguments = listOf(
+                navArgument("itemId") { type = NavType.LongType },
+                navArgument("itemName") { type = NavType.StringType }
+            )
+        ) { backStackEntry -&gt;
+            val itemId = backStackEntry.arguments?.getLong("itemId") ?: 0L
+            val itemName = backStackEntry.arguments?.getString("itemName") ?: ""
+            DetailScreen(
+                itemId = itemId,
+                itemName = itemName,
+                onBack = { navController.popBackStack() }
+            )
+        }
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Quadro Comparativo: Activity Navigation vs. Compose Navigation</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Critério</th>
+        <th>Activity Navigation (Tradicional)</th>
+        <th>Compose Navigation (Moderna)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Estrutura</strong></td>
+        <td>Cada tela é uma classe Activity separada.</td>
+        <td>Cada tela é uma função @Composable.</td>
+      </tr>
+      <tr>
+        <td><strong>Transição</strong></td>
+        <td>Feita via Intent com startActivity().</td>
+        <td>Feita via NavController.navigate().</td>
+      </tr>
+      <tr>
+        <td><strong>Passagem de Dados</strong></td>
+        <td>Extras no Bundle da Intent (putExtra/getExtra).</td>
+        <td>Argumentos na URL da rota ({param}).</td>
+      </tr>
+      <tr>
+        <td><strong>Performance</strong></td>
+        <td>Pesada: cria e destrói Activities pelo sistema.</td>
+        <td>Leve: apenas recomposição de funções.</td>
+      </tr>
+      <tr>
+        <td><strong>Compartilhamento de Estado</strong></td>
+        <td>Complexo: requer ViewModel compartilhado ou SavedStateHandle.</td>
+        <td>Simples: estado pode ser compartilhado via NavController ou ViewModel.</td>
+      </tr>
+      <tr>
+        <td><strong>Animações</strong></td>
+        <td>Requer configuração manual ou shared element transitions.</td>
+        <td>Animations integradas (fade, slide, etc.).</td>
+      </tr>
+      <tr>
+        <td><strong>Registro</strong></td>
+        <td>Exige declaração no AndroidManifest.xml.</td>
+        <td>Não exige registro externo.</td>
+      </tr>
+      <tr>
+        <td><strong>Boa Prática LTS</strong></td>
+        <td>Usado legado e compatibilidade.</td>
+        <td>Recomendado para novos projetos.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas & Lembretes</h4>
+
+  <h5>1. Centralize as Rotas em um Objeto</h5>
+  <p>Evite duplicar strings de rotas por todo o projeto. Crie um <code class="one-line-code">object Routes</code> que centraliza todas as rotas. Isso evita erros de digitação e facilita a manutenção quando uma rota é alterada.</p>
+
+  <h5>2. Use Constantes para Chaves de Extras</h5>
+  <p>Quando usar Intents (navegação por Activities), defina as chaves de extras como constantes no <code class="one-line-code">companion object</code> da Activity de destino. Isso evita o erro clássico de "chave incorreta" que causa dados nulos silenciosos.</p>
+
+  <h5>3. Valide Argumentos na Tela de Destino</h5>
+  <p>Sempre trate o caso de argumentos ausentes ou inválidos. Use o operador <code class="one-line-code">?:</code> (Elvis) para definir valores padrão e evite crashes por dados nulos inesperados.</p>
+
+  <h5>4. Entenda o popBackStack()</h5>
+  <p>O método <code class="one-line-code">navController.popBackStack()</code> remove a tela atual da pilha e retorna à anterior. É o equivalente moderno ao pressionar o botão "Voltar" do dispositivo.</p>
+
+  <h5>5. Lembre do Ciclo de Vida</h5>
+  <p>No modelo Compose Navigation, a Activity permanece ativa durante toda a navegação. Isso significa que estados de UI e dados em memória são preservados entre as rotas, diferentemente do modelo de Activities onde cada transição pode destruir e recriar a tela anterior.</p>
+</div>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/guide/navigation">Navegação entre telas</a>
+    </li>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/guide/navigation/design/navigation-implementing">Implementando Navegação</a>
+    </li>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/guide/components/activities/intro-activities">Introdução a Activities</a>
+    </li>
+    <li>
+      Jetpack Compose Navigation: <a href="https://developer.android.com/jetpack/compose/navigation">NavHost e NavController</a>
+    </li>
+    <li>
+      Kotlin para Android: <a href="https://developer.android.com/kotlin">Recursos e Documentação</a>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>

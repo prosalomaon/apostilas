@@ -1,19 +1,102 @@
 ---
 layout: exercicio
-title: "Navegação entre Telas"
+title: "Atividade Prática: Navegação Mestre-Detalhe com Compose"
 exercicio_numero: "01"
 aula_numero: "15"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 15."
+description: "Desafio prático de implementação de navegação entre telas utilizando Jetpack Compose Navigation, passagem de parâmetros e fluxo Mestre-Detalhe."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Uma empresa de e-commerce precisa de um aplicativo que exiba um catálogo de produtos. O app deve permitir que o usuário selecione um produto da lista e navegue para uma tela de detalhes, exibindo todas as informações do item escolhido. Implemente o fluxo completo de navegação utilizando <strong>Jetpack Compose Navigation</strong>.
+  </p>
+</section>
 
-<div class="tip-box">
-  <h4>Orientações</h4>
+<section class="section-box">
+  <h2>2. Preparação do Ambiente</h2>
+  <p>Antes de iniciar o desenvolvimento, certifique-se de que:</p>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Android Studio:</strong> Versão Ladybug (2024.2.1) ou superior instalada.</li>
+    <li><strong>Kotlin:</strong> Versão 1.9.0 ou superior configurada no <code class="one-line-code">build.gradle.kts</code>.</li>
+    <li><strong>Dependências:</strong> Adicione as dependências de Navigation Compose no arquivo <code class="one-line-code">build.gradle.kts (app)</code>:
+      <div class="code-container">
+        <pre><code class="language-kotlin">dependencies {
+    implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("androidx.compose.material3:material3:1.3.0")
+}</code></pre>
+      </div>
+    </li>
+    <li><strong>Conhecimento Prévio:</strong> Compreender o básico de Compose (estados, composições) e o conceito de rotas e parâmetros.</li>
   </ul>
-</div>
+</section>
+
+<section class="section-box">
+  <h2>3. Código Base (Estrutura de Dados)</h2>
+  <p>Comece criando a classe de dados e a lista de produtos que serão exibidos no catálogo:</p>
+
+  <div class="code-container">
+    <pre><code class="language-kotlin">// data/Product.kt
+data class Product(
+    val id: Long,
+    val name: String,
+    val price: Double,
+    val description: String,
+    val inStock: Boolean
+)
+
+val productList = listOf(
+    Product(1, "Smartphone Galaxy S24", 4599.00, "Smartphone com tela AMOLED de 6.2 polegadas, 128GB de armazenamento.", true),
+    Product(2, "Notebook Dell Inspiron", 3299.00, "Notebook com processador Intel i7, 16GB RAM, SSD 512GB.", true),
+    Product(3, "Fone Bluetooth JBL", 299.90, "Fone bluetooth com cancelamento de ruído ativo.", true),
+    Product(4, "Smartwatch Amazfit", 649.00, "Relógio inteligente com monitoramento de saúde.", false),
+    Product(5, "Tablet Samsung Tab S9", 2899.00, "Tablet com S Pen inclusa, tela de 11 polegadas.", true),
+    Product(6, "Câmera Canon EOS", 5499.00, "Câmera mirrorless com lente 18-55mm.", true)
+)</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio</h2>
+  <p>Com a estrutura de dados definida, implemente as seguintes funcionalidades:</p>
+
+  <h4>Desafio 1: Tela de Catálogo (Mestre)</h4>
+  <p>Crie uma tela que exibe uma lista scrollável (<code class="one-line-code">LazyColumn</code>) com todos os produtos. Cada item da lista deve exibir o <strong>nome</strong>, o <strong>preço</strong> formatado em Real (R$) e um indicador visual de disponibilidade (em estoque / esgotado). Ao clicar em um item, o app deve navegar para a tela de detalhes.</p>
+
+  <h4>Desafio 2: Tela de Detalhes (Detalhe)</h4>
+  <p>Crie uma tela que receba o <strong>ID do produto</strong> como argumento de rota e exiba todas as informações: nome, preço, descrição e status de estoque. Inclua um botão de "Voltar" que retorne ao catálogo.</p>
+
+  <h4>Desafio 3: Rota e Navegação</h4>
+  <p>Configure o <code class="one-line-code">NavHost</code> com as rotas necessárias. Utilize um objeto <code class="one-line-code">Routes</code> para centralizar as strings de rota e evite duplicação de código.</p>
+
+  <h4>Desafio 4 (Bônus): Tratamento de Erro</h4>
+  <p>Se o produto não for encontrado (ID inválido), exiba uma mensagem amigável ao invés de travar o app. Utilize o operador Elvis (<code class="one-line-code">?:</code>) para tratar o caso nulo.</p>
+</section>
+
+<section class="section-box">
+  <h2>5. Estrutura Esperada</h2>
+  <p>Seu projeto deve conter a seguinte organização de arquivos:</p>
+
+  <div class="code-container">
+    <pre><code class="language-text">app/src/main/java/com/example/loja/
+├── data/
+│   └── Product.kt          (modelo de dados e lista)
+├── navigation/
+│   └── AppNavigation.kt    (NavHost e configuração de rotas)
+└── ui/
+    ├── CatalogScreen.kt    (tela de lista - Mestre)
+    └── DetailScreen.kt     (tela de detalhes - Detalhe)</code></pre>
+  </div>
+</section>
+
+<section class="tip-box">
+  <h4>Orientações Finais</h4>
+  <ul>
+    <li>Utilize <code class="one-line-code">MaterialTheme</code> para manter a consistência visual do app.</li>
+    <li>Lembre-se de formatar o preço com <code class="one-line-code">String.format("R$ %.2f", price)</code>.</li>
+    <li>Ao passar o nome do produto como parâmetro na rota, trate caracteres especiais (espaços, acentos) utilizando <code class="one-line-code">Uri.encode()</code>.</li>
+    <li>Certifique-se de que a navegação funciona corretamente ao pressionar o botão "Voltar" do dispositivo.</li>
+    <li>Valide os argumentos recebidos na tela de detalhes antes de utilizá-los.</li>
+  </ul>
+</section>

@@ -2,7 +2,7 @@
 title: "Estrutura de um Projeto Android"
 aula_numero: "04"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Conteúdo da aula 04 do 1o bimestre: Estrutura de um Projeto Android."
+description: "Exploração técnica da hierarquia de pastas de um projeto Android, o papel fundamental do arquivo AndroidManifest.xml e a configuração do sistema de build Gradle para gerenciamento de dependências e versões."
 tags:
 - aula
 - bimestre-01
@@ -10,10 +10,448 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 04 em desenvolvimento...</p>
+
+  <h3>1. A Hierarquia de Pastas (Visão "Android")</h3>
+  <p>
+    Quando você cria um novo projeto no Android Studio, o IDE gera automaticamente uma estrutura de pastas padronizada. No modo de exibição <strong>"Android"</strong> (o padrão do IDE), os arquivos são organizados de forma lógica para facilitar a navegação do desenvolvedor. Entender essa estrutura é essencial para saber onde colocar cada tipo de arquivo.
+  </p>
+
+  <h4>A. Pasta manifests</h4>
+  <p>
+    Contém o arquivo <code class="one-line-code">AndroidManifest.xml</code>, que funciona como a "carteira de identidade" do aplicativo. É aqui que o sistema Android descobre quais componentes (Activities, Services) o app possui, quais permissões ele requer e qual é a tela inicial exibida ao usuário.
+  </p>
+
+  <h4>B. Pasta java (ou kotlin/java)</h4>
+  <p>
+    Armazena todos os arquivos de código-fonte organizados por pacotes (namespaces). No padrão moderno, esta pasta contém tanto código Kotlin quanto Java quando necessário. Aqui residem:
+  </p>
+  <ul>
+    <li><strong>Activities:</strong> Classes que representam telas do app.</li>
+    <li><strong>ViewModels:</strong> Classes que gerenciam dados e lógica de negócio.</li>
+    <li><strong>Repositorys:</strong> Classes que abstraem fontes de dados.</li>
+    <li><strong>Outras classes:</strong> Modelos, utilitários, adaptadores, etc.</li>
+  </ul>
+
+  <h4>C. Pasta res (Resources)</h4>
+  <p>
+    Guarda todos os recursos <strong>não codificados</strong> do projeto. É a pasta mais diversificada e inclui:
+  </p>
+  <ul>
+    <li><code class="one-line-code">layout/</code>: Arquivos XML que definem a interface do usuário (ex: <code class="one-line-code">activity_main.xml</code>). No Jetpack Compose, esta pasta é menos utilizada, pois a UI é definida diretamente no código Kotlin.</li>
+    <li><code class="one-line-code">drawable/</code>: Imensagens, ícones e vetores gráficos (PNG, SVG, XML vector).</li>
+    <li><code class="one-line-code">values/</code>: Arquivos de configuração de valores:
+      <ul>
+        <li><code class="one-line-code">strings.xml</code>: Centraliza todos os textos do app (facilita tradução e manutenção).</li>
+        <li><code class="one-line-code">colors.xml</code>: Define as cores utilizadas no tema.</li>
+        <li><code class="one-line-code">themes.xml</code>: Configura o tema visual global do app.</li>
+      </ul>
+    </li>
+    <li><code class="one-line-code">mipmap/</code>: Ícones do aplicativo em diferentes densidades (launcher icons).</li>
+  </ul>
+
+  <h4>D. Pasta Gradle Scripts</h4>
+  <p>
+    Contém os arquivos de configuração do sistema de build. Não aparece na visão "Android" padrão, mas pode ser acessada na visão "Project". Inclui os arquivos <code class="one-line-code">build.gradle.kts</code> (ou <code class="one-line-code">build.gradle</code>) do projeto e do módulo.
+  </p>
+
+  <hr>
+
+  <h3>2. O Manifesto do Aplicativo (AndroidManifest.xml)</h3>
+  <p>
+    O <code class="one-line-code">AndroidManifest.xml</code> é o arquivo mais importante para a configuração do app. Ele informa ao sistema Android tudo o que o aplicativo precisa para funcionar corretamente.
+  </p>
+
+  <h4>A. Declaração de Componentes</h4>
+  <p>
+    Toda Activity, Service, ContentProvider ou BroadcastReceiver deve ser registrada no manifesto. Sem essa declaração, o sistema não consegue iniciar o componente.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-xml">&lt;application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@style/Theme.MyApp"&gt;
+
+    &lt;activity
+        android:name=".MainActivity"
+        android:exported="true"&gt;
+        &lt;intent-filter&gt;
+            &lt;action android:name="android.intent.action.MAIN" /&gt;
+            &lt;category android:name="android.intent.category.LAUNCHER" /&gt;
+        &lt;/intent-filter&gt;
+    &lt;/activity&gt;
+
+    &lt;activity android:name=".DetailActivity" /&gt;
+
+&lt;/application&gt;</code></pre>
+  </div>
+
+  <h4>B. Permissões</h4>
+  <p>
+    Antes de acessar recursos do dispositivo (câmera, internet, localização), o app precisa declarar a permissão correspondente no manifesto. No Android 6.0+, muitas permissões são solicitadas ao usuário em tempo de execução.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-xml">&lt;!-- Permissões declaradas fora do &lt;application&gt; --&gt;
+&lt;uses-permission android:name="android.permission.INTERNET" /&gt;
+&lt;uses-permission android:name="android.permission.CAMERA" /&gt;
+&lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /&gt;
+
+&lt;application ...&gt;
+    ...
+&lt;/application&gt;</code></pre>
+  </div>
+
+  <h4>C. Metadados do App</h4>
+  <p>
+    O manifesto também define informações visuais e comportamentais do app, como o nome exibido na loja, o ícone do launcher e o tema visual aplicado.
+  </p>
+  <ul>
+    <li><code class="one-line-code">android:label</code>: Nome exibido ao usuário (geralmente referencia <code class="one-line-code">@string/app_name</code>).</li>
+    <li><code class="one-line-code">android:icon</code>: Ícone do aplicativo no launcher e na loja.</li>
+    <li><code class="one-line-code">android:theme</code>: Tema visual base aplicado a todas as Activities.</li>
+  </ul>
+
+  <h4>D. O Intent Filter</h4>
+  <p>
+    Dentro de uma declaração de Activity, o <code class="one-line-code">&lt;intent-filter&gt;</code> define como o sistema deve reagir a intents. A combinação <code class="one-line-code">MAIN</code> + <code class="one-line-code">LAUNCHER</code> indica que aquela Activity é a tela inicial do app, exibida quando o usuário toca no ícone.
+  </p>
+
+  <hr>
+
+  <h3>3. O Sistema de Build Gradle</h3>
+  <p>
+    O <strong>Gradle</strong> é a ferramenta automatizada responsável por compilar o código Kotlin/Java, gerenciar dependências de terceiros, aplicar plugins e gerar o arquivo final de instalação (APK ou AAB). Um projeto Android possui dois arquivos principais de configuração.
+  </p>
+
+  <h4>A. build.gradle.kts (Project-Level)</h4>
+  <p>
+    Localizado na raiz do projeto, define configurações <strong>globais</strong> que afetam todos os módulos. Gereciencia versões de plugins e repositórios de bibliotecas.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-kotlin">// build.gradle.kts (Project - raiz)
+plugins {
+    id("com.android.application") version "8.2.2" apply false
+    id("org.jetbrains.kotlin.android") version "1.9.22" apply false
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}</code></pre>
+  </div>
+
+  <h4>B. build.gradle.kts (Module: app)</h4>
+  <p>
+    Localizado dentro da pasta <code class="one-line-code">app/</code>, é o arquivo mais utilizado pelo desenvolvedor. Aqui são definidas as dependências do módulo, a versão do SDK e as configurações de compilação.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-kotlin">// build.gradle.kts (Module: app)
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+
+android {
+    namespace = "com.example.meuapp"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.example.meuapp"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation(platform("androidx.compose:compose-bom:2024.02.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.navigation:navigation-compose:2.8.3")
+}</code></pre>
+  </div>
+
+  <h4>C. Campos Essenciais do build.gradle (Module)</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Campo</th>
+        <th>Função</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">applicationId</code></td>
+        <td>Identificador único do app na Play Store (não pode ser alterado após o primeiro upload).</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">minSdk</code></td>
+        <td>Versão mínima do Android suportada pelo app (ex: 24 = Android 7.0).</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">targetSdk</code></td>
+        <td>Versão do Android para a qual o app foi otimizado (afeta comportamentos de segurança).</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">compileSdk</code></td>
+        <td>Versão do SDK usada durante a compilação (deve ser igual ou superior ao targetSdk).</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">versionCode</code></td>
+        <td>Número interno incrementado a cada versão (usado pela Play Store para identificar atualizações).</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">versionName</code></td>
+        <td>Nome da versão exibido ao usuário (ex: "1.0.0").</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>D. Gerenciamento de Dependências</h4>
+  <p>
+    As dependências são bibliotecas de terceiros que o projeto utiliza. Cada linha no bloco <code class="one-line-code">dependencies</code> segue o padrão:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-text">implementation("grupo:nome:versão")
+
+// Exemplos:
+implementation("androidx.core:core-ktx:1.12.0")
+//              ↑ grupo          ↑ nome      ↑ versão
+
+implementation("com.google.code.gson:gson:2.10.1")
+//              ↑ biblioteca externa do Google</code></pre>
+  </div>
+
+  <p>Osescopo de dependência mais comuns:</p>
+  <ul>
+    <li><code class="one-line-code">implementation</code>: A biblioteca está disponível apenas dentro do módulo atual.</li>
+    <li><code class="one-line-code">api</code>: A biblioteca é exposta também para módulos que dependem deste (menos recomendado).</li>
+    <li><code class="one-line-code">compileOnly</code>: A biblioteca é usada apenas na compilação, não é incluída no APK final.</li>
+    <li><code class="one-line-code">testImplementation</code>: A biblioteca é usada apenas em testes unitários.</li>
+  </ul>
+
+  <hr>
+
+  <h3>4. Ciclo de Vida e Integração</h3>
+  <p>
+    Compreender a estrutura de pastas é o primeiro passo para entender o <strong>Ciclo de Vida de um App</strong>, pois cada arquivo tem um momento específico de carregamento e execução pelo sistema Android.
+  </p>
+  <p>A ordem de carregamento ao iniciar um app é:</p>
+  <ol>
+    <li>O sistema Android lê o <code class="one-line-code">AndroidManifest.xml</code> para descobrir qual Activity possui o intent-filter <code class="one-line-code">MAIN</code> + <code class="one-line-code">LAUNCHER</code>.</li>
+    <li>A Activity principal é instanciada e o método <code class="one-line-code">onCreate()</code> é chamado.</li>
+    <li>Dentro de <code class="one-line-code">onCreate()</code>, o método <code class="one-line-code">setContentView(R.layout.activity_main)</code> carrega o layout XML da pasta <code class="one-line-code">res/layout/</code> e injeta na tela.</li>
+    <li>No Jetpack Compose, em vez de XML, o método <code class="one-line-code">setContent { }</code> executa funções Compose que desenham a interface diretamente no código Kotlin.</li>
+  </ol>
+  <p>
+    Essa separação entre código (<code class="one-line-code">java/</code>) e interface (<code class="one-line-code">res/</code> ou Compose) permite que o app seja flexível, adaptando-se a diferentes tamanhos de tela e configurações de hardware.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 04 em desenvolvimento...</p>
+  <h2>Representação Gráfica</h2>
+
+  <h3>1. Hierarquia de Pastas de um Projeto Android</h3>
+  <p>
+    Diagrama mostrando a organização completa de um projeto Android moderno, incluindo os arquivos principais de cada pasta.
+  </p>
+
+  <div class="mermaid">
+    graph TD
+    A["📂 MeuApp (Project Root)"] --> B["📁 app"]
+    A --> C["📄 build.gradle.kts (Project)"]
+    A --> D["📄 settings.gradle.kts"]
+
+    B --> E["📁 src/main"]
+    B --> F["📄 build.gradle.kts (Module)"]
+    B --> G["📄 proguard-rules.pro"]
+
+    E --> H["📁 manifests"]
+    E --> I["📁 java/com.example.meuapp"]
+    E --> J["📁 res"]
+
+    H --> K["📄 AndroidManifest.xml"]
+
+    I --> L["📄 MainActivity.kt"]
+    I --> M["📄 DetailActivity.kt"]
+    I --> N["📁 ui/theme"]
+
+    J --> O["📁 layout"]
+    J --> P["📁 drawable"]
+    J --> Q["📁 values"]
+    J --> R["📁 mipmap"]
+
+    O --> S["📄 activity_main.xml"]
+    Q --> T["📄 strings.xml"]
+    Q --> U["📄 colors.xml"]
+    Q --> V["📄 themes.xml"]
+
+    style K fill:#f9f,stroke:#333,stroke-width:2px
+    style F fill:#bbf,stroke:#333,stroke-width:2px
+    style L fill:#dfd,stroke:#333,stroke-width:2px
+  </div>
+
+  <hr>
+
+  <h3>2. Fluxo de Carregamento ao Iniciar o App</h3>
+  <p>
+    Sequência de eventos que ocorrem quando o usuário toca no ícone do aplicativo até a exibição da primeira tela.
+  </p>
+
+  <div class="mermaid">
+    sequenceDiagram
+    autonumber
+    participant U as Usuário
+    participant OS as Sistema Android
+    participant M as AndroidManifest.xml
+    participant A as MainActivity.kt
+    participant L as res/layout/ ou Compose
+
+    U->>OS: Toca no ícone do app
+    OS->>M: Lê o manifesto para encontrar LAUNCHER
+    M-->>OS: Retorna MainActivity como tela inicial
+    OS->>A: Instancia e chama onCreate()
+    A->>L: setContentView(R.layout.activity_main) ou setContent {}
+    L-->>A: Interface gráfica carregada
+    A-->>U: Tela exibida ao usuário
+  </div>
+
+  <hr>
+
+  <h3>3. Estrutura do AndroidManifest.xml</h3>
+  <p>
+    Diagrama representando a estrutura hierárquica do manifesto e seus principais elementos.
+  </p>
+
+  <div class="mermaid">
+    graph TD
+    A["📄 AndroidManifest.xml"] --> B["&lt;manifest&gt;"]
+    B --> C["&lt;uses-permission /&gt;"]
+    B --> D["&lt;application&gt;"]
+    D --> E["&lt;activity&gt;"]
+    D --> F["&lt;service&gt;"]
+    D --> G["&lt;provider&gt;"]
+    D --> H["&lt;receiver&gt;"]
+    E --> I["&lt;intent-filter&gt;"]
+    I --> J["&lt;action /&gt;"]
+    I --> K["&lt;category /&gt;"]
+
+    style C fill:#ffcccb,stroke:#f00,stroke-width:2px
+    style E fill:#dfd,stroke:#333,stroke-width:2px
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Quadro Comparativo: build.gradle (Project) vs. build.gradle (Module)</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>build.gradle.kts (Project)</th>
+        <th>build.gradle.kts (Module: app)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Localização</strong></td>
+        <td>Raiz do projeto.</td>
+        <td>Pasta <code class="one-line-code">app/</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Escopo</strong></td>
+        <td>Global (afeta todos os módulos).</td>
+        <td>Individual (afeta apenas o módulo app).</td>
+      </tr>
+      <tr>
+        <td><strong>Dependências</strong></td>
+        <td>Não declara dependências de bibliotecas.</td>
+        <td>Declara todas as dependências do app.</td>
+      </tr>
+      <tr>
+        <td><strong>Plugins</strong></td>
+        <td>Declara plugins com <code class="one-line-code">apply false</code>.</td>
+        <td>Aplica plugins com <code class="one-line-code">apply true</code> (implícito).</td>
+      </tr>
+      <tr>
+        <td><strong>Repositórios</strong></td>
+        <td>Define repositórios globais (google, mavenCentral).</td>
+        <td>Hereda os repositórios do Project.</td>
+      </tr>
+      <tr>
+        <td><strong>Quem edita?</strong></td>
+        <td>Geralmente apenas ao criar o projeto ou atualizar versões globais.</td>
+        <td>O desenvolvedor edita constantemente.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas & Lembretes</h4>
+
+  <h5>1. Centralize Textos no strings.xml</h5>
+  <p>Nunca escreva textos diretamente no código Kotlin ou nos layouts XML. Use sempre <code class="one-line-code">@string/nome_do_texto</code>. Isso facilita a tradução para outros idiomas e a manutenção futura.</p>
+
+  <h5>2. O applicationId é Imutável</h5>
+  <p>Uma vez que o app é publicado na Play Store com um <code class="one-line-code">applicationId</code>, ele nunca mais pode ser alterado. Se precisar criar uma versão "free" e "pro", use applicationIds diferentes (ex: <code class="one-line-code">com.empresa.app.free</code> e <code class="one-line-code">com.empresa.app.pro</code>).</p>
+
+  <h5>3. Versões LTS vs. bleeding-edge</h5>
+  <p>Em ambiente educacional, prefira sempre as versões estáveis (LTS) do SDK e das dependências. Evite usar versões alpha ou beta, que podem conter bugs e mudanças incompatíveis.</p>
+
+  <h5>4. Nunca Edite o Manifesto sem Entender</h5>
+  <p>Erros no <code class="one-line-code">AndroidManifest.xml</code> podem causar crashes que o app não consegue iniciar. Sempre que alterar o manifesto, teste o app imediatamente para verificar se ele ainda abre corretamente.</p>
+
+  <h5>5. sync é Obrigatório</h5>
+  <p>Após alterar qualquer arquivo <code class="one-line-code">build.gradle.kts</code>, clique em "Sync Now" no banner que aparece no topo do Android Studio. Sem o sync, as alterações não entram em vigor e o projeto pode não compilar.</p>
+</div>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/build">Visão geral do Build System</a>
+    </li>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/guide/topics/manifest/manifest-intro">Visão geral do AndroidManifest</a>
+    </li>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/build.gradle">Configure seu build</a>
+    </li>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/studio/projects#module-level">Estrutura de arquivos do projeto</a>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>

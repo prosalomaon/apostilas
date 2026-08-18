@@ -1,0 +1,108 @@
+---
+layout: exercicio
+title: "Implementando um DAO Completo: Cadastro de Produtos"
+exercicio_numero: "01"
+aula_numero: "26"
+description: "Praticar a implementação completa do padrão DAO: criar a entidade JavaBean, a interface, a implementação JDBC e integrar com uma camada de serviço."
+---
+
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado para desenvolver a camada de persistência de um sistema de estoque. A tabela
+    <code class="one-line-code">PRODUTO</code> no banco de dados <code class="one-line-code">estoque_db</code> possui a
+    seguinte estrutura:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE produto (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    descricao VARCHAR(255),
+    preco DECIMAL(10,2) NOT NULL,
+    quantidade_estoque INT DEFAULT 0
+);</code></pre>
+  </div>
+  <p>Sua tarefa é implementar a camada de persistência completa, seguindo o padrão DAO.</p>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Entidade JavaBean</h3>
+  <p>
+    Crie a classe <code class="one-line-code">Produto</code> que representa a tabela acima. Siga o padrão JavaBean
+    com construtor vazio, getters e setters para todos os atributos.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Escreva sua classe Produto aqui
+</code></pre>
+  </div>
+
+  <h3>Questão 2: Interface DAO</h3>
+  <p>
+    Crie a interface <code class="one-line-code">ProdutoDAO</code> definindo os seguintes contratos:
+  </p>
+  <ul>
+    <li><code class="one-line-code">void salvar(Produto produto)</code> — inserir um novo produto</li>
+    <li><code class="one-line-code">List&lt;Produto&gt; listarTodos()</code> — retornar todos os produtos</li>
+    <li><code class="one-line-code">Produto buscarPorId(int id)</code> — buscar produto pelo ID</li>
+    <li><code class="one-line-code">void atualizar(Produto produto)</code> — atualizar dados de um produto existente</li>
+    <li><code class="one-line-code">void excluir(int id)</code> — remover produto pelo ID</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-java">// Escreva sua interface ProdutoDAO aqui
+</code></pre>
+  </div>
+
+  <h3>Questão 3: Implementação JDBC</h3>
+  <p>
+    Crie a classe <code class="one-line-code">ProdutoDaoImpl</code> que implementa a interface
+    <code class="one-line-code">ProdutoDAO</code>. Requisitos:
+  </p>
+  <ul>
+    <li>O construtor deve receber uma <code class="one-line-code">Connection</code> via Injeção de Dependência.</li>
+    <li>Use <code class="one-line-code">PreparedStatement</code> em todas as operações.</li>
+    <li>Capture <code class="one-line-code">SQLException</code> e relance como <code
+        class="one-line-code">RuntimeException</code>.</li>
+    <li>Utilize <code class="one-line-code">try-with-resources</code> para fechar recursos.</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-java">// Escreva sua classe ProdutoDaoImpl aqui
+</code></pre>
+  </div>
+
+  <h3>Questão 4: Camada de Serviço</h3>
+  <p>
+    Crie a classe <code class="one-line-code">ProdutoService</code> que utiliza o <code
+      class="one-line-code">ProdutoDAO</code>. Implemente uma regra de negócio: o preço do produto não pode ser menor
+    que zero. Se o código detectar um preço negativo, lance uma <code
+      class="one-line-code">IllegalArgumentException</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Escreva sua classe ProdutoService aqui
+</code></pre>
+  </div>
+
+  <h3>Questão 5: Teste Completo</h3>
+  <p>
+    Escreva um método <code class="one-line-code">main</code> que demonstre todas as operações CRUD:
+    cadastrar, listar, buscar por ID, atualizar e excluir. Utilize a ConnectionFactory para obter a conexão.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Escreva seu método main aqui
+</code></pre>
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Orientações</h4>
+  <ul>
+    <li>Revise o conteúdo da aula antes de começar: Entity, Interface DAO, Implementação JDBC e Injeção de
+      Dependência.</li>
+    <li>Nunca esqueça de usar <code class="one-line-code">PreparedStatement</code> — nunca concatene strings
+      para montar SQL.</li>
+    <li>Feche todos os recursos com <code class="one-line-code">try-with-resources</code>.</li>
+    <li>A ConnectionFactory já existe no projeto — não é necessário recriá-la.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
+  </ul>
+</div>

@@ -1,20 +1,200 @@
 ---
 layout: questionario
-title: "Estrutura de um Projeto Android"
+title: "Questionário - Estrutura de um Projeto Android"
 exercicio_numero: "02"
 aula_numero: "04"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Questionário de fixação sobre os conceitos da aula 04."
-perguntas: []
+description: "Questionário de fixação sobre a hierarquia de pastas, AndroidManifest.xml e configuração do Gradle em um projeto Android."
+perguntas:
+  - texto: "Qual pasta do Android Studio contém o arquivo AndroidManifest.xml?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "java (ou kotlin/java)."
+      - letra: "b"
+        texto: "manifests."
+      - letra: "c"
+        texto: "res."
+      - letra: "d"
+        texto: "Gradle Scripts."
+
+  - texto: "Qual é a função principal do AndroidManifest.xml?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Armazenar os layouts XML da interface do usuário."
+      - letra: "b"
+        texto: "Gerenciar as dependências de bibliotecas de terceiros."
+      - letra: "c"
+        texto: "Registrar componentes, permissões e metadados do aplicativo perante o sistema."
+      - letra: "d"
+        texto: "Compilar o código Kotlin em código de máquina."
+
+  - texto: "Dentro da pasta res, qual subpasta contém os arquivos XML que definem a interface do usuário?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "layout."
+      - letra: "b"
+        texto: "drawable."
+      - letra: "c"
+        texto: "values."
+      - letra: "d"
+        texto: "mipmap."
+
+  - texto: "Qual arquivo da pasta res/values centraliza todos os textos exibidos ao usuário no app?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "colors.xml."
+      - letra: "b"
+        texto: "strings.xml."
+      - letra: "c"
+        texto: "themes.xml."
+      - letra: "d"
+        texto: "styles.xml."
+
+  - texto: "O que a combinação de intent-filter MAIN + LAUNCHER indica no AndroidManifest.xml?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Que a Activity é um serviço em segundo plano."
+      - letra: "b"
+        texto: "Que a Activity deve ser oculta do usuário."
+      - letra: "c"
+        texto: "Que a Activity é responsável por receber notificações push."
+      - letra: "d"
+        texto: "Que a Activity é a tela inicial exibida quando o usuário toca no ícone do app."
+
+  - texto: "No arquivo build.gradle.kts (Module: app), qual campo define a versão mínima do Android suportada pelo app?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "compileSdk."
+      - letra: "b"
+        texto: "targetSdk."
+      - letra: "c"
+        texto: "minSdk."
+      - letra: "d"
+        texto: "applicationId."
+
+  - texto: "Qual a diferença entre compileSdk e targetSdk?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "compileSdk é a versão usada na compilação; targetSdk é a versão para a qual o app foi otimizado."
+      - letra: "b"
+        texto: "compileSdk define o nome do app; targetSdk define o ícone."
+      - letra: "c"
+        texto: "Não há diferença: são sinônimos na documentação do Android."
+      - letra: "d"
+        texto: "compileSdk é obrigatório apenas em projetos Java; targetSdk é apenas Kotlin."
+
+  - texto: "Qual é a função do applicationId no build.gradle.kts?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Define o nome exibido ao usuário na tela inicial."
+      - letra: "b"
+        texto: "É o identificador único do app na Google Play Store e não pode ser alterado após publicação."
+      - letra: "c"
+        texto: "Define a versão mínima do Android suportada."
+      - letra: "d"
+        texto: "Especifica o pacote de dependências do projeto."
+
+  - texto: "O que acontece quando você altera um arquivo build.gradle.kts e não clica em 'Sync Now'?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "O Android Studio fecha automaticamente."
+      - letra: "b"
+        texto: "As alterações são aplicadas imediatamente sem necessidade de sync."
+      - letra: "c"
+        texto: "O projeto é publicado na Play Store automaticamente."
+      - letra: "d"
+        texto: "As alterações não entram em vigor e o projeto pode não compilar corretamente."
+
+  - texto: "Qual é o scopo da dependência 'implementation' no build.gradle.kts?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "A biblioteca está disponível apenas dentro do módulo atual."
+      - letra: "b"
+        texto: "A biblioteca é exposta para todos os módulos do projeto."
+      - letra: "c"
+        texto: "A biblioteca é usada apenas durante a compilação e não é incluída no APK."
+      - letra: "d"
+        texto: "A biblioteca é reservada exclusivamente para testes unitários."
+
+  - texto: "Em que pasta do projeto Android está localizado o código-fonte Kotlin das Activities?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "res/layout."
+      - letra: "b"
+        texto: "res/values."
+      - letra: "c"
+        texto: "java (ou kotlin/java) dentro de src/main."
+      - letra: "d"
+        texto: "Gradle Scripts."
+
+  - texto: "Qual é a ordem correta de carregamento ao iniciar um app Android?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Layout XML → Manifesto → Activity → Usuário."
+      - letra: "b"
+        texto: "Manifesto → Activity (onCreate) → Layout/Compose → Tela exibida."
+      - letra: "c"
+        texto: "Gradle → Manifesto → Usuário → Activity."
+      - letra: "d"
+        texto: "Activity → Manifesto → Layout XML → Gradle."
+
+  - texto: "Para que uma Activity seja reconhecida pelo sistema Android, onde ela deve ser declarada?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "No AndroidManifest.xml."
+      - letra: "b"
+        texto: "No build.gradle.kts (Module: app)."
+      - letra: "c"
+        texto: "No strings.xml."
+      - letra: "d"
+        texto: "No arquivo themes.xml."
+
+  - texto: "Qual pasta do projeto contém os ícones do aplicativo em diferentes densidades (launcher icons)?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "drawable."
+      - letra: "b"
+        texto: "layout."
+      - letra: "c"
+        texto: "values."
+      - letra: "d"
+        texto: "mipmap."
+
+  - texto: "No Jetpack Compose, qual método substitui o setContentView() para exibir a interface gráfica?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "onCreateView()."
+      - letra: "b"
+        texto: "setSupportActionBar()."
+      - letra: "c"
+        texto: "setContent { }."
+      - letra: "d"
+        texto: "findViewById()."
+
+  - texto: "O que o campo 'versionCode' no build.gradle.kts representa?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Um número interno incrementado a cada versão, usado pela Play Store para identificar atualizações."
+      - letra: "b"
+        texto: "O nome da versão exibido ao usuário (ex: '1.0.0')."
+      - letra: "c"
+        texto: "A versão do Kotlin utilizada no projeto."
+      - letra: "d"
+        texto: "O número de permissões declaradas no manifesto."
 ---
-
-<p>Questionário em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>

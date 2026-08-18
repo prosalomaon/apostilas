@@ -1,30 +1,314 @@
 ---
 title: "Terceira Forma Normal (3FN): Eliminação de dependências transitivas."
 aula_numero: "25"
-subject: "banco-de-dados-i"
-description: "Conteúdo da aula 25 do bimestre 3: Terceira Forma Normal (3FN): Eliminação de dependências transitivas.."
+description: "Compreender a 3FN, identificar e eliminar dependências transitivas, decompor tabelas para garantir que cada atributo não-chave dependa apenas da chave primária."
 tags:
-- aula
-- bimestre-03
+  - aula
+  - bimestre-03
 ---
-aula_numero: "25"
-subject: "banco-de-dados-i"
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 05 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é a Terceira Forma Normal (3FN)?</h3>
+  <p>
+    Uma tabela/relação está na <strong>Terceira Forma Normal (3FN)</strong> quando e somente quando, atende a duas
+    condições fundamentais:
+  </p>
+  <ul>
+    <li>Estar na <strong>Segunda Forma Normal (2FN)</strong> (todos os atributos não-chave dependem totalmente de toda a
+      chave primária).</li>
+    <li>Não possuir <strong>Dependências Transitivas</strong>: todos os atributos não-chave devem ser dependentes
+      funcionalmente <strong>apenas da chave primária</strong>, e não de outros atributos que também não são chaves.</li>
+  </ul>
+  <div class="tip-box">
+    <h4>Atenção</h4>
+    <ul>
+      <li>O objetivo central da 3FN é evitar a <strong>"mistura de fatos"</strong> dentro de uma mesma tabela.</li>
+      <li>Cada informação deve ser armazenada em <strong>seu local lógico correto</strong>, sem redundância decorrente
+        de dependências indiretas.</li>
+    </ul>
+  </div>
+
+  <h3>2. O Conceito de Dependência Transitiva</h3>
+  <p>
+    Dizemos que um atributo <strong>C</strong> possui uma dependência transitiva de uma chave <strong>A</strong> se ele
+    depende de um atributo <strong>B</strong>, que por sua vez depende de <strong>A</strong>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">A → B → C</code></pre>
+  </div>
+  <p>
+    Embora <code class="one-line-code">A</code> determine <code class="one-line-code">C</code> indiretamente, a relação
+    direta é <code class="one-line-code">B → C</code>. Na 3FN, o atributo <code class="one-line-code">C</code> deve ser
+    movido para uma estrutura onde <code class="one-line-code">B</code> seja a chave primária.
+  </p>
+
+  <h3>3. Exemplo Prático: Tabela de Notas Fiscais</h3>
+  <p>
+    Considere a seguinte estrutura que já está na <strong>2FN</strong> (não possui dependências parciais — a PK é
+    simples):
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">NOTA_FISCAL(
+    NumNF          INT,
+    Data_Emissao   DATE,
+    Cod_Cliente    INT,
+    Nome_Cliente   VARCHAR(100),
+    Cidade_Cliente VARCHAR(50)
+)</code></pre>
+  </div>
+
+  <h4>Análise das Dependências</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Dependência</th>
+        <th>Tipo</th>
+        <th>Explicação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <code class="one-line-code">NumNF</code> → <code class="one-line-code">Data_Emissao</code>
+        </td>
+        <td><strong>Direta da PK</strong></td>
+        <td>A data de emissão depende diretamente da nota fiscal.</td>
+      </tr>
+      <tr>
+        <td>
+          <code class="one-line-code">NumNF</code> → <code class="one-line-code">Cod_Cliente</code>
+        </td>
+        <td><strong>Direta da PK</strong></td>
+        <td>O cliente que fez a compra depende da nota fiscal.</td>
+      </tr>
+      <tr>
+        <td>
+          <code class="one-line-code">Cod_Cliente</code> → <code class="one-line-code">Nome_Cliente</code>,
+          <code class="one-line-code">Cidade_Cliente</code>
+        </td>
+        <td><span style="color: #dc3545;"><strong>TRANSITIVA</strong></span></td>
+        <td>O nome e a cidade do cliente dependem de <code class="one-line-code">Cod_Cliente</code>, que por sua vez
+          depende de <code class="one-line-code">NumNF</code>. Forma-se a cadeia: <code
+            class="one-line-code">NumNF → Cod_Cliente → Nome_Cliente</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="tip-box">
+    <h4>O Problema</h4>
+    <p>
+      Se o mesmo cliente fizer 50 compras, seu nome e cidade serão repetidos 50 vezes, gerando <strong>redundância</strong>
+      e risco de <strong>inconsistência</strong> se ele mudar de cidade.
+    </p>
+  </div>
+
+  <h3>4. Resolução e Decomposição (3FN)</h3>
+  <p>
+    Para normalizar, removemos os atributos com dependência transitiva e criamos uma nova tabela:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tabela</th>
+        <th>Atributos</th>
+        <th>PK</th>
+        <th>FK</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>NOTA_FISCAL</strong></td>
+        <td>NumNF, Data_Emissao, Cod_Cliente</td>
+        <td>NumNF</td>
+        <td>Cod_Cliente → CLIENTE</td>
+      </tr>
+      <tr>
+        <td><strong>CLIENTE</strong></td>
+        <td>Cod_Cliente, Nome_Cliente, Cidade_Cliente</td>
+        <td>Cod_Cliente</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Agora, cada fato (o pedido e o cadastro do cliente) reside em sua própria tabela, <strong>eliminando a
+      redundância</strong> de dados cadastrais no histórico de vendas.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 05 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+
+  <h3>1. Criação das Tabelas Normalizadas (3FN)</h3>
+  <p>
+    A criação das tabelas normalizadas segue o padrão ANSI, sendo compatível com <strong>MySQL</strong> e
+    <strong>PostgreSQL</strong>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- 1. Criando a tabela de Clientes (PK necessária para referência)
+CREATE TABLE cliente (
+    cod_cliente INTEGER NOT NULL,
+    nome_cliente VARCHAR(100) NOT NULL,
+    cidade_cliente VARCHAR(50),
+    PRIMARY KEY (cod_cliente)
+);
+
+-- 2. Criando a tabela de Notas Fiscais (Com FK para evitar dependência transitiva)
+CREATE TABLE nota_fiscal (
+    num_nf INTEGER NOT NULL,
+    data_emissao DATE NOT NULL,
+    cod_cliente INTEGER NOT NULL,
+    PRIMARY KEY (num_nf),
+    -- Restrição de Integridade Referencial
+    FOREIGN KEY (cod_cliente) REFERENCES cliente(cod_cliente)
+);</code></pre>
+  </div>
+
+  <h3>2. Inserção de Dados e Consulta com JOIN</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">INSERT INTO cliente VALUES
+(55, 'João Silva',   'São Paulo'),
+(12, 'Maria Souza',  'Jundiaí');
+
+INSERT INTO nota_fiscal VALUES
+(1001, '2026-08-18', 55),
+(1002, '2026-08-19', 12);
+
+-- Reconstrói a visão original a partir das tabelas normalizadas
+SELECT N.num_nf,
+       N.data_emissao,
+       C.nome_cliente,
+       C.cidade_cliente
+FROM nota_fiscal N
+JOIN cliente C ON C.cod_cliente = N.cod_cliente;</code></pre>
+  </div>
+
+  <h3>3. Decomposição de Tabela Existente (ALTER TABLE)</h3>
+  <p>
+    Caso precise adicionar a restrição de 3FN em uma tabela já existente que foi desmembrada:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Remove-se a coluna redundante da tabela original após migrar os dados
+ALTER TABLE nota_fiscal DROP COLUMN nome_cliente;
+ALTER TABLE nota_fiscal DROP COLUMN cidade_cliente;</code></pre>
+  </div>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
 
+  <h3>Tabela de Exemplo — NOTA_FISCAL (antes da decomposição)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>NumNF</th>
+        <th>Data_Emissao</th>
+        <th>Cod_Cliente</th>
+        <th>Nome_Cliente</th>
+        <th>Cidade_Cliente</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1001</td>
+        <td>18/08/26</td>
+        <td>55</td>
+        <td>João Silva</td>
+        <td>São Paulo</td>
+      </tr>
+      <tr>
+        <td>1002</td>
+        <td>19/08/26</td>
+        <td>12</td>
+        <td>Maria Souza</td>
+        <td>Jundiaí</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <h3>Análise das Dependências Funcionais</h3>
+  <div class="code-container">
+    <pre><code class="language-plaintext">NumNF → Data_Emissao      (dependência direta da PK)
+NumNF → Cod_Cliente       (dependência direta da PK)
+Cod_Cliente → Nome_Cliente (dependência transitiva via Cod_Cliente)
+Cod_Cliente → Cidade_Cliente (dependência transitiva via Cod_Cliente)</code></pre>
+  </div>
 
+  <h3>Diagrama ER — Esquema Normalizado (3FN)</h3>
+  <div class="mermaid">
+    erDiagram
+    CLIENTE {
+        int cod_cliente PK
+        varchar nome_cliente
+        varchar cidade_cliente
+    }
+    NOTA_FISCAL {
+        int num_nf PK
+        date data_emissao
+        int cod_cliente FK
+    }
+    CLIENTE ||--o{ NOTA_FISCAL : "realizou"
+  </div>
 
+  <h3>Fluxo da Decomposição (2FN → 3FN)</h3>
+  <div class="mermaid">
+    flowchart TD
+    A["Tabela na 2FN\nPK simples + atributos não-chave"] --> B{Identificar\nDependências\nTransitivas?}
+    B -->|Sim| C["Remover atributos com\ndependência transitiva"]
+    C --> D["Criar nova tabela\ndomínio (PK = determinante)"]
+    C --> E["Tabela original\n(com FK para nova tabela)"]
+    D --> F["Todas as tabelas\nna 3FN"]
+    E --> F
+    B -->|Não| G["Tabela já está\nna 3FN"]
+  </div>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>Regra do "Determinante":</strong> Em uma tabela 3FN, cada coluna deve depender "da chave, de toda a
+      chave, e de nada mais que a chave".</li>
+    <li><strong>Performance vs. Integridade:</strong> A 3FN pode exigir mais <code class="one-line-code">JOINs</code> em
+      consultas, mas protege o banco de dados contra anomalias de atualização.</li>
+    <li><strong>Data Warehouse:</strong> Em ambientes analíticos (OLAP), a 3FN é frequentemente revertida
+      (desnormalização) para acelerar a leitura de grandes massas de dados.</li>
+    <li><strong>Sequência lógica:</strong> 1FN (elimina multivalorados) → 2FN (elimina dependências parciais) → 3FN
+      (elimina dependências transitivas).</li>
+    <li><strong>Próxima aula:</strong> Aula 26 — Boyce-Codd Normal Form (BCNF): fortalecimento da 3FN para
+      determinantes que são superchaves.</li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>E-commerce:</strong> Separe <em>Cadastros de Clientes</em> (nome, endereço, cidade) do histórico de
+      <em>Pedidos</em>. Evite repetir dados cadastrais a cada nova compra.</li>
+    <li><strong>Universidade:</strong> Cadastre <em>Alunos</em> (matrícula, nome, curso) separadamente da tabela de
+      <em>Matérias Cursei</em>. O nome do aluno não deve aparecer em cada registro de nota.</li>
+    <li><strong>Revisão de modelos legados:</strong> Ao auditir tabelas existentes, verifique se há colunas que dependem
+      de outra coluna não-chave. Se sim, extraia-as para uma tabela de domínio.</li>
+    <li><strong>Data Warehouse:</strong> Ao construir cubos analíticos, avalie conscientemente a desnormalização
+      (tabelas fato e dimensão) para priorizar a performance de leitura.</li>
+  </ul>
+</section>
 
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>MACHADO, Felipe Nery Rodrigues. <em>Projeto e implementação de banco de dados</em>. 3. ed. São Paulo: Érica,
+      2014.</li>
+    <li>HEUSER, Carlos Alberto. <em>Projeto de Banco de Dados</em>. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. <em>Introdução a Banco de Dados</em>.
+      São Paulo: DCC-IME-USP, 2005.</li>
+  </ul>
+</section>
 
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Normalização de Tabela com Dependências Transitivas</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
+</section>

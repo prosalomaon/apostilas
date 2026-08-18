@@ -2,7 +2,7 @@
 title: "Ciclo de Vida de um App"
 aula_numero: "05"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Conteúdo da aula 05 do 1o bimestre: Ciclo de Vida de um App."
+description: "Estudo detalhado dos estados de uma aplicação Android (Activities) e como o sistema gerencia a memória e os processos. Métodos de callback para salvar e restaurar o estado da interface."
 tags:
 - aula
 - bimestre-01
@@ -10,10 +10,497 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 05 em desenvolvimento...</p>
+
+  <h3>1. O Conceito de Ciclo de Vida</h3>
+  <p>
+    No Android, as aplicações são organizadas em torno de <strong>Activities</strong>, que representam telas com interface gráfica. Diferente de programas desktop tradicionais, onde o controle do fluxo pertence ao usuário, o <strong>sistema Android tem controle total</strong> sobre o início, a suspensão e o encerramento das atividades.
+  </p>
+  <p>Isso acontece porque:</p>
+  <ul>
+    <li>O Android precisa gerenciar a memória de forma eficiente, pois dispositivos móveis têm recursos limitados.</li>
+    <li>Chamadas telefônicas, notificações e mudanças de orientação podem interromper o app a qualquer momento.</li>
+    <li>O sistema pode destruir Activities em segundo plano para liberar memória para apps em primeiro plano.</li>
+  </ul>
+  <p>
+    Para lidar com essa realidade, o desenvolvedor sobrescreve <strong> callbacks</strong> — métodos especiais chamados automaticamente pelo sistema em momentos específicos do ciclo de vida. É através desses callbacks que realizamos ações como carregar dados, pausar animações, salvar estado e liberar recursos.
+  </p>
+
+  <h3>2. Os Estados e Callbacks Principais</h3>
+  <p>
+    Uma Activity passa por três estados principais durante sua existência. Cada transição entre estados dispara um ou mais callbacks:
+  </p>
+
+  <h4>A. Estado: Ativo (Running)</h4>
+  <p>
+    A Activity está em primeiro plano e o usuário pode interagir com ela. Este é o único estado em que o app está totalmente ativo.
+  </p>
+
+  <h4>B. Estado: Pausado (Paused)</h4>
+  <p>
+    A Activity ainda está visível, mas parcialmente coberta por outra Activity transparente ou por um diálogo. Ela ainda mantém conexão com o gerenciador de janelas, mas <strong>não recebe entradas do usuário</strong>.
+  </p>
+
+  <h4>C. Estado: Parado (Stopped)</h4>
+  <p>
+    A Activity está completamente invisível para o usuário. Ela permanece na pilha de memória, mas o sistema pode reclassificá-la como "descartável" se precisar liberar memória.
+  </p>
+
+  <h4>Callbacks e Ordem de Execução</h4>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Callback</th>
+        <th>Momento</th>
+        <th>Uso Recomendado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">onCreate()</code></td>
+        <td>Activity criada pela primeira vez.</td>
+        <td>Definir layout, inicializar variáveis, vincular dados.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">onStart()</code></td>
+        <td>Activity prestes a se tornar visível.</td>
+        <td>Registrar listeners, iniciar animações leves.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">onResume()</code></td>
+        <td>Activity em primeiro plano, pronta para interação.</td>
+        <td>Atualizar dados, retomar sensores, iniciar câmera.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">onPause()</code></td>
+        <td>Activity prestes a perder o foco.</td>
+        <td>Salvar dados temporários, pausar animações.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">onStop()</code></td>
+        <td>Activity completamente invisível.</td>
+        <td>Salvar dados persistentes, liberar recursos pesados.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">onRestart()</code></td>
+        <td>Activity parada está prestes a ser reiniciada.</td>
+        <td>Reiniciar operações pausadas no onStop().</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">onDestroy()</code></td>
+        <td>Activity prestes a ser destruída.</td>
+        <td>Liberar memória, encerrar threads, desregistrer listeners.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h3>3. Fluxo Completo do Ciclo de Vida</h3>
+  <p>
+    A sequência completa de callbacks varia dependendo da ação que o usuário ou o sistema executa. Veja os cenários mais comuns:
+  </p>
+
+  <h4>A. Primeira Inicialização do App</h4>
+  <div class="code-container">
+    <pre><code class="language-text">onCreate() → onStart() → onResume()  → [App ativo e interativo]</code></pre>
+  </div>
+
+  <h4>B. Botão Voltar Pressionado</h4>
+  <div class="code-container">
+    <pre><code class="language-text">[App ativo] → onPause() → onStop() → onDestroy()</code></pre>
+  </div>
+
+  <h4>C. Chamada Telefônica ou Notificação</h4>
+  <div class="code-container">
+    <pre><code class="language-text">[App ativo] → onPause() → onStop()
+... (usuário atende e depois retorna) ...
+onRestart() → onStart() → onResume()</code></pre>
+  </div>
+
+  <h4>D. Rotação da Tela (Mudança de Orientação)</h4>
+  <div class="code-container">
+    <pre><code class="language-text">[App ativo] → onPause() → onStop() → onDestroy()
+→ onCreate() → onStart() → onResume()</code></pre>
+  </div>
+  <p>
+    Este é o cenário mais crítico: a Activity é <strong>destruída e recriada</strong> do zero. Sem a persistência de estado via Bundle, todos os dados temporários da interface seriam perdidos.
+  </p>
+
+  <h4>E. App Enviado para Segundo Plano (Home Button)</h4>
+  <div class="code-container">
+    <pre><code class="language-text">[App ativo] → onPause() → onStop()
+... (usuário retorna ao app) ...
+onRestart() → onStart() → onResume()</code></pre>
+  </div>
+
+  <hr>
+
+  <h3>4. Persistência de Estado e o Objeto Bundle</h3>
+  <p>
+    O sistema pode destruir uma Activity a qualquer momento — especialmente durante rotação de tela ou quando o dispositivo fica sem memória. Para evitar a <strong>perda de dados da interface</strong>, utilizamos o método <code class="one-line-code">onSaveInstanceState()</code>.
+  </p>
+
+  <h4>A. Como Funciona o Bundle</h4>
+  <ul>
+    <li>O <code class="one-line-code">Bundle</code> é um objeto chave-valor que armazena dados primitivos (Strings, Integers, Booleans, etc.).</li>
+    <li>Quando a Activity é destruída, o sistema salva o Bundle automaticamente.</li>
+    <li>Quando a Activity é recriada, o Bundle é entregue ao <code class="one-line-code">onCreate(savedInstanceState)</code> como parâmetro.</li>
+    <li>Se não houver dados salvos (primeira execução), o parâmetro <code class="one-line-code">savedInstanceState</code> será <code class="one-line-code">null</code>.</li>
+  </ul>
+
+  <h4>B. Salvando e Recuperando Dados</h4>
+  <div class="code-container">
+    <pre><code class="language-kotlin">class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Recuperando dados salvos anteriormente
+        savedInstanceState?.let { bundle ->
+            val nome = bundle.getString("chave_nome") ?: "Usuário"
+            val pontuacao = bundle.getInt("chave_pontuacao", 0)
+            // Utilizar os dados recuperados na interface
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Salvando dados antes da destruição
+        outState.putString("chave_nome", "João")
+        outState.putInt("chave_pontuacao", 1500)
+    }
+}</code></pre>
+  </div>
+
+  <h4>C. onRestoreInstanceState()</h4>
+  <p>
+    Além do <code class="one-line-code">onCreate()</code>, existe o <code class="one-line-code">onRestoreInstanceState()</code>, chamado apenas quando o Bundle <strong>não é nulo</strong> (ou seja, quando a Activity está sendo recriada, não na primeira execução).
+  </p>
+  <div class="code-container">
+    <pre><code class="language-kotlin">override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+    super.onRestoreInstanceState(savedInstanceState)
+    // O Bundle nunca é nulo aqui
+    val nome = savedInstanceState.getString("chave_nome")
+}</code></pre>
+  </div>
+
+  <h4>D. O que Salvar no Bundle</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Dado</th>
+        <th>Salvar no Bundle?</th>
+        <th>Motivo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Texto digitado em um campo</td>
+        <td>Sim</td>
+        <td>Evita que o usuário precise digitar novamente.</td>
+      </tr>
+      <tr>
+        <td>Posição de scroll</td>
+        <td>Sim</td>
+        <td>Mantém a posição visual ao retornar.</td>
+      </tr>
+      <tr>
+        <td>ID do item selecionado</td>
+        <td>Sim</td>
+        <td>Preserva a seleção do usuário.</td>
+      </tr>
+      <tr>
+        <td>Referência a um Context ou View</td>
+        <td>Não</td>
+        <td>Objetos Android não são serializáveis no Bundle.</td>
+      </tr>
+      <tr>
+        <td>Dados de rede (API response)</td>
+        <td>Não</td>
+        <td>Deve ser recarregado da fonte original ao recriar a Activity.</td>
+      </tr>
+      <tr>
+        <td>Bitmaps grandes</td>
+        <td>Não</td>
+        <td>O Bundle tem limite de tamanho (~1MB); cause TransactionTooLargeException.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h3>5. Ciclo de Vida no Jetpack Compose</h3>
+  <p>
+    No Jetpack Compose, o ciclo de vida da Activity continua funcionando da mesma forma. No entanto, a recomposição das funções <code class="one-line-code">@Composable</code> é gerenciada separadamente. Para integrar o ciclo de vida com Compose, utilize o <code class="one-line-code">LifecycleObserver</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-kotlin">class MyLifecycleObserver : LifecycleEventObserver {
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> {
+                // App voltou para primeiro plano
+            }
+            Lifecycle.Event.ON_PAUSE -> {
+                // App foi pausado
+            }
+            Lifecycle.Event.ON_DESTROY -> {
+                // Activity será destruída
+            }
+            else -> {}
+        }
+    }
+}
+
+// Registrar o observer na Activity
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(MyLifecycleObserver())
+        setContent {
+            // UI Compose aqui
+        }
+    }
+}</code></pre>
+  </div>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 05 em desenvolvimento...</p>
+  <h2>Representação Gráfica</h2>
+
+  <h3>1. Diagrama Completo do Ciclo de Vida</h3>
+  <p>
+    Diagrama oficial do ciclo de vida de uma Activity Android, mostrando todos os estados e as transições entre callbacks.
+  </p>
+
+  <div class="mermaid">
+    stateDiagram-v2
+    [*] --> Created: startActivity()
+    Created --> Started: onStart()
+    Started --> Resumed: onResume()
+    Resumed --> Paused: onPause()
+    Paused --> Resumed: onResume()
+    Paused --> Stopped: onStop()
+    Stopped --> Restarted: onRestart()
+    Restarted --> Started: onStart()
+    Stopped --> Created: onDestroy()
+    Paused --> Created: onDestroy()
+    Created --> [*]
+
+    note right of Created: Activity criada\nonCreate()
+    note right of Started: Activity visível\nonStart()
+    note right of Resumed: Activity em primeiro plano\nonResume()
+    note right of Paused: Activity parcialmente visível\nonPause()
+    note right of Stopped: Activity invisível\nonStop()
+  </div>
+
+  <hr>
+
+  <h3>2. Fluxo de Rotação da Tela</h3>
+  <p>
+    Sequência de callbacks que ocorrem quando o usuário gira o dispositivo 90 graus. Observe que a Activity é destruída e recriada.
+  </p>
+
+  <div class="mermaid">
+    sequenceDiagram
+    autonumber
+    participant U as Usuário
+    participant A as MainActivity
+    participant S as Sistema Android
+    participant B as Bundle (dados)
+
+    U->>S: Gira o dispositivo
+    S->>A: onPause()
+    S->>A: onStop()
+    S->>A: onDestroy()
+    A->>B: onSaveInstanceState() salva dados
+    S->>A: onCreate(savedInstanceState)
+    Note over A: Activity recriada do zero
+    A->>B: savedInstanceState?.let { recupera dados }
+    S->>A: onStart()
+    S->>A: onResume()
+    A-->>U: Tela restaurada com dados preservados
+  </div>
+
+  <hr>
+
+  <h3>3. Árvore de Decisão: O Que Salvar no Bundle</h3>
+  <p>
+    Fluxograma auxiliar para decidir se um dado específico deve ser persistido via Bundle ou recarregado de outra forma.
+  </p>
+
+  <div class="mermaid">
+    graph TD
+    A[Dado a ser salvo] --> B{É um objeto Android<br/>(Context, View, Bitmap)?}
+    B -->|Sim| C[NÃO salve no Bundle<br/>cause TransactionTooLargeException]
+    B -->|Não| D{O dado veio de<br/>uma API ou banco?}
+    D -->|Sim| E[NÃO salve no Bundle<br/>recarregue ao recriar a Activity]
+    D -->|Não| F{O usuário digitou<br/>ou selecionou?}
+    F -->|Sim| G[SALVE no Bundle<br/>use onSaveInstanceState]
+    F -->|Não| H{A interface depende<br/>dele para ser exibida?}
+    H -->|Sim| G
+    H -->|Não| I[NÃO salve<br/>recalculue ao iniciar]
+
+    style C fill:#ffcccb,stroke:#f00,stroke-width:2px
+    style E fill:#ffcccb,stroke:#f00,stroke-width:2px
+    style G fill:#dfd,stroke:#333,stroke-width:2px
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Laboratório Prático: Monitor de Ciclo de Vida</h2>
+  <p>
+    Vamos criar um app simples que exibe na tela qual callback está sendo executado em tempo real, permitindo visualizar o ciclo de vida ao interagir com o dispositivo.
+  </p>
+
+  <h3>1. Estrutura do Código</h3>
+  <div class="code-container">
+    <pre><code class="language-kotlin">// MainActivity.kt
+class MainActivity : ComponentActivity() {
+
+    private var logEntries = mutableStateListOf&lt;String&gt;()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        addLog("onCreate() — Activity criada")
+
+        // Recuperar dados salvos (se houver)
+        savedInstanceState?.let { bundle ->
+            val count = bundle.getInt("counter", 0)
+            addLog("  ↳ Dados recuperados: counter = $count")
+        }
+
+        setContent {
+            LifecycleScreen(logs = logEntries)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        addLog("onStart() — Activity visível")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        addLog("onResume() — Activity em primeiro plano")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        addLog("onPause() — Activity perdendo foco")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        addLog("onStop() — Activity invisível")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        addLog("onRestart() — Retornando de stopped")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        addLog("onDestroy() — Activity destruída")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("counter", logEntries.size)
+        addLog("  ↳ onSaveInstanceState: counter salvo (${logEntries.size})")
+    }
+
+    private fun addLog(message: String) {
+        logEntries.add(message)
+    }
+}</code></pre>
+  </div>
+
+  <h3>2. Tela de Exibição</h3>
+  <div class="code-container">
+    <pre><code class="language-kotlin">// LifecycleScreen.kt
+@Composable
+fun LifecycleScreen(logs: List&lt;String&gt;) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Monitor de Ciclo de Vida",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Gire a tela, envie para 2º plano, ou volte para observar os callbacks.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(logs) { entry ->
+                Text(
+                    text = entry,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(vertical = 2.dp)
+                )
+            }
+        }
+    }
+}</code></pre>
+  </div>
+  <p>
+    Execute o app e teste: gire a tela, pressione o botão Home, abra uma notificação e volte ao app. Observe a sequência de callbacks exibida na tela.
+  </p>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas & Lembretes</h4>
+
+  <h5>1. Sempre Chame super</h5>
+  <p>Ao sobrescrever qualquer callback de ciclo de vida, lembre de chamar <code class="one-line-code">super.onXxx()</code> como primeira linha. Sem isso, o comportamento padrão do sistema é comprometido e erros silenciosos podem ocorrer.</p>
+
+  <h5>2. onPause() é Crítico</h5>
+  <p>O <code class="one-line-code">onPause()</code> é o único callback garantido a ser chamado em todas as situações (exceto quando a Activity é finalizada com <code class="one-line-code">finish()</code>). Sempre salve dados importantes aqui.</p>
+
+  <h5>3. Evite Trabalho Pesado no onPause()</h5>
+  <p>O <code class="one-line-code">onPause()</code> deve ser rápido, pois a próxima Activity não será exibida até que ele termine. Operações pesadas (salvar no banco, enviar dados) devem ser feitas no <code class="one-line-code">onStop()</code>.</p>
+
+  <h5>4. Bundle Tem Limite de Tamanho</h5>
+  <p>O Bundle tem um limite de aproximadamente 1MB. Salvar Bitmaps ou listas grandes pode causar <code class="one-line-code">TransactionTooLargeException</code>. Para dados grandes, utilize <code class="one-line-code">ViewModel</code> ou banco de dados local.</p>
+
+  <h5>5. ViewModel ≠ Ciclo de Vida</h5>
+  <p>O <code class="one-line-code">ViewModel</code> sobrevive às mudanças de configuração (rotação) sem precisar do Bundle. Use-o para dados que devem persistir durante a vida útil da Activity, e o Bundle apenas para dados de restauração de estado da interface.</p>
+</div>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/guide/components/activities/lifecycle">Ciclo de Vida de uma Activity</a>
+    </li>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/guide/components/activities/statechanges">Como lidar com mudanças de configuração</a>
+    </li>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/topic/libraries/architecture/lifecycle">Lifecycle-aware components</a>
+    </li>
+    <li>
+      Documentação Oficial do Android: <a href="https://developer.android.com/topic/libraries/architecture/viewmodel">ViewModel Guide</a>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>

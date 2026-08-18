@@ -1,20 +1,188 @@
 ---
 layout: questionario
-title: "Ciclo de Vida de um App"
+title: "Questionário - Ciclo de Vida de um App"
 exercicio_numero: "02"
 aula_numero: "05"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Questionário de fixação sobre os conceitos da aula 05."
-perguntas: []
+description: "Questionário de fixação sobre os estados de uma Activity, callbacks de ciclo de vida, persistência de estado com Bundle e comportamento do sistema Android."
+perguntas:
+  - texto: "Qual é o primeiro callback chamado quando uma Activity é criada pela primeira vez?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "onCreate()."
+      - letra: "b"
+        texto: "onStart()."
+      - letra: "c"
+        texto: "onResume()."
+      - letra: "d"
+        texto: "onInit()."
+
+  - texto: "Em que momento o callback onResume() é executado?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Quando a Activity é destruída pelo sistema."
+      - letra: "b"
+        texto: "Quando a Activity se torna parcialmente visível."
+      - letra: "c"
+        texto: "Quando a Activity entra em primeiro plano e está pronta para interação do usuário."
+      - letra: "d"
+        texto: "Quando o usuário pressiona o botão Voltar."
+
+  - texto: "O que acontece com a Activity quando o usuário gira a tela de portrait para landscape?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "A Activity permanece ativa sem alterações."
+      - letra: "b"
+        texto: "A Activity é destruída (onDestroy) e recriada (onCreate) do zero."
+      - letra: "c"
+        texto: "Apenas o layout XML é recarregado, sem chamar onCreate."
+      - letra: "d"
+        texto: "O app é fechado completamente e reaberto."
+
+  - texto: "Qual é a função principal do método onSaveInstanceState()?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Salvar dados temporários da interface em um Bundle antes da Activity ser destruída."
+      - letra: "b"
+        texto: "Salvar dados permanentes no banco de dados local."
+      - letra: "c"
+        texto: "Enviar dados para uma API remota."
+      - letra: "d"
+        texto: "Fechar todas asActivities da pilha de memória."
+
+  - texto: "O que acontece com o parâmetro savedInstanceState no onCreate() na primeira execução do app?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Ele contém todos os dados padrão do sistema."
+      - letra: "b"
+        texto: "Ele é uma instância vazia do Bundle."
+      - letra: "c"
+        texto: "Ele lança uma exceção NullPointerException."
+      - letra: "d"
+        texto: "Ele é null, pois não há dados salvos anteriormente."
+
+  - texto: "Qual callback é considerado o mais crítico para salvar dados, pois é garantido a ser chamado em todas as situações?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "onCreate()."
+      - letra: "b"
+        texto: "onPause()."
+      - letra: "c"
+        texto: "onDestroy()."
+      - letra: "d"
+        texto: "onStop()."
+
+  - texto: "Por que não se deve realizar operações pesadas dentro do onPause()?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Porque o método não possui acesso à memória do dispositivo."
+      - letra: "b"
+        texto: "Porque ele só é chamado em versões antigas do Android."
+      - letra: "c"
+        texto: "Porque a próxima Activity não será exibida até que onPause() termine, causando travamento na transição."
+      - letra: "d"
+        texto: "Porque o Bundle não aceita dados grandes."
+
+  - texto: "Qual é a ordem correta de callbacks ao enviar o app para segundo plano (botão Home)?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "onPause() → onStop()."
+      - letra: "b"
+        texto: "onStop() → onPause()."
+      - letra: "c"
+        texto: "onDestroy() → onPause()."
+      - letra: "d"
+        texto: "onPause() → onDestroy()."
+
+  - texto: "Qual é a ordem correta de callbacks ao retornar ao app após tê-lo enviado para segundo plano?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "onCreate() → onStart() → onResume()."
+      - letra: "b"
+        texto: "onResume() → onStart() → onCreate()."
+      - letra: "c"
+        texto: "onStart() → onResume() → onRestart()."
+      - letra: "d"
+        texto: "onRestart() → onStart() → onResume()."
+
+  - texto: "Qual é o limite aproximado de tamanho do objeto Bundle?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "100 KB."
+      - letra: "b"
+        texto: "Cerca de 1 MB."
+      - letra: "c"
+        texto: "10 MB."
+      - letra: "d"
+        texto: "Não há limite definido."
+
+  - texto: "Qual tipo de dado NÃO deve ser salvo no Bundle?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Texto digitado pelo usuário em um campo."
+      - letra: "b"
+        texto: "Posição de scroll de uma lista."
+      - letra: "c"
+        texto: "Referência a um Context ou View do Android."
+      - letra: "d"
+        texto: "ID do item selecionado em uma lista."
+
+  - texto: "O que o método onRestoreInstanceState() garante em relação ao onCreate()?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "O parâmetro Bundle nunca é nulo, pois o método só é chamado quando há dados salvos."
+      - letra: "b"
+        texto: "Ele é chamado antes do onCreate()."
+      - letra: "c"
+        texto: "Ele substitui completamente o onCreate()."
+      - letra: "d"
+        texto: "Ele só funciona em dispositivos com Android 10 ou superior."
+
+  - texto: "Quando o callback onDestroy() é chamado?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Sempre que o app perde o foco temporariamente."
+      - letra: "b"
+        texto: "Quando a Activity está prestes a ser removida permanentemente da memória."
+      - letra: "c"
+        texto: "Quando o usuário gira a tela, antes da recriação."
+      - letra: "d"
+        texto: "Apenas quando o desenvolvedor chama finish() manualmente."
+
+  - texto: "Qual callback é executado quando uma Activity parada (stopped) retorna à pilha de execução?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "onCreate()."
+      - letra: "b"
+        texto: "onResume()."
+      - letra: "c"
+        texto: "onRestart()."
+      - letra: "d"
+        texto: "onSaveInstanceState()."
+
+  - texto: "No Jetpack Compose, como o desenvolvedor pode reagir a mudanças de ciclo de vida da Activity?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Usando apenas funções @Composable, sem necessidade de LifecycleObserver."
+      - letra: "b"
+        texto: "Sobrescrevendo métodos dentro das funções composable."
+      - letra: "c"
+        texto: "Utilizando exclusivamente o onSaveInstanceState() no Compose."
+      - letra: "d"
+        texto: "Registrando um LifecycleEventObserver no lifecycle da Activity."
 ---
-
-<p>Questionário em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>

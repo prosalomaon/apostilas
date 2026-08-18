@@ -1,13 +1,551 @@
 ---
 title: "Persistência de Dados II: O Padrão DAO"
+componente: "Desenvolvimento de Sistemas"
 aula_numero: "26"
-description: "Organização da camada de persistência com o padrão Data Access Object, separando a lógica de negócio das instruções de banco de dados."
+description: "Aprofundamento nos conceitos de persistência com o padrão DAO (Data Access Object): isolamento de acesso a dados, interface genérica, ConnectionFactory, Injeção de Dependência e integração com camadas de serviço."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em construção.</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O que é o Padrão DAO?</h3>
+  <p>
+    O <strong>Data Access Object (DAO)</strong> é um padrão de projeto que visa remover o código de acesso ao banco de
+    dados das classes de lógica de negócio, centralizando as operações de persistência em classes específicas.
+  </p>
+  <ul>
+    <li><strong>Objetivo Principal:</strong> Isolar todo o acesso ao banco de dados em classes simples, onde cada instância
+      é um objeto responsável por acessar e manipular os dados de uma <strong>entidade específica</strong>.</li>
+    <li><strong>Problema que resolve:</strong> Evita que o código SQL fique espalhado por toda a aplicação, o que
+      tornaria o sistema difícil de ler, manter e evoluir.</li>
+    <li><strong>Independência:</strong> O uso do DAO permite que, caso o banco de dados mude, apenas as classes DAO
+      precisem ser alteradas, sem impactar a lógica de negócio.</li>
+  </ul>
+  <div class="mermaid">
+    flowchart TB
+    subgraph App ["Arquitetura com Padrão DAO"]
+      A["Controller / View"] --> B["Service\n(lógica de negócio)"]
+      B --> C["Interface DAO\n(contrato)"]
+      C --> D["DAO Impl\n(implementação JDBC)"]
+      D --> E[("Banco de Dados")]
+    end
+  </div>
+  <div class="tip-box">
+    <h4>Lembre-se</h4>
+    <p>
+      Na aula anterior (Aula 25) vimos os fundamentos do JDBC — conexão, PreparedStatement e ResultSet. Agora, o
+      padrão DAO organiza esses elementos em uma arquitetura limpa e sustentável.
+    </p>
+  </div>
+
+  <h3>2. Componentes de uma Implementação DAO</h3>
+  <p>
+    Para implementar este padrão com eficácia, geralmente trabalhamos com <strong>três elementos principais</strong>:
+    a Entidade, a Interface e a Classe Concreta.
+  </p>
+
+  <h4>A. Entidade (JavaBean)</h4>
+  <p>
+    Representa a tabela do banco de dados no mundo orientado a objetos. Deve seguir o padrão
+    <strong>JavaBean</strong>: possuir um construtor sem argumentos e métodos de acesso
+    <code class="one-line-code">get</code> e <code class="one-line-code">set</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Contato {
+    private Long id;
+    private String nome;
+    private String email;
+
+    // Construtor vazio (padrão JavaBean)
+    public Contato() { }
+
+    // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}</code></pre>
+  </div>
+  <p>
+    Cada atributo da classe corresponde a uma coluna da tabela. O construtor vazio é essencial para que frameworks e
+    ferramentas (como JDBC e serializadores) consigam instanciar o objeto sem conhecer os detalhes de construção.
+  </p>
+
+  <h4>B. Interface DAO (Opcional, mas Recomendada)</h4>
+  <p>
+    Define o <strong>contrato</strong> de quais operações de dados devem existir (como salvar, excluir ou buscar),
+    permitindo o uso de tipos genéricos <code class="one-line-code">&lt;E&gt;</code> para maior flexibilidade.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.List;
+
+// Interface genérica para qualquer entidade
+public interface DAO&lt;E&gt; {
+    void salvar(E entidade);
+    E recuperarPorId(Object id);
+    List&lt;E&gt; listarTodos();
+    void atualizar(E entidade);
+    void excluir(Object id);
+}</code></pre>
+  </div>
+  <p>
+    A interface DAO é o <strong>"contrato"</strong> que a camada de serviço conhece. A implementação concreta pode ser
+    trocada sem alterar o código que consome o DAO — esse é o princípio da <strong>programação para interfaces</strong>.
+  </p>
+
+  <h4>C. Implementação Concreta</h4>
+  <p>
+    A classe concreta implementa a interface DAO e contém toda a lógica de acesso ao banco de dados via JDBC. Cada
+    método representa uma operação de persistência.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Implementação Prática: O ContatoDao</h2>
+  <p>
+    A classe DAO concreta contém a conexão com o banco e os métodos que executam as instruções SQL utilizando a API
+    JDBC. Vejamos uma implementação completa passo a passo.
+  </p>
+
+  <h3>1. A Classe ConnectionFactory</h3>
+  <p>
+    Para evitar repetição de código, a abertura de conexão é centralizada em uma classe utilitária. Essa classe
+    encapsula os detalhes de URL, usuário e senha — se o banco mudar, alteramos apenas este ponto.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class ConnectionFactory {
+
+    private static final String URL = "jdbc:mysql://localhost:3306/agenda_contatos";
+    private static final String USUARIO = "root";
+    private static final String SENHA = "senha";
+
+    public Connection getConnection() {
+        try {
+            return DriverManager.getConnection(URL, USUARIO, SENHA);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao conectar ao banco de dados", e);
+        }
+    }
+}</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Por que encapsular a conexão?</h4>
+    <ul>
+      <li><strong>DRY (Don't Repeat Yourself):</strong> Evita repetir a lógica de conexão em cada DAO.</li>
+      <li><strong>Manutenção:</strong> Se a senha ou URL mudar, altera-se apenas a <code
+          class="one-line-code">ConnectionFactory</code>.</li>
+      <li><strong>Testabilidade:</strong> Em testes unitários, pode-se mockar ou substituir a ConnectionFactory.</li>
+    </ul>
+  </div>
+
+  <h3>2. O ContatoDao Completo</h3>
+  <p>
+    Note como cada método utilize <code class="one-line-code">PreparedStatement</code> (nunca concatenação de strings)
+    e como as exceções <code class="one-line-code">SQLException</code> são capturadas e relançadas como <code
+    class="one-line-code">RuntimeException</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ContatoDao {
+
+    private Connection connection;
+
+    // A conexão é obtida através da ConnectionFactory
+    public ContatoDao() {
+        this.connection = new ConnectionFactory().getConnection();
+    }
+
+    // CREATE — Inserir um novo contato
+    public void adiciona(Contato contato) {
+        String sql = "INSERT INTO contatos (nome, email) VALUES (?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, contato.getNome());
+            stmt.setString(2, contato.getEmail());
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao adicionar contato", e);
+        }
+    }
+
+    // READ — Listar todos os contatos
+    public List&lt;Contato&gt; Lista() {
+        List&lt;Contato&gt; contatos = new ArrayList&lt;&gt;();
+        String sql = "SELECT id, nome, email FROM contatos";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Contato contato = new Contato();
+                contato.setId(rs.getLong("id"));
+                contato.setNome(rs.getString("nome"));
+                contato.setEmail(rs.getString("email"));
+                contatos.add(contato);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar contatos", e);
+        }
+        return contatos;
+    }
+
+    // READ — Buscar contato por ID
+    public Contato buscaPorId(Long id) {
+        String sql = "SELECT id, nome, email FROM contatos WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Contato contato = new Contato();
+                    contato.setId(rs.getLong("id"));
+                    contato.setNome(rs.getString("nome"));
+                    contato.setEmail(rs.getString("email"));
+                    return contato;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar contato por ID", e);
+        }
+        return null;
+    }
+
+    // UPDATE — Atualizar dados de um contato
+    public void atualiza(Contato contato) {
+        String sql = "UPDATE contatos SET nome = ?, email = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, contato.getNome());
+            stmt.setString(2, contato.getEmail());
+            stmt.setLong(3, contato.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar contato", e);
+        }
+    }
+
+    // DELETE — Excluir contato por ID
+    public void remove(Long id) {
+        String sql = "DELETE FROM contatos WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao remover contato", e);
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>3. Uso no Código da Aplicação</h3>
+  <p>
+    Com o DAO implementado, a camada de negócio se torna simples e limpa — ela não precisa saber <em>como</em> os
+    dados são salvos, apenas <em>que</em> o DAO é capaz de salvá-los:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        ContatoDao dao = new ContatoDao();
+
+        // Criando e salvando um contato
+        Contato c = new Contato();
+        c.setNome("Ana Souza");
+        c.setEmail("ana@email.com");
+        dao.adiciona(c);
+
+        // Listando todos os contatos
+        List&lt;Contato&gt; lista = dao.Lista();
+        for (Contato contato : lista) {
+            System.out.println(contato.getId() + " - " + contato.getNome());
+        }
+
+        // Buscando por ID
+        Contato encontrado = dao.buscaPorId(1L);
+        if (encontrado != null) {
+            System.out.println("Encontrado: " + encontrado.getNome());
+        }
+
+        // Atualizando
+        encontrado.setNome("Ana Souza Silva");
+        dao.atualiza(encontrado);
+
+        // Excluindo
+        dao.remove(1L);
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Acoplamento e Injeção de Dependência</h2>
+  <p>
+    Uma evolução importante no design de DAOs é a <strong>Inversão de Controle (IoC)</strong>. No exemplo anterior, o
+    DAO cria sua própria conexão dentro do construtor — isso gera acoplamento direto com a
+    <code class="one-line-code">ConnectionFactory</code>.
+  </p>
+
+  <h3>Problema: Múltiplas Conexões</h3>
+  <p>
+    Se cada DAO abre sua própria conexão, uma única operação que envolva vários DAOs pode consumir várias conexões
+    simultaneamente, desperdiçando recursos do servidor.
+  </p>
+
+  <h3>Solução: Injeção de Dependência</h3>
+  <p>
+    Em vez de o DAO criar sua própria conexão, ele passa a <strong>recebê-la de fora</strong> (via construtor ou
+    método <code class="one-line-code">setter</code>). O DAO declara que "precisa" de uma conexão, e o sistema
+    (ou um framework como Spring) "injeta" essa conexão no momento da criação do objeto.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Versão com Injeção de Dependência
+public class ContatoDao {
+
+    private Connection connection;
+
+    // A conexão é INJETADA pelo construtor (não criada internamente)
+    public ContatoDao(Connection connection) {
+        this.connection = connection;
+    }
+
+    public void adiciona(Contato contato) {
+        String sql = "INSERT INTO contatos (nome, email) VALUES (?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, contato.getNome());
+            stmt.setString(2, contato.getEmail());
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao adicionar contato", e);
+        }
+    }
+
+    // ... outros métodos permanecem iguais
+}</code></pre>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-java">// Uso: a conexão é compartilhada entre múltiplos DAOs
+ConnectionFactory factory = new ConnectionFactory();
+Connection conexao = factory.getConnection();
+
+ContatoDao contatoDao = new ContatoDao(conexao);
+TelefoneDao telefoneDao = new TelefoneDao(conexao);
+
+// Ambos usam a MESMA conexão — economiza recursos e suporta transações
+try {
+    contatoDao.adiciona(novoContato);
+    telefoneDao.adiciona(novoTelefone);
+    conexao.commit(); // confirma ambas as operações
+} catch (Exception e) {
+    conexao.rollback(); // desfaz tudo em caso de erro
+}</code></pre>
+  </div>
+  <div class="mermaid">
+    flowchart LR
+    A["Camada de Serviço"] -->|"precisa de DAO"| B["Cria Connection"]
+    B -->|"injeta Connection"| C["ContatoDao"]
+    B -->|"injeta Connection"| D["TelefoneDao"]
+    C --> E[("Banco de Dados")]
+    D --> E
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>DAOs e Camadas de Serviço</h2>
+  <p>
+    Em arquiteturas modulares, as classes da <strong>Camada de Serviço</strong> são responsáveis pelas regras de
+    negócio e colaboram com os DAOs para persistir informações. A separação de responsabilidades é fundamental:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Camada</th>
+        <th>Responsabilidade</th>
+        <th>Exemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Controller</strong></td>
+        <td>Receber requisições, validar entrada e chamar o Service</td>
+        <td><code class="one-line-code">ContatoController</code></td>
+      </tr>
+      <tr>
+        <td><strong>Service</strong></td>
+        <td>Aplicar regras de negócio, orquestrar operações</td>
+        <td><code class="one-line-code">ContatoService</code></td>
+      </tr>
+      <tr>
+        <td><strong>DAO</strong></td>
+        <td>Acessar o banco de dados (CRUD)</td>
+        <td><code class="one-line-code">ContatoDao</code></td>
+      </tr>
+      <tr>
+        <td><strong>Entity</strong></td>
+        <td>Representar a tabela como objeto Java</td>
+        <td><code class="one-line-code">Contato</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Exemplo: ContatoService usando ContatoDao</h3>
+  <div class="code-container">
+    <pre><code class="language-java">public class ContatoService {
+
+    private ContatoDao contatoDao;
+
+    // Injeção de Dependência: o Service recebe o DAO
+    public ContatoService(ContatoDao contatoDao) {
+        this.contatoDao = contatoDao;
+    }
+
+    // Regra de negócio: não permitir e-mails duplicados
+    public void cadastrarContato(Contato contato) {
+        List&lt;Contato&gt; existentes = contatoDao.Lista();
+
+        for (Contato c : existentes) {
+            if (c.getEmail().equals(contato.getEmail())) {
+                throw new IllegalArgumentException(
+                    "Já existe um contato com esse e-mail: " + contato.getEmail()
+                );
+            }
+        }
+
+        // Se passou pela regra, persiste
+        contatoDao.adiciona(contato);
+    }
+
+    // Regra de negócio:-formatar lista para exibição
+    public String listarFormatado() {
+        List&lt;Contato&gt; contatos = contatoDao.Lista();
+        StringBuilder sb = new StringBuilder();
+
+        for (Contato c : contatos) {
+            sb.append(String.format("[%d] %s — %s%n",
+                c.getId(), c.getNome(), c.getEmail()));
+        }
+        return sb.toString();
+    }
+}</code></pre>
+  </div>
+  <p>
+    Repare que o <code class="one-line-code">ContatoService</code> <strong>não sabe como</strong> o dado é salvo —
+    ele apenas sabe que o <code class="one-line-code">ContatoDao</code> é capaz de salvá-lo. Se amanhã a implementação
+    JDBC for substituída por Hibernate/JPA, o Service permanece intacto.
+  </p>
+
+  <h3>Factory Method para criação de DAOs</h3>
+  <p>
+    Para desacoplar ainda mais a criação de instâncias, pode-se utilizar o padrão <strong>Factory Method</strong> para
+    delegar a criação da instância correta do DAO para uma subclasse específica:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public abstract class DAOFactory {
+
+    // Factory Method abstrato
+    public abstract ContatoDao getContatoDao();
+
+    // Factory concreta para JDBC
+    public static DAOFactory getJdbcFactory(Connection conexao) {
+        return new JdbcDAOFactory(conexao);
+    }
+}
+
+public class JdbcDAOFactory extends DAOFactory {
+
+    private Connection conexao;
+
+    public JdbcDAOFactory(Connection conexao) {
+        this.conexao = conexao;
+    }
+
+    @Override
+    public ContatoDao getContatoDao() {
+        return new ContatoDao(conexao);
+    }
+}
+
+// Uso:
+DAOFactory factory = DAOFactory.getJdbcFactory(conexao);
+ContatoDao dao = factory.getContatoDao();</code></pre>
+  </div>
+  <div class="mermaid">
+    flowchart TD
+    A["DAOFactory (abstrata)"] --> B["JdbcDAOFactory\n(retorna DAOs JDBC)"]
+    A --> C["HibernateDAOFactory\n(retorna DAOs com ORM)"]
+    B --> D["ContatoDao (JDBC)"]
+    C --> E["ContatoDao (Hibernate)"]
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes Técnicos</h4>
+  <ul>
+    <li><strong>Sempre feche os recursos:</strong> Certifique-se de fechar <code class="one-line-code">PreparedStatement</code>
+      e <code class="one-line-code">Connection</code> (preferencialmente usando <code
+        class="one-line-code">try-with-resources</code>) para evitar vazamentos de memória.</li>
+    <li><strong>Encapsule Exceções:</strong> Capture <code class="one-line-code">SQLException</code> e relance como
+      uma exceção de tempo de execução (como <code class="one-line-code">RuntimeException</code> ou uma customizada
+      <code class="one-line-code">DAOException</code>) para não "sujar" as outras camadas com detalhes de banco de dados.
+    </li>
+    <li><strong>Use PreparedStatements:</strong> Nunca concatene Strings para montar SQL; o uso de parâmetros
+      <code class="one-line-code">?</code> é essencial para performance e segurança contra ataques de SQL Injection.</li>
+    <li><strong>Uma entidade = um DAO:</strong> Mantenha o princípio de que cada tabela do banco deve ter seu próprio
+      DAO dedicado. Isso facilita a localização e manutenção do código.</li>
+    <li><strong>Evolução para ORM:</strong> Se o projeto crescer e as consultas SQL se tornarem muito complexas ou
+      manuais, considere evoluir para ferramentas de ORM (Object Relational Mapping) como o <strong>Hibernate</strong>
+      ou a especificação <strong>JPA</strong>.</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>Cadastro de usuários:</strong> Crie uma interface <code class="one-line-code">UsuarioDAO</code> com
+      <em>salvar/listar/buscarPorId/excluir</em> e uma implementação JDBC para a tabela de usuários.</li>
+    <li><strong>Compartilhe a conexão:</strong> Use Injeção de Dependência para que múltiplos DAOs compartilhem a
+      mesma <code class="one-line-code">Connection</code> em uma operação transacional.</li>
+    <li><strong>Factory Pattern:</strong> Implemente uma <code class="one-line-code">DAOFactory</code> para criar DAOs
+      sem expor a implementação concreta ao restante da aplicação.</li>
+    <li><strong>Camada de Serviço:</strong> Nunca chame o DAO diretamente do Controller — sempre passe pelo Service para
+      que as regras de negócio sejam aplicadas antes da persistência.</li>
+    <li><strong>Testes unitários:</strong> Crie implementações "falsas" (mocks) da interface DAO para testar a lógica de
+      negócio sem depender do banco de dados real.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>CAELUM. Java para Desenvolvimento Web. Apostila FJ-21 da Caelum.</li>
+    <li>CAELUM. Java e Orientação a Objetos. Apostila FJ-11 da Caelum.</li>
+    <li>DEITEL, Harvey M.; DEITEL, Paul J. Java: como programar. 8. ed. São Paulo: Pearson, 2010.</li>
+    <li>GAMMA, Erich et al. Design Patterns: Elements of Reusable Object-Oriented Software. Addison-Wesley, 1994.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Implementando um DAO Completo</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>

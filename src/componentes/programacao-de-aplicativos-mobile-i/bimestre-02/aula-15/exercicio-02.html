@@ -1,20 +1,188 @@
 ---
 layout: questionario
-title: "Navegação entre Telas"
+title: "Questionário - Navegação entre Telas"
 exercicio_numero: "02"
 aula_numero: "15"
 subject: "programacao-de-aplicativos-mobile-i"
-description: "Questionário de fixação sobre os conceitos da aula 15."
-perguntas: []
+description: "Questionário de fixação sobre conceitos de navegação entre telas em Android, Intents, Compose Navigation e passagem de parâmetros."
+perguntas:
+  - texto: "Qual é o papel principal de uma Activity no desenvolvimento Android?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Ela serve apenas para armazenar dados em banco de dados local."
+      - letra: "b"
+        texto: "Ela representa uma única tela com interface gráfica e gerencia uma parte do fluxo de trabalho do usuário."
+      - letra: "c"
+        texto: "Ela é responsável exclusivamente por conexões de rede."
+      - letra: "d"
+        texto: "Ela controla apenas o ciclo de vida do processador do dispositivo."
+
+  - texto: "O que é um Intent Explícito no contexto de navegação entre Activities?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Um componente que especifica exatamente qual Activity ou componente deve ser aberto."
+      - letra: "b"
+        texto: "Uma solicitação genérica que o sistema resolve automaticamente."
+      - letra: "c"
+        texto: "Um objeto que apenas armazena chaves de extras sem definir destino."
+      - letra: "d"
+        texto: "Uma configuração que define apenas a animação de transição entre telas."
+
+  - texto: "No modelo moderno de navegação com Jetpack Compose, qual componente gerencia a pilha de telas (Backstack)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "O ActivityManager."
+      - letra: "b"
+        texto: "O IntentFilter."
+      - letra: "c"
+        texto: "O NavController."
+      - letra: "d"
+        texto: "O ViewModelProvider."
+
+  - texto: "Qual é a principal vantagem de utilizar Compose Navigation em vez de múltiplas Activities?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Permite usar apenas linguagem Java no projeto."
+      - letra: "b"
+        texto: "Elimina a necessidade de testar o código."
+      - letra: "c"
+        texto: "Força o uso de banco de dados para cada transição."
+      - letra: "d"
+        texto: "As transições são mais fluidas e leves, pois apenas as composições são recompostas."
+
+  - texto: "Como os parâmetros são passados entre rotas no Compose Navigation?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Através de Extras no Bundle da Intent."
+      - letra: "b"
+        texto: "Através de argumentos na URL da rota (ex: detail/{itemId})."
+      - letra: "c"
+        texto: "Através de variáveis globais estáticas."
+      - letra: "d"
+        texto: "Através de arquivos XML de configuração."
+
+  - texto: "Para que uma Activity seja reconhecida pelo sistema Android, onde ela deve ser declarada?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "No arquivo AndroidManifest.xml."
+      - letra: "b"
+        texto: "No arquivo build.gradle.kts (app)."
+      - letra: "c"
+        texto: "No arquivo settings.gradle."
+      - letra: "d"
+        texto: "No arquivo strings.xml."
+
+  - texto: "O que o método navController.popBackStack() faz?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Fecha completamente o aplicativo."
+      - letra: "b"
+        texto: "Navega para a primeira rota definida no NavHost."
+      - letra: "c"
+        texto: "Remove a tela atual da pilha e retorna à tela anterior."
+      - letra: "d"
+        texto: "Limpa todos os argumentos das rotas anteriores."
+
+  - texto: "Qual é a boa prática recomendada para evitar erros de digitação nas strings de rotas?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Usar números inteiros em vez de strings para identificar rotas."
+      - letra: "b"
+        texto: "Repetir a string de rota em todos os arquivos do projeto."
+      - letra: "c"
+        texto: "Usar variáveis aleatórias geradas em tempo de execução."
+      - letra: "d"
+        texto: "Criar um objeto Routes que centraliza todas as strings de rota."
+
+  - texto: "Ao utilizar Intents para navegação, qual é a boa prática para definir as chaves de extras?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Usar strings textuais diretamente no código de envio e recebimento."
+      - letra: "b"
+        texto: "Definir constantes no companion object da Activity de destino."
+      - letra: "c"
+        texto: "Usar números aleatórios como chaves para maior segurança."
+      - letra: "d"
+        texto: "Armazenar as chaves em um arquivo de configuração externo."
+
+  - texto: "No Compose Navigation, como é definido o valor padrão de um argumento opcional?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Usando a propriedade defaultValue dentro do navArgument."
+      - letra: "b"
+        texto: "Definindo o argumento como nullable no NavHost."
+      - letra: "c"
+        texto: "Criando uma rota separada para cada combinação possível."
+      - letra: "d"
+        texto: "Usando o operador Elvis diretamente na definição da rota."
+
+  - texto: "Qual é a principal característica de uma subquery no contexto de navegação de dados entre telas?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Ela é o mecanismo que substitui completamente o NavHost."
+      - letra: "b"
+        texto: "Ela permite que duas Activities se comuniquem via rede."
+      - letra: "c"
+        texto: "Não se aplica: subqueries são conceitos de banco de dados, não de navegação Android."
+      - letra: "d"
+        texto: "Ela é uma função nativa do Kotlin para transição de telas."
+
+  - texto: "No fluxo Mestre-Detalhe, o que acontece quando o usuário clica em um item da lista?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "O app fecha e reabre a Activity principal."
+      - letra: "b"
+        texto: "O app navega para uma tela de detalhes passando o identificador do item como parâmetro."
+      - letra: "c"
+        texto: "O item é removido da lista e adicionado a um banco de dados."
+      - letra: "d"
+        texto: "O app exibe um popup com as informações sem mudar de tela."
+
+  - texto: "Qual é o comportamento esperado do ciclo de vida da Activity ao navegar entre rotas no Compose Navigation?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "A Activity é destruída e recriada a cada mudança de rota."
+      - letra: "b"
+        texto: "A Activity entra em estado de pausa permanente até o app ser fechado."
+      - letra: "c"
+        texto: "A Activity cria uma nova instância para cada rota diferente."
+      - letra: "d"
+        texto: "A Activity permanece ativa durante toda a navegação, preservando estados em memória."
+
+  - texto: "Ao passar um parâmetro de texto (String) como argumento de rota no Compose Navigation, qual cuidado deve ser tomado?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "O parâmetro deve ser sempre numérico para evitar erros."
+      - letra: "b"
+        texto: "O parâmetro deve ter exatamente 10 caracteres."
+      - letra: "c"
+        texto: "Espaços e caracteres especiais devem ser codificados usando Uri.encode()."
+      - letra: "d"
+        texto: "O parâmetro deve ser passado exclusivamente via Intent."
+
+  - texto: "Qual é a diferença fundamental entre Intent Explícito e Intent Implícito?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "O Explícito define o componente destino diretamente; o Implícito declara uma ação e o sistema escolhe o componente."
+      - letra: "b"
+        texto: "O Explícito é usado apenas para navegação; o Implícito é usado apenas para serviços."
+      - letra: "c"
+        texto: "O Explícito funciona apenas em Java; o Implícito funciona apenas em Kotlin."
+      - letra: "d"
+        texto: "Não existe diferença: ambos são sinônimos na documentação do Android."
 ---
-
-<p>Questionário em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
