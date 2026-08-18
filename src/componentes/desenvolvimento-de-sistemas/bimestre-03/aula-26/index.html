@@ -163,7 +163,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContatoDao {
+public class ContatoDao implements DAO&lt;Contato&gt; {
 
     private Connection connection;
 
@@ -173,7 +173,8 @@ public class ContatoDao {
     }
 
     // CREATE — Inserir um novo contato
-    public void adiciona(Contato contato) {
+    @Override
+    public void salvar(Contato contato) {
         String sql = "INSERT INTO contatos (nome, email) VALUES (?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -186,7 +187,8 @@ public class ContatoDao {
     }
 
     // READ — Listar todos os contatos
-    public List&lt;Contato&gt; Lista() {
+    @Override
+    public List&lt;Contato&gt; listarTodos() {
         List&lt;Contato&gt; contatos = new ArrayList&lt;&gt;();
         String sql = "SELECT id, nome, email FROM contatos";
 
@@ -207,7 +209,8 @@ public class ContatoDao {
     }
 
     // READ — Buscar contato por ID
-    public Contato buscaPorId(Long id) {
+    @Override
+    public Contato recuperarPorId(Object id) {
         String sql = "SELECT id, nome, email FROM contatos WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -229,7 +232,8 @@ public class ContatoDao {
     }
 
     // UPDATE — Atualizar dados de um contato
-    public void atualiza(Contato contato) {
+    @Override
+    public void atualizar(Contato contato) {
         String sql = "UPDATE contatos SET nome = ?, email = ? WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -243,7 +247,8 @@ public class ContatoDao {
     }
 
     // DELETE — Excluir contato por ID
-    public void remove(Long id) {
+    @Override
+    public void excluir(Object id) {
         String sql = "DELETE FROM contatos WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -270,26 +275,26 @@ public class ContatoDao {
         Contato c = new Contato();
         c.setNome("Ana Souza");
         c.setEmail("ana@email.com");
-        dao.adiciona(c);
+        dao.salvar(c);
 
         // Listando todos os contatos
-        List&lt;Contato&gt; lista = dao.Lista();
+        List&lt;Contato&gt; lista = dao.listarTodos();
         for (Contato contato : lista) {
             System.out.println(contato.getId() + " - " + contato.getNome());
         }
 
         // Buscando por ID
-        Contato encontrado = dao.buscaPorId(1L);
+        Contato encontrado = dao.recuperarPorId(1L);
         if (encontrado != null) {
             System.out.println("Encontrado: " + encontrado.getNome());
         }
 
         // Atualizando
         encontrado.setNome("Ana Souza Silva");
-        dao.atualiza(encontrado);
+        dao.atualizar(encontrado);
 
         // Excluindo
-        dao.remove(1L);
+        dao.excluir(1L);
     }
 }</code></pre>
   </div>
@@ -316,8 +321,8 @@ public class ContatoDao {
     (ou um framework como Spring) "injeta" essa conexão no momento da criação do objeto.
   </p>
   <div class="code-container">
-    <pre><code class="language-java">// Versão com Injeção de Dependência
-public class ContatoDao {
+    <pre><code class="language-java">    // Versão com Injeção de Dependência
+public class ContatoDao implements DAO&lt;Contato&gt; {
 
     private Connection connection;
 
@@ -326,7 +331,8 @@ public class ContatoDao {
         this.connection = connection;
     }
 
-    public void adiciona(Contato contato) {
+    @Override
+    public void salvar(Contato contato) {
         String sql = "INSERT INTO contatos (nome, email) VALUES (?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -351,8 +357,8 @@ TelefoneDao telefoneDao = new TelefoneDao(conexao);
 
 // Ambos usam a MESMA conexão — economiza recursos e suporta transações
 try {
-    contatoDao.adiciona(novoContato);
-    telefoneDao.adiciona(novoTelefone);
+    contatoDao.salvar(novoContato);
+    telefoneDao.salvar(novoTelefone);
     conexao.commit(); // confirma ambas as operações
 } catch (Exception e) {
     conexao.rollback(); // desfaz tudo em caso de erro
