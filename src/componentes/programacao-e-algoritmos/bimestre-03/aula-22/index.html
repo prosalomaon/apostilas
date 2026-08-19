@@ -1,57 +1,323 @@
 ---
-title: "Operações com Vetores: Busca e Preenchimento"
+title: "Operações com Vetores: Preenchimento, Busca e Extremos"
 aula_numero: "22"
-description: "Algoritmos para manipulação de arrays."
+description: "Técnicas para preencher, buscar e localizar extremos em vetores Java."
 tags:
   - aula
   - "bimestre-03"
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 22 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    Nesta aula vamos aprofundar o uso de vetores aprendendo três operações
+    fundamentais: <strong>preenchimento</strong>,
+    <strong>busca</strong> e <strong>localização de extremos</strong>. Essas
+    técnicas são a base para resolver a maioria dos problemas que envolvem
+    conjuntos de dados em Java.
+  </p>
+
+  <h3>1. Preenchimento de Vetores</h3>
+  <p>
+    Preencher um vetor consiste em atribuir valores a cada uma de suas posições
+    (índices). Existem três formas principais de realizar essa tarefa em Java:
+  </p>
+  <ul>
+    <li>
+      <strong>Inicialização Direta:</strong> ocorre no momento da declaração,
+      quando os valores já são conhecidos.
+    </li>
+    <li>
+      <strong>Atribuição Manual:</strong> atribuir um valor a uma posição
+      específica usando seu índice.
+    </li>
+    <li>
+      <strong>Preenchimento Dinâmico (Laços):</strong> é a forma mais eficiente,
+      utilizando uma estrutura de repetição (geralmente o laço
+      <code class="one-line-code">for</code>) para percorrer o vetor do índice 0
+      até <code class="one-line-code">comprimento - 1</code>.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-java">// 1. Inicialização Direta
+int[] numeros = {10, 20, 30, 40, 50};
+
+// 2. Atribuição Manual
+String[] cores = new String[3];
+cores[0] = "Azul";
+cores[1] = "Vermelho";
+cores[2] = "Verde";
+
+// 3. Preenchimento Dinâmico (via Scanner)
+import java.util.Scanner;
+
+double[] temps = new double[7];
+Scanner leitor = new Scanner(System.in);
+
+for (int i = 0; i &lt; temps.length; i++) {
+    System.out.print("Digite a temperatura do dia " + (i + 1) + ": ");
+    temps[i] = leitor.nextDouble();
+}</code></pre>
+  </div>
+  <p>
+    <strong>Dica técnica:</strong> ao preencher vetores via teclado, é
+    recomendável usar o atributo
+    <code class="one-line-code">.length</code> no controle do laço para garantir
+    que o código seja flexível a mudanças no tamanho do array.
+  </p>
+
+  <h3>2. Busca em Vetores (Linear Search)</h3>
+  <p>
+    A operação de busca serve para verificar se um determinado valor (chamado de
+    <em>alvo</em> ou <em>chave</em>) está presente no conjunto de dados. A
+    técnica mais simples é a <strong>Busca Linear</strong>.
+  </p>
+  <ul>
+    <li>
+      <strong>Funcionamento:</strong> o programa percorre o vetor item por item,
+      comparando cada elemento com o valor procurado.
+    </li>
+    <li>
+      <strong>Resultados:</strong> se o valor for encontrado, o programa retorna
+      o índice da posição; caso contrário, costuma-se retornar um valor
+      sinalizador, como <code class="one-line-code">-1</code>, para indicar que
+      o item não existe no vetor.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-java">int[] ids = {101, 202, 305, 407, 500};
+int alvo = 305;
+int posicao = -1;
+
+for (int i = 0; i &lt; ids.length; i++) {
+    if (ids[i] == alvo) {
+        posicao = i; // Encontrou o alvo!
+        break;       // Interrompe a busca após encontrar
+    }
+}
+
+if (posicao != -1) {
+    System.out.println("ID encontrado na posição: " + posicao);
+} else {
+    System.out.println("ID não encontrado.");
+}</code></pre>
+  </div>
+
+  <h3>3. Localização de Extremos (Maior e Menor)</h3>
+  <p>
+    Uma variação da busca é a localização do maior ou menor valor. Para isso,
+    utiliza-se a estratégia da <strong>hipótese inicial</strong>: assume-se que o
+    primeiro elemento (<code class="one-line-code">vetor[0]</code>) é o maior e,
+    em seguida, percorre-se o restante do vetor comparando e atualizando essa
+    variável sempre que um valor superior for encontrado.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">double[] notas = {7.5, 9.2, 6.8, 10.0, 8.5};
+double maiorNota = notas[0]; // Hipótese inicial
+
+for (int i = 1; i &lt; notas.length; i++) {
+    if (notas[i] &gt; maiorNota) {
+        maiorNota = notas[i]; // Atualização do maior valor
+    }
+}
+System.out.println("A maior nota é: " + maiorNota);</code></pre>
+  </div>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>Exemplo 1: Preenchimento com Entrada do Usuário</h3>
+  <p>
+    Neste exemplo, preenchemos um vetor de temperaturas coletadas durante uma
+    semana.
+  </p>
   <div class="code-container">
-    <pre><code class="language-java">// Em breve...</code></pre>
+    <pre><code class="language-java">import java.util.Scanner;
+
+public class PreencherVetor {
+    public static void main(String[] args) {
+        Scanner leitor = new Scanner(System.in);
+        double[] temps = new double[7]; // Vetor para 7 dias
+
+        for (int i = 0; i &lt; temps.length; i++) {
+            System.out.print("Digite a temperatura do dia " + (i + 1) + ": ");
+            temps[i] = leitor.nextDouble(); // Preenchimento dinâmico
+        }
+
+        System.out.println("\nTemperaturas registradas:");
+        for (int i = 0; i &lt; temps.length; i++) {
+            System.out.println("Dia " + (i + 1) + ": " + temps[i] + "°C");
+        }
+
+        leitor.close();
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 2: Busca Linear de um Valor</h3>
+  <p>
+    Verificando se um número específico está presente em uma lista de IDs.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class BuscaLinear {
+    public static void main(String[] args) {
+        int[] ids = {101, 202, 305, 407, 500};
+        int alvo = 305;
+        int posicao = -1;
+
+        for (int i = 0; i &lt; ids.length; i++) {
+            if (ids[i] == alvo) {
+                posicao = i; // Encontrou o alvo!
+                break;       // Interrompe a busca após encontrar
+            }
+        }
+
+        if (posicao != -1) {
+            System.out.println("ID encontrado na posição: " + posicao);
+        } else {
+            System.out.println("ID não encontrado.");
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Encontrando o Maior Valor</h3>
+  <p>Localizando a nota mais alta em uma turma.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class MaiorNota {
+    public static void main(String[] args) {
+        double[] notas = {7.5, 9.2, 6.8, 10.0, 8.5};
+        double maiorNota = notas[0]; // Hipótese inicial
+
+        for (int i = 1; i &lt; notas.length; i++) {
+            if (notas[i] &gt; maiorNota) {
+                maiorNota = notas[i]; // Atualização do maior valor
+            }
+        }
+        System.out.println("A maior nota é: " + maiorNota);
+    }
+}</code></pre>
   </div>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
+
+  <h3>1. Fluxo de Busca Linear</h3>
+  <p>
+    Este diagrama mostra o processo de percorrer o vetor comparando cada
+    elemento com o alvo até encontrá-lo ou chegar ao final.
+  </p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    flowchart TD
+        Start([Início]) --> Input[/Definir Alvo/]
+        Input --> Loop{Para i de 0 até N-1}
+        Loop -- Sim --> Compare{Vetor i == Alvo?}
+        Compare -- Verdadeiro --> Found([Retornar Índice i])
+        Compare -- Falso --> Increment[i = i + 1]
+        Increment --> Loop
+        Loop -- Não --> NotFound([Retornar -1])
+  </div>
+
+  <h3>2. Fluxo de Localização de Extremos</h3>
+  <p>
+    Representa a lógica da hipótese inicial para encontrar o maior valor em um
+    vetor.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+        Start([Início]) --> Init["maior = vetor 0<br/>i = 1"]
+        Init --> Cond{i &lt; vetor.length?}
+        Cond -- Verdadeiro --> Cmp{vetor i &gt; maior?}
+        Cmp -- Sim --> Atualiza["maior = vetor i"]
+        Atualiza --> Inc[i++]
+        Cmp -- Não --> Inc
+        Inc --> Cond
+        Cond -- Falso --> Out[/Exibir maior/]
+        Out --> Fim([Fim])
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Cuidado com os Limites:</strong> sempre use
+      <code class="one-line-code">&lt;</code> ao comparar com
+      <code class="one-line-code">.length</code> (ex:
+      <code class="one-line-code">i &lt; lista.length</code>). Usar
+      <code class="one-line-code">&lt;=</code> causará um erro de "Índice fora
+      dos limites" (<code class="one-line-code"
+        >ArrayIndexOutOfBoundsException</code
+      >), pois a última posição é sempre <code class="one-line-code"
+        >tamanho - 1</code
+      >.
+    </li>
+    <li>
+      <strong>Sentinelas em Busca:</strong> se o objetivo é apenas saber se o
+      item existe, uma variável <code class="one-line-code">boolean</code> pode
+      bastar. Se precisar da posição, use um
+      <code class="one-line-code">int</code> iniciado em -1.
+    </li>
+    <li>
+      <strong>Eficiência:</strong> a busca linear é excelente para vetores
+      pequenos ou desordenados. Para grandes volumes de dados ordenados, existem
+      métodos mais rápidos (como a busca binária), que serão estudados
+      futuramente.
+    </li>
+    <li>
+      <strong>Hipótese Inicial:</strong> ao buscar o maior ou menor valor, sempre
+      inicie com o primeiro elemento do vetor e comece o laço pelo índice 1.
+    </li>
+    <li>
+      <strong>Comparação de Strings:</strong> ao buscar nomes em vetores de
+      <code class="one-line-code">String</code>, use
+      <code class="one-line-code">.equalsIgnoreCase()</code> para ignorar
+      diferenças de maiúsculas e minúsculas.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Controle de Estoque:</strong> buscar um produto pelo código de
+      barras em um vetor de inventário.
+    </li>
+    <li>
+      <strong>Sistemas de RH:</strong> encontrar o funcionário com o maior tempo
+      de casa para conceder um bônus.
+    </li>
+    <li>
+      <strong>Processamento de Sinais:</strong> filtrar ruídos em uma sequência
+      de leituras de sensores, eliminando valores fora de uma faixa permitida.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      <a
+        href="https://docente.ifsc.edu.br/mello/livros/java/apostila-caelum-java-orientacao-objetos-FJ11.pdf"
+        >Java e Orientação a Objetos</a
+      >
+    </li>
+    <li><a href="https://www.w3schools.com/java/default.asp">W3School - Java</a></li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li>
+      <a href="./exercicio-01/"
+        >Exercício 01: Localizador de Heróis (RPG)</a
+      >
+    </li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário</a></li>
   </ul>
 </section>
-

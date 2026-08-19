@@ -1,70 +1,504 @@
 ---
-title: "Tratamento de Exceções"
+title: "Tratamento de Exceções - Robustez e Gestão de Erros"
+componente: "Banco de Dados II"
 aula_numero: "26"
-description: "TRY...CATCH e erros personalizados."
+description: "Tratamento de exceções em aplicações que acessam bancos de dados: captura de erros em PHP (PDO), Python e Java (JDBC), handlers internos no MySQL (DECLARE HANDLER), erros customizados com SIGNAL e boas práticas de transações."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
-</section>
+  <h2>Teoria &amp; Conceitos</h2>
 
-<section class="section-box">
-  <h2>Exemplo de Código</h2>
-  <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
+  <h3>1. Por que tratar exceções?</h3>
+  <p>
+    Qualquer operação de banco de dados pode falhar devido a problemas de <strong>rede</strong>, <strong>permissões</strong>,
+    <strong>violações de integridade</strong> ou <strong>erros de sintaxe</strong>. Planejar para a falha é fundamental:
+    se você não verificar os erros, não saberá por que o programa falhou, agindo "às cegas" no desenvolvimento.
+  </p>
 
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
+  <h3>2. Os Três Valores de Erro do MySQL</h3>
+  <p>
+    Quando um erro ocorre no MySQL, ele fornece três valores cruciais para o tratamento:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Valor</th>
+        <th>Descrição</th>
+        <th>Exemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Número do Erro</strong></td>
+        <td>Código numérico específico do MySQL.</td>
+        <td><code class="one-line-code">1062</code> (duplicata de chave)</td>
+      </tr>
+      <tr>
+        <td><strong>Mensagem Descritiva</strong></td>
+        <td>Texto explicando o que aconteceu.</td>
+        <td><code class="one-line-code">Duplicate entry '5' for key 'PRIMARY'</code></td>
+      </tr>
+      <tr>
+        <td><strong>SQLSTATE</strong></td>
+        <td>Código de cinco caracteres padronizado (ANSI/ODBC) que permite maior portabilidade entre diferentes SGBDs.</td>
+        <td><code class="one-line-code">23000</code> (integridade referencial)</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="tip-box">
+    <h4>Por que usar SQLSTATE?</h4>
+    <p>
+      O <strong>SQLSTATE</strong> é padronizado pela ANSI/ODBC, ao contrário do número de erro que é específico do MySQL.
+      Sempre que possível, baseie sua lógica de tratamento no código SQLSTATE, pois ele é mais estável entre diferentes
+      versões de drivers e SGBDs.
+    </p>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Diagramação</h2>
-  <p>Representação visual dos conceitos abordados:</p>
+  <h2>Tratamento em Linguagens de Programação</h2>
+  <p>
+    Diferentes APIs possuem mecanismos distintos para capturar erros de banco de dados. Vejamos as três mais comuns.
+  </p>
+
+  <h3>A. PHP (via PDO)</h3>
+  <p>
+    O PDO pode ser configurado para lançar exceções automaticamente, o que é a <strong>prática recomendada</strong> para
+    evitar checagens manuais após cada comando.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+try {
+    $dsn = "mysql:host=localhost;dbname=cookbook";
+    $dbh = new PDO($dsn, "usuario", "senha");
+
+    // Configura o PDO para lançar exceções em caso de erro
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Exemplo: inserção com tratamento de erro
+    $stmt = $dbh->prepare("INSERT INTO receitas (nome, tempo_prep) VALUES (?, ?)");
+    $stmt->execute(["Bolo de Chocolate", 45]);
+
+} catch (PDOException $e) {
+    echo "Falha na operação: " . $e->getMessage();
+    // Código específico do PDO: $e->getCode()
+    // Mensagem completa: $e->getMessage()
+}
+?&gt;</code></pre>
+  </div>
+  <p>
+    O atributo <code class="one-line-code">ERRMODE_EXCEPTION</code> faz com que o PDO lance uma
+    <code class="one-line-code">PDOException</code> sempre que uma operação falhar, unificando o tratamento em um único
+    bloco <code class="one-line-code">try...catch</code>.
+  </p>
+
+  <h3>B. Python (mysql.connector)</h3>
+  <p>
+    Utiliza o bloco <code class="one-line-code">try...except</code> para capturar objetos da classe
+    <code class="one-line-code">Error</code>, que expõe os três valores de erro diretamente no objeto.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-python">import mysql.connector
+from mysql.connector import Error
+
+try:
+    conn = mysql.connector.connect(
+        host="localhost",
+        database="cookbook",
+        user="usuario",
+        password="senha"
+    )
+
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO receitas (nome, tempo_prep) VALUES (%s, %s)",
+                   ("Bolo de Chocolate", 45))
+    conn.commit()
+
+except Error as e:
+    print(f"Erro MySQL: {e.msg}")       # Mensagem descritiva
+    print(f"Código: {e.errno}")         # Número do erro
+    print(f"SQLSTATE: {e.sqlstate}")    # Código SQLSTATE
+
+finally:
+    if conn.is_connected():
+        cursor.close()
+        conn.close()</code></pre>
+  </div>
+  <p>
+    Repare que o objeto <code class="one-line-code">Error</code> do Python expõe os três valores diretamente:
+    <code class="one-line-code">.msg</code>, <code class="one-line-code">.errno</code> e
+    <code class="one-line-code">.sqlstate</code>.
+  </p>
+
+  <h3>C. Java (JDBC)</h3>
+  <p>
+    O Java utiliza a classe <code class="one-line-code">SQLException</code>. Além de erros fatais, o JDBC permite
+    capturar <code class="one-line-code">SQLWarnings</code>, que são avisos não fatais que não interrompem o programa,
+    mas fornecem metadados sobre a operação.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+
+public class ExemploExcecao {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/cookbook";
+
+        try (Connection conn = DriverManager.getConnection(url, "usuario", "senha")) {
+
+            // Verifica se há avisos (warnings) na conexão
+            SQLWarning warning = conn.getWarnings();
+            while (warning != null) {
+                System.out.println("Aviso SQL: " + warning.getMessage());
+                System.out.println("SQLSTATE: " + warning.getSQLState());
+                warning = warning.getNextWarning();
+            }
+
+        } catch (SQLException e) {
+            // Erro numérico
+            System.out.println("Código do erro: " + e.getErrorCode());
+            // SQLSTATE
+            System.out.println("SQLSTATE: " + e.getSQLState());
+            // Mensagem descritiva
+            System.out.println("Mensagem: " + e.getMessage());
+        }
+    }
+}</code></pre>
+  </div>
+  <p>
+    A <code class="one-line-code">SQLException</code> é uma exceção <strong>checked</strong> — o compilador obriga
+    você a tratá-la ou repassá-la. Os métodos <code class="one-line-code">getErrorCode()</code>,
+    <code class="one-line-code">getSQLState()</code> e <code class="one-line-code">getMessage()</code> fornecem os
+    três valores de erro do MySQL.
+  </p>
+
+  <h3>Comparação entre Linguagens</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Linguagem</th>
+        <th>Mecanismo</th>
+        <th>Classe/Exceção</th>
+        <th>Acesso aos Valores</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>PHP</strong></td>
+        <td>try...catch</td>
+        <td><code class="one-line-code">PDOException</code></td>
+        <td><code class="one-line-code">getMessage()</code>, <code class="one-line-code">getCode()</code></td>
+      </tr>
+      <tr>
+        <td><strong>Python</strong></td>
+        <td>try...except</td>
+        <td><code class="one-line-code">mysql.connector.Error</code></td>
+        <td><code class="one-line-code">.msg</code>, <code class="one-line-code">.errno</code>,
+          <code class="one-line-code">.sqlstate</code></td>
+      </tr>
+      <tr>
+        <td><strong>Java</strong></td>
+        <td>try...catch (checked)</td>
+        <td><code class="one-line-code">SQLException</code></td>
+        <td><code class="one-line-code">getMessage()</code>, <code class="one-line-code">getErrorCode()</code>,
+          <code class="one-line-code">getSQLState()</code></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Tratamento Interno no Banco (Stored Programs)</h2>
+  <p>
+    Dentro de Stored Procedures e Functions, utiliza-se o comando <code class="one-line-code">DECLARE ... HANDLER</code>
+    para capturar condições específicas. Existem dois tipos principais:
+  </p>
+  <ul>
+    <li><strong>CONTINUE:</strong> Captura o erro e <strong>segue o fluxo</strong> normalmente após o tratamento.</li>
+    <li><strong>EXIT:</strong> Captura o erro e <strong>encerra o bloco</strong> imediatamente.</li>
+  </ul>
+
+  <h3>Exemplo: DROP USER seguro com CONTINUE HANDLER</h3>
+  <p>
+    Alguns comandos não suportam a cláusula <code class="one-line-code">IF EXISTS</code> e podem gerar erro se o
+    objeto não existir. Podemos usar um handler para ignorar esse erro específico:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+CREATE PROCEDURE drop_user_safe(user_name TEXT, host_name TEXT)
+BEGIN
+    -- Declara um handler para capturar o erro 1396 (usuário inexistente)
+    -- CONTINUE: ignora o erro e segue o fluxo
+    DECLARE CONTINUE HANDLER FOR 1396 BEGIN END;
+
+    SET @stmt = CONCAT('DROP USER ', QUOTE(user_name), '@', QUOTE(host_name));
+    PREPARE s FROM @stmt;
+    EXECUTE s;
+    DEALLOCATE PREPARE s;
+END $$
+
+DELIMITER ;
+
+-- Se o usuário não existir, o procedure simplesmente não faz nada (sem erro)
+CALL drop_user_safe('usuario_inexistente', 'localhost');</code></pre>
+  </div>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+    flowchart TD
+    A([Início do Bloco]) --> B[Declara CONTINUE HANDLER FOR 1396]
+    B --> C[Executa DROP USER]
+    C --> D{Erro 1396?}
+    D -->|Não| E[Usuário removido com sucesso]
+    D -->|Sim| F["Handler captura o erro e ignora"]
+    F --> G[Fluxo continua normalmente]
+    E --> H([Fim do Bloco])
+    G --> H
+  </div>
+
+  <h3>Exemplo: EXIT Handler com ROLLBACK</h3>
+  <p>
+    Quando o erro é crítico e a operação deve ser completamente desfeita, usamos o <code class="one-line-code">EXIT
+    HANDLER</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+CREATE PROCEDURE TransacaoSegura(IN id_cliente INT, IN valor DECIMAL(10,2))
+BEGIN
+    -- EXIT: qualquer erro desfaz a transação e aborta
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Erro na transação — todas as operações foram desfeitas';
+    END;
+
+    START TRANSACTION;
+
+    INSERT INTO movimentos (id_cliente, tipo, valor, data_movimento)
+    VALUES (id_cliente, 'CREDITO', valor, NOW());
+
+    UPDATE contas SET saldo = saldo + valor WHERE id_cliente = id_cliente;
+
+    COMMIT;
+END $$
+
+DELIMITER ;
+
+-- Execução com sucesso
+CALL TransacaoSegura(1, 500.00);
+
+-- Execução com erro (id_cliente inexistente) → ROLLBACK automático
+CALL TransacaoSegura(999, 500.00);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Lançando Erros Customizados (SIGNAL)</h2>
+  <p>
+    O desenvolvedor pode criar suas próprias exceções para validar regras de negócio complexas que as restrições
+    (<code class="one-line-code">CONSTRAINTS</code>) comuns não alcançam. O comando <code
+      class="one-line-code">SIGNAL</code> permite emitir um erro com código SQLSTATE e mensagem personalizada.
+  </p>
+
+  <h3>Exemplo: Rejeitando divisão por zero</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+CREATE FUNCTION divide_seguro(numerador DECIMAL(10,2), denominador DECIMAL(10,2))
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+    -- Validação de regra de negócio: divisor não pode ser zero
+    IF denominador = 0 THEN
+        SIGNAL SQLSTATE '22012'  -- Código padrão para divisão por zero
+        SET MESSAGE_TEXT = 'Erro de Negócio: O divisor não pode ser zero';
+    END IF;
+
+    RETURN numerador / denominador;
+END $$
+
+DELIMITER ;
+
+-- Funciona normalmente
+SELECT divide_seguro(10, 2);   -- retorna 5.00
+
+-- Dispara erro customizado
+SELECT divide_seguro(10, 0);   -- Erro: Erro de Negócio: O divisor não pode ser zero</code></pre>
+  </div>
+
+  <h3>Exemplo: Validação de intervalo de dados</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+CREATE PROCEDURE RegistraNota(
+    IN p_aluno_id INT,
+    IN p_nota DECIMAL(4,2)
+)
+BEGIN
+    -- Validar que a nota está entre 0 e 10
+    IF p_nota &lt; 0 OR p_nota > 10 THEN
+        SIGNAL SQLSTATE '22000'  -- constraint violation genérica
+        SET MESSAGE_TEXT = 'A nota deve estar entre 0 e 10';
+    END IF;
+
+    -- Validar que o aluno existe
+    IF NOT EXISTS (SELECT 1 FROM alunos WHERE id = p_aluno_id) THEN
+        SIGNAL SQLSTATE '23000'  -- integrity constraint violation
+        SET MESSAGE_TEXT = 'Aluno não encontrado no sistema';
+    END IF;
+
+    INSERT INTO notas (aluno_id, nota, data_registro)
+    VALUES (p_aluno_id, p_nota, NOW());
+END $$
+
+DELIMITER ;
+
+-- Validações funcionam:
+CALL RegistraNota(1, 11.00);   -- Erro: A nota deve estar entre 0 e 10
+CALL RegistraNota(999, 8.50);  -- Erro: Aluno não encontrado no sistema
+CALL RegistraNota(1, 8.50);    -- Sucesso</code></pre>
+  </div>
+  <div class="mermaid">
+    flowchart TD
+    A([Chamada da Procedure]) --> B{nota entre 0 e 10?}
+    B -->|Não| C["SIGNAL SQLSTATE '22000'\nMensagem: nota inválida"]
+    B -->|Sim| D{Aluno existe?}
+    D -->|Não| E["SIGNAL SQLSTATE '23000'\nMensagem: aluno não encontrado"]
+    D -->|Sim| F[INSERT INTO notas]
+    F --> G([Sucesso])
+    C --> H([Erro para a aplicação])
+    E --> H
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Boas Práticas e Estratégias</h2>
+
+  <h3>1. Encapsulamento</h3>
+  <p>
+    Centralize o código de conexão e tratamento de erros em bibliotecas ou classes de "Camada de Persistência" para
+    isolar o acesso direto ao banco da lógica da aplicação. Isso facilita a manutenção e torna o código mais testável.
+  </p>
+
+  <h3>2. Logs do Servidor</h3>
+  <p>
+    Utilize o <strong>Error Log</strong> do servidor MySQL para monitorar falhas críticas que ocorrem durante o
+    funcionamento do daemon, como erros de configuração ou corrupção de arquivos. Não confie apenas nos erros
+    capturados pela aplicação — o log do servidor é a fonte definitiva de diagnóstico.
+  </p>
+
+  <h3>3. Transações com Tratamento de Erro</h3>
+  <p>
+    Sempre use blocos de exceção ao realizar transações. Se qualquer comando falhar, o tratamento de erro deve invocar
+    obrigatoriamente um <code class="one-line-code">ROLLBACK</code> para garantir que o banco não fique inconsistente.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- MySQL: Padrão seguro para transações
+DELIMITER $$
+
+CREATE PROCEDURE TransacaoCompleta(IN id_pedido INT)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Falha na transação — rollback executado';
+    END;
+
+    START TRANSACTION;
+
+    UPDATE estoque SET quantidade = quantidade - 1 WHERE produto_id = id_pedido;
+    INSERT INTO movimentacoes (pedido_id, tipo, data) VALUES (id_pedido, 'SAIDA', NOW());
+
+    -- Se algum dos comandos acima falhar, o ROLLBACK é executado automaticamente
+    COMMIT;
+END $$
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h3>4. Sanitização</h3>
+  <p>
+    Use o tratamento de erros em conjunto com <strong>Placeholders</strong> (<code class="one-line-code">?</code> ou
+    <code class="one-line-code">%s</code>) para prevenir ataques de SQL Injection, que muitas vezes tentam forçar erros
+    no banco para extrair informações do esquema.
+  </p>
+
+  <h3>5. Warnings: o erro silencioso</h3>
+  <p>
+    Não ignore os avisos (<code class="one-line-code">SHOW WARNINGS</code>). Eles podem indicar truncamento de dados
+    que, embora não interrompam o sistema, causam <strong>perda de integridade silenciosa</strong>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Exemplo: dados truncados geram warning, não erro
+CREATE TABLE testa_tamanho (nome VARCHAR(5));
+
+INSERT INTO testa_tamanho VALUES ('Nome muito longo para a coluna');
+
+-- O MySQL aceita a inserção (sem erro), mas TRUNCA o dado
+-- Use SHOW WARNINGS para detectar o problema:
+SHOW WARNINGS;</code></pre>
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Dica importante sobre Tratamento de Exceções aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>SQLSTATE primeiro:</strong> Sempre que possível, baseie sua lógica de tratamento no código SQLSTATE, pois
+      ele é mais estável entre diferentes versões de drivers e SGBDs.</li>
+    <li><strong>Warnings importam:</strong> Não ignore <code class="one-line-code">SHOW WARNINGS</code>. Truncamento
+      silencioso de dados pode causar problemas difíceis de rastrear depois.</li>
+    <li><strong>Transação + Handler:</strong> Sempre combine bloco de transação com handler de exceção. Se qualquer
+      comando dentro do <code class="one-line-code">START TRANSACTION</code> falhar, o <code
+        class="one-line-code">ROLLBACK</code> deve ser executado.</li>
+    <li><strong>SIGNAL para regras de negócio:</strong> Use <code class="one-line-code">SIGNAL</code> quando as
+      constraints do banco não são suficientes para validar regras complexas.</li>
+    <li><strong>EXIT vs CONTINUE:</strong> Use <code class="one-line-code">EXIT</code> para erros críticos que devem
+      interromper o bloco; use <code class="one-line-code">CONTINUE</code> quando o erro pode ser ignorado
+      seguramente.</li>
+    <li><strong>Evolução:</strong> Se o projeto crescer e o tratamento de erros se tornar muito complexo, considere
+      migrar para frameworks que oferecem tratamento centralizado (como Spring para Java ou Django ORM para Python).
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
   <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
+    <li><strong>Formulários web:</strong> Capture exceções PDO/SQLException ao salvar dados de formulário e exiba
+      mensagens amigáveis ao usuário (em vez de traces técnicos).</li>
+    <li><strong>APIs REST:</strong> Retorne códigos HTTP apropriados (400, 500) baseados no tipo de exceção capturada
+      no acesso ao banco.</li>
+    <li><strong>Stored Procedures críticas:</strong> Sempre inclua um <code class="one-line-code">EXIT HANDLER FOR
+        SQLEXCEPTION</code> com <code class="one-line-code">ROLLBACK</code> em procedures que executam transações.</li>
+    <li><strong>Validação de dados:</strong> Use <code class="one-line-code">SIGNAL</code> para criar validações de
+      regra de negócio que não podem ser expressas apenas com <code class="one-line-code">CHECK</code> constraints.</li>
+    <li><strong>Monitoramento:</strong> Implemente logs estruturados que registrem o SQLSTATE, a mensagem e o contexto
+      da operação para facilitar o diagnóstico em produção.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.
-    </li>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
     <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
       Paulo: DCC-IME-USP, 2005.</li>
+    <li>MySQL 8.0 Reference Manual — DECLARE ... HANDLER Statement.</li>
+    <li>MySQL 8.0 Reference Manual — SIGNAL Statement.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Tratamento de Exceções em Stored Procedures</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
   </ul>
 </section>

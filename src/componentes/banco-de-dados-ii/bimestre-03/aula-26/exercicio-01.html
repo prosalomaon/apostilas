@@ -1,18 +1,158 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Tratamento de Exceções"
+title: "Exercício 01 - Tratamento de Exceções em Stored Procedures"
 exercicio_numero: "01"
 aula_numero: "26"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 26."
+subject: "banco-de-dados-ii"
+description: "Praticar o tratamento de exceções com DECLARE HANDLER, SIGNAL e transações seguras no MySQL."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você está desenvolvendo o sistema de gestão de estoque de uma empresa. Algumas operações são críticas e precisam
+    de tratamento adequado de erros para evitar dados inconsistentes. Resolva os problemas abaixo utilizando os
+    conceitos de <strong>tratamento de exceções</strong> vistos na aula.
+  </p>
+  <p>
+    Considere as seguintes tabelas já criadas no banco <code class="one-line-code">estoque_db</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE produtos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    quantidade INT NOT NULL DEFAULT 0,
+    preco_unitario DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE movimentacoes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    produto_id INT NOT NULL,
+    tipo ENUM('ENTRADA', 'SAIDA') NOT NULL,
+    quantidade INT NOT NULL,
+    data_movimento DATETIME DEFAULT NOW(),
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+-- Dados iniciais
+INSERT INTO produtos (nome, quantidade, preco_unitario) VALUES
+('Notebook', 10, 3500.00),
+('Mouse', 50, 45.00),
+('Teclado', 30, 120.00);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Procedure com EXIT HANDLER e ROLLBACK</h3>
+  <p>
+    Crie uma procedure <code class="one-line-code">RegistraSaida</code> que receba o <code
+      class="one-line-code">produto_id</code> e a <code class="one-line-code">quantidade</code> a ser retirada.
+  </p>
+  <p>Requisitos:</p>
+  <ul>
+    <li>A procedure deve iniciar uma transação.</li>
+    <li>Verificar se o produto existe (se não existir, lançar erro com <code class="one-line-code">SIGNAL</code>).</li>
+    <li>Verificar se há estoque suficiente (se não, lançar erro com <code class="one-line-code">SIGNAL</code>).</li>
+    <li>Se tudo OK, inserir a movimentação e atualizar o estoque.</li>
+    <li>Incluir um <code class="one-line-code">EXIT HANDLER FOR SQLEXCEPTION</code> que execute <code
+        class="one-line-code">ROLLBACK</code> e lance mensagem de erro.</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+-- Escreva sua procedure aqui
+CREATE PROCEDURE RegistraSaida(IN p_produto_id INT, IN p_quantidade INT)
+BEGIN
+    -- COMPLETE O CÓDIGO AQUI
+
+END $$
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h3>Questão 2: Function com Validação via SIGNAL</h3>
+  <p>
+    Crie uma function <code class="one-line-code">CalculaTotal</code> que receba o <code
+      class="one-line-code">produto_id</code> e a <code class="one-line-code">quantidade</code> e retorne o valor
+    total (<code class="one-line-code">preco_unitario * quantidade</code>).
+  </p>
+  <p>Requisitos:</p>
+  <ul>
+    <li>Se a quantidade for menor ou igual a zero, lançar erro com <code class="one-line-code">SIGNAL SQLSTATE
+        '22000'</code> e mensagem "A quantidade deve ser maior que zero".</li>
+    <li>Se o produto não existir, lançar erro com <code class="one-line-code">SIGNAL SQLSTATE '23000'</code> e
+      mensagem "Produto não encontrado".</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+-- Escreva sua function aqui
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h3>Questão 3: Procedure com CONTINUE HANDLER para ignorar duplicatas</h3>
+  <p>
+    Crie uma procedure <code class="one-line-code">CadastraProduto</code> que insira um produto na tabela. Se já
+    existir um produto com o mesmo nome (violação de UNIQUE), a procedure deve simplesmente ignorar o erro e
+    retornar sem mensagem de erro.
+  </p>
+  <ul>
+    <li>Use <code class="one-line-code">DECLARE CONTINUE HANDLER FOR 1062</code> (erro de duplicata no MySQL).</li>
+    <li>Adicione uma constraint de nome único na tabela antes de criar a procedure:
+      <code class="one-line-code">ALTER TABLE produtos ADD UNIQUE (nome);</code></li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Primeiro, adicione a constraint
+ALTER TABLE produtos ADD UNIQUE (nome);
+
+DELIMITER $$
+
+-- Escreva sua procedure aqui
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h3>Questão 4: Teste e Validação</h3>
+  <p>
+    Após criar as procedures e functions, execute os seguintes testes e registre o resultado esperado:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql>-- Teste 1: Saída válida (esperado: sucesso)
+CALL RegistraSaida(1, 2);
+
+-- Teste 2: Produto inexistente (esperado: erro customizado)
+CALL RegistraSaida(999, 1);
+
+-- Teste 3: Estoque insuficiente (esperado: erro customizado)
+CALL RegistraSaida(2, 100);
+
+-- Teste 4: Cálculo válido (esperado: 15750.00)
+SELECT CalculaTotal(1, 5);
+
+-- Teste 5: Quantidade inválida (esperado: erro customizado)
+SELECT CalculaTotal(1, -3);
+
+-- Teste 6: Duplicata ignorada (esperado: sem erro, produto não inserido)
+CALL CadastraProduto('Notebook', 5, 3500.00);
+CALL CadastraProduto('Monitor', 8, 1200.00);</code></pre>
+  </div>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Revise o conteúdo da aula antes de começar: DECLARE HANDLER, SIGNAL e transações.</li>
+    <li>Lembre-se de usar <code class="one-line-code">DELIMITER $$</code> antes de criar procedures/functions no
+      MySQL.</li>
+    <li>Sempre inclua <code class="one-line-code">ROLLBACK</code> no <code class="one-line-code">EXIT HANDLER</code>
+      quando trabalhar com transações.</li>
+    <li>Para o <code class="one-line-code">SIGNAL</code>, use códigos SQLSTATE apropriados: <code
+        class="one-line-code">'22000'</code> para erros de dados, <code class="one-line-code">'23000'</code> para
+      violações de integridade.</li>
+    <li>Teste cada procedure individualmente antes de passar para a próxima questão.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>

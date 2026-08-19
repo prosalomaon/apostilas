@@ -1,18 +1,131 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Operações com Vetores: Busca e Preenchimento"
+title: "Exercício 01 - Localizador de Heróis (RPG)"
 exercicio_numero: "01"
 aula_numero: "22"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 22."
+description: "Atividade prática para consolidar preenchimento e busca em vetores."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Crie um sistema que armazene os nomes de 5 heróis da sua equipe. Após
+    cadastrá-los, o usuário deve poder digitar o nome de um herói para verificar
+    se ele faz parte da equipe e em qual posição ele está escalado.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li>
+      <strong>Ambiente:</strong> utilize o VS Code (com extensão Java) ou um
+      compilador Java online (ex: OnlineGDB).
+    </li>
+    <li>
+      <strong>Conhecimento Prévio:</strong> requer domínio de vetores de
+      <code class="one-line-code">String</code>, laços
+      <code class="one-line-code">for</code> e entrada de dados com
+      <code class="one-line-code">Scanner</code>.
+    </li>
+    <li>
+      <strong>Documentação:</strong> consulte o conteúdo da aula 22 sobre
+      preenchimento e busca em vetores.
+    </li>
+    <li>
+      Crie uma classe chamada
+      <code class="one-line-code">LocalizadorEquipe</code>.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Código Base</h2>
+  <p>
+    Este código já realiza o preenchimento do vetor com os nomes dos heróis. Sua
+    missão é completar a parte da busca.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Scanner;
+
+public class LocalizadorEquipe {
+    public static void main(String[] args) {
+        Scanner leitor = new Scanner(System.in);
+        String[] herois = new String[5];
+
+        // Preenchimento do vetor
+        for (int i = 0; i &lt; herois.length; i++) {
+            System.out.print("Cadastre o herói " + (i + 1) + ": ");
+            herois[i] = leitor.nextLine();
+        }
+
+        // O Desafio começa aqui...
+
+        leitor.close();
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio</h2>
+  <p>
+    Implemente as seguintes funcionalidades após o preenchimento do vetor:
+  </p>
+  <ul>
+    <li>
+      <strong>Entrada do Usuário:</strong> solicite ao usuário o nome de um herói
+      para busca.
+    </li>
+    <li>
+      <strong>Busca Linear:</strong> implemente um laço
+      <code class="one-line-code">for</code> para percorrer o vetor e encontrar
+      o nome digitado.
+    </li>
+    <li>
+      <strong>Comparação Flexível:</strong> use o método
+      <code class="one-line-code">.equalsIgnoreCase()</code> para comparar as
+      Strings, permitindo que a busca funcione independentemente de letras
+      maiúsculas ou minúsculas.
+    </li>
+    <li>
+      <strong>Saída:</strong> exiba
+      <code class="one-line-code">"Herói [Nome] encontrado na posição [i]"</code>
+      ou <code class="one-line-code">"Herói não localizado"</code>.
+    </li>
+  </ul>
+
+  <h3>Requisitos técnicos:</h3>
+  <ul>
+    <li>
+      Utilize a propriedade <code class="one-line-code">.length</code> no laço
+      de busca.
+    </li>
+    <li>
+      Inicialize uma variável <code class="one-line-code">int posicao = -1</code>
+      antes do laço para armazenar o resultado da busca.
+    </li>
+    <li>
+      Use <code class="one-line-code">break</code> ao encontrar o herói para
+      interromper a busca.
+    </li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>5. Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Teste de Mesa:</strong> se cadastrar "Artur" na posição 0, a busca
+      deve retornar o índice 0.
+    </li>
+    <li>
+      <strong>Formatação da saída:</strong> exiba mensagens claras, como
+      <code class="one-line-code">"Herói Artur encontrado na posição 0"</code>.
+    </li>
+    <li>
+      <strong>Desafio Extra:</strong> se sobrar tempo, tente exibir a lista
+      completa de heróis em ordem inversa após a busca.
+    </li>
   </ul>
 </div>

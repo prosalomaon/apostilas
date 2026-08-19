@@ -1,57 +1,559 @@
 ---
 title: "Cadeias de Caracteres (Strings)"
 aula_numero: "23"
-description: "Manipulação de textos e funções nativas de Strings."
+description: "Manipulação de textos e funções nativas de Strings em Java."
 tags:
   - aula
   - "bimestre-03"
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 23 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    Nesta aula vamos estudar as <strong>Strings</strong>, uma das estruturas de
+    dados mais utilizadas em qualquer linguagem de programação. Com elas,
+    conseguimos trabalhar com textos — de simples palavras a parágrafos inteiros
+    de um sistema completo.
+  </p>
+
+  <h3>1. O que é uma String?</h3>
+  <p>
+    Tecnicamente, uma cadeia de caracteres é um <strong>vetor de
+    caracteres</strong>. Enquanto um dado do tipo
+    <code class="one-line-code">char</code> armazena apenas uma letra ou
+    símbolo, uma <code class="one-line-code">String</code> permite agrupar esses
+    caracteres para formar palavras, frases ou textos completos.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// char: apenas UM caractere
+char letra = 'A';
+
+// String: vários caracteres agrupados
+String palavra = "Algoritmo";
+
+System.out.println(letra);   // A
+System.out.println(palavra); // Algoritmo</code></pre>
+  </div>
+  <p>
+    Observe que <code class="one-line-code">char</code> usa
+    <strong>aspas simples</strong> (<code class="one-line-code">'A'</code>), já a
+    <code class="one-line-code">String</code> usa <strong>aspas duplas</strong>
+    (<code class="one-line-code">"Algoritmo"</code>).
+  </p>
+
+  <h3>2. Representação na Memória</h3>
+  <p>
+    Internamente, o computador armazena cada caractere utilizando códigos
+    numéricos, como o padrão <strong>ASCII</strong> ou
+    <strong>Unicode</strong>. Cada letra, número ou símbolo corresponde a um
+    número inteiro que o processador utiliza para exibir o caractere correto na
+    tela.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Caractere</th>
+        <th>Código ASCII</th>
+        <th>Código Unicode</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">'A'</code></td>
+        <td>65</td>
+        <td>U+0041</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">'a'</code></td>
+        <td>97</td>
+        <td>U+0061</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">'0'</code></td>
+        <td>48</td>
+        <td>U+0030</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">' '</code> (espaço)</td>
+        <td>32</td>
+        <td>U+0020</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Em muitas linguagens, como o Portugol, o fim de uma string é marcado por um
+    caractere nulo (<code class="one-line-code">'\0'</code>), que indica ao
+    sistema onde o texto termina dentro do espaço reservado no vetor. Em Java,
+    a classe <code class="one-line-code">String</code> gerencia isso
+    automaticamente.
+  </p>
+
+  <h3>3. Strings em Java: Objetos vs. Primitivos</h3>
+  <p>
+    Diferente de tipos como <code class="one-line-code">int</code> ou
+    <code class="one-line-code">double</code>, em Java, a
+    <code class="one-line-code">String</code> é um <strong>objeto</strong> e não
+    um tipo primitivo. Isso significa que, além de armazenar dados, ela possui
+    "poderes" próprios: as chamadas <strong>funções nativas</strong> ou
+    <strong>métodos</strong>, que facilitam tarefas como busca, corte e
+    transformação de textos.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Tipos primitivos: sem métodos
+int x = 10;
+// x.toString(); // ERRO! int não tem métodos
+
+// String: é um objeto, possui métodos
+String texto = "Java";
+System.out.println(texto.length()); // 4 (método funcionando)</code></pre>
+  </div>
+
+  <h3>4. Operações e Funções Nativas</h3>
+  <p>
+    Para manipular Strings de forma eficiente, utilizamos as funções integradas
+    da classe <code class="one-line-code">String</code> em Java:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Operação</th>
+        <th>Método Java</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Comprimento</td>
+        <td><code class="one-line-code">.length()</code></td>
+        <td>Retorna o total de caracteres do texto.</td>
+      </tr>
+      <tr>
+        <td>Acesso</td>
+        <td><code class="one-line-code">.charAt(i)</code></td>
+        <td>Retorna o caractere na posição i (começando do 0).</td>
+      </tr>
+      <tr>
+        <td>Comparação</td>
+        <td><code class="one-line-code">.equals(s2)</code></td>
+        <td>Verifica se o conteúdo de duas strings é idêntico.</td>
+      </tr>
+      <tr>
+        <td>Corte</td>
+        <td><code class="one-line-code">.substring(n, m)</code></td>
+        <td>Extrai uma parte do texto entre as posições n e m−1.</td>
+      </tr>
+      <tr>
+        <td>Busca</td>
+        <td><code class="one-line-code">.indexOf(s2)</code></td>
+        <td>Retorna a posição onde um texto começa dentro de outro.</td>
+      </tr>
+      <tr>
+        <td>Transformação</td>
+        <td><code class="one-line-code">.toUpperCase()</code></td>
+        <td>Converte todo o texto para letras maiúsculas.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5. Detalhamento dos Principais Métodos</h3>
+
+  <h4>5.1. <code class="one-line-code">.length()</code> — Comprimento</h4>
+  <p>
+    Retorna a quantidade total de caracteres da string. Note que é um método
+    (com parênteses), diferente do atributo
+    <code class="one-line-code">.length</code> dos vetores (sem parênteses).
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String nome = "Programação";
+System.out.println(nome.length()); // 11</code></pre>
+  </div>
+
+  <h4>5.2. <code class="one-line-code">.charAt(i)</code> — Acesso por Índice</h4>
+  <p>
+    Retorna o caractere que está na posição <code class="one-line-code">i</code>.
+    Assim como vetores, o primeiro índice é 0.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String palavra = "Java";
+char primeira = palavra.charAt(0); // 'J'
+char ultima = palavra.charAt(3);   // 'a'
+
+System.out.println(primeira); // J
+System.out.println(ultima);   // a</code></pre>
+  </div>
+
+  <h4>5.3. <code class="one-line-code">.equals(s2)</code> — Comparação</h4>
+  <p>
+    Compara o conteúdo de duas strings. <strong>Nunca</strong> use
+    <code class="one-line-code">==</code> para comparar Strings, pois ele
+    verifica se ambas apontam para o mesmo objeto na memória, e não se o texto é
+    igual.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String a = "hello";
+String b = "hello";
+String c = new String("hello");
+
+System.out.println(a == b);      // true (cache de strings)
+System.out.println(a == c);      // false (objetos diferentes!)
+System.out.println(a.equals(c)); // true (conteúdo igual)</code></pre>
+  </div>
+
+  <h4>5.4. <code class="one-line-code">.substring(n, m)</code> — Corte</h4>
+  <p>
+    Extrai uma porção do texto. O parâmetro <code class="one-line-code">n</code>
+    é inclusivo (começa ali) e <code class="one-line-code">m</code> é exclusivo
+    (para antes de chegar ali).
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String texto = "Programação Java";
+
+String parte1 = texto.substring(0, 11); // "Programação"
+String parte2 = texto.substring(12);    // "Java" (até o fim)
+
+System.out.println(parte1); // Programação
+System.out.println(parte2); // Java</code></pre>
+  </div>
+
+  <h4>5.5. <code class="one-line-code">.indexOf(s2)</code> — Busca</h4>
+  <p>
+    Retorna o índice da primeira ocorrência do trecho buscado. Se não encontrar,
+    retorna <code class="one-line-code">-1</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String frase = "Aprendendo Java é divertido";
+int pos = frase.indexOf("Java");
+
+System.out.println("Java começa na posição: " + pos); // 12
+
+int nada = frase.indexOf("Python");
+System.out.println(nada); // -1 (não encontrou)</code></pre>
+  </div>
+
+  <h4>5.6. <code class="one-line-code">.toUpperCase()</code> e
+    <code class="one-line-code">.toLowerCase()</code> — Transformação</h4>
+  <p>
+    Converte toda a string para maiúsculas ou minúsculas. Como Strings são
+    <strong>imutáveis</strong> em Java, esses métodos retornam uma
+    <em>nova</em> string, sem alterar a original.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String original = "Hello World";
+
+String maiusculas = original.toUpperCase();
+String minusculas = original.toLowerCase();
+
+System.out.println(original);    // Hello World (não mudou!)
+System.out.println(maiusculas);  // HELLO WORLD
+System.out.println(minusculas);  // hello world</code></pre>
+  </div>
+
+  <h3>6. Concatenação de Strings</h3>
+  <p>
+    Unir textos (concatenação) é feito de forma simples com o operador
+    <code class="one-line-code">+</code>. Isso também funciona para misturar
+    Strings com outros tipos — o Java converte automaticamente.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String saudacao = "Olá";
+String nome = "Mundo";
+String mensagem = saudacao + " " + nome; // "Olá Mundo"
+
+System.out.println(mensagem);              // Olá Mundo
+System.out.println("Tamanho: " + mensagem.length()); // 9
+
+// Concatenação com outros tipos
+int idade = 25;
+String descricao = "Idade: " + idade; // "Idade: 25"</code></pre>
+  </div>
+
+  <h3>7. Percorrendo uma String como Vetor</h3>
+  <p>
+    Podemos usar um laço <code class="one-line-code">for</code> para analisar
+    cada letra individualmente, tratando a string como uma sequência indexada.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String palavra = "Java";
+
+for (int i = 0; i &lt; palavra.length(); i++) {
+    System.out.println("Posição " + i + ": " + palavra.charAt(i));
+}
+
+// Saída:
+// Posição 0: J
+// Posição 1: a
+// Posição 2: v
+// Posição 3: a</code></pre>
+  </div>
+
+  <h3>8. Comparação Segura</h3>
+  <p>
+    <strong>Nunca</strong> use <code class="one-line-code">==</code> para
+    comparar o conteúdo de Strings em Java; use sempre o método
+    <code class="one-line-code">.equals()</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String senhaCorreta = "12345";
+String tentativa = "12345";
+
+if (tentativa.equals(senhaCorreta)) {
+    System.out.println("Acesso Permitido");
+} else {
+    System.out.println("Senha incorreta");
+}</code></pre>
+  </div>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>Exemplo 1: Concatenação e Comprimento</h3>
+  <p>Unir textos e descobrir o tamanho da mensagem resultante.</p>
   <div class="code-container">
-    <pre><code class="language-java">// Em breve...</code></pre>
+    <pre><code class="language-java">public class Concatenacao {
+    public static void main(String[] args) {
+        String saudacao = "Olá";
+        String nome = "Mundo";
+        String mensagem = saudacao + " " + nome; // "Olá Mundo"
+
+        System.out.println("Mensagem: " + mensagem);
+        System.out.println("Tamanho do texto: " + mensagem.length()); // 9
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 2: Percorrendo uma String como Vetor</h3>
+  <p>Exibe cada letra da palavra com sua respectiva posição.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class PercorreString {
+    public static void main(String[] args) {
+        String palavra = "Java";
+
+        for (int i = 0; i &lt; palavra.length(); i++) {
+            System.out.println("Posição " + i + ": " + palavra.charAt(i));
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Comparação Segura</h3>
+  <p>Verifica se a senha digitada corresponde à senha correta.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class VerificaSenha {
+    public static void main(String[] args) {
+        String senhaCorreta = "12345";
+        String tentativa = "12345";
+
+        if (tentativa.equals(senhaCorreta)) {
+            System.out.println("Acesso Permitido");
+        } else {
+            System.out.println("Senha incorreta. Tente novamente.");
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 4: Validando um E-mail</h3>
+  <p>
+    Verifica se o e-mail digitado contém o símbolo
+    <code class="one-line-code">@</code> usando
+    <code class="one-line-code">.indexOf()</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class ValidaEmail {
+    public static void main(String[] args) {
+        String email = "usuario@email.com";
+
+        if (email.indexOf("@") != -1) {
+            System.out.println("E-mail válido!");
+        } else {
+            System.out.println("E-mail inválido: falta o @");
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 5: Extraindo Informações com substring</h3>
+  <p>
+    Extrai o domínio de um e-mail (tudo depois do
+    <code class="one-line-code">@</code>).
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class ExtraiDominio {
+    public static void main(String[] args) {
+        String email = "aluno@etec.sp.gov.br";
+        int posArroba = email.indexOf("@");
+
+        String dominio = email.substring(posArroba + 1);
+        System.out.println("Domínio: " + dominio); // etec.sp.gov.br
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 6: Contando Vogais em uma Palavra</h3>
+  <p>Usa <code class="one-line-code">charAt()</code> e um laço para contar.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class ContaVogais {
+    public static void main(String[] args) {
+        String palavra = "Programacao";
+        int contador = 0;
+
+        for (int i = 0; i &lt; palavra.length(); i++) {
+            char letra = palavra.charAt(i);
+            if (letra == 'a' || letra == 'e' || letra == 'i'
+                || letra == 'o' || letra == 'u') {
+                contador++;
+            }
+        }
+
+        System.out.println("Vogais: " + contador); // 5
+    }
+}</code></pre>
   </div>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
+
+  <h3>1. Estrutura de uma String na Memória</h3>
+  <p>
+    Uma <code class="one-line-code">String</code> "Java" é internamente um vetor
+    de 4 caracteres. Cada posição guarda um caractere associado a um código
+    numérico.
+  </p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    graph LR
+      S["String: Java"]
+      S --> I0["0 = J"]
+      S --> I1["1 = a"]
+      S --> I2["2 = v"]
+      S --> I3["3 = a"]
+      I3 -. "length() = 4" .-> L["0 a 3"]
+  </div>
+
+  <h3>2. Diferença entre == e .equals()</h3>
+  <p>
+    O operador <code class="one-line-code">==</code> compara endereços de
+    memória; o método
+    <code class="one-line-code">.equals()</code> compara o conteúdo real.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+        Start([Comparar Strings]) --> Check{Usar == ou .equals?}
+        Check -- "==" --> Mem["Compara endereço<br/>na memória"]
+        Check -- ".equals()" --> Content["Compara cada<br/>caractere"]
+        Mem --> R1["Pode dar false<br/>mesmo com texto igual"]
+        Content --> R2["True se conteúdo<br/>idêntico"]
+  </div>
+
+  <h3>3. Fluxo de Validação de E-mail</h3>
+  <p>
+    Exemplo de como usar <code class="one-line-code">.indexOf()</code> para
+    verificar a presença do <code class="one-line-code">@</code>.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+        Start([Início]) --> Input[/Ler e-mail/]
+        Input --> Search{indexOf("@") != -1?}
+        Search -- Sim --> Valid([E-mail válido])
+        Search -- Não --> Invalid([E-mail inválido])
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Imutabilidade:</strong> em Java, Strings são imutáveis. Funções
+      como <code class="one-line-code">.trim()</code> ou
+      <code class="one-line-code">.toUpperCase()</code> não alteram a string
+      original — elas retornam uma <em>nova</em> string transformada.
+    </li>
+    <li>
+      <strong>Índice Zero:</strong> assim como nos vetores, a primeira letra
+      está sempre na posição 0. A última letra está na posição
+      <code class="one-line-code">comprimento - 1</code>.
+    </li>
+    <li>
+      <strong>Case Sensitive:</strong> Java diferencia maiúsculas de
+      minúsculas. Se precisar ignorar essa diferença, use
+      <code class="one-line-code">.equalsIgnoreCase()</code>.
+    </li>
+    <li>
+      <strong>Nunca use ==:</strong> para comparar conteúdo de Strings, sempre
+      use <code class="one-line-code">.equals()</code>. O
+      <code class="one-line-code">==</code> compara endereços de memória, não
+      o texto.
+    </li>
+    <li>
+      <strong>length() vs .length:</strong> para Strings use
+      <code class="one-line-code">.length()</code> (com parênteses); para
+      vetores use <code class="one-line-code">.length</code> (sem
+      parênteses).
+    </li>
+    <li>
+      <strong>substring é exclusivo no fim:</strong>
+      <code class="one-line-code">substring(0, 3)</code> pega os caracteres nas
+      posições 0, 1 e 2 — <em>não</em> inclui a posição 3.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Validação de Formulários:</strong> verificar se um e-mail contém
+      o símbolo <code class="one-line-code">@</code> usando
+      <code class="one-line-code">.indexOf()</code>.
+    </li>
+    <li>
+      <strong>Sistemas de Segurança:</strong> formatar senhas e realizar login
+      comparando Strings com <code class="one-line-code">.equals()</code>.
+    </li>
+    <li>
+      <strong>Processamento de Dados:</strong> ler arquivos de texto e extrair
+      informações específicas através de divisões e cortes
+      (<code class="one-line-code">.substring()</code>).
+    </li>
+    <li>
+      <strong>Interface de Usuário:</strong> formatar nomes para exibição em
+      relatórios (ex: tudo em maiúsculas ou apenas as iniciais).
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      <a
+        href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html"
+        >Java SE Documentation — String</a
+      >
+    </li>
+    <li>
+      <a href="https://www.w3schools.com/java/java_strings.asp"
+        >W3School — Java Strings</a
+      >
+    </li>
+    <li>
+      <a
+        href="https://docente.ifsc.edu.br/mello/livros/java/apostila-caelum-java-orientacao-objetos-FJ11.pdf"
+        >Java e Orientação a Objetos</a
+      >
+    </li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li>
+      <a href="./exercicio-01/"
+        >Exercício 01: Formatador de Nomes RPG</a
+      >
+    </li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário</a></li>
   </ul>
 </section>
-

@@ -1,18 +1,126 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Cadeias de Caracteres (Strings)"
+title: "Exercício 01 - Formatador de Nomes RPG"
 exercicio_numero: "01"
 aula_numero: "23"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 23."
+description: "Atividade prática para consolidar manipulação de Strings em Java."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Muitos sistemas de jogos exigem que os nomes dos personagens sigam um padrão
+    (ex: tudo em maiúsculas) e não excedam um limite de caracteres. Crie um
+    programa que receba o nome de um herói e realize uma série de tratamentos.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li>
+      <strong>Ambiente:</strong> utilize o VS Code (com extensão Java) ou um
+      compilador Java online (ex: OnlineGDB).
+    </li>
+    <li>
+      <strong>Conhecimento Prévio:</strong> requer domínio de métodos de String
+      (<code class="one-line-code">.trim()</code>,
+      <code class="one-line-code">.toUpperCase()</code>,
+      <code class="one-line-code">.length()</code>,
+      <code class="one-line-code">.charAt()</code>,
+      <code class="one-line-code">.substring()</code>).
+    </li>
+    <li>
+      <strong>Documentação:</strong> consulte o conteúdo da aula 23 sobre
+      Strings e suas funções nativas.
+    </li>
+    <li>
+      Crie a classe <code class="one-line-code">FormatadorRPG</code>.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Código Base</h2>
+  <p>
+    Este código lê o nome do herói pelo teclado. Sua missão é implementar todos
+    os tratamentos solicitados.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Scanner;
+
+public class FormatadorRPG {
+    public static void main(String[] args) {
+        Scanner leitor = new Scanner(System.in);
+        System.out.print("Digite o nome do Herói: ");
+        String nomeOriginal = leitor.nextLine();
+
+        // Implemente o desafio abaixo
+
+        leitor.close();
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio</h2>
+  <p>
+    Implemente as seguintes regras de tratamento do nome do herói:
+  </p>
+  <ul>
+    <li>
+      <strong>Limpeza:</strong> remova espaços em branco extras no início e no
+      fim do nome usando <code class="one-line-code">.trim()</code>.
+    </li>
+    <li>
+      <strong>Padronização:</strong> exiba o nome todo em MAIÚSCULAS usando
+      <code class="one-line-code">.toUpperCase()</code>.
+    </li>
+    <li>
+      <strong>Contagem:</strong> informe quantos caracteres o nome possui (após
+      a limpeza) usando <code class="one-line-code">.length()</code>.
+    </li>
+    <li>
+      <strong>Validação:</strong> verifique se o nome começa com a letra "A"
+      usando <code class="one-line-code">.charAt(0)</code>. Se sim, exiba a
+      mensagem: <code class="one-line-code">"Este herói pertence ao Clã dos
+      Alfas!"</code>.
+    </li>
+    <li>
+      <strong>Corte:</strong> exiba apenas as 3 primeiras letras do nome
+      (abreviação) usando
+      <code class="one-line-code">.substring(0, 3)</code>.
+    </li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>5. Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Teste de Mesa:</strong> teste o programa com nomes como
+      <code class="one-line-code">"   Artur   "</code> para verificar se o
+      <code class="one-line-code">.trim()</code> e o
+      <code class="one-line-code">.toUpperCase()</code> funcionam juntos.
+    </li>
+    <li>
+      <strong>Cuidado com nomes curtos:</strong> se o nome tiver menos de 3
+      caracteres, <code class="one-line-code">.substring(0, 3)</code> lançará um
+      erro. Considere usar
+      <code class="one-line-code">Math.min(3, nomeLimpo.length())</code> como
+      segundo parâmetro.
+    </li>
+    <li>
+      <strong>Saída esperada:</strong> para a entrada
+      <code class="one-line-code">"   Artur   "</code>, a saída deve ser:
+    </li>
   </ul>
+  <div class="code-container">
+    <pre><code class="language-text">Nome limpo: Artur
+Em maiúsculas: ARTUR
+Quantidade de caracteres: 6
+Este herói pertence ao Clã dos Alfas!
+Abreviação: Art</code></pre>
+  </div>
 </div>
