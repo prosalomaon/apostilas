@@ -1,0 +1,695 @@
+---
+layout: exercicio
+title: "Stored Procedures - Demonstração Prática"
+exercicio_numero: "01"
+aula_numero: "22"
+description: "Demonstração prática de Stored Procedures com parâmetros IN, OUT e INOUT em um sistema de vendas completo."
+---
+
+<section class="section-box">
+  <h2>Cenário: Sistema de Vendas "TechStore"</h2>
+  <p>
+    Esta demonstração pratica todos os conceitos da aula — <strong>parâmetros IN, OUT e INOUT</strong>,
+    <strong>Stored Procedures</strong> e <strong>Functions</strong> — em um único sistema integrado de vendas
+    de uma loja de tecnologia. O banco gerencia vendedores, produtos, pedidos e comissões.
+  </p>
+  <p>
+    Copie e execute cada bloco de código <strong>na ordem apresentada</strong> no MySQL Workbench
+    ou terminal. Ao final, você terá 4 procedures e 1 function funcionando.
+  </p>
+
+  <div class="mermaid">
+    erDiagram
+    VENDEDORES {
+    int id PK
+    varchar nome
+    varchar email
+    decimal meta_mensal
+    }
+    PRODUTOS {
+    int id PK
+    varchar nome
+    decimal preco
+    int estoque
+    }
+    PEDIDOS {
+    int id PK
+    int id_vendedor FK
+    date data_pedido
+    decimal valor_total
+    varchar status
+    }
+    ITENS_PEDIDO {
+    int id PK
+    int id_pedido FK
+    int id_produto FK
+    int quantidade
+    decimal preco_unitario
+    }
+    VENDEDORES ||--o{ PEDIDOS : "realiza"
+    PEDIDOS ||--o{ ITENS_PEDIDO : "contem"
+    PRODUTOS ||--o{ ITENS_PEDIDO : "referencia"
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 1 — Estrutura das Tabelas</h2>
+  <p>
+    Criamos as tabelas do banco de dados da loja. A tabela <code class="one-line-code">comissoes</code>
+    será usada pela procedure de fechamento mensal para armazenar os valores calculados.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Limpeza preventiva do ambiente de teste
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS itens_pedido;
+DROP TABLE IF EXISTS comissoes;
+DROP TABLE IF EXISTS pedidos;
+DROP TABLE IF EXISTS produtos;
+DROP TABLE IF EXISTS vendedores;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- Tabela 1: Cadastro de Vendedores
+CREATE TABLE vendedores (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    meta_mensal DECIMAL(10,2) NOT NULL DEFAULT 0.00
+);
+
+-- Tabela 2: Catálogo de Produtos
+CREATE TABLE produtos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    estoque INT NOT NULL DEFAULT 0
+);
+
+-- Tabela 3: Registro de Pedidos
+CREATE TABLE pedidos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_vendedor INT NOT NULL,
+    data_pedido DATE NOT NULL,
+    valor_total DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    status VARCHAR(30) NOT NULL DEFAULT 'PENDENTE',
+    FOREIGN KEY (id_vendedor) REFERENCES vendedores(id)
+);
+
+-- Tabela 4: Itens de Cada Pedido
+CREATE TABLE itens_pedido (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_pedido INT NOT NULL,
+    id_produto INT NOT NULL,
+    quantidade INT NOT NULL,
+    preco_unitario DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_pedido) REFERENCES pedidos(id),
+    FOREIGN KEY (id_produto) REFERENCES produtos(id)
+);
+
+-- Tabela 5: Registro de Comissões Calculadas
+CREATE TABLE comissoes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_vendedor INT NOT NULL,
+    mes_ano VARCHAR(7) NOT NULL,
+    total_vendas DECIMAL(10,2) NOT NULL,
+    percentual_comissao DECIMAL(5,2) NOT NULL,
+    valor_comissao DECIMAL(10,2) NOT NULL,
+    data_calculo DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_vendedor) REFERENCES vendedores(id)
+);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 2 — Carga de Dados Inicial</h2>
+  <p>
+    Populamos as tabelas com dados de teste. Os vendedores possuem metas diferentes para demonstrar
+    a lógica condicional nas procedures.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Vendedores de teste
+INSERT INTO vendedores (id, nome, email, meta_mensal) VALUES
+(1, 'Ana Souza', 'ana@techstore.com', 5000.00),
+(2, 'Carlos Lima', 'carlos@techstore.com', 8000.00),
+(3, 'Maria Oliveira', 'maria@techstore.com', 3000.00);
+
+-- Produtos de teste
+INSERT INTO produtos (id, nome, preco, estoque) VALUES
+(101, 'Notebook Dell Inspiron', 4500.00, 15),
+(102, 'Monitor LG 27"', 1800.00, 25),
+(103, 'Teclado Mecânico Redragon', 350.00, 50),
+(104, 'Mouse Logitech MX Master', 450.00, 40),
+(105, 'Headset HyperX Cloud', 280.00, 30);
+
+-- Pedidos de exemplo (mês atual: maio/2026)
+INSERT INTO pedidos (id, id_vendedor, data_pedido, valor_total, status) VALUES
+(1, 1, '2026-05-05', 4850.00, 'FINALIZADO'),
+(2, 1, '2026-05-10', 2250.00, 'FINALIZADO'),
+(3, 2, '2026-05-08', 6300.00, 'FINALIZADO'),
+(4, 2, '2026-05-15', 1800.00, 'FINALIZADO'),
+(5, 3, '2026-05-12', 280.00, 'PENDENTE');
+
+-- Itens dos pedidos
+INSERT INTO itens_pedido (id, id_pedido, id_produto, quantidade, preco_unitario) VALUES
+(1, 1, 101, 1, 4500.00),
+(2, 1, 103, 1, 350.00),
+(3, 2, 102, 1, 1800.00),
+(4, 2, 104, 1, 450.00),
+(5, 3, 101, 1, 4500.00),
+(6, 3, 102, 1, 1800.00),
+(7, 4, 102, 1, 1800.00),
+(8, 5, 105, 1, 280.00);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 3 — Procedure com IN: Registrar Novo Pedido</h2>
+  <p>
+    <strong>Conceito:</strong> O parâmetro <code class="one-line-code">IN</code> é o padrão — recebe um
+    valor da aplicação. Esta procedure encapsula toda a lógica de registro de um pedido: valida estoque,
+    cria o registro e atualiza o saldo.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE RegistrarPedido(
+    IN p_id_vendedor INT,
+    IN p_id_produto INT,
+    IN p_quantidade INT
+)
+BEGIN
+    DECLARE v_estoque INT;
+    DECLARE v_preco DECIMAL(10,2);
+    DECLARE v_id_pedido INT;
+    DECLARE v_valor_total DECIMAL(10,2);
+
+    -- 1. Verifica se o produto existe e tem estoque suficiente
+    SELECT estoque, preco INTO v_estoque, v_preco
+    FROM produtos
+    WHERE id = p_id_produto;
+
+    IF v_estoque IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'ERRO: Produto não encontrado.';
+    END IF;
+
+    IF v_estoque < p_quantidade THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'ERRO: Estoque insuficiente para esta quantidade.';
+    END IF;
+
+    -- 2. Calcula o valor total
+    SET v_valor_total = v_preco * p_quantidade;
+
+    -- 3. Cria o pedido
+    INSERT INTO pedidos (id_vendedor, data_pedido, valor_total, status)
+    VALUES (p_id_vendedor, CURDATE(), v_valor_total, 'PENDENTE');
+
+    SET v_id_pedido = LAST_INSERT_ID();
+
+    -- 4. Registra o item do pedido
+    INSERT INTO itens_pedido (id_pedido, id_produto, quantidade, preco_unitario)
+    VALUES (v_id_pedido, p_id_produto, p_quantidade, v_preco);
+
+    -- 5. Atualiza o estoque do produto
+    UPDATE produtos
+    SET estoque = estoque - p_quantidade
+    WHERE id = p_id_produto;
+
+    -- 6. Retorna o ID do pedido criado
+    SELECT v_id_pedido AS 'Pedido Criado', v_valor_total AS 'Valor Total (R$)';
+
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando a Procedure</h4>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Pedido válido: Ana vende 2 teclados
+CALL RegistrarPedido(1, 103, 2);
+
+-- Pedido válido: Carlos vende 1 monitor
+CALL RegistrarPedido(2, 102, 1);
+
+-- ERRO: estoque insuficiente (produto 105 só tem 30, pedindo 100)
+CALL RegistrarPedido(3, 105, 100);
+
+-- Verificando o estoque atualizado do teclado (era 50, vendeu 2)
+SELECT id, nome, estoque FROM produtos WHERE id = 103;
+
+-- Verificando os pedidos criados
+SELECT id, id_vendedor, valor_total, status FROM pedidos ORDER BY id DESC LIMIT 3;</code></pre>
+  </div>
+
+  <div class="tip-box">
+    <h4>Por que usar IN?</h4>
+    <p>
+      Todos os parâmetros desta procedure são <strong>entrada</strong>: o ID do vendedor, do produto e a
+      quantidade. A procedure processa tudo internamente e retorna o resultado via
+      <code class="one-line-code">SELECT</code>. Em um sistema real, essa procedure substituiria
+      dezenas de linhas de código PHP/Java espalhadas pela aplicação.
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 4 — Procedure com OUT: Estatísticas do Vendedor</h2>
+  <p>
+    <strong>Conceito:</strong> O parâmetro <code class="one-line-code">OUT</code> devolve valores para
+    a aplicação após a execução. Esta procedure calcula o total de vendas e o ticket médio de um
+    vendedor no mês atual, retornando os resultados em parâmetros de saída.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE ObterEstatisticasVendedor(
+    IN p_id_vendedor INT,
+    OUT p_total_vendas DECIMAL(10,2),
+    OUT p_total_pedidos INT,
+    OUT p_ticket_medio DECIMAL(10,2)
+)
+BEGIN
+    -- Calcula o total de vendas do vendedor no mês atual
+    SELECT COALESCE(SUM(valor_total), 0), COUNT(*)
+    INTO p_total_vendas, p_total_pedidos
+    FROM pedidos
+    WHERE id_vendedor = p_id_vendedor
+      AND MONTH(data_pedido) = MONTH(CURDATE())
+      AND YEAR(data_pedido) = YEAR(CURDATE())
+      AND status = 'FINALIZADO';
+
+    -- Calcula o ticket médio
+    IF p_total_pedidos > 0 THEN
+        SET p_ticket_medio = p_total_vendas / p_total_pedidos;
+    ELSE
+        SET p_ticket_medio = 0.00;
+    END IF;
+
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando a Procedure</h4>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Consultando estatísticas da Ana (vendedor 1)
+CALL ObterEstatisticasVendedor(1, @total_ana, @pedidos_ana, @ticket_ana);
+SELECT @total_ana AS 'Total Vendas (R$)',
+       @pedidos_ana AS 'Total Pedidos',
+       @ticket_ana AS 'Ticket Médio (R$)';
+
+-- Consultando estatísticas do Carlos (vendedor 2)
+CALL ObterEstatisticasVendedor(2, @total_carlos, @pedidos_carlos, @ticket_carlos);
+SELECT @total_carlos AS 'Total Vendas (R$)',
+       @pedidos_carlos AS 'Total Pedidos',
+       @ticket_carlos AS 'Ticket Médio (R$)';
+
+-- Consultando estatísticas da Maria (vendedor 3 — sem pedidos finalizados)
+CALL ObterEstatisticasVendedor(3, @total_maria, @pedidos_maria, @ticket_maria);
+SELECT @total_maria AS 'Total Vendas (R$)',
+       @pedidos_maria AS 'Total Pedidos',
+       @ticket_maria AS 'Ticket Médio (R$)';</code></pre>
+  </div>
+
+  <div class="tip-box">
+    <h4>Palavra-chave INTO</h4>
+    <p>
+      Dentro da procedure, o comando <code class="one-line-code">SELECT ... INTO p_total_vendas, p_total_pedidos</code>
+      atribui os resultados da consulta diretamente aos parâmetros de saída. Fora da procedure, a aplicação
+      lê esses valores usando variáveis de sessão (<code class="one-line-code">@total_ana</code>).
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 5 — Procedure com INOUT: Aplicar Desconto Progressivo</h2>
+  <p>
+    <strong>Conceito:</strong> O parâmetro <code class="one-line-code">INOUT</code> recebe um valor,
+    pode ser modificado pela procedure e retorna o novo valor. Esta procedure aplica desconto
+    progressivo com base no volume de compras.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE AplicarDescontoProgressivo(
+    INOUT p_valor DECIMAL(10,2),
+    IN p_quantidade INT
+)
+BEGIN
+    DECLARE v_percentual DECIMAL(5,2) DEFAULT 0;
+
+    -- Define o percentual de desconto com base na quantidade
+    IF p_quantidade >= 10 THEN
+        SET v_percentual = 15.00;  -- 15% para 10+ unidades
+    ELSEIF p_quantidade >= 5 THEN
+        SET v_percentual = 10.00;  -- 10% para 5-9 unidades
+    ELSEIF p_quantidade >= 3 THEN
+        SET v_percentual = 5.00;   -- 5% para 3-4 unidades
+    ELSE
+        SET v_percentual = 0.00;   -- Sem desconto para menos de 3
+    END IF;
+
+    -- Aplica o desconto no valor de entrada
+    SET p_valor = p_valor - (p_valor * v_percentual / 100);
+
+    -- Retorna o desconto aplicado junto com o valor final
+    SELECT p_valor AS 'Valor Final (R$)',
+           v_percentual AS 'Desconto Aplicado (%)';
+
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando a Procedure</h4>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Teste 1: 12 unidades → 15% de desconto
+SET @valor = 350.00;  -- Preço unitário do teclado
+CALL AplicarDescontoProgressivo(@valor, 12);
+-- Resultado: 350.00 → 297.50 (desconto de 15%)
+
+-- Teste 2: 6 unidades → 10% de desconto
+SET @valor = 450.00;  -- Preço unitário do mouse
+CALL AplicarDescontoProgressivo(@valor, 6);
+-- Resultado: 450.00 → 405.00 (desconto de 10%)
+
+-- Teste 3: 2 unidades → sem desconto
+SET @valor = 280.00;  -- Preço unitário do headset
+CALL AplicarDescontoProgressivo(@valor, 2);
+-- Resultado: 280.00 → 280.00 (sem desconto)</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 6 — Function: Calcular Comissão do Vendedor</h2>
+  <p>
+    <strong>Conceito:</strong> Diferente da procedure, a <strong>function</strong> sempre retorna um
+    valor via <code class="one-line-code">RETURN</code> e pode ser usada diretamente dentro de um
+    <code class="one-line-code">SELECT</code>.
+  </p>
+  <p>
+    Esta função calcula a comissão de um vendedor com base no total de vendas: 5% para quem bateu
+    a meta, 3% para quem não bateu.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE FUNCTION CalcularComissao(id_vend INT) RETURNS DECIMAL(10,2)
+BEGIN
+    DECLARE v_total_vendas DECIMAL(10,2);
+    DECLARE v_meta DECIMAL(10,2);
+    DECLARE v_percentual DECIMAL(5,2);
+
+    -- Busca o total de vendas finalizadas no mês
+    SELECT COALESCE(SUM(valor_total), 0) INTO v_total_vendas
+    FROM pedidos
+    WHERE id_vendedor = id_vend
+      AND MONTH(data_pedido) = MONTH(CURDATE())
+      AND YEAR(data_pedido) = YEAR(CURDATE())
+      AND status = 'FINALIZADO';
+
+    -- Busca a meta mensal do vendedor
+    SELECT meta_mensal INTO v_meta
+    FROM vendedores
+    WHERE id = id_vend;
+
+    -- Define o percentual com base no desempenho
+    IF v_total_vendas >= v_meta THEN
+        SET v_percentual = 5.00;  -- Bateu a meta: 5%
+    ELSE
+        SET v_percentual = 3.00;  -- Não bateu: 3%
+    END IF;
+
+    RETURN v_total_vendas * v_percentual / 100;
+
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando a Function</h4>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- A function pode ser usada diretamente dentro de um SELECT
+SELECT 
+    v.id,
+    v.nome,
+    v.meta_mensal AS 'Meta (R$)',
+    (SELECT COALESCE(SUM(valor_total), 0) 
+     FROM pedidos 
+     WHERE id_vendedor = v.id 
+       AND status = 'FINALIZADO'
+       AND MONTH(data_pedido) = MONTH(CURDATE())) AS 'Vendas (R$)',
+    CalcularComissao(v.id) AS 'Comissão (R$)'
+FROM vendedores v
+ORDER BY v.id;</code></pre>
+  </div>
+
+  <div class="tip-box">
+    <h4>Procedure vs Function — na prática</h4>
+    <p>
+      Note que a function <code class="one-line-code">CalcularComissao</code> é chamada <strong>dentro
+      do SELECT</strong>, algo impossível com uma procedure. Para tarefas que precisam modificar dados
+      ou retornar múltiplos valores, use <strong>procedure</strong>. Para cálculos escalar, use
+      <strong>function</strong>.
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 7 — Procedure Complexa: Fechamento Mensal de Comissões</h2>
+  <p>
+    <strong>Conceito:</strong> Uma procedure real em produção geralmente combina múltiplas operações:
+    consultas, cálculos condicionais, inserções e atualizações — tudo em uma única chamada.
+  </p>
+  <p>
+    Esta procedure simula o fechamento mensal: percorre todos os vendedores, calcula a comissão
+    de cada um e registra na tabela <code class="one-line-code">comissoes</code>.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE FechamentoMensalComissoes(IN p_mes_ano VARCHAR(7))
+BEGIN
+    DECLARE v_id INT;
+    DECLARE v_nome VARCHAR(100);
+    DECLARE v_total DECIMAL(10,2);
+    DECLARE v_meta DECIMAL(10,2);
+    DECLARE v_percentual DECIMAL(5,2);
+    DECLARE v_comissao DECIMAL(10,2);
+    DECLARE v_fim INT DEFAULT 0;
+
+    -- Cursor para percorrer todos os vendedores
+    DECLARE cur_vendedores CURSOR FOR
+        SELECT id, nome, meta_mensal FROM vendedores ORDER BY id;
+
+    -- Handler para detectar o fim do cursor
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_fim = 1;
+
+    OPEN cur_vendedores;
+
+    loop_vendedores: LOOP
+        FETCH cur_vendedores INTO v_id, v_nome, v_meta;
+        IF v_fim = 1 THEN
+            LEAVE loop_vendedores;
+        END IF;
+
+        -- Calcula total de vendas finalizadas do vendedor no mês
+        SELECT COALESCE(SUM(valor_total), 0) INTO v_total
+        FROM pedidos
+        WHERE id_vendedor = v_id
+          AND DATE_FORMAT(data_pedido, '%Y-%m') = p_mes_ano
+          AND status = 'FINALIZADO';
+
+        -- Define percentual de comissão
+        IF v_total >= v_meta THEN
+            SET v_percentual = 5.00;
+        ELSE
+            SET v_percentual = 3.00;
+        END IF;
+
+        SET v_comissao = v_total * v_percentual / 100;
+
+        -- Registra na tabela de comissões (só se houver vendas)
+        IF v_total > 0 THEN
+            INSERT INTO comissoes (id_vendedor, mes_ano, total_vendas, percentual_comissao, valor_comissao)
+            VALUES (v_id, p_mes_ano, v_total, v_percentual, v_comissao);
+        END IF;
+
+    END LOOP;
+
+    CLOSE cur_vendedores;
+
+    -- Retorna o resumo do fechamento
+    SELECT 
+        v.nome AS 'Vendedor',
+        c.total_vendas AS 'Total Vendas (R$)',
+        c.percentual_comissao AS 'Comissão (%)',
+        c.valor_comissao AS 'Valor Comissão (R$)'
+    FROM comissoes c
+    INNER JOIN vendedores v ON c.id_vendedor = v.id
+    WHERE c.mes_ano = p_mes_ano
+    ORDER BY c.valor_comissao DESC;
+
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando a Procedure</h4>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Executa o fechamento de maio/2026
+CALL FechamentoMensalComissoes('2026-05');
+
+-- Verificando o registro completo na tabela de comissões
+SELECT * FROM comissoes ORDER BY id;</code></pre>
+  </div>
+
+  <h4>Resultado Esperado</h4>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Vendedor</th>
+        <th>Total Vendas (R$)</th>
+        <th>Meta (R$)</th>
+        <th>Bateu Meta?</th>
+        <th>Comissão (%)</th>
+        <th>Valor Comissão (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Carlos Lima</td>
+        <td>8.100,00</td>
+        <td>8.000,00</td>
+        <td>Sim</td>
+        <td>5%</td>
+        <td>405,00</td>
+      </tr>
+      <tr>
+        <td>Ana Souza</td>
+        <td>7.100,00</td>
+        <td>5.000,00</td>
+        <td>Sim</td>
+        <td>5%</td>
+        <td>355,00</td>
+      </tr>
+      <tr>
+        <td>Maria Oliveira</td>
+        <td>0,00</td>
+        <td>3.000,00</td>
+        <td>Não</td>
+        <td>—</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    <strong>Maria</strong> não aparece no fechamento porque seus pedidos ainda estão como
+    <code class="one-line-code">PENDENTE</code> (não finalizados). A procedure só contabiliza
+    vendas com status <code class="one-line-code">FINALIZADO</code>.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Resumo: Procedures e Functions Criadas</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nome</th>
+        <th>Tipo</th>
+        <th>Parâmetros</th>
+        <th>Finalidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><code class="one-line-code">RegistrarPedido</code></td>
+        <td>Procedure</td>
+        <td>3 × IN</td>
+        <td>Registra pedido com validação de estoque</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><code class="one-line-code">ObterEstatisticasVendedor</code></td>
+        <td>Procedure</td>
+        <td>1 × IN, 3 × OUT</td>
+        <td>Retorna estatísticas de vendas do vendedor</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><code class="one-line-code">AplicarDescontoProgressivo</code></td>
+        <td>Procedure</td>
+        <td>1 × INOUT, 1 × IN</td>
+        <td>Aplica desconto progressivo por volume</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><code class="one-line-code">CalcularComissao</code></td>
+        <td>Function</td>
+        <td>1 × IN (return)</td>
+        <td>Calcula comissão baseada em meta</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><code class="one-line-code">FechamentoMensalComissoes</code></td>
+        <td>Procedure</td>
+        <td>1 × IN</td>
+        <td>Fecha comissões de todos os vendedores</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Bônus: Como Remover e Listar</h2>
+  <p>
+    Para gerenciar os programas armazenados no banco:
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Listar todas as procedures do banco atual
+SELECT routine_name, routine_type, routine_definition
+FROM information_schema.routines
+WHERE routine_schema = DATABASE()
+  AND routine_type IN ('PROCEDURE', 'FUNCTION');
+
+-- Remover uma procedure específica
+DROP PROCEDURE IF EXISTS RegistrarPedido;
+
+-- Remover uma function específica
+DROP FUNCTION IF EXISTS CalcularComissao;</code></pre>
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas & Lembretes</h4>
+  <ul>
+    <li><strong>DELIMITER:</strong> No MySQL, sempre use <code class="one-line-code">DELIMITER //</code>
+      antes de criar procedures/functions com múltiplas linhas. Sem ele, o ";" interno corta o comando
+      antes do bloco terminar.</li>
+    <li><strong>Variáveis de sessão:</strong> Para ler parâmetros OUT, use <code class="one-line-code">@variavel</code>
+      antes do CALL e depois do CALL. As variáveis com "@" são mantidas durante toda a sessão.</li>
+    <li><strong>Cursor e Handler:</strong> Em procedures complexas (como o FechamentoMensal), o
+      <code class="one-line-code">CURSOR</code> percorre linhas de uma consulta e o
+      <code class="one-line-code">CONTINUE HANDLER</code> trata o fim dos dados sem erro.</li>
+    <li><strong>Recompila:</strong> Se precisar alterar uma procedure, use
+      <code class="one-line-code">DROP PROCEDURE</code> antes de <code class="one-line-code">CREATE PROCEDURE</code>
+      com o mesmo nome, ou use <code class="one-line-code">CREATE OR REPLACE</code> (MySQL 8.0+).</li>
+  </ul>
+</div>

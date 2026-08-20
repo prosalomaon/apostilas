@@ -1,0 +1,562 @@
+---
+layout: exercicio
+title: "Gatilhos (Triggers) I - Demonstração Prática"
+exercicio_numero: "01"
+aula_numero: "24"
+description: "Demonstração prática completa de gatilhos: validação, auditoria, atualização automática e proteção de integridade em um banco de dados de loja virtual."
+---
+
+<section class="section-box">
+  <h2>Cenário: Loja Virtual de Games "GameShop"</h2>
+  <p>
+    Esta demonstração pratica todos os conceitos da aula — <strong>BEFORE/AFTER</strong>,
+    <strong>INSERT/UPDATE/DELETE</strong>, palavras-chave <code class="one-line-code">NEW</code> e
+    <code class="one-line-code">OLD</code> — em um único exemplo integrado. O banco de dados gerencia
+    clientes, pedidos e estoque de uma loja virtual de games.
+  </p>
+  <p>
+    Copie e execute cada bloco de código <strong>na ordem apresentada</strong> no MySQL Workbench
+    ou terminal. Ao final, você terá um ambiente completo com 5 gatilhos funcionando.
+  </p>
+
+  <div class="mermaid">
+    erDiagram
+    CLIENTES {
+    int id PK
+    varchar nome
+    varchar email
+    date data_cadastro
+    }
+    PEDIDOS {
+    int id PK
+    int id_cliente FK
+    decimal valor_total
+    varchar status
+    datetime data_pedido
+    }
+    ITENS_PEDIDO {
+    int id PK
+    int id_pedido FK
+    int id_produto FK
+    int quantidade
+    decimal preco_unitario
+    }
+    PRODUTOS {
+    int id PK
+    varchar nome
+    decimal preco
+    int estoque_atual
+    }
+    LOG_AUDITORIA {
+    int id PK
+    varchar tabela_alvo
+    varchar operacao
+    varchar detalhes
+    datetime data_operacao
+    }
+
+    CLIENTES ||--o{ PEDIDOS : "realiza"
+    PEDIDOS ||--o{ ITENS_PEDIDO : "contem"
+    PRODUTOS ||--o{ ITENS_PEDIDO : "referencia"
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 1 — Estrutura das Tabelas</h2>
+  <p>
+    Primeiro, criamos as tabelas do banco de dados. A tabela <code class="one-line-code">log_auditoria</code>
+    será usada pelos gatilhos para registrar todas as operações realizadas.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Limpeza preventiva do ambiente de teste
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS itens_pedido;
+DROP TABLE IF EXISTS pedidos;
+DROP TABLE IF EXISTS log_auditoria;
+DROP TABLE IF EXISTS produtos;
+DROP TABLE IF EXISTS clientes;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- Tabela 1: Cadastro de Clientes
+CREATE TABLE clientes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    data_cadastro DATE NOT NULL
+);
+
+-- Tabela 2: Catálogo de Produtos
+CREATE TABLE produtos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    estoque_atual INT NOT NULL DEFAULT 0
+);
+
+-- Tabela 3: Registro de Pedidos
+CREATE TABLE pedidos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_cliente INT NOT NULL,
+    valor_total DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    status VARCHAR(30) NOT NULL DEFAULT 'PENDENTE',
+    data_pedido DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id)
+);
+
+-- Tabela 4: Itens de Cada Pedido
+CREATE TABLE itens_pedido (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_pedido INT NOT NULL,
+    id_produto INT NOT NULL,
+    quantidade INT NOT NULL,
+    preco_unitario DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_pedido) REFERENCES pedidos(id),
+    FOREIGN KEY (id_produto) REFERENCES produtos(id)
+);
+
+-- Tabela 5: Log de Auditoria (destino dos registros dos triggers)
+CREATE TABLE log_auditoria (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tabela_alvo VARCHAR(50) NOT NULL,
+    operacao VARCHAR(10) NOT NULL,
+    detalhes TEXT,
+    data_operacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 2 — Carga de Dados Inicial</h2>
+  <p>
+    Populamos as tabelas com dados de teste para termos um ambiente funcional antes de criar os gatilhos.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Clientes de teste
+INSERT INTO clientes (id, nome, email, data_cadastro) VALUES
+(1, 'Ana Souza', 'ana@email.com', '2026-01-10'),
+(2, 'Carlos Lima', 'carlos@email.com', '2026-02-15'),
+(3, 'Maria Oliveira', 'maria@email.com', '2026-03-20');
+
+-- Produtos de teste (com estoque controlado)
+INSERT INTO produtos (id, nome, preco, estoque_atual) VALUES
+(101, 'Elden Ring', 249.90, 50),
+(102, 'God of War Ragnarok', 199.90, 30),
+(103, 'Hogwarts Legacy', 229.90, 25),
+(104, 'Cyberpunk 2077', 149.90, 0);  -- Sem estoque (para teste)
+
+-- Pedido e item de exemplo (sem triggers ainda)
+INSERT INTO pedidos (id, id_cliente, valor_total, status, data_pedido) VALUES
+(1, 1, 249.90, 'CONFIRMADO', '2026-04-01 10:00:00');
+
+INSERT INTO itens_pedido (id, id_pedido, id_produto, quantidade, preco_unitario) VALUES
+(1, 1, 101, 1, 249.90);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 3 — Gatilho BEFORE INSERT: Validação de Dados</h2>
+  <p>
+    <strong>Conceito:</strong> BEFORE INSERT executa <strong>antes</strong> do dado ser gravado na tabela.
+    É ideal para <strong>validar ou modificar</strong> valores que estão sendo inseridos.
+  </p>
+  <p>
+    Este gatilho verifica se o email do cliente contém o caractere <code class="one-line-code">@</code>.
+    Se não contiver, o inserts é <strong>bloqueado</strong> com uma mensagem de erro usando
+    <code class="one-line-code">SIGNAL SQLSTATE</code>.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE TRIGGER trg_valida_email_cliente
+BEFORE INSERT ON clientes
+FOR EACH ROW
+BEGIN
+    -- Valida se o email contém o caractere "@"
+    IF NEW.email NOT LIKE '%@%' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'ERRO: O email informado é inválido. O campo deve conter o caractere "@".';
+    END IF;
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando o Gatilho</h4>
+  <p>Execute os dois inserts abaixo. O primeiro será <strong>bloqueado</strong> pelo gatilho; o segundo será aceito:</p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- ERRO ESPERADO: email sem "@"
+INSERT INTO clientes (nome, email, data_cadastro)
+VALUES ('Teste Erro', 'emailinvalido.com', '2026-05-01');
+
+-- INSERÇÃO BEM-SUCEDIDA
+INSERT INTO clientes (nome, email, data_cadastro)
+VALUES ('Pedro Santos', 'pedro@email.com', '2026-05-01');</code></pre>
+  </div>
+
+  <div class="tip-box">
+    <h4>Por que funciona?</h4>
+    <p>
+      A palavra-chave <code class="one-line-code">NEW.email</code> acessa o valor que está sendo
+      inserido <strong>antes</strong> de ele chegar à tabela. O <code class="one-line-code">SIGNAL SQLSTATE '45000'</code>
+      é o mecanismo do MySQL para lançar uma exceção customizada e interromper a operação.
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 4 — Gatilho AFTER INSERT: Log de Auditoria</h2>
+  <p>
+    <strong>Conceito:</strong> AFTER INSERT executa <strong>depois</strong> do dado ser gravado com sucesso.
+    É usado para registrar o que aconteceu, sem interferir na operação original.
+  </p>
+  <p>
+    Todo novo cliente inserido gera automaticamente um registro na tabela
+    <code class="one-line-code">log_auditoria</code>, capturando nome, email e data/hora.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE TRIGGER trg_log_insert_cliente
+AFTER INSERT ON clientes
+FOR EACH ROW
+BEGIN
+    INSERT INTO log_auditoria (tabela_alvo, operacao, detalhes)
+    VALUES (
+        'clientes',
+        'INSERT',
+        CONCAT(
+            'Novo cliente cadastrado: ',
+            NEW.nome,
+            ' | Email: ',
+            NEW.email,
+            ' | Data: ',
+            NEW.data_cadastro
+        )
+    );
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando o Gatilho</h4>
+  <p>Insira um novo cliente e consulte a tabela de log:</p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Inserindo um novo cliente (o trigger gera o log automaticamente)
+INSERT INTO clientes (nome, email, data_cadastro)
+VALUES ('Lucia Ferreira', 'lucia@email.com', '2026-05-10');
+
+-- Consultando o log de auditoria gerado
+SELECT * FROM log_auditoria;</code></pre>
+  </div>
+
+  <p>
+    O resultado mostrará um registro com <code class="one-line-code">operacao = 'INSERT'</code> e
+    os detalhes completos do cliente recém-cadastrado.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Passo 5 — Gatilho BEFORE UPDATE: Proteção de Status</h2>
+  <p>
+    <strong>Conceito:</strong> BEFORE UPDATE permite <strong>interceptar e modificar</strong> valores
+    antes que a alteração seja gravada. Aqui, impedimos que um pedido com status
+    <code class="one-line-code">'CANCELADO'</code> tenha seu status alterado para qualquer outro valor.
+  </p>
+  <p>
+    Este é um exemplo clássico de <strong>regra de negócio enforcement</strong>: uma vez cancelado, o pedido
+    não pode ser reaberto.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE TRIGGER trg_bloqueia_reabertura_pedido
+BEFORE UPDATE ON pedidos
+FOR EACH ROW
+BEGIN
+    -- Se o pedido já estava CANCELADO, bloqueia qualquer alteração de status
+    IF OLD.status = 'CANCELADO' AND NEW.status != 'CANCELADO' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'ERRO: Não é possível alterar o status de um pedido que já foi CANCELADO.';
+    END IF;
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando o Gatilho</h4>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Passo A: Cancele o pedido de exemplo
+UPDATE pedidos SET status = 'CANCELADO' WHERE id = 1;
+
+-- Passo B: Tente reabrir o pedido (ERRO ESPERADO)
+UPDATE pedidos SET status = 'CONFIRMADO' WHERE id = 1;
+
+-- Passo C: Verifique que o pedido continua CANCELADO
+SELECT id, status FROM pedidos WHERE id = 1;</code></pre>
+  </div>
+
+  <div class="tip-box">
+    <h4>Palavra-chave OLD vs NEW</h4>
+    <p>
+      Neste trigger, usamos <code class="one-line-code">OLD.status</code> para ler o valor
+      <strong>atual</strong> (antes da alteração) e <code class="one-line-code">NEW.status</code>
+      para ler o valor <strong>novo</strong> (que está tentando ser gravado). A comparação entre
+      os dois permite validar a transição de estados.
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 6 — Gatilho AFTER UPDATE: Trilha de Auditoria Completa</h2>
+  <p>
+    <strong>Conceito:</strong> AFTER UPDATE registra o que mudou, comparando
+    <code class="one-line-code">OLD</code> e <code class="one-line-code">NEW</code>. Este é o padrão
+    mais comum em sistemas empresariais: a tabela de log recebe uma linha descrevendo
+    exatamente o que foi alterado.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE TRIGGER trg_log_update_pedido
+AFTER UPDATE ON pedidos
+FOR EACH ROW
+BEGIN
+    -- Só registra se o status realmente mudou
+    IF OLD.status != NEW.status THEN
+        INSERT INTO log_auditoria (tabela_alvo, operacao, detalhes)
+        VALUES (
+            'pedidos',
+            'UPDATE',
+            CONCAT(
+                'Pedido #', NEW.id,
+                ' | Status alterado de "', OLD.status,
+                '" para "', NEW.status,
+                '" | Valor: R$ ', NEW.valor_total
+            )
+        );
+    END IF;
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando o Gatilho</h4>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Criando um novo pedido para testar a auditoria
+INSERT INTO pedidos (id, id_cliente, valor_total, status, data_pedido) VALUES
+(2, 2, 199.90, 'PENDENTE', '2026-05-15 14:30:00');
+
+-- Alterando o status (o trigger gera o log)
+UPDATE pedidos SET status = 'CONFIRMADO' WHERE id = 2;
+
+-- Consultando TODOS os logs de auditoria gerados até agora
+SELECT id, tabela_alvo, operacao, detalhes, data_operacao
+FROM log_auditoria
+ORDER BY id;</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 7 — Gatilho BEFORE DELETE: Proteção de Integridade</h2>
+  <p>
+    <strong>Conceito:</strong> BEFORE DELETE impede a exclusão de registros que possuem dependentes.
+    Aqui, bloqueamos a exclusão de um cliente que possui pedidos associados, garantindo a
+    <strong>integridade referencial</strong> além da chave estrangeira.
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE TRIGGER trg_bloqueia_delete_cliente_com_pedido
+BEFORE DELETE ON clientes
+FOR EACH ROW
+BEGIN
+    DECLARE total_pedidos INT;
+
+    -- Conta quantos pedidos estão associados ao cliente
+    SELECT COUNT(*) INTO total_pedidos
+    FROM pedidos
+    WHERE id_cliente = OLD.id;
+
+    -- Se existir pelo menos 1 pedido, bloqueia a exclusão
+    IF total_pedidos > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'ERRO: Não é possível excluir um cliente que possui pedidos registrados.';
+    END IF;
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h4>Testando o Gatilho</h4>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- ERRO ESPERADO: Cliente 1 possui pedidos
+DELETE FROM clientes WHERE id = 1;
+
+-- SUCESSO: Cliente 3 não possui pedidos
+DELETE FROM clientes WHERE id = 3;
+
+-- Confirmando que o cliente 1 ainda existe
+SELECT id, nome FROM clientes WHERE id = 1;</code></pre>
+  </div>
+
+  <div class="tip-box">
+    <h4>Palavra-chave OLD no DELETE</h4>
+    <p>
+      Em um <code class="one-line-code">BEFORE DELETE</code>, apenas
+      <code class="one-line-code">OLD</code> está disponível — não existe <code class="one-line-code">NEW</code>,
+      pois o registro está sendo removido. Usamos <code class="one-line-code">OLD.id</code> para
+      acessar a chave primária do registro que está prestes a ser excluído.
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Passo 8 — Validação Final: Todos os Logs</h2>
+  <p>
+    Consulte a tabela de auditoria para ver <strong>todas as operações</strong> registradas pelos
+    gatilhos ao longo da demonstração:
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Relatório completo de auditoria
+SELECT 
+    id,
+    tabela_alvo AS 'Tabela',
+    operacao AS 'Operação',
+    detalhes AS 'Detalhes',
+    DATE_FORMAT(data_operacao, '%d/%m/%Y %H:%i:%s') AS 'Data/Hora'
+FROM log_auditoria
+ORDER BY id;</code></pre>
+  </div>
+
+  <h4>Resultado Esperado</h4>
+  <p>A tabela de log conterá registros semelhantes a estes:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tabela</th>
+        <th>Operação</th>
+        <th>Detalhes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>clientes</td>
+        <td>INSERT</td>
+        <td>Novo cliente cadastrado: Lucia Ferreira | Email: lucia@email.com</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>pedidos</td>
+        <td>UPDATE</td>
+        <td>Pedido #2 | Status alterado de "PENDENTE" para "CONFIRMADO" | Valor: R$ 199.90</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Resumo: Mapa dos 5 Gatilhos Criados</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nome do Trigger</th>
+        <th>Momento</th>
+        <th>Evento</th>
+        <th>Finalidade</th>
+        <th>Palavra-chave</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><code class="one-line-code">trg_valida_email_cliente</code></td>
+        <td>BEFORE</td>
+        <td>INSERT</td>
+        <td>Validar formato do email</td>
+        <td>NEW</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><code class="one-line-code">trg_log_insert_cliente</code></td>
+        <td>AFTER</td>
+        <td>INSERT</td>
+        <td>Registrar inclusão no log</td>
+        <td>NEW</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><code class="one-line-code">trg_bloqueia_reabertura_pedido</code></td>
+        <td>BEFORE</td>
+        <td>UPDATE</td>
+        <td>Bloquear reabertura de pedido cancelado</td>
+        <td>OLD + NEW</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><code class="one-line-code">trg_log_update_pedido</code></td>
+        <td>AFTER</td>
+        <td>UPDATE</td>
+        <td>Registrar alteração de status no log</td>
+        <td>OLD + NEW</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><code class="one-line-code">trg_bloqueia_delete_cliente_com_pedido</code></td>
+        <td>BEFORE</td>
+        <td>DELETE</td>
+        <td>Impedir exclusão de cliente com pedidos</td>
+        <td>OLD</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Bônus: Como Remover um Gatilho</h2>
+  <p>
+    Caso precise desativar ou corrigir um gatilho, utilize o comando
+    <code class="one-line-code">DROP TRIGGER</code>:
+  </p>
+
+  <div class="code-container">
+    <pre><code class="language-sql">-- Removendo um gatilho específico
+DROP TRIGGER IF EXISTS trg_valida_email_cliente;
+
+-- Listando todos os gatilhos da tabela "clientes"
+SHOW TRIGGERS LIKE 'clientes';</code></pre>
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas & Lembretes</h4>
+  <ul>
+    <li><strong>Ordem de execução:</strong> Sempre crie as tabelas primeiro, depois os triggers, e por
+      último insira os dados de teste. Se criar um trigger antes da tabela existir, o SGBD retorna erro.</li>
+    <li><strong>DELIMITER:</strong> No MySQL, o <code class="one-line-code">DELIMITER //</code> é
+      necessário porque o trigger contém ";" internos. Sem ele, o MySQL interpreta o ";" como o fim do
+      comando antes do bloco terminar.</li>
+    <li><strong>Depuração:</strong> Se um trigger causar comportamento inesperado, consulte
+      <code class="one-line-code">SHOW TRIGGERS</code> para listá-los e <code class="one-line-code">DROP TRIGGER</code>
+      para removê-los antes de recriá-los.</li>
+    <li><strong>Performance:</strong> Evite triggers com consultas complexas em tabelas grandes. Cada
+      <code class="one-line-code">INSERT</code>/<code class="one-line-code">UPDATE</code> dispara o trigger
+      automaticamente, e queries lentas dentro dele afetam diretamente o tempo de resposta da operação.</li>
+  </ul>
+</div>
