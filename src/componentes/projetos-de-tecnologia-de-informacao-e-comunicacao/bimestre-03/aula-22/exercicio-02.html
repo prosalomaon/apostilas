@@ -1,21 +1,218 @@
 ---
-layout: exercicio
-title: "Exercício 02 - Lógica de Programação II"
+layout: questionario
+title: "Questionário - Lógica de Programação II"
 exercicio_numero: "02"
 aula_numero: "22"
-description: "Desafio extra para aprofundamento da aula 22."
+sigla_componente: "PTIC"
+description: "Questionário de fixação sobre a tradução de planilhas para JavaScript: variáveis, tipos de dados, operadores, estrutura if/else e saída de dados com console.log()."
+perguntas:
+  - texto: "Qual linguagem de programação, considerada a mais popular do mundo para desenvolvimento web e automação de chatbots, foi estudada nesta aula?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Python."
+      - letra: "b"
+        texto: "Java."
+      - letra: "c"
+        texto: "JavaScript."
+      - letra: "d"
+        texto: "HTML."
+  - texto: "Na tradução de planilhas para programação, uma célula ativa (ex: B2) corresponde a:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Um comentário no código."
+      - letra: "b"
+        texto: "Uma variável declarada com let ou const."
+      - letra: "c"
+        texto: "Uma fórmula pronta que não pode ser alterada."
+      - letra: "d"
+        texto: "Um gráfico embutido na página."
+  - texto: "Qual é a diferença entre let e const em JavaScript?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "let cria textos e const cria números."
+      - letra: "b"
+        texto: "Não há diferença, são sinônimos."
+      - letra: "c"
+        texto: "const permite mudar o valor quantas vezes quiser; let não permite."
+      - letra: "d"
+        texto: "let cria uma variável cujo valor pode mudar; const cria um valor fixo que não pode ser alterado."
+  - texto: 'O trecho let produto = "Tomate"; declara uma variável de qual tipo de dado?'
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "String (texto)."
+      - letra: "b"
+        texto: "Number (número)."
+      - letra: "c"
+        texto: "Booleano (verdadeiro/falso)."
+      - letra: "d"
+        texto: "Fórmula."
+  - texto: "Em JavaScript, os valores 12 e 2.80 são exemplos do tipo de dado:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "String."
+      - letra: "b"
+        texto: "Number."
+      - letra: "c"
+        texto: "Célula."
+      - letra: "d"
+        texto: "Fórmula lógica."
+  - texto: "No JavaScript, o sinal de igual (=) tem a função de:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Comparar se dois valores são diferentes."
+      - letra: "b"
+        texto: "Iniciar uma fórmula, como nas planilhas."
+      - letra: "c"
+        texto: "Atribuir (guardar) um valor dentro de uma variável, da direita para a esquerda."
+      - letra: "d"
+        texto: "Exibir um valor na tela do usuário."
+  - texto: 'A fórmula =B2*C2 da planilha corresponde em JavaScript à expressão:'
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "quantidade * precoUnitario"
+      - letra: "b"
+        texto: "quantidade + precoUnitario"
+      - letra: "c"
+        texto: "=quantidade*precoUnitario"
+      - letra: "d"
+        texto: "SE(quantidade; precoUnitario)"
+  - texto: "Qual estrutura do JavaScript substitui a função SE() das planilhas?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "console.log()."
+      - letra: "b"
+        texto: "const."
+      - letra: "c"
+        texto: "toFixed()."
+      - letra: "d"
+        texto: "if / else."
+  - texto: "Qual comando é utilizado para exibir o resultado do processamento na tela ou terminal do programador?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "print.cell()"
+      - letra: "b"
+        texto: "console.log()"
+      - letra: "c"
+        texto: "=EXIBIR()"
+      - letra: "d"
+        texto: "alerta.celula()"
+  - texto: "O operador lógico && (AND) combina condições exigindo que:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Pelo menos uma delas seja verdadeira."
+      - letra: "b"
+        texto: "Todas sejam falsas."
+      - letra: "c"
+        texto: "Todas sejam verdadeiras simultaneamente."
+      - letra: "d"
+        texto: "Apenas a primeira seja verdadeira."
+  - texto: "Diferente do Google Planilhas, onde =se() e =SE() funcionam igualmente, escrever IF em maiúsculo em JavaScript:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Gera um erro, pois a linguagem diferencia maiúsculas de minúsculas (case sensitive)."
+      - letra: "b"
+        texto: "Funciona normalmente, como no Sheets."
+      - letra: "c"
+        texto: "Converte automaticamente para minúsculo."
+      - letra: "d"
+        texto: "Executa apenas metade da condição."
+  - texto: 'Sobre as aspas em JavaScript, é correto afirmar que:'
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Números devem estar entre aspas para funcionarem em cálculos."
+      - letra: "b"
+        texto: "Textos devem ficar entre aspas simples ou duplas; números não utilizam aspas."
+      - letra: "c"
+        texto: "Nenhum dado precisa de aspas em JavaScript."
+      - letra: "d"
+        texto: "Somente variáveis do tipo const usam aspas."
+  - texto: 'O que acontece se declararmos let precoUnitario = "2.80" (com aspas)?'
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "O JavaScript converte automaticamente para número decimal."
+      - letra: "b"
+        texto: "O código não executa por ser inválido."
+      - letra: "c"
+        texto: "Nada, pois aspas são opcionais em números."
+      - letra: "d"
+        texto: "O valor será tratado como texto, impedindo operações matemáticas corretas."
+  - texto: "Para que utilizamos o ponto e vírgula (;) ao final de cada instrução em JavaScript?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Para separar células, como nas fórmulas do Sheets."
+      - letra: "b"
+        texto: "Para criar comentários no código."
+      - letra: "c"
+        texto: "Para indicar ao interpretador que aquele comando foi concluído, evitando falhas de leitura no script."
+      - letra: "d"
+        texto: "Para declarar uma nova variável."
+  - texto: 'Ao digitar console.log(produto); sem ter declarado a variável produto, o terminal exibirá:'
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Um ReferenceError, indicando que você tentou usar algo que o sistema não reconhece."
+      - letra: "b"
+        texto: "O erro #NOME?, igual ao das planilhas."
+      - letra: "c"
+        texto: "A palavra undefined como resultado normal."
+      - letra: "d"
+        texto: "Nada, o código roda sem problemas."
+  - texto: "Considerando o código let quantidade = 2; if (quantidade > 10) { statusPedido = \"Atacado\"; } else { statusPedido = \"Varejo\"; }, qual será o valor final de statusPedido?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "\"Atacado\", pois a condição é verdadeira."
+      - letra: "b"
+        texto: "\"Varejo\", pois a condição quantidade > 10 é falsa."
+      - letra: "c"
+        texto: "Erro, pois falta o ponto e vírgula no if."
+      - letra: "d"
+        texto: "\"Tomate\", pois é o valor da variável produto."
+  - texto: "No desafio da aula, a fórmula =SE(B2&gt;5000; 10000; 3000) traduzida para JavaScript resulta em qual condição?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "if (rendaMensal < 5000) { limiteConcedido = 10000; } else { limiteConcedido = 3000; }"
+      - letra: "b"
+        texto: "if (rendaMensal >= 3000) { limiteConcedido = 5000; } else { limiteConcedido = 10000; }"
+      - letra: "c"
+        texto: "if (limiteConcedido > 5000) { rendaMensal = 10000; } else { rendaMensal = 3000; }"
+      - letra: "d"
+        texto: "if (rendaMensal > 5000) { limiteConcedido = 10000; } else { limiteConcedido = 3000; }"
+  - texto: "Qual recurso do JavaScript formata um número com duas casas decimais, simulando o formato monetário de uma célula?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "console.round(2)"
+      - letra: "b"
+        texto: "toFixed.texto(2)"
+      - letra: "c"
+        texto: "precoTotal.toFixed(2)"
+      - letra: "d"
+        texto: "=FORMATAR(precoTotal; 2)"
 ---
 
-<section class="section-box">
-  <h2>Enunciado</h2>
-  <p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-</section>
+<p>Responda as questões abaixo para consolidar os conhecimentos sobre a tradução da lógica de planilhas para JavaScript: variáveis, tipos de dados, operadores e estruturas de decisão.</p>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Leia o enunciado com atenção antes de começar.</li>
+    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>

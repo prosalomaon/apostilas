@@ -1,56 +1,415 @@
 ---
 title: "Lógica de Programação II"
 aula_numero: "22"
-description: "Uso de variáveis, tipos de dados e operadores aritméticos, relacionais e lógicos."
+description: "A Ponte de Ouro: tradução da lógica das planilhas para JavaScript — variáveis, tipos de dados, operadores, estruturas de decisão (if/else) e saída de dados com console.log()."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 22 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos: A Ponte de Ouro – Traduzindo Planilhas para JavaScript</h2>
+
+  <p>
+    Nas aulas anteriores de processamento de dados e algoritmos, você utilizou a grade de células e fórmulas do
+    <strong>Google Planilhas</strong> para automatizar cálculos e tomar decisões. Agora, daremos um passo fundamental:
+    aprender a pensar como um programador profissional, utilizando o <strong>JavaScript</strong> — a linguagem de
+    programação mais popular do mundo para desenvolvimento web e automação de chatbots.
+  </p>
+  <p>
+    Nesta aula, você verá que uma planilha eletrônica e um código JavaScript compartilham exatamente a mesma lógica.
+    Vamos aprender a converter tabelas e fórmulas do Sheets diretamente em códigos de programação estruturados.
+  </p>
+
+  <h3>A Tabela de Tradução</h3>
+  <p>
+    Para programar em JavaScript, você não precisa esquecer o que aprendeu em planilhas; basta
+    <strong>"traduzir"</strong> os conceitos. Veja como os elementos das planilhas são mapeados na programação:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Conceito em Planilhas (Google Sheets)</th>
+        <th>Conceito em Programação (JavaScript)</th>
+        <th>O que significa?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Célula Ativa (ex: B2)</td>
+        <td><code class="one-line-code">let</code> ou <code class="one-line-code">const</code> (Variável)</td>
+        <td>Um espaço na memória para guardar dados que podem ou não mudar.</td>
+      </tr>
+      <tr>
+        <td>Texto</td>
+        <td>Tipo de Dado: String</td>
+        <td>Texto puro, delimitado por aspas (ex: "Tomate").</td>
+      </tr>
+      <tr>
+        <td>Número (Numeric)</td>
+        <td>Tipo de Dado: Number</td>
+        <td>Números inteiros ou decimais (ex: 12 ou 2.80).</td>
+      </tr>
+      <tr>
+        <td>Sinal de igual (=) no início</td>
+        <td>Operador de Atribuição (=)</td>
+        <td>Em JS, o = serve para guardar um valor dentro de uma variável (da direita para a esquerda).</td>
+      </tr>
+      <tr>
+        <td>Fórmula de Multiplicação (=B2*C2)</td>
+        <td>Operador Aritmético (*)</td>
+        <td>Realização de cálculos aritméticos diretos sobre as variáveis.</td>
+      </tr>
+      <tr>
+        <td>Fórmula Lógica SE()</td>
+        <td>Estrutura de Decisão if / else</td>
+        <td>Se uma condição for verdadeira, faça algo; senão, faça outra coisa.</td>
+      </tr>
+      <tr>
+        <td>Operador Lógico E()</td>
+        <td>Operador Lógico &amp;&amp; (AND)</td>
+        <td>Combina condições. Exige que todas sejam verdadeiras simultaneamente.</td>
+      </tr>
+      <tr>
+        <td>Exibir valor na célula</td>
+        <td>Saída de Dados (console.log())</td>
+        <td>Exibe o resultado do processamento na tela ou terminal do programador.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Duas formas de criar uma variável: let e const</h3>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">let</code>:</strong> cria uma variável cujo valor <em>pode mudar</em> durante
+      a execução do programa — como uma célula que você edita livremente (ex: quantidade em estoque).
+    </li>
+    <li>
+      <strong><code class="one-line-code">const</code>:</strong> cria uma constante cujo valor <em>não pode ser
+      alterado</em> depois da atribuição — como um dado fixo de cadastro (ex: nome do produto, taxa de imposto).
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>Exemplo de Código: A Conversão Prática (Passo a Passo)</h2>
+  <p>
+    Vamos analisar uma planilha muito simples de controle de compras (comum em quitandas ou pequenos comércios) e ver
+    como ela é convertida linha por linha em um código JavaScript.
+  </p>
+
+  <h3>A Planilha de Origem (A1:E2)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Célula</th>
+        <th>Campo</th>
+        <th>Conteúdo / Fórmula</th>
+        <th>Tipo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">A2</code></td>
+        <td>Produto</td>
+        <td>Tomate</td>
+        <td>Texto (String)</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">B2</code></td>
+        <td>Quantidade</td>
+        <td>2</td>
+        <td>Número (Number)</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">C2</code></td>
+        <td>Preço Unitário</td>
+        <td>2.80</td>
+        <td>Número (Number)</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">D2</code></td>
+        <td>Preço Total</td>
+        <td><code class="one-line-code">=B2*C2</code></td>
+        <td>Fórmula de Multiplicação</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">E2</code></td>
+        <td>Status do Pedido</td>
+        <td><code class="one-line-code">=SE(B2&gt;10; "Atacado"; "Varejo")</code></td>
+        <td>Fórmula de Decisão</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>O Código JavaScript Correspondente</h3>
+  <p>
+    Copie o código estruturado abaixo. Você pode executá-lo no Terminal do Visual Studio Code ou diretamente no
+    console do seu navegador de internet:
+  </p>
   <div class="code-container">
-    <pre><code class="language-plaintext">// Em breve...</code></pre>
+    <pre><code class="language-javascript">// 1. Declarando as "Células" como Variáveis (Entrada de Dados)
+let produto = "Tomate";       // Célula A2 (String)
+let quantidade = 2;           // Célula B2 (Number)
+let precoUnitario = 2.80;     // Célula C2 (Number)
+
+// 2. Criando as Fórmulas de Processamento
+// Célula D2: Preço Total (=B2*C2)
+let precoTotal = quantidade * precoUnitario;
+
+// Célula E2: Status do Pedido usando a estrutura SE (=SE(B2>10; "Atacado"; "Varejo"))
+let statusPedido;
+if (quantidade > 10) {
+    statusPedido = "Atacado";
+} else {
+    statusPedido = "Varejo";
+}
+
+// 3. Exibindo os Resultados (Saída de Dados)
+console.log("--- CUPOM FISCAL SIMULADO ---");
+console.log("Produto adquirido: " + produto);
+console.log("Quantidade: " + quantidade);
+console.log("Preço Total calculado: R$ " + precoTotal.toFixed(2));
+console.log("Classificação de Venda: " + statusPedido);</code></pre>
+  </div>
+
+  <h3>Anatomia do Código</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Parte do Código</th>
+        <th>Equivalente na Planilha</th>
+        <th>Significado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">let produto = "Tomate";</code></td>
+        <td>Célula A2 preenchida com Tomate</td>
+        <td>Cria a variável e guarda o texto nela.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">quantidade * precoUnitario</code></td>
+        <td><code class="one-line-code">=B2*C2</code></td>
+        <td>Multiplica os valores guardados nas variáveis.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">if (quantidade > 10) { ... } else { ... }</code></td>
+        <td><code class="one-line-code">=SE(B2&gt;10; "Atacado"; "Varejo")</code></td>
+        <td>Teste lógico com dois caminhos possíveis.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">console.log(...)</code></td>
+        <td>Valor exibido na célula</td>
+        <td>Mostra o resultado do processamento na tela.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">"R$ " + precoTotal.toFixed(2)</code></td>
+        <td>Formatação de número/currency da célula</td>
+        <td>Concatena texto com número formatado com 2 casas decimais.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Resultado esperado ao executar:</p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">--- CUPOM FISCAL SIMULADO ---
+Produto adquirido: Tomate
+Quantidade: 2
+Preço Total calculado: R$ 5.60
+Classificação de Venda: Varejo</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>O Desafio: Transforme a Lógica Contábil em Código JS</h2>
+  <p>
+    Para consolidar essa transição de pensamento lógico, realize a atividade a seguir.
+  </p>
+
+  <h3>A Planilha Proposta (Entrada de Dados)</h3>
+  <p>
+    Imagine que você tem uma tabela de análise financeira para decidir se um cliente receberá um determinado limite de
+    crédito com base na renda e no tempo de trabalho:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Célula</th>
+        <th>Nome do Campo</th>
+        <th>Conteúdo / Fórmula</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">A2</code></td>
+        <td>Nome do Cliente</td>
+        <td>"Carlos"</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">B2</code></td>
+        <td>Renda Mensal</td>
+        <td>5500</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">C2</code></td>
+        <td>Tempo de Trabalho (Anos)</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">D2</code></td>
+        <td>Limite Concedido</td>
+        <td><code class="one-line-code">=SE(B2&gt;5000; 10000; 3000)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>O que você deve fazer</h3>
+  <ol>
+    <li>Abra o seu editor de código (como o VS Code) ou o console do navegador.</li>
+    <li>
+      Declare as variáveis de entrada de dados para o Nome do Cliente, Renda Mensal e Tempo de Trabalho.
+    </li>
+    <li>
+      Escreva a estrutura condicional <code class="one-line-code">if / else</code> para avaliar a renda (se for maior
+      que 5000, a variável <code class="one-line-code">limiteConcedido</code> recebe 10000; caso contrário, recebe
+      3000).
+    </li>
+    <li>
+      Utilize o <code class="one-line-code">console.log()</code> para imprimir na tela uma mensagem clara, por exemplo:
+      <em>"O cliente Carlos tem direito a R$ 10000 de limite de crédito"</em>.
+    </li>
+  </ol>
+  <div class="code-container">
+    <pre><code class="language-plaintext">// Estrutura esperada (rascunho):
+let nomeCliente = ...;
+let rendaMensal = ...;
+let limiteConcedido;
+
+if (rendaMensal > 5000) {
+    // verdadeiro
+} else {
+    // falso
+}
+
+console.log(...);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Diagramação</h2>
+  <p>
+    Representação gráfica da lógica de decisão do cupom fiscal simulado — repare como o
+    <code class="one-line-code">if / else</code> herda exatamente a mesma forma da função SE estudada na aula
+    anterior:
+  </p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    flowchart TD
+    A([Início]) --> B[Ler produto,\nquantidade e precoUnitario]
+    B --> C["precoTotal = quantidade * precoUnitario"]
+    C --> D{SE quantidade > 10?}
+    D -->|Verdadeiro| E["statusPedido = ATACADO"]
+    D -->|Falso| F["statusPedido = VAREJO"]
+    E --> G[Exibir cupom com console.log]
+    F --> G
+    G --> H([Fim])
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes de Programação</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Case Sensitivity (Diferenciação de Maiúsculas):</strong> diferente das funções do Sheets (onde
+      <code class="one-line-code">=se()</code> e <code class="one-line-code">=SE()</code> funcionam igual), o
+      JavaScript é extremamente rígido. Escrever IF em maiúsculo gerará um erro. Use sempre letras minúsculas para
+      estruturas de controle: <code class="one-line-code">if</code> e <code class="one-line-code">else</code>.
+    </li>
+    <li>
+      <strong>As Aspas Importam:</strong> textos (Strings) devem ser declarados obrigatoriamente entre aspas simples
+      ou duplas. Números não utilizam aspas, caso contrário, o JavaScript os tratará como texto e impedirá a
+      realização de operações matemáticas.
+    </li>
+    <li>
+      <strong>A importância do Ponto e Vírgula (;):</strong> em JavaScript, utilizamos o ponto e vírgula ao final de
+      cada linha de instrução para indicar ao interpretador que aquele comando foi concluído com sucesso, evitando
+      falhas de leitura no script.
+    </li>
+    <li>
+      <strong>O Erro #NOME? vs. Erros de JS:</strong> nas planilhas, errar o nome de uma fórmula gera o erro
+      <code class="one-line-code">#NOME?</code>. No JavaScript, o terminal exibirá um erro de referência
+      (<code class="one-line-code">ReferenceError</code>), indicando que você tentou chamar algo que o sistema não
+      reconhece.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <p>
+    Essa mesma lógica de tradução está presente no dia a dia de quem trabalha com tecnologia:
+  </p>
+  <ul>
+    <li>
+      <strong>Automação de chatbots:</strong> bots de WhatsApp e atendimento usam exatamente estruturas
+      <code class="one-line-code">if / else</code> para decidir qual mensagem enviar conforme a resposta do cliente.
+    </li>
+    <li>
+      <strong>Sistemas comerciais:</strong> o cálculo do preço total de um pedido (quantidade × preço unitário) é o
+      mesmo que fizemos no cupom fiscal simulado.
+    </li>
+    <li>
+      <strong>Análise de crédito e financeira:</strong> regras como "renda maior que X aprova limite Y" rodam em
+      servidores escritos em JavaScript (Node.js), substituindo planilhas manuais.
+    </li>
+    <li>
+      <strong>Migração de sistemas:</strong> muitas empresas começaram com controles em planilhas e depois os
+      "converteram" em programas — o processo que você aprendeu hoje é a base dessa migração.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>O que vem por aí: Aula 23 - Estruturas de Controle e Otimização</h2>
+  <p>Na próxima aula, vamos aprofundar o controle do fluxo dos nossos programas. Aprenderemos:</p>
+  <ul>
+    <li>
+      <strong>Estruturas de repetição (for / while):</strong> como processar uma lista inteira de produtos ou clientes
+      sem repetir código.
+    </li>
+    <li>
+      <strong>Condições combinadas:</strong> usar <code class="one-line-code">&amp;&amp;</code> (E) e
+      <code class="one-line-code">||</code> (OU) para criar regras de negócio mais sofisticadas.
+    </li>
+    <li>
+      <strong>Otimização e clareza do código:</strong> técnicas para garantir eficiência e legibilidade, preparando o
+      terreno para projetos maiores.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      MDN WEB DOCS. <em>JavaScript — Guia de referência</em>. Disponível em:
+      https://developer.mozilla.org/pt-BR/docs/Web/JavaScript
+    </li>
+    <li>
+      FORBELLONE, André Luiz Villar; EBERSPÄCHER, Henri Frederico. <em>Lógica de Programação: A Construção de
+      Algoritmos e Estruturas de Dados</em>. 3. ed. São Paulo: Pearson Prentice Hall, 2005.
+    </li>
+    <li>
+      MANZANO, José Augusto N. G.; OLIVEIRA, Jayr Figueiredo de. <em>Algoritmos: Lógica para Desenvolvimento de
+      Programação de Computadores</em>. 28. ed. São Paulo: Érica, 2016.
+    </li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Convertendo a Análise de Crédito de Planilha para JavaScript</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
   </ul>
 </section>

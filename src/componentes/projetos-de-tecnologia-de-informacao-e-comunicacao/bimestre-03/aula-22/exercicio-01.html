@@ -1,21 +1,216 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Lógica de Programação II"
+title: "Convertendo a Análise de Crédito de Planilha para JavaScript"
 exercicio_numero: "01"
 aula_numero: "22"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 22."
+description: "Converter a lógica de uma planilha de análise financeira (células, fórmula SE e saída de dados) em um programa JavaScript com variáveis, estrutura if/else e console.log()."
 ---
 
 <section class="section-box">
   <h2>Enunciado</h2>
-  <p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+  <p>
+    Você é analista financeiro da empresa <strong>CrediTech</strong>. A equipe ainda decide os limites de crédito dos
+    clientes em uma planilha, mas a diretoria quer migrar esse controle para um programa automatizado. Sua missão é
+    <strong>traduzir a planilha em um código JavaScript</strong> que aplique a seguinte regra:
+  </p>
+  <p>
+    <strong>Se a Renda Mensal do cliente for maior que 5000, o limite concedido é R$ 10000. Caso contrário, o limite
+    concedido é R$ 3000.</strong>
+  </p>
+  <p>A planilha de origem que você deve "traduzir" é:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Célula</th>
+        <th>Nome do Campo</th>
+        <th>Conteúdo / Fórmula</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">A2</code></td>
+        <td>Nome do Cliente</td>
+        <td>"Carlos"</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">B2</code></td>
+        <td>Renda Mensal</td>
+        <td>5500</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">C2</code></td>
+        <td>Tempo de Trabalho (Anos)</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">D2</code></td>
+        <td>Limite Concedido</td>
+        <td><code class="one-line-code">=SE(B2&gt;5000; 10000; 3000)</code></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Execute os passos abaixo e, em seguida, responda às questões.</p>
+</section>
+
+<section class="section-box">
+  <h2>Passos da Construção</h2>
+  <ol>
+    <li>Abra o Visual Studio Code (ou o console do navegador, tecla F12).</li>
+    <li>Crie um arquivo chamado <code class="one-line-code">analise-credito.js</code>.</li>
+    <li>
+      Declare as variáveis de entrada com <code class="one-line-code">let</code>: Nome do Cliente (String), Renda
+      Mensal (Number) e Tempo de Trabalho (Number).
+    </li>
+    <li>
+      Declare a variável <code class="one-line-code">limiteConcedido</code> e escreva a estrutura
+      <code class="one-line-code">if / else</code> que avalia a renda conforme a regra do enunciado.
+    </li>
+    <li>
+      Utilize o <code class="one-line-code">console.log()</code> para exibir a mensagem final, por exemplo:
+      <em>"O cliente Carlos tem direito a R$ 10000 de limite de crédito"</em>.
+    </li>
+    <li>
+      Execute o código no terminal (comando <code class="one-line-code">node analise-credito.js</code>) ou no console
+      do navegador e confira o resultado.
+    </li>
+    <li>
+      Altere os valores das variáveis pelo menos 3 vezes para testar cenários diferentes e anote os resultados na
+      Questão 2.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: A Tabela de Tradução</h3>
+  <p>Complete a tabela relacionando cada elemento da planilha ao seu equivalente em JavaScript:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Planilha (Google Sheets)</th>
+        <th>JavaScript</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Célula B2</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Número 5500</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Texto "Carlos"</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Fórmula =SE(B2&gt;5000; 10000; 3000)</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Valor exibido na célula D2</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 2: Tabela de Testes</h3>
+  <p>
+    Execute o seu código com cada cenário abaixo e complete o resultado exibido no console:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Cenário</th>
+        <th>Nome do Cliente</th>
+        <th>Renda Mensal</th>
+        <th>Mensagem exibida no console</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Carlos</td>
+        <td>5500</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Ana</td>
+        <td>4800</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Bruno</td>
+        <td>5000</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <strong>Desafio:</strong> no Cenário 3, a renda é <em>exatamente igual</em> a 5000. O operador utilizado é
+    <code class="one-line-code">&gt;</code> (maior) ou <code class="one-line-code">&gt;=</code> (maior ou igual)? O
+    que essa escolha muda no limite recebido por Bruno? Como a regra deveria ser reescrita se quiséssemos que Bruno
+    recebesse R$ 10000?
+  </p>
+
+  <h3>Questão 3: Entrada, Processamento e Saída</h3>
+  <p>
+    Classifique cada trecho do seu código como <strong>Entrada de Dados</strong>, <strong>Processamento</strong> ou
+    <strong>Saída de Dados</strong>:
+  </p>
+  <ul>
+    <li><strong>a)</strong> <code class="one-line-code">let rendaMensal = 5500;</code></li>
+    <li><strong>b)</strong> A estrutura <code class="one-line-code">if / else</code> que define o valor de
+      <code class="one-line-code">limiteConcedido</code>.</li>
+    <li><strong>c)</strong> <code class="one-line-code">console.log("O cliente " + nomeCliente + "...");</code></li>
+  </ul>
+  <p>
+    Explique com suas palavras: <em>"Em que a declaração de variáveis em JavaScript se parece com preencher células
+    de uma planilha? E o que o if/else tem em comum com a função SE?"</em>
+  </p>
+
+  <h3>Questão 4: Tratamento de Erros</h3>
+  <ul>
+    <li>
+      <strong>a)</strong> O que acontece se você escrever <code class="one-line-code">IF</code> (maiúsculo) no lugar
+      de <code class="one-line-code">if</code>? Qual a diferença desse comportamento para o Google Planilhas?
+    </li>
+    <li>
+      <strong>b)</strong> O que ocorre se declarar <code class="one-line-code">let rendaMensal = "5500";</code> (com
+      aspas)? A comparação da renda funcionaria corretamente?
+    </li>
+    <li>
+      <strong>c)</strong> Se o nome da variável for declarado como <code class="one-line-code">RendaMensal</code>, mas
+      o <code class="one-line-code">if</code> chamar <code class="one-line-code">rendaMensal</code>, qual erro será
+      exibido? Com qual erro do Google Planilhas ele pode ser comparado?
+    </li>
+  </ul>
+
+  <h3>Questão 5: Evoluindo o Código</h3>
+  <ul>
+    <li>
+      <strong>a)</strong> Das variáveis criadas, quais poderiam ser declaradas com
+      <code class="one-line-code">const</code> em vez de <code class="one-line-code">let</code>? Justifique.
+    </li>
+    <li>
+      <strong>b)</strong> A diretoria pediu uma nova regra: clientes com renda maior que 5000 <em>e</em> tempo de
+      trabalho maior ou igual a 2 anos recebem R$ 12000. Qual operador lógico você utilizaria e como ficaria a
+      condição do <code class="one-line-code">if</code>?
+    </li>
+  </ul>
 </section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Revise o conteúdo da aula antes de começar: variáveis (<code class="one-line-code">let</code>/<code class="one-line-code">const</code>), tipos de dados, operadores e a estrutura <code class="one-line-code">if / else</code>.</li>
+    <li>Lembre-se: textos entre aspas, números sem aspas e instruções terminadas com ponto e vírgula.</li>
+    <li>O JavaScript diferencia maiúsculas de minúsculas: use sempre <code class="one-line-code">if</code> e <code class="one-line-code">else</code> em minúsculo.</li>
+    <li>Na Questão 2, teste também o caso-limite (renda igual a 5000) para refletir sobre a escolha do operador.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
