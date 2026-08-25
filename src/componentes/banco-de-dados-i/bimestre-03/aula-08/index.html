@@ -1,8 +1,8 @@
 ---
-title: "Entrega de Projeto 3: Relatório de Normalização do banco de dados do aluno."
+title: "Entrega de Projeto 3: Relatório de Normalização do banco de dados do aluno"
 aula_numero: "28"
 subject: "banco-de-dados-i"
-description: "Projeto prático de normalização: o aluno deve receher um banco de dados não normalizado, identificar dependências funcionais, aplicar as Formas Normais (1FN, 2FN e 3FN) e entregar o relatório completo com o esquema final."
+description: "Projeto prático de normalização: o aluno deve receber um banco de dados não normalizado, identificar dependências funcionais e multivaloradas, aplicar as Formas Normais (1FN, 2FN, 3FN e 4FN) e entregar o relatório completo com o esquema final."
 tags:
 - aula
 - bimestre-03
@@ -15,7 +15,7 @@ tags:
     transformam tabelas mal projetadas em estruturas limpas, sem redundância e livres de anomalias de atualização. No
     entanto, saber a teoria não é o mesmo que aplicá-la. Este projeto tem o objetivo de avaliar se vocês conseguem
     <strong>executar o processo completo de normalização</strong> em um cenário realista, do "Tabelão" bruto até o
-    esquema relacional final em 3FN.
+    esquema relacional final em 3FN e 4FN.
   </p>
   <p>
     O trabalho será individual e entregue como um <strong>Relatório de Normalização</strong> técnico, contendo todas as
@@ -138,6 +138,63 @@ tags:
     </table>
   </div>
 
+  <h3>2.2 Segunda Tabela: Fornecedores e Certificações</h3>
+  <p>
+    A TechShop também mantém um registro de quais <strong>certificações</strong> cada fornecedor possui e quais
+    <strong>produtos</strong> cada fornecedor fornece. O sistema armazena tudo em uma única tabela:
+  </p>
+
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>CodFornecedor</th>
+          <th>Nome Fornecedor</th>
+          <th>CodProduto</th>
+          <th>Certificacao</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>F01</td>
+          <td>Dell Brasil</td>
+          <td>Notebook Dell</td>
+          <td>ISO 9001</td>
+        </tr>
+        <tr>
+          <td>F01</td>
+          <td>Dell Brasil</td>
+          <td>Notebook Dell</td>
+          <td>ISO 14001</td>
+        </tr>
+        <tr>
+          <td>F01</td>
+          <td>Dell Brasil</td>
+          <td>Monitor Dell</td>
+          <td>ISO 9001</td>
+        </tr>
+        <tr>
+          <td>F01</td>
+          <td>Dell Brasil</td>
+          <td>Monitor Dell</td>
+          <td>ISO 14001</td>
+        </tr>
+        <tr>
+          <td>F02</td>
+          <td>Logitech</td>
+          <td>Mouse Logitech</td>
+          <td>ISO 9001</td>
+        </tr>
+        <tr>
+          <td>F02</td>
+          <td>Logitech</td>
+          <td>Teclado Logitech</td>
+          <td>ISO 9001</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="tip-box">
     <h4>Problemas Visíveis no Tabelão</h4>
     <ul>
@@ -196,6 +253,16 @@ tags:
           <td>Produto → Categoria, Fornecedor</td>
           <td>Cada produto pertence a uma categoria e é fornecido por um único fornecedor.</td>
         </tr>
+        <tr>
+          <td><strong>MVD1</strong></td>
+          <td>CodFornecedor →→ CodProduto</td>
+          <td>Os produtos fornecidos são independentes das certificações do fornecedor.</td>
+        </tr>
+        <tr>
+          <td><strong>MVD2</strong></td>
+          <td>CodFornecedor →→ Certificacao</td>
+          <td>As certificações do fornecedor são independentes dos produtos que ele fornece.</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -236,22 +303,29 @@ tags:
       dependência funcional onde o determinante não é chave mas determina outro atributo não-chave.</li>
     <li><strong>Decomposição:</strong> Elimine as dependências transitivas criando tabelas auxiliares para os
       determinantes intermediários.</li>
-    <li><strong>Validação BCNF:</strong> Verifique se o resultado final em 3FN também atende à Forma Normal de
-      Boyce-Codd. Justifique se há ou não violação da FNBC.</li>
-    <li><strong>Resultado Final:</strong> Apresente o esquema relacional completo em 3FN (e, se aplicável, FNBC) com
-      todas as chaves primárias e estrangeiras explicitadas.</li>
+    <li><strong>Resultado Final:</strong> Apresente o esquema relacional completo em 3FN com todas as chaves primárias e
+      estrangeiras explicitadas.</li>
   </ul>
 
-  <h4>Parte 4: Script DDL — Implementação no SGBD</h4>
+  <h4>Parte 4: Quarta Forma Normal (4FN)</h4>
+  <ul>
+    <li><strong>Identificação de MVDs:</strong> Na tabela FORNECEDOR_PRODUTO_CERTIFICACAO, identifique as Dependências
+      Multivaloradas (MVDs) existentes. Justifique por que produtos e certificações são fatos independentes sobre o
+      fornecedor.</li>
+    <li><strong>Decomposição:</strong> Isole cada fato multivalorado em uma tabela binária separada, garantindo que cada
+      nova tabela tenha apenas um fato multivalorado sobre a chave.</li>
+    <li><strong>Verificação de 5FN:</strong> Verifique se as tabelas resultantes da decomposição 4FN possuem chaves
+      simples (uma única coluna). Se sim, elas estão automaticamente na 5FN. Justifique.</li>
+    <li><strong>Resultado:</strong> Apresente o esquema relacional final incluindo todas as tabelas das partes 1–4.</li>
+  </ul>
+
+  <h4>Parte 5: Script DDL — Implementação no SGBD</h4>
   <ul>
     <li><strong>Criação das Tabelas:</strong> Escreva os comandos <code class="one-line-code">CREATE TABLE</code>
       (MySQL ou PostgreSQL) para todas as tabelas resultantes da normalização, incluindo chaves primárias, estrangeiras
       e as restrições de integridade.</li>
     <li><strong>Inserção de Dados:</strong> Insira a amostra de dados do Tabelão original nas novas tabelas utilizando
       comandos <code class="one-line-code">INSERT INTO</code>.</li>
-    <li><strong>Consulta de Validação:</strong> Elabore uma consulta com <code class="one-line-code">JOIN</code> que
-      reconstrua a visão original do Tabelão a partir das tabelas normalizadas, provando que nenhuma informação foi
-      perdida.</li>
   </ul>
 </section>
 
@@ -261,17 +335,14 @@ tags:
     O relatório será avaliado com base nos seguintes critérios técnicos:
   </p>
   <ul>
-    <li><strong>Completude das Etapas:</strong> Todas as Formas Normais (1FN, 2FN e 3FN) devem ser demonstradas
+    <li><strong>Completude das Etapas:</strong> Todas as Formas Normais (1FN, 2FN, 3FN e 4FN) devem ser demonstradas
       explicitamente, com a decomposição em cada etapa.</li>
-    <li><strong>Correção das Dependências Funcionais:</strong> As DFs devem ser corretamente identificadas e utilizadas
-      como base para cada decomposição.</li>
-    <li><strong>Preservação de Informação:</strong> A consulta JOIN final deve reconstruir exatamente a mesma informação
-      do Tabelão original — nenhuma perda de dado é aceitável.</li>
+    <li><strong>Correção das Dependências Funcionais e MVDs:</strong> As DFs e MVDs devem ser corretamente identificadas
+      e utilizadas como base para cada decomposição.</li>
     <li><strong>Preservação de Dependências:</strong> As dependências funcionais originais devem ser preservadas nas novas
       tabelas (ou justificadas caso alguma tenha sido intencionalmente eliminada).</li>
     <li><strong>Integridade Referencial:</strong> As chaves estrangeiras devem estar corretamente posicionadas e os
       comandos DDL devem incluir as constraints de <code class="one-line-code">FOREIGN KEY</code>.</li>
-    <li><strong>BCNF:</strong> Verificar e justificar se o esquema final em 3FN também atende à FNBC.</li>
     <li><strong>Organização e Clareza:</strong> O relatório deve ser autoexplicativo, com seções numeradas, tabelas
       formatadas e código SQL indentado.</li>
   </ul>

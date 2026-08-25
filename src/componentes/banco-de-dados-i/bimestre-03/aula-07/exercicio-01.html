@@ -1,23 +1,77 @@
 ---
 layout: exercicio
-title: "Ferramentas CASE: Introdução ao uso de softwares para modelagem conceitual (brModelo/CASE)."
+title: "Identificando MVDs e Decompondo para 4FN"
 exercicio_numero: "01"
-07ero: "07"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 07."
+aula_numero: "27"
+subject: "banco-de-dados-i"
+description: "Atividade prática sobre Dependências Multivaloradas e aplicação da 4FN em cenários reais."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Exercício: Identificação de MVDs</h2>
+  <p>
+    Analise a tabela abaixo, utilizada por uma empresa de consultoria para registrar os
+    <strong>idiomas</strong> e as <strong>certificações</strong> de cada funcionário:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">FUNCIONARIO_IDIOMA(
+    CodFuncionario,
+    Idioma,
+    Certificacao
+)</code></pre>
+  </div>
+  <p><strong>Regras de Negócio:</strong></p>
+  <ul>
+    <li>Um funcionário pode falar múltiplos idiomas.</li>
+    <li>Um funcionário pode possuir múltiplas certificações.</li>
+    <li>Os idiomas falados por um funcionário são <strong>independentes</strong> das certificações que ele possui.</li>
+  </ul>
+
+  <h3>Atividades:</h3>
+  <ul>
+    <li>Identifique a(s) Dependência(s) Multivalorada(s) existente(s) na tabela.</li>
+    <li>Justifique por que essa tabela viola a 4FN.</li>
+    <li>Escreva o esquema relacional resultante após a decomposição para 4FN.</li>
+    <li>Escreva os comandos <code class="one-line-code">CREATE TABLE</code> para as tabelas resultantes.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>2. Exercício: Aplicação da 4FN</h2>
+  <p>
+    Uma rede de hotéis mantém uma tabela para registrar quais <strong>serviços</strong> são oferecidos em cada
+    <strong>quarto</strong> e quais <strong>funcionários</strong> estão designados para cada quarto:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">QUARTO_SERVICO_FUNCIONARIO(
+    NumQuarto,
+    Servico,
+    CodFuncionario
+)</code></pre>
+  </div>
+  <p><strong>Regras de Negócio:</strong></p>
+  <ul>
+    <li>Um quarto pode ter múltiplos serviços (limpeza, room service, lavanderia).</li>
+    <li>Um quarto pode ter múltiplos funcionários designados.</li>
+    <li>Os serviços oferecidos em um quarto são <strong>independentes</strong> dos funcionários designados.</li>
+  </ul>
+
+  <h3>Atividades:</h3>
+  <ul>
+    <li>Identifique as MVDs na tabela.</li>
+    <li>Decomponha a tabela para 4FN, justificando cada criação.</li>
+    <li>Escreva os comandos SQL (<code class="one-line-code">CREATE TABLE</code> e
+      <code class="one-line-code">INSERT INTO</code>) para implementar as tabelas normalizadas com pelo menos 3
+      registros cada.</li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações de Entrega</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Preencha cada seção com sua análise e código SQL.</li>
+    <li>Utilize notação textual para os esquemas relacionais:
+      <code class="one-line-code">NOME_TABELA(atributo1, atributo2, ...)</code>.</li>
+    <li>Justifique sempre <strong>por que</strong> a decomposição é necessária.</li>
   </ul>
 </div>
-
-
-
-
-

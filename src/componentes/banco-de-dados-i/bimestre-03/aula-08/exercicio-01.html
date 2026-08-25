@@ -4,7 +4,7 @@ title: "Relatório de Normalização — Projeto TechShop"
 exercicio_numero: "01"
 aula_numero: "28"
 subject: "banco-de-dados-i"
-description: "Ficha de resposta do Projeto 3: normalização completa do Tabelão da TechShop (1FN, 2FN, 3FN). O aluno deve preencher cada seção com sua análise e entregar o relatório."
+description: "Ficha de resposta do Projeto 3: normalização completa do Tabelão da TechShop (1FN, 2FN, 3FN e 4FN). O aluno deve preencher cada seção com sua análise e entregar o relatório."
 ---
 
 <section class="section-box">
@@ -20,7 +20,6 @@ description: "Ficha de resposta do Projeto 3: normalização completa do Tabelã
       <li>Consulte o enunciado completo e os dados do Tabelão na <strong>Aula 28</strong> (index.html).</li>
       <li>Preencha cada seção deste relatório com sua análise.</li>
       <li>O relatório deve ser entregue em PDF ou DOCX.</li>
-      <li>Inclua o script SQL executado e o resultado da consulta JOIN como evidência.</li>
     </ul>
   </div>
 </section>
@@ -28,15 +27,17 @@ description: "Ficha de resposta do Projeto 3: normalização completa do Tabelã
 <section class="section-box">
   <h2>2. Dependências Funcionais</h2>
   <p>
-    Liste formalmente todas as dependências funcionais que você identificou no Tabelão da TechShop. Utilize a notação
-    <code class="one-line-code">Determinante → Dependente(s)</code>.
+    Liste formalmente todas as dependências funcionais e dependências multivaloradas que você identificou no Tabelão da
+    TechShop. Utilize a notação
+    <code class="one-line-code">Determinante → Dependente(s)</code> para DFs e
+    <code class="one-line-code">Determinante →→ Dependente(s)</code> para MVDs.
   </p>
   <table>
     <thead>
       <tr>
         <th>Código</th>
-        <th>Dependência Funcional</th>
-        <th>Tipo (Total / Parcial / Transitiva)</th>
+        <th>Dependência (DF ou MVD)</th>
+        <th>Tipo (Total / Parcial / Transitiva / Multivalorada)</th>
       </tr>
     </thead>
     <tbody>
@@ -67,6 +68,16 @@ description: "Ficha de resposta do Projeto 3: normalização completa do Tabelã
       </tr>
       <tr>
         <td>DF6</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>MVD1</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>MVD2</td>
         <td></td>
         <td></td>
       </tr>
@@ -164,12 +175,7 @@ TABELA_B(
   <p>_______________________________________________________________</p>
   <p>_______________________________________________________________</p>
 
-  <h3>5.2 Verificação da FNBC</h3>
-  <p>O esquema resultante em 3FN também atende à Forma Normal de Boyce-Codd? Justifique.</p>
-  <p>_______________________________________________________________</p>
-  <p>_______________________________________________________________</p>
-
-  <h3>5.3 Esquema Relacional Final (3FN / FNBC)</h3>
+  <h3>5.2 Esquema Relacional Final (3FN)</h3>
   <p>Escreva o esquema relacional completo, com todas as tabelas, PKs e FKs:</p>
   <div class="code-container">
     <pre><code class="language-plaintext">CLIENTES(
@@ -192,14 +198,51 @@ PEDIDOS(
 ITENS_PEDIDO(
     PK:
     FK:
+)
+
+FORNECEDOR_PRODUTO_CERTIFICACAO(
+    PK:
 )</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>6. Script DDL e Validação</h2>
+  <h2>6. Quarta Forma Normal (4FN)</h2>
 
-  <h3>6.1 Comandos CREATE TABLE</h3>
+  <h3>6.1 Identificação das MVDs</h3>
+  <p>
+    Na tabela FORNECEDOR_PRODUTO_CERTIFICACAO, identifique as Dependências Multivaloradas. Justifique por que produtos
+    e certificações são fatos independentes sobre o fornecedor.
+  </p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
+
+  <h3>6.2 Decomposição para 4FN</h3>
+  <p>Isole cada fato multivalorado em uma tabela binária separada:</p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">FORNECEDOR_PRODUTO(
+    PK:
+)
+
+FORNECEDOR_CERTIFICACAO(
+    PK:
+)</code></pre>
+  </div>
+
+  <h3>6.3 Verificação de 5FN</h3>
+  <p>
+    As tabelas resultantes da decomposição 4FN possuem chaves simples (uma única coluna)? Se sim, estão
+    automaticamente na 5FN. Justifique.
+  </p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
+</section>
+
+<section class="section-box">
+  <h2>7. Script DDL</h2>
+
+  <h3>7.1 Comandos CREATE TABLE</h3>
   <p>
     Escreva os comandos SQL (<code class="one-line-code">CREATE TABLE</code>) para todas as tabelas resultantes da
     normalização. Inclua chaves primárias, estrangeiras e restrições.
@@ -208,29 +251,15 @@ ITENS_PEDIDO(
     <pre><code class="language-sql">-- Seu código CREATE TABLE aqui</code></pre>
   </div>
 
-  <h3>6.2 Comandos INSERT INTO</h3>
+  <h3>7.2 Comandos INSERT INTO</h3>
   <p>Insira a amostra de dados do Tabelão original nas novas tabelas:</p>
   <div class="code-container">
     <pre><code class="language-sql">-- Seu código INSERT INTO aqui</code></pre>
   </div>
-
-  <h3>6.3 Consulta JOIN de Validação</h3>
-  <p>
-    Elabore uma consulta <code class="one-line-code">SELECT ... JOIN</code> que reconstrua a visão completa do Tabelão
-    original a partir das tabelas normalizadas. Anexe o resultado da execução como evidência.
-  </p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- Seu código SELECT JOIN aqui</code></pre>
-  </div>
-
-  <h3>6.4 Resultado da Consulta (Evidência)</h3>
-  <p>_______________________________________________________________</p>
-  <p>_______________________________________________________________</p>
-  <p>(Anexar print ou resultado copiado do SGBD)</p>
 </section>
 
 <section class="section-box">
-  <h2>7. Resumo da Decomposição</h2>
+  <h2>8. Resumo da Decomposição</h2>
   <p>
     Preencha a tabela abaixo resumindo cada etapa da normalização:
   </p>
@@ -263,7 +292,13 @@ ITENS_PEDIDO(
         <td></td>
       </tr>
       <tr>
-        <td><strong>FNBC</strong></td>
+        <td><strong>4FN</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>5FN</strong></td>
         <td></td>
         <td></td>
         <td></td>

@@ -1,23 +1,126 @@
 ---
-layout: exercicio
-title: "Ferramentas CASE: Introdução ao uso de softwares para modelagem conceitual (brModelo/CASE)."
+layout: questionario
+title: "Questionário — 4FN e 5FN: Dependências Multivaloradas e de Junção"
 exercicio_numero: "02"
-07ero: "07"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 07."
----
+aula_numero: "27"
+description: "Questionário de fixação sobre Dependências Multivaloradas (MVD), 4FN, Dependências de Junção (JD) e 5FN."
+perguntas:
+  - texto: "O que é uma Dependência Multivalorada (MVD)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Quando um atributo determina unicamente o valor de outro atributo."
+      - letra: "b"
+        texto: "Quando dois atributos têm os mesmos valores possíveis."
+      - letra: "c"
+        texto: "Quando um atributo determina um conjunto de valores que é independente de outros atributos da tabela."
+      - letra: "d"
+        texto: "Quando uma tabela possui apenas uma chave candidata composta."
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+  - texto: "Uma tabela está na 4FN quando:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Está na 3FN e cada MVD não-trivial tem um determinante que é superchave."
+      - letra: "b"
+        texto: "Não possui nenhuma dependência funcional."
+      - letra: "c"
+        texto: "Todos os seus atributos são atômicos."
+      - letra: "d"
+        texto: "Possui apenas chaves candidatas simples (não compostas)."
 
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
+  - texto: "Na tabela COMPRA(CodFornecedor, CodProduto, CodComprador), o que causa a violação da 4FN?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "O CodFornecedor não é numérico."
+      - letra: "b"
+        texto: "Produtos e Compradores são dois fatos multivalorados independentes sobre o mesmo Fornecedor."
+      - letra: "c"
+        texto: "A chave primária não está definida corretamente."
+      - letra: "d"
+        texto: "A tabela não está na 3FN."
 
+  - texto: "Qual é a decomposição correta da tabela COMPRA para 4FN?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "FORNECEDOR(CodFornecedor) e PRODUTO(CodProduto) e COMPRADOR(CodComprador)"
+      - letra: "b"
+        texto: "COMPRA_1(CodFornecedor, CodProduto) e COMPRA_2(CodComprador)"
+      - letra: "c"
+        texto: "PRODUTO_COMPRADOR(CodProduto, CodComprador) e FORNECEDOR(CodFornecedor)"
+      - letra: "d"
+        texto: "FORNECEDOR_PRODUTO(CodFornecedor, CodProduto) e FORNECEDOR_COMPRADOR(CodFornecedor, CodComprador)"
 
+  - texto: "A 5FN (Projection-Join Normal Form) lida com:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Grupos repetitivos em tabelas."
+      - letra: "b"
+        texto: "Dependências transitivas entre atributos não-chave."
+      - letra: "c"
+        texto: "Relacionamentos múltiplos que podem ser decompostos em relacionamentos binários sem perda."
+      - letra: "d"
+        texto: "Chaves candidatas sobrepostas em tabelas com múltiplas superchaves."
 
+  - texto: "Quando uma tabela está automaticamente na 5FN?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Quando está na FNBC e possui apenas chaves primárias simples (uma única coluna)."
+      - letra: "b"
+        texto: "Quando possui apenas duas colunas."
+      - letra: "c"
+        texto: "Quando todos os seus atributos são atributos-chave."
+      - letra: "d"
+        texto: "Quando não possui nenhuma chave estrangeira."
 
+  - texto: "Na tabela FAZ(Material, Pedido, Requisicao), ao fazer o JOIN entre Pede(Material, Pedido) e Tem(Pedido, Requisicao), o que pode ocorrer?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "O resultado sempre estará correto."
+      - letra: "b"
+        texto: "Podem surgir linhas espúrias (dados falsos) que não existiam na tabela original."
+      - letra: "c"
+        texto: "A consulta retornará erro de sintaxe."
+      - letra: "d"
+        texto: "Todos os registros serão duplicados."
 
+  - texto: "Qual é a relação entre Dependência Funcional e Dependência Multivalorada?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "São conceitos completamente diferentes e independentes."
+      - letra: "b"
+        texto: "Uma MVD é mais restritiva que uma DF."
+      - letra: "c"
+        texto: "Uma MVD só existe em tabelas que não estão na 3FN."
+      - letra: "d"
+        texto: "Toda DF é uma MVD, mas nem toda MVD é uma DF."
+
+  - texto: "Uma tabela com a chave primária composta por uma única coluna (chave simples) está na 5FN:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Não, pois sempre é necessário verificar JDs."
+      - letra: "b"
+        texto: "Apenas se estiver também na FNBC."
+      - letra: "c"
+        texto: "Sim, automaticamente, pois não pode haver JDs não-triviais."
+      - letra: "d"
+        texto: "Apenas se não possuir chaves estrangeiras."
+
+  - texto: "Uma empresa registra quais cursos cada funcionário concluiu e quais projetos participa. Cursos e projetos são independentes. Qual o problema dessa tabela?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Ela viola a 2FN pois a chave é composta."
+      - letra: "b"
+        texto: "Ela viola a 4FN pois cursos e projetos são dois fatos multivalorados independentes."
+      - letra: "c"
+        texto: "Ela não viola nenhuma forma normal."
+      - letra: "d"
+        texto: "Ela viola a 3FN pois existe dependência transitiva."

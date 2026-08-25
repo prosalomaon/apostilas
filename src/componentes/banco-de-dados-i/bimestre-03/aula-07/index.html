@@ -1,30 +1,362 @@
 ---
-title: "Quarta Forma Normal (4FN) e Quinta Forma Normal (5FN): Visão geral de dependências multivaloradas."
+title: "Quarta Forma Normal (4FN) e Quinta Forma Normal (5FN): Dependências Multivaloradas e de Junção."
 aula_numero: "27"
 subject: "banco-de-dados-i"
-description: "Conteúdo da aula 27 do bimestre 3: Quarta Forma Normal (4FN) e Quinta Forma Normal (5FN): Visão geral de dependências multivaloradas.."
+description: "Compreender as Dependências Multivaloradas (MVD) e Dependências de Junção (JD), aplicar a 4FN e a 5FN para eliminar anomalias remanescentes após a FNBC."
 tags:
-- aula
-- bimestre-03
+  - aula
+  - bimestre-03
 ---
-aula_numero: "27"
-subject: "banco-de-dados-i"
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 07 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O Limite da FNBC</h3>
+  <p>
+    Até a <strong>Forma Normal de Boyce-Codd (FNBC)</strong>, todas as regras de normalização baseavam-se em
+    <strong>Dependências Funcionais (DFs)</strong>, onde um atributo determina de forma única o valor de outro. No
+    entanto, existem cenários onde uma tabela está na FNBC, mas ainda sofre de <strong>redundâncias graves e anomalias
+    de atualização</strong>.
+  </p>
+  <p>
+    Esses problemas ocorrem quando tentamos representar <strong>dois ou mais fatos multivalorados independentes</strong>
+    em uma única tabela. Para resolver essa falha de projeto, recorremos às formas normais superiores: a <strong>4FN</strong>
+    e a <strong>5FN</strong>.
+  </p>
+
+  <h3>2. Dependências Multivaloradas (MVD)</h3>
+  <p>
+    Uma <strong>Dependência Multivalorada (MVD)</strong>, representada por
+    <code class="one-line-code">A →→ B</code>, ocorre quando um atributo de chave <code class="one-line-code">A</code>
+    determina um <strong>conjunto de valores</strong> para o atributo <code class="one-line-code">B</code>, mas esse
+    conjunto é <strong>completamente independente</strong> de outros atributos presentes na tabela.
+  </p>
+  <p>
+    Uma MVD é <strong>não-trivial</strong> quando a tabela contém pelo menos três atributos
+    (<code class="one-line-code">A</code>, <code class="one-line-code">B</code> e
+    <code class="one-line-code">C</code>) e os valores de <code class="one-line-code">B</code> associados a um valor
+    de <code class="one-line-code">A</code> dependem apenas de <code class="one-line-code">A</code>, sendo
+    <strong>totalemente independentes</strong> dos valores de <code class="one-line-code">C</code>.
+  </p>
+
+  <h3>3. Quarta Forma Normal (4FN)</h3>
+  <p>
+    Uma tabela está na <strong>Quarta Forma Normal (4FN)</strong> se, e somente se:
+  </p>
+  <ul>
+    <li>Estiver na <strong>3FN</strong> (e, idealmente, na FNBC).</li>
+    <li>Para cada dependência multivalorada não-trivial
+      <code class="one-line-code">A →→ B</code>, o determinante <code class="one-line-code">A</code> for uma
+      <strong>superchave</strong> da tabela.</li>
+  </ul>
+  <p><strong>Em termos práticos:</strong> Uma tabela na 3FN também estará na 4FN se ela não contiver mais do que
+    <strong>um fato multivalorado</strong> sobre o objeto descrito.</p>
+
+  <h3>4. Estudo de Caso: O Caso do Fornecedor (COMPRA)</h3>
+  <p>
+    Considere uma tabela utilizada para registrar as compras de uma empresa:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">COMPRA(CodFornecedor, CodProduto, CodComprador)</code></pre>
+  </div>
+
+  <h4>Regras de Negócio</h4>
+  <ul>
+    <li>Um fornecedor fornece <strong>múltiplos produtos</strong>.</li>
+    <li>Um fornecedor atende a <strong>múltiplos compradores</strong>.</li>
+    <li>Os produtos fornecidos <strong>não têm relação</strong> com os compradores que negociam com ele.</li>
+  </ul>
+
+  <h4>Chave Primária</h4>
+  <p>
+    A chave é composta por todos os campos: <code class="one-line-code">{CodFornecedor, CodProduto, CodComprador}</code>
+    (uma tabela "all-key").
+  </p>
+
+  <h4>O Problema de Redundância</h4>
+  <p>
+    Se o Fornecedor 101 vende o Produto BA3 e atende aos Compradores 01 e 25, somos obrigados a registrar:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>CodFornecedor</th>
+        <th>CodProduto</th>
+        <th>CodComprador</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>101</td>
+        <td>BA3</td>
+        <td>01</td>
+      </tr>
+      <tr>
+        <td>101</td>
+        <td>BA3</td>
+        <td>25</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Se o Fornecedor 101 passar a vender também o Produto X9, teremos que inserir <strong>duas novas linhas</strong>
+    (uma para cada comprador), mesmo que o comprador nada tenha a ver com a variedade de produtos. Se esquecermos de
+    inserir uma combinação, criaremos uma <strong>inconsistência</strong>.
+  </p>
+
+  <h4>Decomposição para a 4FN</h4>
+  <p>
+    Para eliminar a MVD, isolamos os dois fatos multivalorados independentes em tabelas binárias distintas:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">FORNECEDOR_PRODUTO(CodFornecedor, CodProduto)
+    PK: {CodFornecedor, CodProduto}
+
+FORNECEDOR_COMPRADOR(CodFornecedor, CodComprador)
+    PK: {CodFornecedor, CodComprador}</code></pre>
+  </div>
+
+  <h3>5. Quinta Forma Normal (5FN)</h3>
+  <p>
+    A <strong>5FN</strong>, também conhecida como <strong>Projection-Join Normal Form (PJ/NF)</strong>, é considerada o
+    "estágio final" da normalização lógica por meio de projeções. Ela lida com casos em que um
+    <strong>relacionamento múltiplo</strong> (geralmente ternário ou de grau maior) pode ser decomposto em
+    <strong>relacionamentos binários menores</strong> sem perda de informação.
+  </p>
+  <p>
+    Uma tabela <code class="one-line-code">R</code> satisfaz uma <strong>Dependência de Junção (JD)</strong> se o seu
+    conteúdo puder ser perfeitamente reconstruído através do JOIN de suas projeções.
+  </p>
+
+  <h4>Definição Formal da 5FN</h4>
+  <p>
+    Uma tabela <code class="one-line-code">R</code> está na <strong>5FN</strong> se, e somente se, todas as dependências
+    de junção (JDs) não-triviais que nela se mantêm forem implicadas pelas superchaves da tabela.
+  </p>
+
+  <div class="tip-box">
+    <h4>Regra de Ouro Prática</h4>
+    <p>
+      Se uma tabela estiver na FNBC/3FN e <strong>não possuir chaves compostas</strong> (todas as suas chaves
+      candidatas são formadas por uma única coluna), ela está <strong>automaticamente na 5FN</strong>. Não é preciso
+      se preocupar com JDs nesse cenário.
+    </p>
+  </div>
+
+  <h3>6. Estudo de Caso: A Relação de Produção (FAZ)</h3>
+  <p>
+    Considere uma indústria que projeta equipamentos. A tabela registra quais <strong>Materiais</strong> são
+    necessários para cada <strong>Pedido de Compra</strong> que atende a uma <strong>Requisição</strong> específica:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">FAZ(Material, Pedido, Requisicao)</code></pre>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Material</th>
+        <th>Pedido</th>
+        <th>Requisição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ROTOR 1B</td>
+        <td>WPC 0792</td>
+        <td>R1292</td>
+      </tr>
+      <tr>
+        <td>ROTOR 1B</td>
+        <td>WPC 0992</td>
+        <td>R3192</td>
+      </tr>
+      <tr>
+        <td>CI 102</td>
+        <td>PC 0792</td>
+        <td>R3192</td>
+      </tr>
+      <tr>
+        <td>ROTOR 1B</td>
+        <td>WPC 0792</td>
+        <td>R3192</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Decomposição em Três Projeções Binárias</h4>
+  <div class="code-container">
+    <pre><code class="language-plaintext">Pede(Material, Pedido)
+Tem(Pedido, Requisicao)
+Faz_Binario(Material, Requisicao)</code></pre>
+  </div>
+
+  <h4>O Teste de Junção</h4>
+  <p>
+    Se fizermos o JOIN apenas entre <code class="one-line-code">Pede</code> e
+    <code class="one-line-code">Tem</code> com base no Pedido, o resultado gerará uma <strong>linha espúria</strong>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">CI 102 | PC 0792 | R1292  ← Dado incorreto!
+(O circuito integrado CI 102 nunca foi requisitado na R1292)</code></pre>
+  </div>
+  <p>
+    No entanto, ao juntar com a terceira tabela (<code class="one-line-code">Faz_Binario</code>), a linha espúria é
+    <strong>automaticamente eliminada</strong>, restando exatamente o conteúdo da tabela original.
+  </p>
+  <p>
+    Como a tabela original pôde ser decomposta em três tabelas menores e reconstruída perfeitamente
+    (<strong>decomposição sem perdas</strong>), a estrutura original <strong>não estava na 5FN</strong>. Para atingi-la,
+    devemos dividi-la nas três tabelas binárias resultantes.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 07 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+
+  <h3>1. Implementação da 4FN (Caso do Fornecedor)</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Tabela de Produtos (Entidade Forte)
+CREATE TABLE produto (
+    cod_produto VARCHAR(10) PRIMARY KEY,
+    desc_produto VARCHAR(100) NOT NULL
+);
+
+-- Tabela de Compradores (Entidade Forte)
+CREATE TABLE comprador (
+    cod_comprador VARCHAR(10) PRIMARY KEY,
+    nome_comprador VARCHAR(100) NOT NULL
+);
+
+-- Decomposição 4FN: Fornecedor x Produto
+CREATE TABLE fornecedor_produto (
+    cod_fornecedor INT NOT NULL,
+    cod_produto VARCHAR(10) NOT NULL,
+    PRIMARY KEY (cod_fornecedor, cod_produto),
+    FOREIGN KEY (cod_produto) REFERENCES produto(cod_produto)
+);
+
+-- Decomposição 4FN: Fornecedor x Comprador
+CREATE TABLE fornecedor_comprador (
+    cod_fornecedor INT NOT NULL,
+    cod_comprador VARCHAR(10) NOT NULL,
+    PRIMARY KEY (cod_fornecedor, cod_comprador),
+    FOREIGN KEY (cod_comprador) REFERENCES comprador(cod_comprador)
+);</code></pre>
+  </div>
+
+  <h3>2. Implementação da 5FN (Caso da Produção)</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Decomposição 5FN: três tabelas binárias
+CREATE TABLE material_pedido (
+    material VARCHAR(50) NOT NULL,
+    pedido_compra VARCHAR(20) NOT NULL,
+    PRIMARY KEY (material, pedido_compra)
+);
+
+CREATE TABLE pedido_requisicao (
+    pedido_compra VARCHAR(20) NOT NULL,
+    requisicao VARCHAR(20) NOT NULL,
+    PRIMARY KEY (pedido_compra, requisicao)
+);
+
+CREATE TABLE material_requisicao (
+    material VARCHAR(50) NOT NULL,
+    requisicao VARCHAR(20) NOT NULL,
+    PRIMARY KEY (material, requisicao)
+);</code></pre>
+  </div>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
 
+  <h3>Fluxo Completo de Normalização (1FN → 5FN)</h3>
+  <div class="mermaid">
+    flowchart TD
+    A["1FN — Atomicidade\nEliminar grupos repetitivos"] --> B["2FN — Dependência Total\nEliminar dependências parciais"]
+    B --> C["3FN — Dependência Transitiva\nEliminar transitividades"]
+    C --> D{"Existem chaves\nsobrepostas?"}
+    D -->|Sim| E["FNBC\nTodo determinante deve ser chave"]
+    D -->|Não| F{"Existem fatos\nmultivalorados\nindependentes?"}
+    E --> F
+    F -->|Sim| G["4FN\nIsolar cada MVD em tabela própria"]
+    F -->|Não| H{"Existem JDs\nem tabelas com\nchaves compostas?"}
+    G --> H
+    H -->|Sim| I["5FN\nDecompor em tabelas binárias"]
+    H -->|Não| J["Tabela normalizada\n(3FN / 4FN / 5FN)"]
+    I --> J
+  </div>
 
+  <h3>4FN — Antes e Depois (Caso Fornecedor)</h3>
+  <div class="mermaid">
+    erDiagram
+    COMPRA {
+        int cod_fornecedor PK
+        varchar cod_produto PK
+        varchar cod_comprador PK
+    }
+    FORNECEDOR_PRODUTO {
+        int cod_fornecedor PK
+        varchar cod_produto PK,FK
+    }
+    FORNECEDOR_COMPRADOR {
+        int cod_fornecedor PK
+        varchar cod_comprador PK,FK
+    }
+    COMPRA ||--|{ FORNECEDOR_PRODUTO : "decomposto"
+    COMPRA ||--|{ FORNECEDOR_COMPRADOR : "decomposto"
+  </div>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>4FN:</strong> Se uma tabela tem dois ou mais conjuntos de valores independentes sobre a mesma chave,
+      cada conjunto deve ficar em uma tabela separada.</li>
+    <li><strong>5FN:</strong> Só se aplica a tabelas com chaves compostas. Se a chave é simples (uma coluna), a tabela
+      já está em 5FN automaticamente.</li>
+    <li><strong>Sequência lógica:</strong> 1FN → 2FN → 3FN → FNBC → 4FN → 5FN. Cada Forma Normal é mais rigorosa que
+      a anterior.</li>
+    <li><strong>Na prática:</strong> A maioria dos sistemas comerciais trabalha com normalização até 3FN. A 4FN e 5FN
+      são mais relevantes em bancos de dados acadêmicos e sistemas de_planejamento de recursos (ERP).</li>
+    <li><strong>MVD vs DF:</strong> Uma dependência funcional <code class="one-line-code">A → B</code> é um caso especial
+      de MVD. Toda DF é uma MVD, mas nem toda MVD é uma DF.</li>
+    <li><strong>Próxima aula:</strong> Aula 28 — Entrega de Projeto 3: Relatório de Normalização.</li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>Sistemas de catálogo:</strong> Quando um fornecedor tem múltiplos produtos E múltiplos clientes
+      independentes, aplique a 4FN para evitar a explosão combinatória de linhas.</li>
+    <li><strong>Gestão de projetos:</strong> Em tabelas que relacionam Materiais, Pedidos e Requisições, verifique se a
+      decomposição binária preserva a informação (teste de junção).</li>
+    <li><strong>Bancos de dados acadêmicos:</strong> Professores com múltiplas disciplinas E múltiplos alunos
+      independentes são um caso clássico de MVD.</li>
+    <li><strong>Auditoria:</strong> Antes de criar uma tabela com três ou mais chaves compostas, questione se todos os
+      fatos são realmente dependentes entre si.</li>
+  </ul>
+</section>
 
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>MACHADO, Felipe Nery Rodrigues. <em>Projeto e implementação de banco de dados</em>. 3. ed. São Paulo: Érica,
+      2014.</li>
+    <li>HEUSER, Carlos Alberto. <em>Projeto de Banco de Dados</em>. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. <em>Introdução a Banco de Dados</em>.
+      São Paulo: DCC-IME-USP, 2005.</li>
+    <li>SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. <em>Database System Concepts</em>. 7. ed. New York:
+      McGraw-Hill, 2020.</li>
+  </ul>
+</section>
 
-
-
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Identificando MVDs e Decompondo para 4FN</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação sobre 4FN e 5FN</a></li>
+  </ul>
+</section>
