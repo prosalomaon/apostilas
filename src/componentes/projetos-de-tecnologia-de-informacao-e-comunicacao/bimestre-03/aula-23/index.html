@@ -1,56 +1,444 @@
 ---
 title: "Estruturas de Controle e Otimização"
 aula_numero: "23"
-description: "Implementação de condições (if/else), repetição (for/while) e técnicas para garantir eficiência e clareza do código."
+description: "Fluxos de decisão complexos com if / else if / else, automação de tarefas repetitivas com as estruturas de repetição for e while e técnicas de otimização de algoritmos para garantir clareza e eficiência do código."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 23 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos: Tomada de Decisão e Fluxos de Repetição</h2>
+
+  <p>
+    Na aula anterior, estabelecemos a <strong>"ponte de ouro"</strong> entre as fórmulas de planilhas e os primeiros
+    comandos em JavaScript, compreendendo variáveis, tipos de dados e condicionais simples. Nesta aula, daremos um
+    passo fundamental no desenvolvimento do seu <strong>raciocínio lógico</strong>: aprenderemos a estruturar fluxos
+    de decisão complexos, automatizar tarefas repetitivas por meio de <strong>estruturas de repetição (loops)</strong>
+    e aplicar técnicas de <strong>otimização de algoritmos</strong> para garantir que seus scripts sejam claros, limpos
+    e eficientes.
+  </p>
+  <p>
+    Para um profissional da área de negócios ou contabilidade, dominar essas estruturas permite criar rotinas
+    automáticas de auditoria, processar lotes de milhares de lançamentos fiscais em milissegundos e simular cenários
+    financeiros com alta performance.
+  </p>
+
+  <h3>1. O que é um Algoritmo sob a Ótica da Programação Estruturada?</h3>
+  <p>
+    Como aprendemos nos conceitos fundamentais, um <strong>algoritmo</strong> é um procedimento computacional bem
+    definido que recebe um valor ou conjunto de valores como <strong>entrada (input)</strong> e produz um valor ou
+    conjunto de valores como <strong>saída (output)</strong>. Ele serve como uma ferramenta exata para resolver
+    problemas passo a passo, sem margem para ambiguidades. Para que um programa resolva problemas do mundo real de
+    maneira ótima, o fluxo de execução das instruções precisa ser controlado dinamicamente através de
+    <strong>estruturas de controle</strong>.
+  </p>
+
+  <h3>2. Decisões Complexas: Estruturas Condicionais Avançadas (if, else if, else)</h3>
+  <p>
+    Nas planilhas, quando precisamos analisar mais de duas alternativas, recorremos ao aninhamento de funções SE (uma
+    dentro da outra). No JavaScript, estruturamos essa mesma hierarquia lógica de forma muito mais limpa utilizando o
+    <strong>encadeamento</strong> de <code class="one-line-code">if</code>,
+    <code class="one-line-code">else if</code> (senão se) e <code class="one-line-code">else</code> (senão):
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">if</code> (Se):</strong> avalia se uma premissa inicial é verdadeira para
+      executar o primeiro bloco de código.
+    </li>
+    <li>
+      <strong><code class="one-line-code">else if</code> (Senão se):</strong> adiciona novas condições intermediárias
+      que só serão testadas caso a condição anterior seja falsa.
+    </li>
+    <li>
+      <strong><code class="one-line-code">else</code> (Senão):</strong> estabelece o caminho padrão que será executado
+      se nenhuma das condições anteriores for atendida.
+    </li>
+  </ul>
+
+  <div class="code-container">
+    <pre><code class="language-javascript">// Exemplo de enquadramento tributário simplificado com if / else if / else
+let faturamentoAnual = 380000;
+
+if (faturamentoAnual &lt;= 81000) {
+    console.log("Enquadramento: MEI");
+} else if (faturamentoAnual &lt;= 360000) {
+    console.log("Enquadramento: Microempresa (ME)");
+} else if (faturamentoAnual &lt;= 4800000) {
+    console.log("Enquadramento: Empresa de Pequeno Porte (EPP)");
+} else {
+    console.log("Enquadramento: Lucro Presumido ou Real");
+}</code></pre>
+  </div>
+
+  <h3>3. Estruturas de Repetição (Loops): for e while</h3>
+  <p>
+    Imagine que você precise auditar uma lista com 5.000 lançamentos contábeis. Escrever uma fórmula manual para cada
+    linha seria inviável. É aqui que entram as <strong>estruturas de repetição</strong> (ou laços de repetição),
+    permitindo que o computador execute o mesmo bloco de instruções várias vezes, iterando sobre coleções de dados:
+  </p>
+  <ul>
+    <li>
+      <strong>O Loop <code class="one-line-code">for</code> (Repetição com limite definido):</strong> é utilizado
+      quando sabemos previamente o número exato de vezes que a repetição deve ocorrer. Ele se baseia em uma variável
+      contadora, uma condição de parada e um incremento automático de controle.
+      <br />
+      Sintaxe: <code class="one-line-code">for (inicialização; condição; incremento) { ... }</code>
+    </li>
+    <li>
+      <strong>O Loop <code class="one-line-code">while</code> (Repetição baseada em condição contínua):</strong> é
+      executado enquanto uma determinada condição de teste for verdadeira. Ele é ideal quando não sabemos exatamente
+      quantas iterações serão necessárias para atingir o objetivo.
+      <br />
+      Sintaxe: <code class="one-line-code">while (condição) { ... }</code>
+    </li>
+  </ul>
+
+  <h3>4. Otimização de Algoritmos: Clareza e Eficiência</h3>
+  <p>
+    No desenvolvimento de softwares profissionais, otimizar significa projetar rotinas que realizem suas tarefas
+    consumindo o mínimo de tempo de processamento e o mínimo de espaço em memória:
+  </p>
+  <ul>
+    <li>
+      <strong>Eficiência (Complexidade de Tempo):</strong> algoritmos mal estruturados (como loops desnecessários uns
+      dentro dos outros) podem fazer o computador ficar preso processando dados por minutos, enquanto um código
+      otimizado resolveria a mesma tarefa em segundos.
+    </li>
+    <li>
+      <strong>Clareza (Legibilidade):</strong> um código legível, bem identado, com comentários pontuais e variáveis
+      com nomes significativos é infinitamente mais fácil de auditar, testar e manter.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>A Ponte Prática: Da Planilha ao Processamento em JavaScript</h2>
+  <p>
+    No Google Planilhas, quando queremos somar e analisar uma lista de transações mensais, criamos uma tabela e
+    aplicamos funções matemáticas como a <code class="one-line-code">SOMA</code>. No JavaScript, tratamos essa lista
+    de dados como uma <strong>Matriz (Array)</strong>, que é uma coleção ordenada de valores. Usamos o loop
+    <code class="one-line-code">for</code> para percorrer essa matriz do primeiro ao último item de forma automatizada.
+  </p>
+
+  <h3>Tabela de Dados Brutos (Transações Contábeis)</h3>
+  <p>Para o nosso simulador, considere a seguinte lista de faturamentos mensais da empresa contábil de janeiro a maio:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Célula (Sheets)</th>
+        <th>Mês</th>
+        <th>Faturamento bruto (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">A2:B2</code></td>
+        <td>Jan</td>
+        <td>82000</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">A3:B3</code></td>
+        <td>Fev</td>
+        <td>85000</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">A4:B4</code></td>
+        <td>Mar</td>
+        <td>88000</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">A5:B5</code></td>
+        <td>Abr</td>
+        <td>91000</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">A6:B6</code></td>
+        <td>Mai</td>
+        <td>94000</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Exemplo 1: Otimizando a Soma e Auditoria de Lançamentos com for</h3>
+  <p>
+    O script abaixo pega nossa matriz de faturamentos, calcula a soma total acumulada e avisa automaticamente caso
+    algum mês apresente um faturamento atípico (acima de R$ 90.000):
+  </p>
   <div class="code-container">
-    <pre><code class="language-plaintext">// Em breve...</code></pre>
+    <pre><code class="language-javascript">// 1. Declarando a matriz contendo o histórico de faturamentos
+const faturamentos = [82000, 85000, 88000, 91000, 94000];
+const meses = ["Jan", "Fev", "Mar", "Abr", "Mai"];
+
+let faturamentoTotal = 0; // Variável acumuladora
+
+console.log("--- INICIANDO AUDITORIA ANUAL ---");
+
+// 2. Loop 'for' para percorrer a matriz de forma otimizada
+for (let i = 0; i &lt; faturamentos.length; i++) {
+    let valorMensal = faturamentos[i];
+    let mesCorrente = meses[i];
+
+    // Acumula o valor mensal na soma total
+    faturamentoTotal += valorMensal;
+
+    // Condicional interna para auditoria de metas
+    if (valorMensal > 90000) {
+        console.log(`[ALERTA] ${mesCorrente}: Faturamento alto detectado (R$ ${valorMensal})`);
+    }
+}
+
+// 3. Saída final de dados
+console.log("---------------------------------");
+console.log(`Soma Total do Período: R$ ${faturamentoTotal}`);</code></pre>
+  </div>
+
+  <p>Resultado esperado ao executar:</p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">--- INICIANDO AUDITORIA ANUAL ---
+[ALERTA] Abr: Faturamento alto detectado (R$ 91000)
+[ALERTA] Mai: Faturamento alto detectado (R$ 94000)
+---------------------------------
+Soma Total do Período: R$ 440000</code></pre>
+  </div>
+
+  <h3>Anatomia do Código</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Parte do Código</th>
+        <th>Equivalente na Planilha</th>
+        <th>Significado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">const faturamentos = [82000, ...]</code></td>
+        <td>Intervalo de células B2:B6</td>
+        <td>Cria uma Matriz (Array), coleção ordenada de valores.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">faturamentos.length</code></td>
+        <td>Contagem de células preenchidas (CONT.NÚM)</td>
+        <td>Propriedade que informa quantos itens existem na matriz.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">faturamentos[i]</code></td>
+        <td>Referenciar a célula da linha atual</td>
+        <td>Acessa o item da posição <code class="one-line-code">i</code> (a contagem começa em 0).</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">for (let i = 0; i &lt; length; i++)</code></td>
+        <td>Arrastar a fórmula para baixo até a última linha</td>
+        <td>Inicializa o contador, testa a condição e incrementa a cada volta.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">faturamentoTotal += valorMensal</code></td>
+        <td><code class="one-line-code">=SOMA(B2:B6)</code></td>
+        <td>Operador de acúmulo: soma o valor mensal ao total acumulado.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">`[ALERTA] ${mesCorrente}`</code></td>
+        <td>Concatenação de texto com célula</td>
+        <td>Template String: interpola variáveis dentro do texto usando crases e ${}.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Exemplo 2: Monitoramento Preventivo de Caixa com while</h3>
+  <p>
+    No planejamento financeiro corporativo, simular a queima de caixa e prevenir crises de liquidez é vital. O código
+    abaixo simula um algoritmo de feedback que consome o saldo de caixa inicial para pagar custos operacionais mensais
+    (OPEX), interrompendo o loop se o caixa atingir o limite crítico de segurança:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-javascript">let saldoCaixa = 120000;       // Caixa inicial
+const opexMensal = 35000;      // Custo operacional fixo mensal
+let mes = 1;
+
+console.log("--- SIMULADOR DE LIQUIDEZ E SOBREVIVÊNCIA ---");
+console.log(`Caixa Inicial: R$ ${saldoCaixa}`);
+
+// O loop continuará rodando ENQUANTO houver saldo suficiente para pagar o custo mensal
+while (saldoCaixa >= opexMensal) {
+    saldoCaixa -= opexMensal; // Deduz o custo mensal do saldo acumulado
+    console.log(`Mês ${mes} concluído. Saldo restante: R$ ${saldoCaixa}`);
+    mes++;
+}
+
+// Quando o caixa fica menor que o custo fixo, o loop para
+console.log("---------------------------------------------");
+console.log(`[CRÍTICO] Falência de fluxo de caixa após o mês ${mes - 1}!`);
+console.log(`Saldo de caixa final indisponível para OPEX: R$ ${saldoCaixa}`);</code></pre>
+  </div>
+
+  <p>Resultado esperado ao executar:</p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">--- SIMULADOR DE LIQUIDEZ E SOBREVIVÊNCIA ---
+Caixa Inicial: R$ 120000
+Mês 1 concluído. Saldo restante: R$ 85000
+Mês 2 concluído. Saldo restante: R$ 50000
+Mês 3 concluído. Saldo restante: R$ 15000
+---------------------------------------------
+[CRÍTICO] Falência de fluxo de caixa após o mês 3!
+Saldo de caixa final indisponível para OPEX: R$ 15000</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>O Desafio Prático da Aula</h2>
+  <p>
+    Com base no conteúdo apresentado, monte o algoritmo de auditoria a seguir no seu ambiente de desenvolvimento
+    (VS Code ou Console do Navegador).
+  </p>
+
+  <h3>Contexto do Desafio</h3>
+  <p>Você recebeu uma lista com as margens de lucro líquido (%) de quatro projetos contábeis auditados:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Projeto</th>
+        <th>Margem de Lucro Líquido (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Projeto Alfa</td>
+        <td>15%</td>
+      </tr>
+      <tr>
+        <td>Projeto Beta</td>
+        <td>8%</td>
+      </tr>
+      <tr>
+        <td>Projeto Gama</td>
+        <td>-3% (Prejuízo)</td>
+      </tr>
+      <tr>
+        <td>Projeto Delta</td>
+        <td>22%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Sua Tarefa</h3>
+  <ol>
+    <li>
+      Crie uma matriz (Array) contendo as margens de lucro:
+      <code class="one-line-code">const margens = [15, 8, -3, 22];</code> e outra com os nomes:
+      <code class="one-line-code">const projetos = ["Alfa", "Beta", "Gama", "Delta"];</code>
+    </li>
+    <li>Escreva um loop <code class="one-line-code">for</code> que percorra as matrizes.</li>
+    <li>
+      Dentro do loop, insira uma estrutura condicional para avaliar a margem:
+      <ul>
+        <li>
+          Se a margem for menor que 0, imprima: <em>"[ALERTA] O Projeto [Nome] está dando prejuízo!"</em>
+        </li>
+        <li>
+          Se for entre 0 e 10 (inclusive), imprima: <em>"[ATENÇÃO] O Projeto [Nome] está com baixa lucratividade."</em>
+        </li>
+        <li>
+          Se for maior que 10, imprima: <em>"[OK] O Projeto [Nome] é altamente rentável."</em>
+        </li>
+      </ul>
+    </li>
+    <li>Certifique-se de que o código execute sem erros e que a saída de dados seja impressa de forma nítida.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Diagramação</h2>
+  <p>
+    Representação gráfica do fluxo do algoritmo de auditoria (Exemplo 1) — repare como o loop
+    <code class="one-line-code">for</code> repete o bloco de instruções até que a condição de parada seja atingida:
+  </p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    flowchart TD
+    A([Início]) --> B["Declarar matrizes faturamentos e meses\nfaturamentoTotal = 0"]
+    B --> C{"i < faturamentos.length?"}
+    C -->|Não| J[Exibir Soma Total do Período]
+    C -->|Sim| D["valorMensal = faturamentos[i]\nmesCorrente = meses[i]"]
+    D --> E["faturamentoTotal += valorMensal"]
+    E --> F{"valorMensal > 90000?"}
+    F -->|Sim| G["Emitir alerta de faturamento alto"]
+    F -->|Não| H["i++ (avança para o próximo mês)"]
+    G --> H
+    H --> C
+    J --> K([Fim])
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas, Lembretes &amp; Boas Práticas</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Identação é obrigatória para clareza:</strong> mantenha os blocos de código internos do
+      <code class="one-line-code">if</code> e do <code class="one-line-code">for</code> sempre recuados com a tecla
+      TAB. Isso permite visualizar instantaneamente onde cada comando começa e termina.
+    </li>
+    <li>
+      <strong>Cuidado com Loops Infinitos:</strong> no loop <code class="one-line-code">while</code>, sempre
+      certifique-se de que a variável de controle da condição mude de valor dentro do bloco (ex:
+      <code class="one-line-code">mes++</code> ou <code class="one-line-code">saldoCaixa -= opexMensal</code>). Caso
+      contrário, a condição de parada nunca será atendida e o sistema travará a execução em loop infinito.
+    </li>
+    <li>
+      <strong>Otimize reduzindo processamento redundante:</strong> ao encadear condições, ordene-as de forma que as
+      premissas mais prováveis ou excludentes venham primeiro. Isso economiza processamento computacional da CPU.
+    </li>
+    <li>
+      <strong>Comentários estruturados:</strong> documente as rotinas e funções do seu código para permitir que outros
+      auditores ou desenvolvedores compreendam a regra de negócio que você implementou.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <p>Estruturas de decisão, repetição e otimização estão presentes nas rotinas tecnológicas do mundo real:</p>
+  <ul>
+    <li>
+      <strong>Rotinas automáticas de auditoria:</strong> escritórios de contabilidade usam loops para varrer milhares
+      de lançamentos fiscais e sinalizar inconsistências automaticamente — exatamente como fizemos no Exemplo 1.
+    </li>
+    <li>
+      <strong>Análise de crédito e fluxo de caixa:</strong> simuladores de liquidez e "burn rate" de startups rodam
+      loops <code class="one-line-code">while</code> para projetar quantos meses a empresa sobrevive com o caixa atual.
+    </li>
+    <li>
+      <strong>Enquadramento tributário automatizado:</strong> sistemas de gestão fiscal classificam empresas (MEI, ME,
+      EPP) encadeando condicionais sobre o faturamento anual.
+    </li>
+    <li>
+      <strong>Processamento em lote (batch):</strong> rotinas noturnas de bancos e ERPs processam lotes de transações
+      com loops otimizados, onde cada segundo economizado representa economia real de recursos computacionais.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      MDN WEB DOCS. <em>JavaScript — Guia de referência (Control flow and error handling; Loops and iteration)</em>.
+      Disponível em: https://developer.mozilla.org/pt-BR/docs/Web/JavaScript
+    </li>
+    <li>
+      FORBELLONE, André Luiz Villar; EBERSPÄCHER, Henri Frederico. <em>Lógica de Programação: A Construção de
+      Algoritmos e Estruturas de Dados</em>. 3. ed. São Paulo: Pearson Prentice Hall, 2005.
+    </li>
+    <li>
+      MANZANO, José Augusto N. G.; OLIVEIRA, Jayr Figueiredo de. <em>Algoritmos: Lógica para Desenvolvimento de
+      Programação de Computadores</em>. 28. ed. São Paulo: Érica, 2016.
+    </li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Auditoria de Rentabilidade de Projetos com Loops</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
   </ul>
 </section>

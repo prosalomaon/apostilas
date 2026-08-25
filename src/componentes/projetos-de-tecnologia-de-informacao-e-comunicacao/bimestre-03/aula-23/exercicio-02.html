@@ -1,21 +1,218 @@
 ---
-layout: exercicio
-title: "Exercício 02 - Estruturas de Controle e Otimização"
+layout: questionario
+title: "Questionário - Estruturas de Controle e Otimização"
 exercicio_numero: "02"
 aula_numero: "23"
-description: "Desafio extra para aprofundamento da aula 23."
+sigla_componente: "PTIC"
+description: "Questionário de fixação sobre algoritmos, condicionais avançadas (if / else if / else), estruturas de repetição (for e while), matrizes (Arrays) e otimização de código."
+perguntas:
+  - texto: "Segundo a ótica da programação estruturada, um algoritmo é um procedimento computacional que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Exibe apenas gráficos na tela."
+      - letra: "b"
+        texto: "Recebe valores de entrada (input) e produz valores de saída (output) passo a passo, sem ambiguidades."
+      - letra: "c"
+        texto: "Substitui completamente as fórmulas de planilhas em todos os casos."
+      - letra: "d"
+        texto: "Executa sempre a mesma instrução, sem controle de fluxo."
+  - texto: 'Em uma planilha, analisamos múltiplas alternativas aninhando funções SE. Em JavaScript, o equivalente mais limpo é:'
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Declarar várias variáveis const."
+      - letra: "b"
+        texto: "Usar vários console.log() seguidos."
+      - letra: "c"
+        texto: "Encadear if / else if / else."
+      - letra: "d"
+        texto: "Criar uma matriz com todos os resultados."
+  - texto: "Em uma estrutura encadeada if / else if / else, o bloco do else if só é testado quando:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "A condição anterior é falsa."
+      - letra: "b"
+        texto: "A condição anterior é verdadeira."
+      - letra: "c"
+        texto: "O loop for termina."
+      - letra: "d"
+        texto: "Todas as condições anteriores são verdadeiras."
+  - texto: "Qual é a função do bloco else em uma estrutura condicional encadeada?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Testar uma nova condição intermediária."
+      - letra: "b"
+        texto: "Iniciar um loop de repetição."
+      - letra: "c"
+        texto: "Encerrar o programa imediatamente."
+      - letra: "d"
+        texto: "Estabelecer o caminho padrão executado se nenhuma condição anterior for atendida."
+  - texto: "A estrutura de repetição indicada quando sabemos previamente o número exato de repetições é o:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "while."
+      - letra: "b"
+        texto: "for."
+      - letra: "c"
+        texto: "if."
+      - letra: "d"
+        texto: "else if."
+  - texto: "No comando for (let i = 0; i < faturamentos.length; i++), as três partes entre parênteses são, respectivamente:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Inicialização; condição; incremento."
+      - letra: "b"
+        texto: "Condição; incremento; inicialização."
+      - letra: "c"
+        texto: "Incremento; condição; inicialização."
+      - letra: "d"
+        texto: "Entrada; processamento; saída."
+  - texto: "O loop while é executado enquanto:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "O contador for igual a zero."
+      - letra: "b"
+        texto: "A condição de teste for falsa."
+      - letra: "c"
+        texto: "A condição de teste for verdadeira."
+      - letra: "d"
+        texto: "O usuário pressionar uma tecla."
+  - texto: "Uma Matriz (Array) em JavaScript é:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Um tipo de fórmula do Google Planilhas."
+      - letra: "b"
+        texto: "Uma coleção ordenada de valores, percorrida por loops."
+      - letra: "c"
+        texto: "Um erro de sintaxe da linguagem."
+      - letra: "d"
+        texto: "Uma célula especial da planilha."
+  - texto: 'Considerando const meses = ["Jan", "Fev", "Mar"], qual expressão acessa o valor "Mar"?'
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "meses[3]"
+      - letra: "b"
+        texto: "meses(2)"
+      - letra: "c"
+        texto: "meses.length"
+      - letra: "d"
+        texto: "meses[2]"
+  - texto: "Para que serve a propriedade length em uma matriz como faturamentos.length?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Informar quantos itens (elementos) existem na matriz."
+      - letra: "b"
+        texto: "Somar todos os valores da matriz."
+      - letra: "c"
+        texto: "Ordenar a matriz em ordem crescente."
+      - letra: "d"
+        texto: "Apagar o último elemento da matriz."
+  - texto: 'No script de auditoria, a linha faturamentoTotal += valorMensal tem a função de:'
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Comparar o total com o valor mensal."
+      - letra: "b"
+        texto: "Zerar o acumulador a cada volta do loop."
+      - letra: "c"
+        texto: "Acumular o valor mensal na soma total, como a função SOMA da planilha."
+      - letra: "d"
+        texto: "Criar uma nova matriz com os totais."
+  - texto: 'Considerando o Exemplo 1 da aula (faturamentos = [82000, 85000, 88000, 91000, 94000] e alerta para valores acima de 90000), quais meses geram alerta?'
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Jan e Fev."
+      - letra: "b"
+        texto: "Abr e Mai."
+      - letra: "c"
+        texto: "Todos os cinco meses."
+      - letra: "d"
+        texto: "Nenhum mês gera alerta."
+  - texto: "No simulador de liquidez (saldoCaixa = 120000 e opexMensal = 35000), após quantos meses o loop while é interrompido?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Após 1 mês."
+      - letra: "b"
+        texto: "Após 2 meses."
+      - letra: "c"
+        texto: "Após 3 meses."
+      - letra: "d"
+        texto: "Após 12 meses."
+  - texto: "O que caracteriza um loop infinito?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "A variável de controle nunca muda de valor dentro do bloco, então a condição de parada jamais é atendida."
+      - letra: "b"
+        texto: "O loop executa apenas duas vezes e para."
+      - letra: "c"
+        texto: "A matriz utilizada é muito grande."
+      - letra: "d"
+        texto: "Faltam comentários no código."
+  - texto: "No contexto de otimização de algoritmos, eficiência (complexidade de tempo) significa:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Escrever o menor número possível de linhas, mesmo ilegíveis."
+      - letra: "b"
+        texto: "Usar sempre loops aninhados para garantir precisão."
+      - letra: "c"
+        texto: "Evitar comentários para acelerar a execução."
+      - letra: "d"
+        texto: "Realizar as tarefas consumindo o mínimo de tempo de processamento e espaço em memória."
+  - texto: "Sobre legibilidade (clareza) do código, é correto afirmar que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Identação e nomes significativos são opcionais e não afetam a manutenção."
+      - letra: "b"
+        texto: "Um código identado, com comentários pontuais e variáveis bem nomeadas é mais fácil de auditar, testar e manter."
+      - letra: "c"
+        texto: "Comentários deixam o programa mais lento durante a auditoria fiscal."
+      - letra: "d"
+        texto: "Código legível ocupa necessariamente mais memória RAM."
+  - texto: 'Considerando o desafio da aula e o código if (margem < 0) { ... } else if (margem <= 10) { ... } else { ... }, qual mensagem será exibida para o Projeto Beta, cuja margem é 8?'
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: '"[ALERTA] O Projeto Beta está dando prejuízo!"'
+      - letra: "b"
+        texto: '"[OK] O Projeto Beta é altamente rentável."'
+      - letra: "c"
+        texto: '"[ATENÇÃO] O Projeto Beta está com baixa lucratividade."'
+      - letra: "d"
+        texto: "Nenhuma mensagem, pois 8 não satisfaz nenhuma condição."
+  - texto: "Ao ordenar condições encadeadas, uma boa prática de otimização é:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Colocar primeiro as premissas mais prováveis ou excludentes, economizando processamento da CPU."
+      - letra: "b"
+        texto: "Colocar sempre o else no início da estrutura."
+      - letra: "c"
+        texto: "Repetir a mesma condição em vários blocos para garantir o resultado."
+      - letra: "d"
+        texto: "Evitar o uso de condicionais dentro de loops."
 ---
 
-<section class="section-box">
-  <h2>Enunciado</h2>
-  <p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-</section>
+<p>Responda as questões abaixo para consolidar os conhecimentos sobre tomada de decisão, fluxos de repetição e otimização de algoritmos em JavaScript.</p>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Leia o enunciado com atenção antes de começar.</li>
+    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>

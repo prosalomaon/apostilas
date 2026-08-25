@@ -1,21 +1,217 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Estruturas de Controle e Otimização"
+title: "Auditoria de Rentabilidade de Projetos com Loops"
 exercicio_numero: "01"
 aula_numero: "23"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 23."
+description: "Construir um algoritmo de auditoria em JavaScript que percorra matrizes com um loop for e classifique a rentabilidade de projetos usando if / else if / else."
 ---
 
 <section class="section-box">
   <h2>Enunciado</h2>
-  <p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+  <p>
+    Você foi contratado como <strong>auditor financeiro</strong> da empresa <strong>AuditPro Consultoria</strong>. A
+    equipe recebeu o relatório de margens de lucro líquido (%) de quatro projetos contábeis auditados e precisa
+    classificar cada um automaticamente. Sua missão é <strong>montar um algoritmo em JavaScript</strong> que percorra
+    a lista de projetos e exiba um diagnóstico para cada margem, conforme as regras de negócio:
+  </p>
+  <p>
+    <strong>Margem menor que 0:</strong> <em>"[ALERTA] O Projeto [Nome] está dando prejuízo!"</em><br />
+    <strong>Margem entre 0 e 10 (inclusive):</strong> <em>"[ATENÇÃO] O Projeto [Nome] está com baixa lucratividade."</em><br />
+    <strong>Margem maior que 10:</strong> <em>"[OK] O Projeto [Nome] é altamente rentável."</em>
+  </p>
+  <p>O relatório de origem (que você deve converter em matrizes) contém os seguintes dados:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Projeto</th>
+        <th>Margem de Lucro Líquido (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Alfa</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Beta</td>
+        <td>8</td>
+      </tr>
+      <tr>
+        <td>Gama</td>
+        <td>-3 (Prejuízo)</td>
+      </tr>
+      <tr>
+        <td>Delta</td>
+        <td>22</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Execute os passos abaixo e, em seguida, responda às questões.</p>
+</section>
+
+<section class="section-box">
+  <h2>Passos da Construção</h2>
+  <ol>
+    <li>Abra o Visual Studio Code (ou o console do navegador, tecla F12).</li>
+    <li>Crie um arquivo chamado <code class="one-line-code">auditoria-projetos.js</code>.</li>
+    <li>
+      Declare a matriz das margens: <code class="one-line-code">const margens = [15, 8, -3, 22];</code> e a matriz dos
+      nomes: <code class="one-line-code">const projetos = ["Alfa", "Beta", "Gama", "Delta"];</code>
+    </li>
+    <li>
+      Escreva um loop <code class="one-line-code">for</code> que percorra as matrizes do índice 0 até
+      <code class="one-line-code">margens.length</code>, guardando a margem e o nome do projeto corrente em variáveis.
+    </li>
+    <li>
+      Dentro do loop, monte a estrutura condicional encadeada
+      (<code class="one-line-code">if / else if / else</code>) aplicando as três regras do enunciado com
+      <code class="one-line-code">console.log()</code>.
+    </li>
+    <li>
+      Execute o código no terminal (comando <code class="one-line-code">node auditoria-projetos.js</code>) ou no
+      console do navegador e confira se os quatro diagnósticos aparecem corretamente.
+    </li>
+    <li>
+      Adicione novos projetos às matrizes para testar cenários diferentes e anote os resultados na Questão 2.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: A Tabela de Tradução</h3>
+  <p>Complete a tabela relacionando cada conceito ao seu equivalente:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Planilha / Conceito</th>
+        <th>JavaScript</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Intervalo de células B2:B5</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>=SOMA(B2:B5) (acumular valores)</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Aninhamento de funções SE(SE(...))</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Contagem de células preenchidas</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Arrastar a fórmula até a última linha</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 2: Tabela de Testes</h3>
+  <p>
+    Execute o seu código e complete a tabela com a mensagem exibida no console para cada projeto:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Projeto</th>
+        <th>Margem (%)</th>
+        <th>Mensagem exibida no console</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Alfa</td>
+        <td>15</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Beta</td>
+        <td>8</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Gama</td>
+        <td>-3</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Delta</td>
+        <td>22</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <strong>Desafio:</strong> adicione à matriz um projeto Ômega com margem exatamente igual a
+    <code class="one-line-code">10</code>. Qual mensagem ele recebe? Por quê? E se a condição do segundo bloco fosse
+    escrita como <code class="one-line-code">margem &gt;= 0 &amp;&amp; margem &lt; 10</code>, o diagnóstico mudaria?
+    Justifique.
+  </p>
+
+  <h3>Questão 3: Anatomia do Loop</h3>
+  <p>
+    Considere a linha <code class="one-line-code">for (let i = 0; i &lt; margens.length; i++)</code>. Identifique qual
+    parte corresponde a:
+  </p>
+  <ul>
+    <li><strong>a)</strong> Inicialização (variável contadora):</li>
+    <li><strong>b)</strong> Condição de parada:</li>
+    <li><strong>c)</strong> Incremento automático:</li>
+  </ul>
+  <p>
+    Em seguida, explique com suas palavras: <em>"Por que a primeira posição de uma matriz em JavaScript é acessada com
+    o índice 0 (margens[0]) e não com o índice 1? Qual seria o erro gerado se tentássemos acessar
+    margens[4] nessa lista?"</em>
+  </p>
+
+  <h3>Questão 4: Tratamento de Erros e Loops Infinitos</h3>
+  <ul>
+    <li>
+      <strong>a)</strong> O que aconteceria se você esquecesse o incremento <code class="one-line-code">i++</code>
+      dentro da estrutura do <code class="one-line-code">for</code>? E se esquecer de alterar a variável de controle
+      (como <code class="one-line-code">saldoCaixa -= opexMensal</code>) dentro de um
+      <code class="one-line-code">while</code>?
+    </li>
+    <li>
+      <strong>b)</strong> Se trocarmos a ordem das condições e testarmos primeiro
+      <code class="one-line-code">if (margem &gt; 10)</code> antes de
+      <code class="one-line-code">if (margem &lt; 0)</code>, o resultado final muda? Há algum risco nessa reordenação
+      quando as faixas se sobrepõem?
+    </li>
+    <li>
+      <strong>c)</strong> O que acontece se escrevermos <code class="one-line-code">For</code> (com F maiúsculo)? Qual
+      erro será exibido no terminal?
+    </li>
+  </ul>
+
+  <h3>Questão 5: Evoluindo o Código</h3>
+  <ul>
+    <li>
+      <strong>a)</strong> Reescreva a auditoria usando um loop <code class="one-line-code">while</code> no lugar do
+      <code class="one-line-code">for</code>. Quais cuidados extras você precisou tomar?
+    </li>
+    <li>
+      <strong>b)</strong> A diretoria quer saber quantos projetos estão dando prejuízo. Crie uma variável acumuladora
+      <code class="one-line-code">let projetosEmPrejuizo = 0;</code> e incremente-a dentro do loop quando apropriado,
+      exibindo o total ao final. Que operador você utilizou para somar na variável acumuladora?
+    </li>
+  </ul>
 </section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Revise o conteúdo da aula antes de começar: matrizes (Arrays), loops <code class="one-line-code">for</code>/<code class="one-line-code">while</code> e condicionais encadeadas.</li>
+    <li>Mantenha os blocos internos do <code class="one-line-code">for</code> e do <code class="one-line-code">if</code> sempre identados com TAB — a clareza faz parte da nota!</li>
+    <li>Lembre-se: o índice das matrizes começa em 0 e a propriedade <code class="one-line-code">length</code> informa quantos itens existem.</li>
+    <li>Cuidado com loops infinitos: garanta que a condição de parada possa ser atingida.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>

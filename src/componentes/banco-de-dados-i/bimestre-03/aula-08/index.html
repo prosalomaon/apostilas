@@ -2,29 +2,285 @@
 title: "Entrega de Projeto 3: Relatório de Normalização do banco de dados do aluno."
 aula_numero: "28"
 subject: "banco-de-dados-i"
-description: "Conteúdo da aula 28 do bimestre 3: Entrega de Projeto 3: Relatório de Normalização do banco de dados do aluno.."
+description: "Projeto prático de normalização: o aluno deve receher um banco de dados não normalizado, identificar dependências funcionais, aplicar as Formas Normais (1FN, 2FN e 3FN) e entregar o relatório completo com o esquema final."
 tags:
 - aula
 - bimestre-03
 ---
-aula_numero: "28"
-subject: "banco-de-dados-i"
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 08 em desenvolvimento...</p>
+  <h2>1. Introdução: Por que este Projeto?</h2>
+  <p>
+    Ao longo do terceiro bimestre, vocês estudaram as <strong>Formas Normais</strong> — ferramentas matemáticas que
+    transformam tabelas mal projetadas em estruturas limpas, sem redundância e livres de anomalias de atualização. No
+    entanto, saber a teoria não é o mesmo que aplicá-la. Este projeto tem o objetivo de avaliar se vocês conseguem
+    <strong>executar o processo completo de normalização</strong> em um cenário realista, do "Tabelão" bruto até o
+    esquema relacional final em 3FN.
+  </p>
+  <p>
+    O trabalho será individual e entregue como um <strong>Relatório de Normalização</strong> técnico, contendo todas as
+    etapas do processo, desde a identificação das dependências funcionais até a validação de cada Forma Normal.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 08 em desenvolvimento...</p>
+  <h2>2. O Minimundo: Sistema de Vendas — TechShop</h2>
+  <p>
+    A <strong>TechShop</strong> é uma loja de informática que vende computadores, periféricos e acessórios. A empresa
+    possui funcionários divisionados em departamentos (Vendas, Estoque, Administrativo) e cada funcionário ocupa um cargo
+    específico. A loja trabalha com diversos fornecedores de hardware e cada produto é exclusive de um único fornecedor.
+    Quando um cliente realiza uma compra, o sistema registra o pedido contendo um ou mais itens (produtos), a quantidade
+    de cada um, o vendedor responsável pela venda e os dados do cliente.
+  </p>
+
+  <h3>2.1 O "Tabelão" — Versão Não Normalizada</h3>
+  <p>
+    O banco de dados atual da TechShop foi projetado como uma <strong>única tabela gigante</strong>, onde todas as
+    informações são armazenadas em um único local. A tabela abaixo representa uma amostra dos dados reais do sistema:
+  </p>
+
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Pedido</th>
+          <th>Data</th>
+          <th>Cliente</th>
+          <th>CPF</th>
+          <th>Endereço</th>
+          <th>Vendedor</th>
+          <th>Cargo</th>
+          <th>Depto</th>
+          <th>Produto</th>
+          <th>Categoria</th>
+          <th>Fornecedor</th>
+          <th>Qtd</th>
+          <th>Valor Unit.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1001</td>
+          <td>05/03/26</td>
+          <td>Ana Silva</td>
+          <td>123.456.789-00</td>
+          <td>Rua A, 100</td>
+          <td>Carlos Souza</td>
+          <td>Consultor Vendas</td>
+          <td>Vendas</td>
+          <td>Notebook Dell</td>
+          <td>Computador</td>
+          <td>Dell Brasil</td>
+          <td>1</td>
+          <td>4.500,00</td>
+        </tr>
+        <tr>
+          <td>1001</td>
+          <td>05/03/26</td>
+          <td>Ana Silva</td>
+          <td>123.456.789-00</td>
+          <td>Rua A, 100</td>
+          <td>Carlos Souza</td>
+          <td>Consultor Vendas</td>
+          <td>Vendas</td>
+          <td>Mouse Logitech</td>
+          <td>Periférico</td>
+          <td>Logitech</td>
+          <td>2</td>
+          <td>89,90</td>
+        </tr>
+        <tr>
+          <td>1002</td>
+          <td>10/03/26</td>
+          <td>Bruno Costa</td>
+          <td>987.654.321-00</td>
+          <td>Av. B, 250</td>
+          <td>Maria Lima</td>
+          <td>Gerente</td>
+          <td>Administrativo</td>
+          <td>Monitor Samsung</td>
+          <td>Periférico</td>
+          <td>Samsung</td>
+          <td>2</td>
+          <td>1.200,00</td>
+        </tr>
+        <tr>
+          <td>1003</td>
+          <td>15/03/26</td>
+          <td>Ana Silva</td>
+          <td>123.456.789-00</td>
+          <td>Rua A, 100</td>
+          <td>Carlos Souza</td>
+          <td>Consultor Vendas</td>
+          <td>Vendas</td>
+          <td>Teclado HyperX</td>
+          <td>Periférico</td>
+          <td>HyperX</td>
+          <td>1</td>
+          <td>250,00</td>
+        </tr>
+        <tr>
+          <td>1003</td>
+          <td>15/03/26</td>
+          <td>Ana Silva</td>
+          <td>123.456.789-00</td>
+          <td>Rua A, 100</td>
+          <td>Carlos Souza</td>
+          <td>Consultor Vendas</td>
+          <td>Vendas</td>
+          <td>Notebook Dell</td>
+          <td>Computador</td>
+          <td>Dell Brasil</td>
+          <td>1</td>
+          <td>4.500,00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip-box">
+    <h4>Problemas Visíveis no Tabelão</h4>
+    <ul>
+      <li><strong>Redundância massiva:</strong> Os dados de "Ana Silva" (nome, CPF, endereço) aparecem em 4 linhas. O
+        cargo e departamento de "Carlos Souza" aparecem em 4 linhas.</li>
+      <li><strong>Anomalia de Inserção:</strong> Não é possível cadastrar um novo fornecedor sem que ele esteja associado
+        a pelo menos um pedido.</li>
+      <li><strong>Anomalia de Exclusão:</strong> Se o pedido 1002 for cancelado e sua linha removida, perdemos o registro
+        de que Bruno Costa é nosso cliente.</li>
+      <li><strong>Anomalia de Modificação:</strong> Se "Carlos Souza" for promovido para "Gerente", precisamos alterar
+        todas as 4 linhas onde ele aparece.</li>
+    </ul>
+  </div>
 </section>
 
+<section class="section-box">
+  <h2>3. Dependências Funcionais Identificadas</h2>
+  <p>
+    Antes de começar a normalizar, é fundamental mapear todas as <strong>dependências funcionais (DFs)</strong>
+    existentes nos dados. Com base nas regras de negócio da TechShop, identificamos as seguintes dependências:
+  </p>
 
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Dependência Funcional</th>
+          <th>Regra de Negócio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DF1</strong></td>
+          <td>(Pedido, Produto) → Qtd, Valor_Unitario</td>
+          <td>Cada item de pedido é identificado pelo número do pedido e pelo produto. A quantidade e o valor unitário
+            dependem do par (Pedido, Produto).</td>
+        </tr>
+        <tr>
+          <td><strong>DF2</strong></td>
+          <td>Pedido → Data, Cliente, CPF, Endereco, Vendedor, Cargo, Depto</td>
+          <td>Um pedido possui uma única data, um único cliente e um único vendedor.</td>
+        </tr>
+        <tr>
+          <td><strong>DF3</strong></td>
+          <td>CPF → Cliente, Endereco</td>
+          <td>O CPF identifica univocamente o cliente. Nome e endereço dependem apenas do CPF.</td>
+        </tr>
+        <tr>
+          <td><strong>DF4</strong></td>
+          <td>Vendedor → Cargo, Depto</td>
+          <td>Cada vendedor possui um único cargo e pertence a um único departamento.</td>
+        </tr>
+        <tr>
+          <td><strong>DF5</strong></td>
+          <td>Produto → Categoria, Fornecedor</td>
+          <td>Cada produto pertence a uma categoria e é fornecido por um único fornecedor.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
+<section class="section-box">
+  <h2>4. O Desafio Prático: Etapas de Execução</h2>
+  <p>
+    Sua missão neste projeto é <strong>normalizar completamente o Tabelão da TechShop</strong>, aplicando todas as Formas
+    Normais estudadas no bimestre. O relatório deve demonstrar cada etapa de forma clara e organizada.
+  </p>
 
+  <h4>Parte 1: Primeira Forma Normal (1FN)</h4>
+  <ul>
+    <li><strong>Identificação do Problema:</strong> Aponte quais colunas do Tabelão violam a 1FN (grupos repetitivos e
+      valores não atômicos).</li>
+    <li><strong>Definição da Chave Primária Composta:</strong> Identifique a chave primária composta que garante a
+      unicidade de cada linha na tabela já em 1FN.</li>
+    <li><strong>Decomposição:</strong> Escreva o esquema relacional resultante após a aplicação da 1FN. Demonstre como
+      os grupos repetitivos (itens do pedido) foram eliminados.</li>
+    <li><strong>Tabela de Dados:</strong> Apresente a tabela resultante com os mesmos dados de amostra, agora em formato
+      1FN.</li>
+  </ul>
 
+  <h4>Parte 2: Segunda Forma Normal (2FN)</h4>
+  <ul>
+    <li><strong>Identificação de Dependências Parciais:</strong> Para cada DF identificada, verifique se o determinante é
+      <strong>parte</strong> da chave primária composta. Se sim, essa DF viola a 2FN.</li>
+    <li><strong>Decomposição:</strong> Separe as dependências parciais em tabelas próprias, garantindo que cada atributo
+      não-chave dependa da <strong>chave primária completa</strong> de sua tabela.</li>
+    <li><strong>Resultado:</strong> Apresente o esquema relacional resultante em 2FN, com a definição de chaves primárias
+      e estrangeiras.</li>
+  </ul>
 
+  <h4>Parte 3: Terceira Forma Normal (3FN)</h4>
+  <ul>
+    <li><strong>Identificação de Dependências Transitivas:</strong> Em cada tabela da 2FN, verifique se existe alguma
+      dependência funcional onde o determinante não é chave mas determina outro atributo não-chave.</li>
+    <li><strong>Decomposição:</strong> Elimine as dependências transitivas criando tabelas auxiliares para os
+      determinantes intermediários.</li>
+    <li><strong>Validação BCNF:</strong> Verifique se o resultado final em 3FN também atende à Forma Normal de
+      Boyce-Codd. Justifique se há ou não violação da FNBC.</li>
+    <li><strong>Resultado Final:</strong> Apresente o esquema relacional completo em 3FN (e, se aplicável, FNBC) com
+      todas as chaves primárias e estrangeiras explicitadas.</li>
+  </ul>
 
+  <h4>Parte 4: Script DDL — Implementação no SGBD</h4>
+  <ul>
+    <li><strong>Criação das Tabelas:</strong> Escreva os comandos <code class="one-line-code">CREATE TABLE</code>
+      (MySQL ou PostgreSQL) para todas as tabelas resultantes da normalização, incluindo chaves primárias, estrangeiras
+      e as restrições de integridade.</li>
+    <li><strong>Inserção de Dados:</strong> Insira a amostra de dados do Tabelão original nas novas tabelas utilizando
+      comandos <code class="one-line-code">INSERT INTO</code>.</li>
+    <li><strong>Consulta de Validação:</strong> Elabore uma consulta com <code class="one-line-code">JOIN</code> que
+      reconstrua a visão original do Tabelão a partir das tabelas normalizadas, provando que nenhuma informação foi
+      perdida.</li>
+  </ul>
+</section>
 
+<div class="tip-box">
+  <h4>5. Orientações Finais e Critérios de Homologação</h4>
+  <p>
+    O relatório será avaliado com base nos seguintes critérios técnicos:
+  </p>
+  <ul>
+    <li><strong>Completude das Etapas:</strong> Todas as Formas Normais (1FN, 2FN e 3FN) devem ser demonstradas
+      explicitamente, com a decomposição em cada etapa.</li>
+    <li><strong>Correção das Dependências Funcionais:</strong> As DFs devem ser corretamente identificadas e utilizadas
+      como base para cada decomposição.</li>
+    <li><strong>Preservação de Informação:</strong> A consulta JOIN final deve reconstruir exatamente a mesma informação
+      do Tabelão original — nenhuma perda de dado é aceitável.</li>
+    <li><strong>Preservação de Dependências:</strong> As dependências funcionais originais devem ser preservadas nas novas
+      tabelas (ou justificadas caso alguma tenha sido intencionalmente eliminada).</li>
+    <li><strong>Integridade Referencial:</strong> As chaves estrangeiras devem estar corretamente posicionadas e os
+      comandos DDL devem incluir as constraints de <code class="one-line-code">FOREIGN KEY</code>.</li>
+    <li><strong>BCNF:</strong> Verificar e justificar se o esquema final em 3FN também atende à FNBC.</li>
+    <li><strong>Organização e Clareza:</strong> O relatório deve ser autoexplicativo, com seções numeradas, tabelas
+      formatadas e código SQL indentado.</li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Relatório de Normalização — TechShop (Atividade Prática)</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação sobre Formas Normais</a></li>
+  </ul>
+</section>

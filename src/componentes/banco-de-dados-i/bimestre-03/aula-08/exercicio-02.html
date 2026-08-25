@@ -1,23 +1,198 @@
 ---
-layout: exercicio
-title: "Entrega de Projeto 1: Diagrama Conceitual (MER) de um cenário de pequeno porte."
+layout: questionario
+title: "Questionário — Formas Normais e o Projeto TechShop"
 exercicio_numero: "02"
-08ero: "08"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 08."
----
+aula_numero: "28"
+description: "Questionário de fixação sobre 1FN, 2FN, 3FN, FNBC e o processo de normalização aplicado ao cenário da TechShop."
+perguntas:
+  - texto: "Qual é o objetivo PRINCIPAL da Primeira Forma Normal (1FN)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Eliminar dependências transitivas entre atributos não-chave."
+      - letra: "b"
+        texto: "Garantir que todo determinante seja uma superchave."
+      - letra: "c"
+        texto: "Eliminar grupos repetitivos e garantir que todos os atributos sejam atômicos."
+      - letra: "d"
+        texto: "Separar tabelas que possuem chaves candidatas sobrepostas."
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+  - texto: "No Tabelão da TechShop, qual é a violação da 1FN?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Os valores de CPF não são numéricos."
+      - letra: "b"
+        texto: "Um mesmo pedido aparece em múltiplas linhas com produtos diferentes (grupos repetitivos)."
+      - letra: "c"
+        texto: "O campo Valor_Unitario deveria ser do tipo FLOAT."
+      - letra: "d"
+        texto: "O nome do cliente contém espaços em branco."
 
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
+  - texto: "Ao aplicar a 1FN no Tabelão da TechShop, qual chave primária composta é mais adequada?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "(Pedido, Produto) — pois cada linha representa um item específico dentro de um pedido."
+      - letra: "b"
+        texto: "(Pedido, CPF) — pois o cliente pode comprar o mesmo produto duas vezes."
+      - letra: "c"
+        texto: "Pedido — pois cada pedido é único no sistema."
+      - letra: "d"
+        texto: "Produto — pois cada produto é único na loja."
 
+  - texto: "Uma tabela está na 2FN quando:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Todos os atributos são atômicos e não há grupos repetitivos."
+      - letra: "b"
+        texto: "Todos os determinantes são chaves candidatas."
+      - letra: "c"
+        texto: "Não existem dependências transitivas entre os atributos."
+      - letra: "d"
+        texto: "Todos os atributos não-chave dependem da chave primária COMPLETA (dependência total)."
 
+  - texto: "No esquema em 1FN da TechShop: PEDIDO_ITEM(Pedido, Produto, Data, Cliente, CPF, Endereco, Vendedor, Cargo, Depto, Categoria, Fornecedor, Qtd, Valor_Unit), qual DF é uma dependência PARCIAL que viola a 2FN?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "(Pedido, Produto) → Qtd, Valor_Unit"
+      - letra: "b"
+        texto: "Produto → Categoria, Fornecedor"
+      - letra: "c"
+        texto: "Pedido → Data, Cliente, CPF, Endereco, Vendedor, Cargo, Depto"
+      - letra: "d"
+        texto: "CPF → Cargo, Depto"
 
+  - texto: "Ao aplicar a 2FN, os dados de cliente (nome, endereço) devem ficar em qual tabela?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Na tabela PEDIDO_ITEM, pois o cliente é parte do pedido."
+      - letra: "b"
+        texto: "Em uma tabela CLIENTES separada, com PK = CPF, pois o nome e endereço dependem apenas do CPF."
+      - letra: "c"
+        texto: "Na tabela PEDIDOS, pois o cliente está associado ao pedido."
+      - letra: "d"
+        texto: "Em uma tabela PEDIDO_CLIENTE com PK composta (Pedido, CPF)."
 
+  - texto: "Qual é a definição de dependência TRANSITIVA?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Quando A → B e B → C, então A → C é uma dependência transitiva (C depende de A através de B)."
+      - letra: "b"
+        texto: "Quando um atributo determina múltiplos valores ao mesmo tempo."
+      - letra: "c"
+        texto: "Quando a chave primária é composta por mais de dois atributos."
+      - letra: "d"
+        texto: "Quando duas tabelas compartilham a mesma chave estrangeira."
 
+  - texto: "No cenário da TechShop, qual das seguintes situações é uma dependência transitiva que viola a 3FN?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Pedido → Data"
+      - letra: "b"
+        texto: "CPF → Cliente, Endereco"
+      - letra: "c"
+        texto: "Pedido → Vendedor, e Vendedor → Cargo, Depto (Dpto depende de Pedido através de Vendedor)."
+      - letra: "d"
+        texto: "Produto → Categoria"
+
+  - texto: "Ao aplicar a 3FN no Tabelão da TechShop, qual tabela deve ser criada para eliminar a dependência transitiva do Vendedor?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Tabela VENDAS(Pedido, Vendedor, Cargo, Depto)"
+      - letra: "b"
+        texto: "Tabela VENDEDORES(Vendedor, Cargo, Depto) com PK = Vendedor"
+      - letra: "c"
+        texto: "Tabela CARGOS(Cargo, Depto) com PK = Cargo"
+      - letra: "d"
+        texto: "Tabela DEPARTAMENTOS(Depto) com PK = Depto"
+
+  - texto: "Uma tabela está na Forma Normal de Boyce-Codd (FNBC) quando:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Todos os atributos são atômicos e não há grupos repetitivos."
+      - letra: "b"
+        texto: "Todos os atributos não-chave dependem da chave primária completa."
+      - letra: "c"
+        texto: "Não existem dependências transitivas entre atributos não-chave."
+      - letra: "d"
+        texto: "Todo determinante de uma dependência funcional não-trivial é uma superchave."
+
+  - texto: "Se o esquema final da TechShop em 3FN contém: PEDIDOS(Pedido, Data, CPF_Cliente, Vendedor), CLIENTES(CPF, Nome, Endereco), VENDEDORES(Nome_Vendedor, Cargo, Depto), PRODUTOS(Nome_Produto, Categoria, Fornecedor), ITENS_PEDIDO(Pedido, Produto, Qtd, Valor_Unit). Qual afirmativa está CORRETA?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "A tabela VENDEDORES isolou corretamente a dependência transitiva (Vendedor → Cargo, Depto)."
+      - letra: "b"
+        texto: "A tabela CLIENTES deveria ter PK composta (CPF, Nome)."
+      - letra: "c"
+        texto: "A tabela PEDIDOS não deveria ter a FK CPF_Cliente."
+      - letra: "d"
+        texto: "A tabela ITENS_PEDIDO ainda viola a 2FN pois tem chave composta."
+
+  - texto: "Na consulta JOIN que reconstrói o Tabelão a partir das tabelas normalizadas, quais tabelas devem ser combinadas?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Apenas PEDIDOS e CLIENTES."
+      - letra: "b"
+        texto: "Apenas ITENS_PEDIDO e PRODUTOS."
+      - letra: "c"
+        texto: "PEDIDOS, CLIENTES, VENDEDORES, PRODUTOS e ITENS_PEDIDO, utilizando todas as chaves estrangeiras."
+      - letra: "d"
+        texto: "Todas as tabelas com um CROSS JOIN para gerar todas as combinações possíveis."
+
+  - texto: "Qual das seguintes afirmações sobre normalização é FALSA?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Uma tabela na FNBC está automaticamente na 3FN."
+      - letra: "b"
+        texto: "Uma tabela na 3FN está automaticamente na FNBC."
+      - letra: "c"
+        texto: "A normalização visa eliminar redundâncias e anomalias de atualização."
+      - letra: "d"
+        texto: "A decomposição para 3FN deve preservar as dependências funcionais originais."
+
+  - texto: "No script DDL final da TechShop, qual cláusula é ESSENCIAL para garantir a integridade referencial entre ITENS_PEDIDO e PEDIDOS?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "FOREIGN KEY (Pedido) REFERENCES pedidos(Pedido)"
+      - letra: "b"
+        texto: "UNIQUE (Pedido, Produto)"
+      - letra: "c"
+        texto: "CHECK (Qtd > 0)"
+      - letra: "d"
+        texto: "INDEX (Pedido)"
+
+  - texto: "Um aluno normalizou o Tabelão da TechShop e na verificação final descobriu que a tabela PRODUTOS(Produto, Categoria, Fornecedor) ainda possui a DF: Fornecedor → Categoria. Isso significa que:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "A tabela está correta em 3FN, pois Fornecedor é uma chave candidata."
+      - letra: "b"
+        texto: "A tabela está correta em 2FN, mas precisa de mais uma decomposição para 3FN."
+      - letra: "c"
+        texto: "A tabela não viola nenhuma Forma Normal, pois Fornecedor é atributo não-chave."
+      - letra: "d"
+        texto: "A tabela viola a 3FN (e possivelmente a FNBC), pois Fornecedor determina Categoria sem ser chave."
+
+  - texto: "Ao decompor o Tabelão da TechShop, qual princípio deve ser respeitado para garantir que nenhuma informação seja perdida?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Cada tabela resultante deve ter exatamente 3 colunas."
+      - letra: "b"
+        texto: "Os nomes das tabelas devem ser diferentes dos nomes originais."
+      - letra: "c"
+        texto: "A decomposição deve ser decomposição por JOIN (lossless-join), permitindo reconstruir os dados originais."
+      - letra: "d"
+        texto: "Todas as tabelas resultantes devem ter a mesma chave primária."

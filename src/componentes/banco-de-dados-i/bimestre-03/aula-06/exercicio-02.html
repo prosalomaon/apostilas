@@ -1,23 +1,152 @@
 ---
-layout: exercicio
-title: "Cardinalidade: Definição de conectividade (1:1, 1:N, N:N)."
+layout: questionario
+title: "Questionário - Forma Normal de Boyce-Codd (FNBC)"
 exercicio_numero: "02"
-06ero: "06"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 06."
+aula_numero: "26"
+sigla_componente: "BD1"
+description: "Questionário de fixação sobre a FNBC, chaves candidatas sobrepostas, atributos primos e o trade-off da decomposição."
+perguntas:
+  - texto: "Uma tabela está na Forma Normal de Boyce-Codd (FNBC) quando:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Todos os seus atributos são primos."
+      - letra: "b"
+        texto: "Para cada dependência funcional não-trivial X → Y, o determinante X é uma superchave da tabela."
+      - letra: "c"
+        texto: "Não possui dependências transitivas entre atributos não-chave."
+      - letra: "d"
+        texto: "Possui apenas uma chave candidata simples."
+  - texto: "As anomalias que a 3FN não cobre só ocorrem quando três condições se manifestam simultaneamente. Quais são elas?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Múltiplas chaves candidatas, todas compostas, compartilhando pelo menos um atributo em comum."
+      - letra: "b"
+        texto: "Chave primária simples, muitos atributos nulos e ausência de chaves estrangeiras."
+      - letra: "c"
+        texto: "Dependências parciais, dependências transitivas e atributos multivalorados."
+      - letra: "d"
+        texto: "Uma única chave candidata, atributos derivados e índices redundantes."
+  - texto: "O que é um atributo primo?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Todo atributo que possui a restrição NOT NULL."
+      - letra: "b"
+        texto: "O primeiro atributo da tabela, que sempre faz parte da chave primária."
+      - letra: "c"
+        texto: "Um atributo que faz parte de alguma chave candidata da tabela."
+      - letra: "d"
+        texto: "Todo atributo que depende diretamente da chave primária."
+  - texto: "Na tabela LECIONA(Aluno, Disciplina, Instrutor), com DF1: (Aluno, Disciplina) → Instrutor e DF2: Instrutor → Disciplina, quais são as chaves candidatas?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Apenas {Aluno}."
+      - letra: "b"
+        texto: "{Aluno, Disciplina} apenas."
+      - letra: "c"
+        texto: "{Instrutor} e {Aluno, Instrutor}."
+      - letra: "d"
+        texto: "{Aluno, Disciplina} e {Aluno, Instrutor}, que são sobrepostas por compartilharem o atributo Aluno."
+  - texto: "Por que a 3FN aceita a dependência Instrutor → Disciplina na tabela LECIONA?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Porque o determinante Instrutor é uma superchave."
+      - letra: "b"
+        texto: "Porque a regra da 3FN permite essa dependência quando o atributo dependente (Disciplina) é um atributo primo."
+      - letra: "c"
+        texto: "Porque a dependência é parcial, e não transitiva."
+      - letra: "d"
+        texto: "Porque a tabela não possui chaves estrangeiras."
+  - texto: "Por que essa mesma dependência faz a LECIONA violar a FNBC?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Porque o determinante Instrutor não é uma superchave, e a FNBC não abre exceções para atributos primos."
+      - letra: "b"
+        texto: "Porque a LECIONA não está na 1FN."
+      - letra: "c"
+        texto: "Porque existem valores nulos na tabela."
+      - letra: "d"
+        texto: "Porque a tabela possui mais de duas chaves candidatas."
+  - texto: "Qual anomalia ocorre ao tentar registrar que o instrutor Date leciona Sistemas Operacionais sem nenhum aluno matriculado com ele?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Anomalia de atualização, pois os dados ficam duplicados."
+      - letra: "b"
+        texto: "Anomalia de exclusão, pois perdemos informações ao remover linhas."
+      - letra: "c"
+        texto: "Nenhuma anomalia, a inserção funciona normalmente."
+      - letra: "d"
+        texto: "Anomalia de inserção: seria necessário usar valores nulos no atributo Aluno, violando a integridade da chave primária."
+  - texto: "Após decompor a LECIONA para a FNBC, quais tabelas resultam?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "ALUNO(Aluno) e DISCIPLINA(Disciplina)."
+      - letra: "b"
+        texto: "INSTRUCAO(Instrutor, Disciplina) e MATRICULA(Aluno, Instrutor)."
+      - letra: "c"
+        texto: "LECIONA1(Aluno, Disciplina) e LECIONA2(Disciplina, Instrutor)."
+      - letra: "d"
+        texto: "Uma única tabela com todos os atributos, mas com nova chave primária."
+  - texto: "Na tabela MATRICULA resultante da decomposição, qual é a configuração correta das chaves?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Aluno é PK e Instrutor é apenas atributo comum."
+      - letra: "b"
+        texto: "Instrutor é PK e Aluno é FK para INSTRUCAO."
+      - letra: "c"
+        texto: "Aluno + Instrutor formam a PK composta, e Instrutor é FK referenciando INSTRUCAO."
+      - letra: "d"
+        texto: "Disciplina também deve fazer parte da PK composta."
+  - texto: "Qual é o principal trade-off da decomposição para a FNBC?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Perde-se a validação declarativa direta da dependência (Aluno, Disciplina) → Instrutor, exigindo triggers ou procedures adicionais."
+      - letra: "b"
+        texto: "As consultas passam a retornar resultados inconsistentes."
+      - letra: "c"
+        texto: "A FNBC impede o uso de chaves estrangeiras entre as tabelas."
+      - letra: "d"
+        texto: "A tabela MATRICULA deixa de estar na 1FN."
+  - texto: "Sobre a relação entre FNBC e 3FN, é correto afirmar:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Toda tabela na 3FN está automaticamente na FNBC."
+      - letra: "b"
+        texto: "FNBC e 3FN são formas normais equivalentes."
+      - letra: "c"
+        texto: "Toda tabela na FNBC está automaticamente na 3FN, mas nem toda tabela na 3FN está na FNBC."
+      - letra: "d"
+        texto: "A FNBC substitui a necessidade de aplicar as formas normais anteriores."
+  - texto: "Em qual situação uma tabela pode estar na 3FN mas violar a FNBC?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Quando possui atributos multivalorados."
+      - letra: "b"
+        texto: "Quando existe dependência parcial da chave composta."
+      - letra: "c"
+        texto: "Quando um atributo não-chave depende de outro atributo não-chave."
+      - letra: "d"
+        texto: "Quando existe uma dependência funcional cujo determinante não é superchave, mas o atributo dependente é primo."
 ---
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+<p>Responda as questões abaixo para consolidar os conhecimentos sobre a FNBC, chaves candidatas sobrepostas, atributos primos e o processo de decomposição.</p>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Leia o enunciado com atenção antes de começar.</li>
+    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
-
-
-
-
-

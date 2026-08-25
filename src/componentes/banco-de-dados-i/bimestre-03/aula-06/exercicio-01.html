@@ -1,23 +1,174 @@
 ---
 layout: exercicio
-title: "Cardinalidade: Definição de conectividade (1:1, 1:N, N:N)."
+title: "Decomposição de Tabela com Chaves Candidatas Sobrepostas"
 exercicio_numero: "01"
-06ero: "06"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 06."
+aula_numero: "26"
+description: "Identificar chaves candidatas sobrepostas, demonstrar que uma tabela está na 3FN mas viola a FNBC, e implementar a decomposição em SQL."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Uma academia deseja controlar as matrículas de seus alunos junto aos personais responsáveis. A tabela abaixo já
+    está na <strong>Terceira Forma Normal (3FN)</strong>, porém apresenta chaves candidatas sobrepostas:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">TREINO(
+    Aluno        VARCHAR(100),
+    Modalidade   VARCHAR(100),
+    Personal     VARCHAR(100)
+)</code></pre>
+  </div>
+
+  <h4>Regras de Negócio (Dependências Funcionais)</h4>
+  <ul>
+    <li><strong>DF1:</strong> (Aluno, Modalidade) → Personal — para cada modalidade, o aluno tem apenas um personal
+      específico.</li>
+    <li><strong>DF2:</strong> Personal → Modalidade — cada personal trabalha com apenas uma modalidade específica.</li>
+  </ul>
+
+  <h3>Dados de Exemplo</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Aluno</th>
+        <th>Modalidade</th>
+        <th>Personal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Carla</td>
+        <td>Musculação</td>
+        <td>Rafael</td>
+      </tr>
+      <tr>
+        <td>Diego</td>
+        <td>Musculação</td>
+        <td>Rafael</td>
+      </tr>
+      <tr>
+        <td>Carla</td>
+        <td>Natação</td>
+        <td>Beatriz</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Análise das Chaves Candidatas</h3>
+  <p>Com base nas dependências funcionais, responda:</p>
+  <ul>
+    <li><strong>a)</strong> Quais são as chaves candidatas da tabela <code class="one-line-code">TREINO</code>?</li>
+    <li><strong>b)</strong> Essas chaves são sobrepostas? Justifique indicando o atributo em comum.</li>
+    <li><strong>c)</strong> Quais atributos são considerados <strong>primos</strong>? Explique o conceito.</li>
+  </ul>
+
+  <h3>Questão 2: Verificação da FNBC</h3>
+  <p>Preencha a tabela de análise das dependências funcionais:</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Dependência</th>
+        <th>O determinante é superchave?</th>
+        <th>O dependente é atributo primo?</th>
+        <th>Viola a FNBC?</th>
+        <th>Viola a 3FN?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>(Aluno, Modalidade) → Personal</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Personal → Modalidade</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><strong>a)</strong> Explique com suas palavras por que a tabela está na 3FN mesmo com a DF2.</li>
+    <li><strong>b)</strong> Explique por que essa mesma DF2 faz a tabela violar a FNBC.</li>
+  </ul>
+
+  <h3>Questão 3: Anomalias de Atualização</h3>
+  <ul>
+    <li><strong>a)</strong> <strong>Inserção:</strong> A academia contratou o personal <em>Fernanda</em> para a
+      modalidade <em>Spinning</em>, mas nenhum aluno se matriculou ainda. É possível registrar essa informação na
+      tabela TREINO? O que aconteceria se tentássemos?</li>
+    <li><strong>b)</strong> <strong>Exclusão:</strong> O aluno <em>Diego</em>, único matriculado com o personal
+      <em>Rafael</em>, cancelou a matrícula. Que informação seria perdida ao remover sua linha?</li>
+  </ul>
+
+  <h3>Questão 4: Decomposição para a FNBC</h3>
+  <p>Escreva os esquemas das tabelas resultantes após a decomposição. Cada tabela deve indicar sua chave primária
+    (sublinhada) e eventuais chaves estrangeiras (marcadas com FK).</p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Tabela</th>
+        <th>Atributos</th>
+        <th>PK</th>
+        <th>FK</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 5: Implementação em SQL</h3>
+  <p>
+    Escreva as instruções <code class="one-line-code">CREATE TABLE</code> em SQL para o esquema resultante da
+    Questão 4. Inclua as restrições de Chave Primária e Chave Estrangeira.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Escreva seu código SQL aqui</code></pre>
+  </div>
+
+  <h3>Questão 6: O Trade-off da Decomposição</h3>
+  <ul>
+    <li><strong>a)</strong> Após a decomposição, qual dependência funcional deixou de poder ser validada de forma
+      declarativa direta pelo SGBD?</li>
+    <li><strong>b)</strong> Cite dois mecanismos que poderiam ser usados para garantir essa validação na aplicação ou
+      no banco de dados.</li>
+  </ul>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Revise o conteúdo da aula antes de começar: atributo primo, chaves candidatas sobrepostas e o processo de
+      decomposição para a FNBC.</li>
+    <li>Na Questão 1, teste cada chave candidata: ela identifica univocamente todas as linhas? Nenhum subconjunto
+      dela também identifica?</li>
+    <li>Na Questão 2, lembre-se: a 3FN aceita determinantes que não são chave quando o dependente é um atributo
+      primo; a FNBC não aceita nenhuma exceção.</li>
+    <li>Na Questão 4, crie uma tabela cuja chave primária seja exatamente o determinante da dependência problemática,
+      e mantenha na outra tabela apenas o necessário com uma FK.</li>
+    <li>Na Questão 5, use <code class="one-line-code">FOREIGN KEY</code> para definir a referência entre as tabelas
+      resultantes.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
-
-
-
-
-

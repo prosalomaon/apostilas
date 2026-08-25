@@ -1,30 +1,416 @@
 ---
 title: "Boyce-Codd (FNBC): Casos especiais de chaves candidatas sobrepostas."
 aula_numero: "26"
-subject: "banco-de-dados-i"
-description: "Conteúdo da aula 26 do bimestre 3: Boyce-Codd (FNBC): Casos especiais de chaves candidatas sobrepostas.."
+description: "Compreender a Forma Normal de Boyce-Codd, identificar chaves candidatas sobrepostas e decompor tabelas que estão na 3FN mas ainda violam a FNBC."
 tags:
-- aula
-- bimestre-03
+  - aula
+  - bimestre-03
 ---
-aula_numero: "26"
-subject: "banco-de-dados-i"
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 06 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. O Limite da Terceira Forma Normal (3FN)</h3>
+  <p>
+    Até a <strong>3FN</strong>, nosso foco era garantir que os atributos não-chave dependessem direta e
+    exclusivamente da chave primária. No entanto, as definições clássicas da 2FN e da 3FN falham em cenários
+    específicos onde há <strong>chaves candidatas sobrepostas</strong> — quando duas ou mais chaves candidatas
+    compostas compartilham um ou mais atributos em comum.
+  </p>
+  <p>
+    De acordo com <strong>Raymond Boyce</strong> e <strong>Edgar F. Codd</strong>, essas anomalias de atualização
+    remanescentes só ocorrem quando <strong>três condições se manifestam simultaneamente</strong> em uma tabela:
+  </p>
+  <ul>
+    <li>A tabela possui <strong>múltiplas chaves candidatas</strong>.</li>
+    <li>Essas chaves candidatas são <strong>compostas</strong> (formadas por mais de um atributo).</li>
+    <li>As chaves candidatas <strong>compartilham pelo menos um atributo comum</strong> (chaves sobrepostas).</li>
+  </ul>
+  <div class="tip-box">
+    <h4>O Ponto Cego da 3FN</h4>
+    <p>
+      A 3FN permite que um atributo pertencente a uma chave candidata — chamado de
+      <strong>atributo primo</strong> — seja determinado por um atributo que não é chave. É justamente essa brecha
+      que a FNBC fecha.
+    </p>
+  </div>
+
+  <h3>2. Definição Formal da FNBC</h3>
+  <p>
+    Uma tabela está na <strong>Forma Normal de Boyce-Codd (FNBC)</strong> se, e somente se, para cada uma de suas
+    <strong>dependências funcionais não-triviais</strong> (<code class="one-line-code">X → Y</code>), o determinante
+    (<code class="one-line-code">X</code>) for uma <strong>superchave</strong> (ou chave candidata) da tabela.
+  </p>
+  <p><strong>Em termos simples:</strong></p>
+  <ul>
+    <li>Na FNBC, <strong>todos os determinantes devem ser chaves candidatas</strong>.</li>
+    <li>Não são permitidas setas de dependência funcional partindo de atributos que não possam identificar
+      univocamente as linhas da tabela.</li>
+    <li>Toda tabela na FNBC está automaticamente na 3FN, mas a recíproca não é verdadeira.</li>
+  </ul>
+
+  <h3>3. Estudo de Caso Prático: A Tabela LECIONA</h3>
+  <p>
+    Considere um sistema de alocação de disciplinas acadêmicas representado pela tabela a seguir:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">LECIONA(
+    Aluno       VARCHAR(100),
+    Disciplina  VARCHAR(100),
+    Instrutor   VARCHAR(100)
+)</code></pre>
+  </div>
+
+  <h4>Regras de Negócio (Dependências Funcionais)</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Dependência Funcional</th>
+        <th>Significado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>DF1</strong></td>
+        <td>(Aluno, Disciplina) → Instrutor</td>
+        <td>Para cada disciplina, o aluno tem apenas um instrutor específico.</td>
+      </tr>
+      <tr>
+        <td><strong>DF2</strong></td>
+        <td>Instrutor → Disciplina</td>
+        <td>Cada instrutor leciona apenas uma disciplina específica.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Análise das Chaves Candidatas</h4>
+  <ul>
+    <li>As chaves candidatas compostas são: <code class="one-line-code">{Aluno, Disciplina}</code> e
+      <code class="one-line-code">{Aluno, Instrutor}</code>.</li>
+    <li>Ambas as chaves compartilham o atributo <code class="one-line-code">Aluno</code>, caracterizando
+      <strong>chaves candidatas sobrepostas</strong>.</li>
+    <li>Os <strong>atributos primos</strong> são: Aluno, Disciplina e Instrutor (todos fazem parte de alguma chave
+      candidata).</li>
+  </ul>
+
+  <h4>Por que esta tabela está na 3FN, mas VIOLA a FNBC?</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Forma Normal</th>
+        <th>Análise da DF2: Instrutor → Disciplina</th>
+        <th>Resultado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>3FN</strong></td>
+        <td>O determinante Instrutor não é chave, porém a regra da 3FN aceita essa dependência porque o atributo
+          dependente (Disciplina) é um <strong>atributo primo</strong> — faz parte da chave candidata
+          {Aluno, Disciplina}.</td>
+        <td><span style="color: #198754;"><strong>ATENDE</strong></span></td>
+      </tr>
+      <tr>
+        <td><strong>FNBC</strong></td>
+        <td>O determinante Instrutor <strong>não é uma superchave</strong>. Como a FNBC não abre exceções para
+          atributos primos, a estrutura é considerada inconsistente.</td>
+        <td><span style="color: #dc3545;"><strong>VIOLADA</strong></span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Anomalias Geradas pela Violação</h4>
+  <p>Suponha que o instrutor <em>Navathe</em> leciona a disciplina <em>Banco de Dados</em>:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Anomalia</th>
+        <th>Cenário</th>
+        <th>Consequência</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Inserção</strong></td>
+        <td>Registrar que o instrutor <em>Date</em> leciona <em>Sistemas Operacionais</em> antes de qualquer aluno
+          estar matriculado com ele.</td>
+        <td>Impossível inserir sem usar valores nulos no atributo Aluno, violando a integridade da chave primária.</td>
+      </tr>
+      <tr>
+        <td><strong>Exclusão</strong></td>
+        <td>O único aluno matriculado com o instrutor <em>Mark</em> cancela a matrícula.</td>
+        <td>Ao remover a linha, perdemos a informação de que Mark leciona Banco de Dados.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4. Resolução: Decomposição para a FNBC</h3>
+  <p>
+    Para ajustar a tabela à FNBC, devemos desmembrá-la em duas novas tabelas utilizando projeções:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tabela</th>
+        <th>Atributos</th>
+        <th>PK</th>
+        <th>FK</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>INSTRUCAO</strong></td>
+        <td>Instrutor, Disciplina</td>
+        <td>Instrutor</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>MATRICULA</strong></td>
+        <td>Aluno, Instrutor</td>
+        <td>Aluno + Instrutor</td>
+        <td>Instrutor → INSTRUCAO</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Em ambas as novas tabelas, todos os determinantes passam a ser chaves candidatas, alcançando a FNBC e eliminando
+    todas as anomalias de atualização.
+  </p>
+
+  <h3>5. Resumo Teórico para Fixação</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Conceito</th>
+        <th>Regra Básica</th>
+        <th>Tratamento de Atributo Primo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>3FN</strong></td>
+        <td>Atributos não-chave não podem depender de outros atributos não-chave.</td>
+        <td>Permite que um atributo primo seja determinado por um não-chave.</td>
+      </tr>
+      <tr>
+        <td><strong>FNBC</strong></td>
+        <td>Todos os determinantes de dependências não-triviais devem ser chaves candidatas.</td>
+        <td>Não permite nenhuma dependência onde o determinante não seja chave, mesmo se o alvo for atributo
+          primo.</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 06 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+
+  <h3>1. Criação das Tabelas Normalizadas (FNBC)</h3>
+  <p>
+    A criação dessas tabelas normalizadas é idêntica nos SGBDs <strong>MySQL</strong> e <strong>PostgreSQL</strong>,
+    seguindo o padrão ANSI SQL:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Tabela de Instrutores e suas Disciplinas (FNBC alcançada)
+CREATE TABLE instrucao (
+    instrutor VARCHAR(100) NOT NULL,
+    disciplina VARCHAR(100) NOT NULL,
+    PRIMARY KEY (instrutor)
+);
+
+-- Tabela de Matrículas de Alunos com Instrutores (FNBC alcançada)
+CREATE TABLE matricula (
+    aluno VARCHAR(100) NOT NULL,
+    instrutor VARCHAR(100) NOT NULL,
+    PRIMARY KEY (aluno, instrutor),
+    -- Garantia da Integridade Referencial
+    FOREIGN KEY (instrutor) REFERENCES instrucao(instrutor)
+);</code></pre>
+  </div>
+
+  <h3>2. Inserção de Dados e Consulta com JOIN</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">INSERT INTO instrucao VALUES
+('Navathe', 'Banco de Dados'),
+('Date',    'Sistemas Operacionais');
+
+INSERT INTO matricula VALUES
+('Ana',   'Navathe'),
+('Bruno', 'Navathe');
+
+-- Reconstrói a visão original a partir das tabelas normalizadas
+SELECT M.aluno,
+       I.disciplina,
+       M.instrutor
+FROM matricula M
+JOIN instrucao I ON I.instrutor = M.instrutor;</code></pre>
+  </div>
+
+  <h3>3. O Trade-off da FNBC: Perda de Dependência</h3>
+  <p>
+    Ao realizar essa decomposição, alcançamos a FNBC e eliminamos todas as anomalias de atualização. No entanto, há um
+    custo: <strong>perdemos a capacidade de validar a dependência original</strong>
+    <code class="one-line-code">(Aluno, Disciplina) → Instrutor</code> de forma declarativa direta no banco de dados.
+  </p>
+  <p>
+    Para garantir que um aluno não seja associado a dois professores de disciplinas diferentes, o SGBD precisaria de
+    validações adicionais, como <code class="one-line-code">TRIGGERs</code> ou procedures de consistência:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Exemplo conceitual de trigger de validação (PostgreSQL)
+CREATE FUNCTION valida_disciplina_unica() RETURNS TRIGGER AS $$
+DECLARE
+    qtd_disciplinas INTEGER;
+BEGIN
+    SELECT COUNT(DISTINCT i.disciplina)
+      INTO qtd_disciplinas
+      FROM instrucao I
+     WHERE I.instrutor = NEW.instrutor
+       AND EXISTS (
+            SELECT 1 FROM matricula M2
+             JOIN instrucao I2 ON I2.instrutor = M2.instrutor
+            WHERE M2.aluno = NEW.aluno
+              AND I2.disciplina &lt;&gt; I.disciplina
+       );
+
+    IF qtd_disciplinas &gt; 0 THEN
+        RAISE EXCEPTION 'Aluno já matriculado nessa disciplina com outro instrutor.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;</code></pre>
+  </div>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica</h2>
 
+  <h3>Tabela de Exemplo — LECIONA (antes da decomposição)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Aluno</th>
+        <th>Disciplina</th>
+        <th>Instrutor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ana</td>
+        <td>Banco de Dados</td>
+        <td>Navathe</td>
+      </tr>
+      <tr>
+        <td>Bruno</td>
+        <td>Banco de Dados</td>
+        <td>Navathe</td>
+      </tr>
+      <tr>
+        <td>Ana</td>
+        <td>Sistemas Operacionais</td>
+        <td>Date</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="tip-box">
+    <h4>Observe</h4>
+    <p>
+      A informação de que cada instrutor leciona apenas uma disciplina fica repetida em todas as linhas de suas
+      matrículas — é essa redundância que gera as anomalias de inserção e exclusão.
+    </p>
+  </div>
 
+  <h3>Análise das Dependências Funcionais e Chaves Candidatas</h3>
+  <div class="code-container">
+    <pre><code class="language-plaintext">DF1: (Aluno, Disciplina) → Instrutor   (determinante = chave candidata OK)
+DF2: Instrutor → Disciplina            (determinante NÃO é superchave - VIOLAÇÃO)
 
+Chaves Candidatas:
+CK1 = {Aluno, Disciplina}
+CK2 = {Aluno, Instrutor}
 
+Atributos primos: Aluno, Disciplina e Instrutor (todos os atributos)</code></pre>
+  </div>
 
+  <h3>Diagrama ER — Esquema Normalizado (FNBC)</h3>
+  <div class="mermaid">
+    erDiagram
+    INSTRUCAO {
+        varchar instrutor PK
+        varchar disciplina
+    }
+    MATRICULA {
+        varchar aluno PK
+        varchar instrutor PK,FK
+    }
+    INSTRUCAO ||--o{ MATRICULA : "ministrada"
+  </div>
 
+  <h3>Fluxo da Verificação e Decomposição (3FN → FNBC)</h3>
+  <div class="mermaid">
+    flowchart TD
+    A["Tabela na 3FN"] --> B{Existe DF X → Y\ncom X não superchave?}
+    B -->|Não| C["Tabela já está\nna FNBC"]
+    B -->|Sim| D{Y é atributo\nprimo?}
+    D -->|Sim| E["Caso clássico:\nchaves candidatas sobrepostas\n(3FN OK, FNBC violada)"]
+    D -->|Não| F["Viola também a 3FN\n(dependência transitiva)"]
+    E --> G["Decompor via projeção:\ntabela do determinante (X → Y)\n+ tabela restante"]
+    F --> G
+    G --> H["Verificar FNBC\nde cada tabela resultante"]
+    H --> C
+  </div>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>Regra de ouro da FNBC:</strong> "Todos os determinantes devem ser chaves candidatas" — sem exceções,
+      nem para atributos primos.</li>
+    <li><strong>Hierarquia:</strong> Toda tabela na FNBC está na 3FN, mas nem toda tabela na 3FN está na FNBC. A FNBC
+      é estritamente mais rigorosa.</li>
+    <li><strong>Quando suspeitar:</strong> Múltiplas chaves candidatas + compostas + sobrepostas é o cenário clássico
+      de tabela em 3FN que viola a FNBC.</li>
+    <li><strong>Trade-off:</strong> A decomposição para FNBC pode perder a validação declarativa de alguma
+      dependência funcional, exigindo triggers ou procedures para garantir a consistência.</li>
+    <li><strong>Sequência lógica:</strong> 1FN (multivalorados) → 2FN (dependências parciais) → 3FN (dependências
+      transitivas) → FNBC (todo determinante deve ser superchave).</li>
+    <li><strong>Próxima aula:</strong> Aula 27 — Quarta Forma Normal (4FN) e Quinta Forma Normal (5FN): visão geral de
+      dependências multivaloradas.</li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li><strong>Instituições de ensino:</strong> Ao modelar alocação de professores, turmas e alunos, verifique se há
+      mais de uma chave candidata composta compartilhando atributos — se houver, aplique a decomposição FNBC.</li>
+    <li><strong>Sistemas de agendamento:</strong> Tabelas como AGENDAMENTO(Cliente, Servico, Profissional) frequentemente
+      escondem determinantes que não são superchaves; audite as dependências funcionais antes de implementar.</li>
+    <li><strong>Revisão de modelos legados:</strong> Liste todas as chaves candidatas da tabela; se existirem DFs cujo
+      determinante não está em nenhuma delas, a tabela precisa ser desmembrada.</li>
+    <li><strong>Planejamento de integridade:</strong> Antes de decompor, documente quais dependências deixarão de ser
+      validáveis por chaves estrangeiras e preveja triggers ou procedures de compensação.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. <em>Database System Concepts</em>. 7. ed. New York:
+      McGraw-Hill, 2020.</li>
+    <li>MACHADO, Felipe Nery Rodrigues. <em>Projeto e implementação de banco de dados</em>. 3. ed. São Paulo: Érica,
+      2014.</li>
+    <li>HEUSER, Carlos Alberto. <em>Projeto de Banco de Dados</em>. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. <em>Introdução a Banco de Dados</em>.
+      São Paulo: DCC-IME-USP, 2005.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Decomposição de Tabela com Chaves Candidatas Sobrepostas</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
+</section>

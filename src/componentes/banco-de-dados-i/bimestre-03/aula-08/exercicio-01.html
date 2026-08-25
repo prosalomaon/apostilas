@@ -1,23 +1,273 @@
 ---
 layout: exercicio
-title: "Entrega de Projeto 1: Diagrama Conceitual (MER) de um cenário de pequeno porte."
+title: "Relatório de Normalização — Projeto TechShop"
 exercicio_numero: "01"
-08ero: "08"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 08."
+aula_numero: "28"
+subject: "banco-de-dados-i"
+description: "Ficha de resposta do Projeto 3: normalização completa do Tabelão da TechShop (1FN, 2FN, 3FN). O aluno deve preencher cada seção com sua análise e entregar o relatório."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
+<section class="section-box">
+  <h2>1. Identificação do Aluno</h2>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Nome:</strong> _______________________________________________</li>
+    <li><strong>RA:</strong> _______________________________________________</li>
+    <li><strong>Data de entrega:</strong> _______________________________________________</li>
   </ul>
-</div>
+  <div class="tip-box">
+    <h4>Instruções</h4>
+    <ul>
+      <li>Consulte o enunciado completo e os dados do Tabelão na <strong>Aula 28</strong> (index.html).</li>
+      <li>Preencha cada seção deste relatório com sua análise.</li>
+      <li>O relatório deve ser entregue em PDF ou DOCX.</li>
+      <li>Inclua o script SQL executado e o resultado da consulta JOIN como evidência.</li>
+    </ul>
+  </div>
+</section>
 
+<section class="section-box">
+  <h2>2. Dependências Funcionais</h2>
+  <p>
+    Liste formalmente todas as dependências funcionais que você identificou no Tabelão da TechShop. Utilize a notação
+    <code class="one-line-code">Determinante → Dependente(s)</code>.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Dependência Funcional</th>
+        <th>Tipo (Total / Parcial / Transitiva)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>DF1</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF2</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF3</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF4</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF5</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF6</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
 
+<section class="section-box">
+  <h2>3. Primeira Forma Normal (1FN)</h2>
 
+  <h3>3.1 Identificação do Problema</h3>
+  <p>Quais colunas do Tabelão violam a 1FN? Justifique.</p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
 
+  <h3>3.2 Chave Primária Composta</h3>
+  <p>Qual é a chave primária composta da tabela em 1FN? Por que essa escolha?</p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
 
+  <h3>3.3 Esquema Relacional em 1FN</h3>
+  <p>Escreva a estrutura da(s) tabela(s) resultante(s) em notação textual:</p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">TABELA_1FN(
+    
+)</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. Segunda Forma Normal (2FN)</h2>
+
+  <h3>4.1 Dependências Parciais</h3>
+  <p>
+    Para cada DF listada na seção 2, indique se o determinante é <strong>parte</strong> da chave composta (violando a
+    2FN) ou se é a chave completa (dependência total, OK).
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>DF</th>
+        <th>Determinante é parte da PK?</th>
+        <th>Viola a 2FN?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>DF1</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF2</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF3</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF4</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>DF5</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 Esquema Relacional em 2FN</h3>
+  <p>Separe as dependências parciais em tabelas próprias. Escreva o esquema resultante com PKs e FKs:</p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">TABELA_A(
+    
+)
+
+TABELA_B(
+    
+)</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>5. Terceira Forma Normal (3FN)</h2>
+
+  <h3>5.1 Dependências Transitivas</h3>
+  <p>Em cada tabela da 2FN, identifique se existem dependências transitivas. Justifique.</p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
+
+  <h3>5.2 Verificação da FNBC</h3>
+  <p>O esquema resultante em 3FN também atende à Forma Normal de Boyce-Codd? Justifique.</p>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
+
+  <h3>5.3 Esquema Relacional Final (3FN / FNBC)</h3>
+  <p>Escreva o esquema relacional completo, com todas as tabelas, PKs e FKs:</p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">CLIENTES(
+    PK:
+)
+
+VENDEDORES(
+    PK:
+)
+
+PRODUTOS(
+    PK:
+)
+
+PEDIDOS(
+    PK:
+    FK:
+)
+
+ITENS_PEDIDO(
+    PK:
+    FK:
+)</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>6. Script DDL e Validação</h2>
+
+  <h3>6.1 Comandos CREATE TABLE</h3>
+  <p>
+    Escreva os comandos SQL (<code class="one-line-code">CREATE TABLE</code>) para todas as tabelas resultantes da
+    normalização. Inclua chaves primárias, estrangeiras e restrições.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Seu código CREATE TABLE aqui</code></pre>
+  </div>
+
+  <h3>6.2 Comandos INSERT INTO</h3>
+  <p>Insira a amostra de dados do Tabelão original nas novas tabelas:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Seu código INSERT INTO aqui</code></pre>
+  </div>
+
+  <h3>6.3 Consulta JOIN de Validação</h3>
+  <p>
+    Elabore uma consulta <code class="one-line-code">SELECT ... JOIN</code> que reconstrua a visão completa do Tabelão
+    original a partir das tabelas normalizadas. Anexe o resultado da execução como evidência.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Seu código SELECT JOIN aqui</code></pre>
+  </div>
+
+  <h3>6.4 Resultado da Consulta (Evidência)</h3>
+  <p>_______________________________________________________________</p>
+  <p>_______________________________________________________________</p>
+  <p>(Anexar print ou resultado copiado do SGBD)</p>
+</section>
+
+<section class="section-box">
+  <h2>7. Resumo da Decomposição</h2>
+  <p>
+    Preencha a tabela abaixo resumindo cada etapa da normalização:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Forma Normal</th>
+        <th>Problema Identificado</th>
+        <th>Ação Tomada</th>
+        <th>Nº de Tabelas Resultantes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1FN</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>2FN</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>3FN</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>FNBC</strong></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
