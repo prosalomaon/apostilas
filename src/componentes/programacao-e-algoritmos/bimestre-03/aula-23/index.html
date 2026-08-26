@@ -489,7 +489,7 @@ if (tentativa.equals(senhaCorreta)) {
   <div class="mermaid">
     flowchart TD
         Start([Início]) --> Input[/Ler e-mail/]
-        Input --> Search{indexOf("@") != -1?}
+        Input --> Search{indexOf arroba != -1?}
         Search -- Sim --> Valid([E-mail válido])
         Search -- Não --> Invalid([E-mail inválido])
   </div>
