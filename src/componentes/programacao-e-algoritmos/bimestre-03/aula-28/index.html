@@ -1,57 +1,325 @@
 ---
-title: "Projeto 3: Sistema Modularizado com Vetores"
+title: "Projeto 3: Sistema de Gerenciamento de Estoque"
 aula_numero: "28"
-description: "Aplicação prática de modularização e arrays."
+description: "Projeto integrador: aplicação prática de vetores, matrizes, strings e modularização em Java."
 tags:
   - aula
   - "bimestre-03"
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 28 em desenvolvimento...</p>
+  <h2>1. Visão Geral do Projeto</h2>
+  <p>
+    Este projeto integra todos os conteúdos estudados no terceiro bimestre:
+    <strong>vetores</strong>, <strong>matrizes</strong>,
+    <strong>Strings</strong> e <strong>modularização</strong> (funções com
+    parâmetros e retorno). Você irá construir um sistema completo de
+    gerenciamento de estoque para uma loja de materiais escolares.
+  </p>
+
+  <h3>Objetivos de Aprendizagem</h3>
+  <ul>
+    <li>
+      Aplicar <strong>vetores</strong> para armazenar listas de produtos e
+      preços.
+    </li>
+    <li>
+      Utilizar <strong>matrizes</strong> para controlar entradas e saídas ao
+      longo do tempo.
+    </li>
+    <li>
+      Manipular <strong>Strings</strong> para cadastro e exibição de
+      informações.
+    </li>
+    <li>
+      Estruturar o programa com <strong>funções modulares</strong> reutilizáveis.
+    </li>
+    <li>
+      Praticar a <strong>comunicação entre módulos</strong> via parâmetros e
+      retorno.
+    </li>
+    <li>
+      Compreender o <strong>escopo</strong> de variáveis locais e globais.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>2. Preparação</h2>
+  <ul>
+    <li>
+      <strong>Ambiente:</strong> utilize o VS Code (com extensão Java) ou um
+      compilador Java online (ex: OnlineGDB).
+    </li>
+    <li>
+      <strong>Conhecimento Prévio:</strong> vetores, matrizes, Strings,
+      funções com parâmetros e retorno, escopo de variáveis.
+    </li>
+    <li>
+      Crie a classe
+      <code class="one-line-code">SistemaEstoque</code>.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Estrutura do Sistema</h2>
+  <p>O sistema será composto por módulos (funções) que realizam tarefas específicas:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Módulo</th>
+        <th>Responsabilidade</th>
+        <th>Conteúdo Utilizado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">cadastrarProdutos()</code></td>
+        <td>Preencher vetores de nomes, preços e quantidades</td>
+        <td>Vetores, Strings, Entrada de dados</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">exibirEstoque()</code></td>
+        <td>Listar todos os produtos com suas informações</td>
+        <td>Vetores, Laços, Strings</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">registrarEntrada()</code></td>
+        <td>Adicionar quantidade a um produto existente</td>
+        <td>Vetores, Busca sequencial</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">registrarSaida()</code></td>
+        <td>Remover quantidade de um produto (com validação)</td>
+        <td>Vetores, Condicionais</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">buscarProduto()</code></td>
+        <td>Encontrar um produto pelo nome</td>
+        <td>Vetores, Strings (.equals, .toLowerCase)</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">calcularValorTotal()</code></td>
+        <td>Retornar o valor total do estoque</td>
+        <td>Vetores, Função com retorno</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">relatorioMensal()</code></td>
+        <td>Exibir movimentação do mês usando matriz</td>
+        <td>Matrizes, Laços aninhados</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>4. Estrutura de Dados</h2>
+  <p>Os dados do sistema serão armazenados em vetores paralelos e uma matriz:</p>
+
   <div class="code-container">
-    <pre><code class="language-java">// Em breve...</code></pre>
+    <pre><code class="language-java">// Vetores paralelos (cada índice representa um produto)
+String[] nomes = new String[5];      // Nomes dos produtos
+double[] precos = new double[5];     // Preços unitários
+int[] quantidades = new int[5];      // Quantidade em estoque
+
+// Matriz de movimentação (produto x mês)
+// movimentacao[produto][mes] = quantidade movimentada no mês
+int[][] movimentacao = new int[5][12]; // 5 produtos, 12 meses</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
-  <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+  <h2>5. Código Base</h2>
+  <p>
+    Este código já possui a estrutura do menu principal. Sua missão é implementar
+    todas as funções que estão vazias.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">import java.util.Scanner;
+
+public class SistemaEstoque {
+    static Scanner leitor = new Scanner(System.in);
+    static final int MAX_PRODUTOS = 5;
+
+    public static void main(String[] args) {
+        String[] nomes = new String[MAX_PRODUTOS];
+        double[] precos = new double[MAX_PRODUTOS];
+        int[] quantidades = new int[MAX_PRODUTOS];
+        int[][] movimentacao = new int[MAX_PRODUTOS][12];
+
+        int opcao;
+        do {
+            System.out.println("\n=== SISTEMA DE ESTOQUE ===");
+            System.out.println("1. Cadastrar produtos");
+            System.out.println("2. Exibir estoque");
+            System.out.println("3. Registrar entrada");
+            System.out.println("4. Registrar saída");
+            System.out.println("5. Buscar produto");
+            System.out.println("6. Valor total do estoque");
+            System.out.println("7. Relatório mensal");
+            System.out.println("0. Sair");
+            System.out.print("Opção: ");
+            opcao = leitor.nextInt();
+            leitor.nextLine();
+
+            switch (opcao) {
+                case 1: cadastrarProdutos(nomes, precos, quantidades); break;
+                case 2: exibirEstoque(nomes, precos, quantidades); break;
+                case 3: registrarEntrada(nomes, quantidades, movimentacao); break;
+                case 4: registrarSaida(nomes, quantidades, movimentacao); break;
+                case 5: buscarProduto(nomes, precos, quantidades); break;
+                case 6:
+                    double total = calcularValorTotal(precos, quantidades);
+                    System.out.printf("Valor total do estoque: R$ %.2f%n", total);
+                    break;
+                case 7: relatorioMensal(nomes, movimentacao); break;
+                case 0: System.out.println("Saindo do sistema..."); break;
+                default: System.out.println("Opção inválida!");
+            }
+        } while (opcao != 0);
+
+        leitor.close();
+    }
+
+    // Implemente as funções abaixo
+
+    static void cadastrarProdutos(String[] nomes, double[] precos, int[] quantidades) {
+        // TODO: implementar
+    }
+
+    static void exibirEstoque(String[] nomes, double[] precos, int[] quantidades) {
+        // TODO: implementar
+    }
+
+    static void registrarEntrada(String[] nomes, int[] quantidades, int[][] movimentacao) {
+        // TODO: implementar
+    }
+
+    static void registrarSaida(String[] nomes, int[] quantidades, int[][] movimentacao) {
+        // TODO: implementar
+    }
+
+    static void buscarProduto(String[] nomes, double[] precos, int[] quantidades) {
+        // TODO: implementar
+    }
+
+    static double calcularValorTotal(double[] precos, int[] quantidades) {
+        // TODO: implementar
+        return 0;
+    }
+
+    static void relatorioMensal(String[] nomes, int[][] movimentacao) {
+        // TODO: implementar
+    }
+}</code></pre>
   </div>
+</section>
+
+<section class="section-box">
+  <h2>6. O Desafio</h2>
+  <p>Implemente cada função seguindo as especificações:</p>
+  <ul>
+    <li>
+      <strong>cadastrarProdutos():</strong> peça ao usuário o nome, preço e
+      quantidade de cada produto. Preencha os 3 vetores.
+    </li>
+    <li>
+      <strong>exibirEstoque():</strong> exiba uma tabela formatada com todos
+      os produtos, mostrando nome, preço e quantidade.
+    </li>
+    <li>
+      <strong>registrarEntrada():</strong> peça o nome do produto e a
+      quantidade a adicionar. Use busca sequencial para encontrar o índice.
+      Atualize a matriz de movimentação no mês atual (use 0 como mês
+      fixo para simplificar).
+    </li>
+    <li>
+      <strong>registrarSaida():</strong> peça o nome do produto e a quantidade
+      a remover. Valide se há estoque suficiente. Atualize a matriz.
+    </li>
+    <li>
+      <strong>buscarProduto():</strong> peça o nome e use
+      <code class="one-line-code">.toLowerCase()</code> e
+      <code class="one-line-code">.equals()</code> para busca
+      case-insensitive.
+    </li>
+    <li>
+      <strong>calcularValorTotal():</strong> retorne a soma de
+      (preço × quantidade) de todos os produtos.
+    </li>
+    <li>
+      <strong>relatorioMensal():</strong> exiba a matriz de movimentação
+      formatada com nomes nas linhas e meses nas colunas.
+    </li>
+  </ul>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>7. Orientações Finais</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Teste passo a passo:</strong> implemente e teste cada função
+      antes de passar para a próxima.
+    </li>
+    <li>
+      <strong>Validação:</strong> ao registrar saída, verifique se
+      <code class="one-line-code">quantidades[i] >= quantidadeSolicitada</code>.
+    </li>
+    <li>
+      <strong>Escalação mínima:</strong> implemente pelo menos 4 funções para
+      nota mínima. Todas para nota máxima.
+    </li>
+    <li>
+      <strong>Saída esperada:</strong> para a opção 2, a saída deve ser
+      semelhante a:
+    </li>
   </ul>
+  <div class="code-container">
+    <pre><code class="language-text">=== ESTOQUE ATUAL ===
+Produto          Preço     Qtd
+Canetas        R$ 2.50     100
+Lápis          R$ 1.00     200
+Borracha       R$ 0.75     150
+Caderno       R$ 15.00      50
+Estojo        R$ 25.00      30</code></pre>
+  </div>
 </div>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <h2>8. Requisitos Funcionais</h2>
+  <ol>
+    <li>Cadastro de até 5 produtos (nome, preço e quantidade).</li>
+    <li>Exibição formatada de todos os produtos em estoque.</li>
+    <li>Registro de entradas e saídas com atualização de quantidade.</li>
+    <li>Busca de produto por nome (case-insensitive).</li>
+    <li>Cálculo do valor total do estoque.</li>
+    <li>Relatório mensal de movimentação usando matriz.</li>
+    <li>Menu interativo com loop até o usuário escolher sair.</li>
+  </ol>
 </section>
 
 <section class="section-box">
-  <h2>Referências</h2>
+  <h2>9. Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      <a
+        href="https://docs.oracle.com/javase/tutorial/java/javaOO/methods.html"
+        >Java Tutorials — Methods</a
+      >
+    </li>
+    <li>
+      <a
+        href="https://www.w3schools.com/java/java_arrays.asp"
+        >W3School — Java Arrays</a
+      >
+    </li>
+    <li>
+      <a
+        href="https://www.w3schools.com/java/java_arrays_multi.asp"
+        >W3School — Java Multidimensional Arrays</a
+      >
+    </li>
   </ul>
 </section>
-
-<section class="section-box">
-  <h2>Para Praticar</h2>
-  <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
-  </ul>
-</section>
-

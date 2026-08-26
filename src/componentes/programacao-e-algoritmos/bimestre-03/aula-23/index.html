@@ -148,6 +148,11 @@ System.out.println(texto.length()); // 4 (método funcionando)</code></pre>
         <td>Retorna a posição onde um texto começa dentro de outro.</td>
       </tr>
       <tr>
+        <td>Limpeza</td>
+        <td><code class="one-line-code">.trim()</code></td>
+        <td>Remove espaços em branco no início e no fim do texto.</td>
+      </tr>
+      <tr>
         <td>Transformação</td>
         <td><code class="one-line-code">.toUpperCase()</code></td>
         <td>Converte todo o texto para letras maiúsculas.</td>
@@ -230,7 +235,37 @@ int nada = frase.indexOf("Python");
 System.out.println(nada); // -1 (não encontrou)</code></pre>
   </div>
 
-  <h4>5.6. <code class="one-line-code">.toUpperCase()</code> e
+  <h4>5.6. <code class="one-line-code">.trim()</code> — Limpeza de Espaços</h4>
+  <p>
+    Remove todos os espaços em branco (espaços, tabs, quebras de linha) do
+    <strong>início</strong> e do <strong>fim</strong> da string. É extremamente
+    útil quando o usuário digita dados com espaços acidentais, como
+    <code class="one-line-code">"  João  "</code>.
+  </p>
+  <p>
+    IMPORTANTE: o <code class="one-line-code">.trim()</code> NÃO remove espaços
+    do <strong>meio</strong> do texto — apenas das pontas.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">String nome = "   João   ";
+
+System.out.println("Antes: [" + nome + "]");
+System.out.println("Tamanho antes: " + nome.length()); // 11
+
+String limpo = nome.trim();
+
+System.out.println("Depois: [" + limpo + "]");
+System.out.println("Tamanho depois: " + limpo.length()); // 4
+
+// Comparação que falha sem trim
+String digitado = "  senha123  ";
+String correto = "senha123";
+
+System.out.println(digitado.equals(correto));          // false!
+System.out.println(digitado.trim().equals(correto));    // true</code></pre>
+  </div>
+
+  <h4>5.7. <code class="one-line-code">.toUpperCase()</code> e
     <code class="one-line-code">.toLowerCase()</code> — Transformação</h4>
   <p>
     Converte toda a string para maiúsculas ou minúsculas. Como Strings são

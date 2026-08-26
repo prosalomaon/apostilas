@@ -111,11 +111,15 @@ src/componentes/[slug-do-componente]/
 │   │   ├── index.html          # Conteúdo da aula
 │   │   ├── exercicio-01.html   # Exercício prático (layout: exercicio)
 │   │   └── exercicio-02.html   # Questionário (layout: questionario)
+│   ├── aula-08/                # Aula de Projeto (8ª aula do bimestre)
+│   │   └── index.html          # Apenas index — é o enunciado do projeto
 │   └── ...
 ├── bimestre-02/
 │   └── ...
 └── ...
 ```
+
+> **Nota:** aulas de projeto (8ª aula de cada bimestre) possuem apenas `index.html`, sem exercícios.
 
 ### Bimestres globais
 
@@ -345,7 +349,94 @@ description: "Breve resumo da atividade"
 </div>
 ```
 
-### 5. Questionário (`exercicio-02.html`, layout `questionario`)
+### 5. Aula de Projeto (`aula-XX/index.html`, sem exercícios)
+
+As aulas de projeto são **entregas integradoras** que ocorrem na **8ª aula de cada bimestre** (aulas 08, 18, 28, 38). Elas consolidam os conteúdos aprendidos ao longo do bimestre em um projeto prático.
+
+> **Regra:** aulas de projeto possuem **apenas o `index.html`** — não possuem `exercicio-01.html` nem `exercicio-02.html`. O próprio `index.html` é o enunciado do projeto.
+
+#### Metadados (front matter)
+
+```yaml
+---
+title: "Projeto X: Nome do Projeto"
+aula_numero: "28"
+description: "Descrição do projeto integrador."
+tags:
+  - aula
+  - bimestre-03
+---
+```
+
+#### Seções obrigatórias
+
+| Seção | Descrição |
+| :--- | :--- |
+| **Visão Geral do Projeto** | Objetivo do projeto e objetivos de aprendizagem. |
+| **Preparação** | Ambiente, conhecimento prévio e arquivos necessários. |
+| **Estrutura do Sistema** | Tabela ou descrição dos módulos/components do projeto. |
+| **Código Base** | Snippet com a estrutura inicial que o aluno deve utilizar. |
+| **O Desafio** | Lista de tarefas específicas a serem implementadas. |
+| **Orientações Finais** | Dicas, validações e critérios de avaliação. |
+| **Requisitos Funcionais** | Lista numerada dos requisitos obrigatórios. |
+| **Referências** | Links de apoio. |
+
+#### Exemplo de estrutura
+
+```html
+<section class="section-box">
+  <h2>1. Visão Geral do Projeto</h2>
+  <p>Descrição do projeto...</p>
+  <h3>Objetivos de Aprendizagem</h3>
+  <ul>
+    <li>Objetivo 1...</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li>Ambiente...</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Código Base</h2>
+  <div class="code-container">
+    <pre><code class="language-java">...</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio</h2>
+  <ul>
+    <li>Tarefa 1...</li>
+  </ul>
+</section>
+
+<div class="tip-box">
+  <h4>5. Orientações Finais</h4>
+  <ul>
+    <li>Dica...</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>6. Requisitos Funcionais</h2>
+  <ol>
+    <li>Requisito 1...</li>
+  </ol>
+</section>
+```
+
+#### Regras importantes
+
+- **Aulas de projeto** são sempre a **8ª aula do bimestre** (aula 08, 18, 28, 38).
+- **Não possuem exercícios** — o `index.html` é o próprio enunciado/entrega.
+- **Não possuem** seções de "Exemplo de Código", "Representação Gráfica" ou "Como aplicar na Prática" (diferente de aulas normais).
+- **Mantenha** as seções: Visão Geral, Preparação, Código Base, O Desafio, Orientações Finais, Requisitos e Referências.
+
+### 6. Questionário (`exercicio-02.html`, layout `questionario`)
 
 O questionário é renderizado pelo layout `questionario`, que já fornece o formulário interativo, a correção automática e o **código de autenticidade** (gerado a partir do nome do aluno, da sigla do componente e de um timestamp).
 
