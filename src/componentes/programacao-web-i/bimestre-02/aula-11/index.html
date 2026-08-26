@@ -1,7 +1,7 @@
 ---
 title: "Fundamentos do CSS"
 aula_numero: "11"
-description: "Inclusão (inline, interno, externo), seletores básicos (tipo, id, classe) e unidades de medida."
+description: "Inclusão (inline, interno, externo), seletores básicos (tipo, id, classe), unidades de medida, cascata e especificidade, tipos de display (block, inline, flex, grid) e DevTools."
 tags:
   - aula
   - bimestre-02
@@ -63,6 +63,55 @@ tags:
 </section>
 
 <section class="section-box">
+  <h2>2.1 Cascata e Especificidade</h2>
+  <p>Quando múltiplas regras CSS tentam estilizar o mesmo elemento, o navegador precisa decidir qual regra "vence". Isso
+    é resolvido através do sistema de <strong>Cascata</strong> e <strong>Especificidade</strong>.</p>
+  
+  <h3>O que é Cascata?</h3>
+  <p>A "cascata" (do inglês <em>cascade</em>, como água descendo por cachoeiras) é o algoritmo que o navegador usa para
+    resolver conflitos de estilos. A ordem de precedência, da menor para a maior, é:</p>
+  <ol>
+    <li><strong>Estilos do Navegador</strong> (user-agent stylesheet)</li>
+    <li><strong>CSS Externo</strong> (via <code class="one-line-code">&lt;link&gt;</code>)</li>
+    <li><strong>CSS Interno</strong> (via <code class="one-line-code">&lt;style&gt;</code>)</li>
+    <li><strong>CSS Inline</strong> (via atributo <code class="one-line-code">style=""</code>)</li>
+    <li><strong>!important</strong> (evite usar - quebra a cascata natural)</li>
+  </ol>
+
+  <h3>O que é Especificidade?</h3>
+  <p>Especificidade é um sistema de pontuação que determina qual seletor é mais "específico". Quanto mais específico o
+    seletor, maior sua precedência.</p>
+  
+  <div class="code-container">
+    <pre><code class="language-text">/* Especificidade: 0-0-1 (1 seletor de tipo) */
+p { color: blue; }
+
+/* Especificidade: 0-1-0 (1 classe) */
+.texto { color: red; }
+
+/* Especificidade: 1-0-0 (1 ID) */
+#destaque { color: green; }
+
+/* Resultado: O parágrafo será verde, pois ID vence */</code></pre>
+  </div>
+
+  <h3>Pontuação de Especificidade</h3>
+  <ul>
+    <li><strong>Seletor de Tipo</strong> (p, h1, div): 0-0-1</li>
+    <li><strong>Seletor de Classe</strong> (.classe): 0-1-0</li>
+    <li><strong>Seletor de ID</strong> (#id): 1-0-0</li>
+    <li><strong>Inline</strong>: 1-0-0-0</li>
+    <li><strong>!important</strong>: Quebra todas as regras (use com moderação)</li>
+  </ul>
+
+  <div class="tip-box">
+    <h4>Regra de Ouro</h4>
+    <p>Quando duas regras têm a especificidade igual, a que aparecer <strong>por último</strong> no CSS vence.
+      Isso é especialmente importante ao trabalhar com múltiplos arquivos CSS.</p>
+  </div>
+</section>
+
+<section class="section-box">
   <h2>3. Unidades de Medida</h2>
   <p>O CSS suporta diversas unidades para definir tamanhos de fontes, margens e dimensões:</p>
   <ul>
@@ -77,6 +126,101 @@ tags:
       </ul>
     </li>
   </ul>
+</section>
+
+<section class="section-box">
+  <h2>3.1 Tipos de Display</h2>
+  <p>A propriedade <code class="one-line-code">display</code> controla como um elemento é renderizado na página.
+    Entender os principais tipos é essencial para criar layouts funcionais.</p>
+
+  <h3>Display Block</h3>
+  <p>Ocupa toda a largura disponível, forçando quebra de linha antes e depois. É o padrão de tags como
+    <code class="one-line-code">&lt;div&gt;</code>, <code class="one-line-code">&lt;p&gt;</code> e
+    <code class="one-line-code">&lt;h1&gt;</code>.</p>
+  <div class="code-container">
+    <pre><code class="language-css">.bloco {
+  display: block;
+  width: 200px;
+  height: 100px;
+  background-color: lightblue;
+  margin-bottom: 10px; /* Empilha verticalmente */
+}</code></pre>
+  </div>
+
+  <h3>Display Inline</h3>
+  <p>Flui dentro do texto sem quebrar linha. Não respeita <code class="one-line-code">width</code> e
+    <code class="one-line-code">height</code> definidos. É o padrão de <code class="one-line-code">&lt;span&gt;</code>,
+    <code class="one-line-code">&lt;a&gt;</code> e <code class="one-line-code">&lt;strong&gt;</code>.</p>
+  <div class="code-container">
+    <pre><code class="language-css">.inline {
+  display: inline;
+  background-color: lightyellow;
+  padding: 5px; /* Funciona */
+  width: 200px; /* NÃO funciona em inline */
+}</code></pre>
+  </div>
+
+  <h3>Display Inline-Block</h3>
+  <p>Combina o melhor dos dois mundos: flui inline mas respeita dimensões. Ideal para botões e cards que ficam lado a lado.</p>
+  <div class="code-container">
+    <pre><code class="language-css">.card {
+  display: inline-block;
+  width: 200px;
+  height: 150px;
+  background-color: lightcoral;
+  margin: 10px;
+  padding: 15px;
+}</code></pre>
+  </div>
+
+  <h3>Display Flex</h3>
+  <p>O <strong>Flexbox</strong> é o modelo de layout moderno para distribuir espaço entre itens. Ideal para layouts responsivos.</p>
+  <div class="code-container">
+    <pre><code class="language-css">.container {
+  display: flex;
+  justify-content: space-between; /* Espaço igual entre itens */
+  align-items: center;            /* Alinha verticalmente */
+  gap: 20px;                      /* Espaço entre itens */
+}
+
+.item {
+  flex: 1; /* Cada item ocupa espaço igual */
+  padding: 20px;
+  background-color: lightgreen;
+}</code></pre>
+  </div>
+
+  <h3>Display Grid</h3>
+  <p>O <strong>CSS Grid</strong> é um sistema de layout bidimensional que permite organizar elementos em linhas e
+    colunas. Diferente do Flexbox (unidimensional), o Grid é ideal para layouts complexos como galerias e dashboards.</p>
+  <div class="code-container">
+    <pre><code class="language-css">.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colunas iguais */
+  gap: 20px;                             /* Espaço entre itens */
+}
+
+.grid-item {
+  padding: 20px;
+  background-color: lightblue;
+  border: 1px solid #ccc;
+}</code></pre>
+  </div>
+
+  <h3>Comparação Visual</h3>
+  <div class="mermaid">
+    graph LR
+    A[Display] --> B[Block]
+    A --> C[Inline]
+    A --> D[Inline-Block]
+    A --> E[Flex]
+    A --> F[Grid]
+    B --> G[Ocupa largura total]
+    C --> H[Flui no texto]
+    D --> I[Inline + dimensões]
+    E --> J[Layout 1D]
+    F --> K[Layout 2D]
+  </div>
 </section>
 
 <section class="section-box">
@@ -154,7 +298,36 @@ body {
 </div>
 
 <section class="section-box">
-  <h2>6. Como aplicar na Prática</h2>
+  <h2>6. Ferramentas de Desenvolvimento (DevTools)</h2>
+  <p>Os navegadores modernos possuem ferramentas integradas que são indispensáveis para desenvolvedores CSS.</p>
+
+  <h3>Como Acessar</h3>
+  <ul>
+    <li><strong>Chrome/Edge:</strong> <code class="one-line-code">F12</code> ou <code class="one-line-code">Ctrl+Shift+I</code></li>
+    <li><strong>Firefox:</strong> <code class="one-line-code">F12</code> ou <code class="one-line-code">Ctrl+Shift+I</code></li>
+  </ul>
+
+  <h3>Recursos Essenciais para CSS</h3>
+  <ul>
+    <li><strong>Painel "Elements":</strong> Mostra a árvore DOM e permite inspecionar estilos aplicados a cada elemento em tempo real.</li>
+    <li><strong>Caixa de Modelo:</strong> Clique em qualquer elemento para ver visualmente margin, border, padding e content.</li>
+    <li><strong>Edição em Tempo Real:</strong> Clique diretamente no valor de uma propriedade CSS para editá-la instantaneamente.</li>
+    <li><strong>Classes Adicionais:</strong> Clique em <code class="one-line-code">.cls</code> para adicionar/remover classes e testar efeitos.</li>
+    <li><strong>Media Queries:</strong> Ative o modo responsivo (<code class="one-line-code">Ctrl+Shift+M</code>) para testar em diferentes tamanhos de tela.</li>
+  </ul>
+
+  <div class="tip-box">
+    <h4>Console CSS</h4>
+    <p>Você pode aplicar estilos diretamente no console! Digite algo como:</p>
+    <div class="code-container">
+      <pre><code class="language-javascript">document.body.style.backgroundColor = 'red';</code></pre>
+    </div>
+    <p>Isso é útil para testes rápidos, mas lembre: sempre faça as alterações permanentes nos arquivos CSS.</p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>7. Como aplicar na Prática</h2>
   <ul>
     <li><strong>Identidade Visual:</strong> Definir as cores institucionais de uma empresa (como o azul da MusicDot) em
       um único arquivo CSS para que todo o site seja atualizado instantaneamente.</li>
@@ -168,16 +341,20 @@ body {
 </section>
 
 <section class="section-box">
-  <h2>7. Referências</h2>
+  <h2>8. Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li><a href="https://developer.mozilla.org/pt-BR/docs/Web/CSS" target="_blank">MDN Web Docs - CSS (Cascading Style Sheets)</a> - Documentação oficial completa.</li>
+    <li><a href="https://www.w3schools.com/css/" target="_blank">W3Schools - CSS Tutorial</a> - Tutoriais interativos com exemplos práticos.</li>
+    <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank">CSS-Tricks - A Complete Guide to Flexbox</a> - Guia visual completo sobre Flexbox.</li>
+    <li><a href="https://css-tricks.com/snippets/css/complete-guide-grid/" target="_blank">CSS-Tricks - A Complete Guide to Grid</a> - Guia visual completo sobre CSS Grid.</li>
+    <li><a href="https://developer.chrome.com/docs/devtools/css/" target="_blank">Chrome DevTools - Edit CSS</a> - Documentação oficial sobre DevTools para CSS.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Criando um Layout com Seletores CSS</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário - Fundamentos do CSS</a></li>
   </ul>
 </section>

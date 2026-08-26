@@ -1,18 +1,230 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Mapeamento ORM"
+title: "Exercício 01 — Mapeamento ORM: Hibernate (Java) e Drizzle (TypeScript)"
 exercicio_numero: "01"
 aula_numero: "27"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 27."
+description: "Atividade prática sobre mapeamento 1:N e Herança via ORM com Hibernate e Drizzle, comparando com driver de abstração."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você é responsável por implementar a camada de persistência de um sistema de gerenciamento de usuários.
+    O sistema possui dois tipos de usuários: <strong>Aluno</strong> (com atributo exclusivo <code class="one-line-code">matricula</code>)
+    e <strong>Professor</strong> (com atributo exclusivo <code class="one-line-code">siape</code>). Ambos herdam da classe
+    <code class="one-line-code">Usuario</code> (com atributos <code class="one-line-code">nome</code> e <code class="one-line-code">email</code>).
+    Além disso, cada usuário pode possuir múltiplos <strong>Telefones</strong> (associação 1:N).
+  </p>
+  <p>
+    Implemente o mapeamento utilizando a abordagem de <strong>Tabela Única (Single Table)</strong> para a herança,
+    primeiro com um ORM (<strong>Hibernate</strong> ou <strong>Drizzle</strong>), depois compare com o equivalente via <strong>driver de abstração</strong> (JDBC ou PDO).
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Parte 1 — Classes do Domínio</h2>
+  <p>Complete as classes Java representando o modelo de domínio descrito no enunciado:</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class Usuario {
+    private Long id;
+    private String nome;
+    private String email;
+    // Getters e Setters
+}
+
+public class Aluno extends Usuario {
+    private String matricula;
+}
+
+public class Professor extends Usuario {
+    private String siape;
+}
+
+public class Telefone {
+    private Long id;
+    private String numero;
+    private Usuario usuario; // Referência ao objeto
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Parte 2 — Mapeamento com Hibernate (ORM)</h2>
+  <p>
+    Anote as classes com as anotações JPA/Hibernate para implementar a herança por <strong>Tabela Única (Single Table)</strong>
+    e a associação 1:N com <code class="one-line-code">@OneToMany</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Complete as anotações nas classes
+@Entity
+@Table(name = "usuario")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo")
+public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String nome;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List&lt;Telefone&gt; telefones = new ArrayList&lt;&gt;();
+}
+
+@Entity
+@DiscriminatorValue("A")
+public class Aluno extends Usuario {
+    @Column(length = 20)
+    private String matricula;
+}
+
+@Entity
+@DiscriminatorValue("P")
+public class Professor extends Usuario {
+    @Column(length = 20)
+    private String siape;
+}
+
+@Entity
+@Table(name = "telefone")
+public class Telefone {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 20)
+    private String numero;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Parte 3 — Mapeamento com Drizzle ORM (TypeScript)</h2>
+  <p>
+    Defina o schema equivalente em Drizzle utilizando <code class="one-line-code">pgTable</code> e a abordagem de Tabela Única com coluna discriminadora:
+  </p>
+  <div class="code-container">
+    <pre><code class="languagetypescript">import { pgTable, serial, varchar, char } from "drizzle-orm/pg-core";
+
+// Tabela única para herança
+export const usuario = pgTable("usuario", {
+    id: serial("id_usuario").primaryKey(),
+    nome: varchar("nome", { length: 100 }).notNull(),
+    email: varchar("email", { length: 100 }).notNull().unique(),
+    tipo: char("tipo", { length: 1 }).notNull(), // 'A' ou 'P'
+    matricula: varchar("matricula", { length: 20 }),
+    siape: varchar("siape", { length: 20 }),
+});
+
+export const telefone = pgTable("telefone", {
+    id: serial("id_telefone").primaryKey(),
+    numero: varchar("numero", { length: 20 }).notNull(),
+    idUsuario: serial("id_usuario").notNull().references(() => usuario.id),
+});</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Parte 4 — Inserção com ORM vs. Driver de Abstração</h2>
+  <p>Compare a inserção via Hibernate (ORM) com JDBC (driver):</p>
+  <div class="code-container">
+    <pre><code class="language-java">// Hibernate (ORM) — sem SQL manual
+Session session = sessionFactory.openSession();
+Transaction tx = session.beginTransaction();
+
+Aluno aluno = new Aluno();
+aluno.setNome("Ana Souza");
+aluno.setEmail("ana.souza@etec.sp.gov.br");
+aluno.setMatricula("2025001234");
+session.save(aluno); // INSERT gerado automaticamente
+
+Telefone tel1 = new Telefone();
+tel1.setNumero("(11) 99876-5432");
+tel1.setUsuario(aluno);
+session.save(tel1);
+
+tx.commit();</code></pre>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-java">// JDBC (Driver) — SQL explícito, sem mapeamento
+Connection conn = DriverManager.getConnection(url, user, pass);
+conn.setAutoCommit(false);
+
+PreparedStatement stmt = conn.prepareStatement(
+    "INSERT INTO usuario (nome, email, tipo, matricula) VALUES (?, ?, 'A', ?)",
+    Statement.RETURN_GENERATED_KEYS
+);
+stmt.setString(1, "Ana Souza");
+stmt.setString(2, "ana.souza@etec.sp.gov.br");
+stmt.setString(3, "2025001234");
+stmt.executeUpdate();
+
+ResultSet rs = stmt.getGeneratedKeys();
+rs.next();
+long idUsuario = rs.getLong(1);
+
+PreparedStatement telStmt = conn.prepareStatement(
+    "INSERT INTO telefone (numero, id_usuario) VALUES (?, ?)"
+);
+telStmt.setString(1, "(11) 99876-5432");
+telStmt.setLong(2, idUsuario);
+telStmt.executeUpdate();
+
+conn.commit();</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Resumo da Decomposição</h2>
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Regra de Transposição</th>
+          <th>ORM (Hibernate/Drizzle)</th>
+          <th>Driver (JDBC/PDO)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Identity (PK)</strong></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>Herança (Single Table)</strong></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>Coluna Discriminadora</strong></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>Associação 1:N</strong></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Leia atentamente o enunciado antes de preencher os campos.</li>
+    <li>Consulte o conteúdo da aula caso tenha dúvidas sobre as regras de transposição.</li>
+    <li>Compare como o ORM (Hibernate/Drizzle) abstrai o mapeamento vs. como o driver (JDBC/PDO) exige SQL manual.</li>
+    <li>Observe como a coluna discriminadora (<code class="one-line-code">tipo</code>) é tratada automaticamente pelo ORM, mas manualmente no driver.</li>
   </ul>
 </div>

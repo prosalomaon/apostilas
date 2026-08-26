@@ -1,18 +1,222 @@
 ---
-layout: exercicio
-title: "Exercício 02 - Mapeamento ORM"
+layout: questionario
+title: "Questionário — ORM e Mapeamento Objeto-Relacional"
 exercicio_numero: "02"
 aula_numero: "27"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 27."
----
+description: "Questionário de fixação sobre Incompatibilidade de Impedância Semântica, regras de transposição ORM e a diferença entre ORM e driver de abstração."
+perguntas:
+  - texto: "O que é a Incompatibilidade de Impedância Semântica (Object-Relational Impedance Mismatch)?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "A incompatibilidade conceitual e estrutural entre o paradigma orientado a objetos e o modelo relacional de banco de dados."
+      - letra: "b"
+        texto: "Um erro de sintaxe que ocorre ao conectar PHP ao MySQL."
+      - letra: "c"
+        texto: "A falta de suporte do PHP a consultas SQL complexas."
+      - letra: "d"
+        texto: "Uma limitação do MySQL que impede a criação de chaves estrangeiras."
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+  - texto: "Qual das seguintes alternativas descreve corretamente a Incompatibilidade de Impedância Semântica?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Objetos usam junções via FK, enquanto o banco relacional usa ponteiros."
+      - letra: "b"
+        texto: "O modelo relacional suporta herança nativamente, mas OO não."
+      - letra: "c"
+        texto: "Objetos possuem referências diretas (ponteiros), enquanto o relacional exige comparação de valores via FK para associar registros."
+      - letra: "d"
+        texto: "O ORM não permite a criação de queries parametrizadas."
 
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Aplique os conceitos de lógica e sintaxe aprendidos.</li>
-    <li>Verifique se o resultado atende aos requisitos propostos.</li>
-    <li>Documente seu código para facilitar o entendimento.</li>
-  </ul>
-</div>
+  - texto: "O que é a principal vantagem de utilizar um ORM?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Eliminar completamente a necessidade de escrever SQL."
+      - letra: "b"
+        texto: "Isolar o acesso ao banco de dados da lógica da aplicação, mapeando automaticamente objetos para tabelas."
+      - letra: "c"
+        texto: "Garantir que o banco de dados nunca terá problemas de performance."
+      - letra: "d"
+        texto: "Substituir completamente os drivers de abstração (JDBC, PDO)."
+
+  - texto: "Qual é o problema de performance conhecido como N+1 queries?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Quando o banco de dados possui mais de 1 tabela."
+      - letra: "b"
+        texto: "Quando o ORM gera mais de 1 tipo de consulta desnecessário."
+      - letra: "c"
+        texto: "Quando o ORM executa 1 consulta para carregar uma lista e depois N consultas adicionais para carregar relacionamentos."
+      - letra: "d"
+        texto: "Quando o aplicativo faz mais de 1 chamada ao banco no mesmo script."
+
+  - texto: "Segundo as regras de transposição ORM, toda tabela relacional deve obrigatoriamente conter:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Uma Chave Primária (PK) para garantir que nenhuma tupla seja repetida."
+      - letra: "b"
+        texto: "Uma coluna discriminadora para indicar o tipo de classe."
+      - letra: "c"
+        texto: "Uma tabela associativa para cada relacionamento."
+      - letra: "d"
+        texto: "Uma coluna do tipo SERIAL."
+
+  - texto: "Na regra de mapeamento de Associações Um-para-Um (1:1), qual condição adicional deve ser aplicada ao nível físico do SGBD?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "A tabela do lado 1 deve ter AUTO_INCREMENT."
+      - letra: "b"
+        texto: "O campo FK deve ser do tipo NUMERIC."
+      - letra: "c"
+        texto: "A tabela deve possuir uma coluna discriminadora."
+      - letra: "d"
+        texto: "O campo que atua como chave estrangeira deve possuir uma restrição de unicidade (UNIQUE)."
+
+  - texto: "Em uma associação Um-para-Muitos (1:N), qual tabela herda a chave estrangeira (FK)?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "A tabela do lado 'Um' da relação."
+      - letra: "b"
+        texto: "A tabela cujos registros correspondem ao lado 'Muitos' da relação."
+      - letra: "c"
+        texto: "Uma tabela associativa criada especificamente para isso."
+      - letra: "d"
+        texto: "A tabela da superclasse no caso de herança."
+
+  - texto: "Por que uma associação Muitos-para-Muitos (M:N) gera uma Tabela Associativa no modelo relacional?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Porque o ORM não suporta o tipo M:N nativamente."
+      - letra: "b"
+        texto: "Porque não é possível criar chaves compostas em tabelas."
+      - letra: "c"
+        texto: "Porque o modelo relacional não suporta gravação direta de listas multivaloradas (violação da 1FN)."
+      - letra: "d"
+        texto: "Porque a Tabela Associativa é a única forma de criar chaves compostas no banco relacional."
+
+  - texto: "Na abordagem de Herança por Tabela Única (Single Table), como o SGBD identifica qual subclass cada registro representa?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Através de uma coluna discriminadora (flag) que indica a classe filha."
+      - letra: "b"
+        texto: "Através de múltiplas chaves estrangeiras."
+      - letra: "c"
+        texto: "Através de um trigger que valida o tipo."
+      - letra: "d"
+        texto: "Não é possível; a Single Table não suporta herança."
+
+  - texto: "Na abordagem de Herança por Tabela por Classe Concreta (Class Table / Joined), como as tabelas das subclasses se relacionam com a superclasse?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Através de uma tabela associativa N:N."
+      - letra: "b"
+        texto: "Através de herança múltipla no banco de dados."
+      - letra: "c"
+        texto: "Através de triggers que sincronizam os dados."
+      - letra: "d"
+        texto: "As tabelas das subclasses herdam a PK da superclasse como FK, estabelecendo um relacionamento físico 1:1 entre si."
+
+  - texto: "No MySQL, como a geração automática de chave primária é implementada no DDL?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "GENERATED ALWAYS AS IDENTITY"
+      - letra: "b"
+        texto: "AUTO_INCREMENT na definição da coluna"
+      - letra: "c"
+        texto: "SERIAL como tipo de dado"
+      - letra: "d"
+        texto: "SEQUENCE associado à tabela"
+
+  - texto: "No PostgreSQL, qual cláusula permite obter o ID gerado automaticamente logo após uma inserção, sem precisar de uma segunda consulta?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "LAST_INSERT_ID()"
+      - letra: "b"
+        texto: "AUTO_INCREMENT"
+      - letra: "c"
+        texto: "RETURNING id_coluna"
+      - letra: "d"
+        texto: "SELECT MAX(id)"
+
+  - texto: "O que a cláusula RETURNING faz no PostgreSQL que o MySQL não oferece nativamente?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Retorna o ID gerado diretamente na mesma execução INSERT, evitando uma segunda chamada ao banco."
+      - letra: "b"
+        texto: "Permite criar tabelas com AUTO_INCREMENT."
+      - letra: "c"
+        texto: "Habilita o suporte a chaves estrangeiras."
+      - letra: "d"
+        texto: "Executa um rollback automático em caso de erro."
+
+  - texto: "Qual é a principal razão de se usar placeholders (parâmetros nomeados como :nome, :email) em vez de interpolação direta de variáveis nas queries?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Para tornar o código mais curto e legível."
+      - letra: "b"
+        texto: "Para prevenir ataques de SQL Injection e auxiliar o otimizador do banco a criar planos de execução reutilizáveis."
+      - letra: "c"
+        texto: "Porque o ORM não suporta interpolação de variáveis."
+      - letra: "d"
+        texto: "Porque o driver de abstração não aceita variáveis diretamente."
+
+  - texto: "No cenário de um ORM, qual técnica é recomendada para evitar o problema de N+1 queries ao carregar uma lista de objetos com seus relacionamentos?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Aumentar o timeout de conexão do banco de dados."
+      - letra: "b"
+        texto: "Usar SELECT * em todas as tabelas de uma vez."
+      - letra: "c"
+        texto: "Desativar todas as chaves estrangeiras no banco."
+      - letra: "d"
+        texto: "Utilizar JOIN FETCH ou eager loading para carregar os relacionamentos em uma única consulta."
+
+  - texto: "Qual é a diferença fundamental entre um ORM (ex: Hibernate, Drizzle) e um driver de abstração (ex: PDO, JDBC)?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "O driver de abstração é mais rápido que o ORM em todas as situações."
+      - letra: "b"
+        texto: "O ORM mapeia automaticamente objetos↔tabelas e gera SQL; o driver apenas facilita a conexão e execução de SQL manual."
+      - letra: "c"
+        texto: "O ORM não suporta transações, enquanto o driver suporta."
+      - letra: "d"
+        texto: "O driver de abstração é um ORM mais simples."
+
+  - texto: "No Hibernate (Java), qual anotação define a herança por Tabela Única (Single Table)?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "@Inheritance(strategy = InheritanceType.SINGLE_TABLE) na superclasse."
+      - letra: "b"
+        texto: "@DiscriminatorColumn(name = \"tipo\") em cada subclasse."
+      - letra: "c"
+        texto: "@MappedSuperclass na superclasse."
+      - letra: "d"
+        texto: "@Table(name = \"single_table\") em uma tabela separada."
+
+  - texto: "No Drizzle ORM (TypeScript), como a herança por Tabela Única é implementada?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Utilizando classes TypeScript com herança nativa."
+      - letra: "b"
+        texto: "Com uma tabela para cada subclasse e JOINs automáticos."
+      - letra: "c"
+        texto: "Com uma única tabela que contém uma coluna discriminadora e colunas NULL para atributos de subclasses não aplicáveis."
+      - letra: "d"
+        texto: "Drizzle não suporta herança — é necessário usar triggers."

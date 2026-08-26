@@ -1,0 +1,183 @@
+---
+layout: exercicio
+title: "Criando um Layout com Seletores CSS"
+exercicio_numero: "01"
+aula_numero: "11"
+description: "Prática de seletores CSS (tipo, classe, id), métodos de inclusion e display block/inline/inline-block."
+---
+
+<section class="section-box">
+  <h2>Atividade Prática: Página de Apresentação Pessoal</h2>
+  
+  <h3>1. Enunciado</h3>
+  <p>Nesta atividade, você criará uma página HTML simples estilizada com CSS para praticar os conceitos fundamentais:
+    seletores, inclusion e tipos de display. O objetivo é criar uma "cartão de visitas" digital com layout organizado.</p>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li><strong>Localização:</strong> Crie os arquivos dentro da pasta do exercício (ex: <code class="one-line-code">aula11/exercicio/</code>).</li>
+    <li><strong>Arquivos Necessários:</strong>
+      <ul>
+        <li><code class="one-line-code">index.html</code>: Estrutura HTML da página.</li>
+        <li><code class="one-line-code">estilos.css</code>: Arquivo CSS externo com todos os estilos.</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Passo a Passo</h2>
+
+  <h3>Passo 1: Criando a Estrutura HTML</h3>
+  <p>Crie o arquivo <code class="one-line-code">index.html</code> com a seguinte estrutura:</p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Cartão de Visitas - [Seu Nome]&lt;/title&gt;
+  &lt;!-- Método Externo (Recomendado) --&gt;
+  &lt;link rel="stylesheet" href="estilos.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    &lt;h1 class="nome-titulo"&gt;João Silva&lt;/h1&gt;
+    &lt;p class="subtitulo"&gt;Desenvolvedor Web&lt;/p&gt;
+    
+    &lt;div class="informacoes"&gt;
+      &lt;p class="info-item"&gt;&lt;strong&gt;Email:&lt;/strong&gt; joao@email.com&lt;/p&gt;
+      &lt;p class="info-item"&gt;&lt;strong&gt;Telefone:&lt;/strong&gt; (11) 99999-9999&lt;/p&gt;
+      &lt;p class="info-item"&gt;&lt;strong&gt;GitHub:&lt;/strong&gt; github.com/joaosilva&lt;/p&gt;
+    &lt;/div&gt;
+    
+    &lt;div id="habilidades"&gt;
+      &lt;h2&gt;Habilidades&lt;/h2&gt;
+      &lt;ul&gt;
+        &lt;li&gt;HTML5&lt;/li&gt;
+        &lt;li&gt;CSS3&lt;/li&gt;
+        &lt;li&gt;JavaScript&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+    
+    &lt;footer class="rodape"&gt;
+      &lt;p&gt;© 2024 - Todos os direitos reservados&lt;/p&gt;
+    &lt;/footer&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <h3>Passo 2: Estilizando com CSS</h3>
+  <p>Crie o arquivo <code class="one-line-code">estilos.css</code> com os seguintes seletores:</p>
+  <div class="code-container">
+    <pre><code class="language-css">/* Seletor de Tipo - Reset e Estilos Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Seletor de Classe - Container Principal */
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  text-align: center;
+}
+
+/* Seletor de Classe - Nome e Subtítulo */
+.nome-titulo {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 5px;
+}
+
+.subtitulo {
+  color: #7f8c8d;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+/* Seletor de Classe - Informações */
+.informacoes {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+}
+
+.info-item {
+  font-size: 1rem;
+  color: #34495e;
+  margin-bottom: 8px;
+}
+
+/* Seletor de ID - Habilidades */
+#habilidades {
+  background-color: #3498db;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+#habilidades h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+#habilidades ul {
+  list-style: none;
+  text-align: center;
+}
+
+#habilidades li {
+  display: inline-block;
+  background-color: #2980b9;
+  padding: 8px 16px;
+  margin: 5px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+/* Seletor de Classe - Rodapé */
+.rodape {
+  color: #95a5a6;
+  font-size: 0.85rem;
+  border-top: 1px solid #ecf0f1;
+  padding-top: 20px;
+}</code></pre>
+  </div>
+</section>
+
+<div class="tip-box">
+  <h3>4. Desafios de Fixação</h3>
+  <ul>
+    <li><strong>Personalização:</strong> Altere as cores, tamanhos de fonte e espaçamentos para criar seu próprio visual.</li>
+    <li><strong>Exercitando Display:</strong> Altere o <code class="one-line-code">display: inline-block</code> para <code class="one-line-code">display: block</code> nos itens da lista e observe o que acontece.</li>
+    <li><strong>Especificidade:</strong> Adicione uma regra <code class="one-line-code">.nome-titulo { color: red; }</code> e veja qual cor vence. Por quê?</li>
+    <li><strong>CSS Inline:</strong> Teste adicionar <code class="one-line-code">style="color: green"</code> diretamente no elemento <code class="one-line-code">&lt;h1&gt;</code>. O que acontece com a cor?</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>5. Resultado Esperado</h2>
+  <p>Ao abrir o arquivo <code class="one-line-code">index.html</code> no navegador, você deve ver um cartão centralizado com:</p>
+  <ul>
+    <li>Um título com seu nome e subtítulo profissional</li>
+    <li>Um bloco cinza com informações de contato</li>
+    <li>Uma seção azul com habilidades dispostas lado a lado (inline-block)</li>
+    <li>Um rodapé sutil com copyright</li>
+  </ul>
+</section>

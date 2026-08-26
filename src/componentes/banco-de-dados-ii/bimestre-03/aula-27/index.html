@@ -1,7 +1,7 @@
 ---
-title: "Mapeamento ORM"
+title: "Mapeamento ORM — Incompatibilidade de Impedância Semântica e Persistência de Objetos"
 aula_numero: "27"
-description: "Persistência em linguagens modernas."
+description: "Mapeamento Objeto-Relacional (ORM): resolvendo a Incompatibilidade de Impedância Semântica entre programação orientada a objetos e bancos de dados relacionais com Hibernate (Java) e Drizzle (TypeScript)."
 tags:
 - aula
 - bimestre-03
@@ -9,62 +9,395 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
+
+  <h3>1. O Desafio da Persistência e a Incompatibilidade de Impedância Semântica</h3>
+  <p>
+    No desenvolvimento de aplicações modernas (como sistemas web desenvolvidos em PHP ou Java), o programador trabalha sob o paradigma <strong>orientado a objetos</strong>, onde o mundo real é representado por <em>classes</em>, <em>instâncias</em> (objetos), <em>métodos</em>, <em>encapsulamento</em> e <em>herança</em>.
+    Por outro lado, os dados devem ser gravados em <strong>SGBDs Relacionais</strong> (como MySQL e PostgreSQL), estruturados em tabelas bidimensionais com linhas, colunas, chaves primárias (PK), chaves estrangeiras (FK) e restrições lógicas.
+  </p>
+  <p>
+    Essa incompatibilidade conceitual e estrutural é conhecida na engenharia de software como <strong>Incompatibilidade de Impedância Semântica</strong> (<em>Object-Relational Impedance Mismatch</em>). Ela surge porque:
+  </p>
+  <ul>
+    <li><strong>Representação vs. Relação:</strong> Objetos na memória do computador possuem referências diretas (ponteiros) entre si, enquanto o banco relacional exige a comparação de valores comuns (junções via FK) para associar registros.</li>
+    <li><strong>Dados e Comportamentos:</strong> Um modelo de classes integra dados e comportamentos (métodos) em uma única unidade; o modelo relacional armazena estritamente o estado dos dados.</li>
+    <li><strong>Herança:</strong> O paradigma orientado a objetos suporta herança nativamente, enquanto o modelo relacional clássico não possui o conceito de especialização de tabelas de forma direta.</li>
+  </ul>
+
+  <h3>2. O Papel do ORM</h3>
+  <p>
+    O <strong>ORM</strong> (Object-Relational Mapping) é uma técnica implementada por meio de bibliotecas (como <em>Hibernate</em> em Java, <em>Drizzle</em> em TypeScript ou <em>Eloquent/Doctrine</em> em PHP) que atua como uma <strong>camada de persistência transparente</strong>.
+    O ORM automatiza a tradução bidirecional de objetos na memória do sistema para registros físicos no banco de dados.
+  </p>
+  <p>
+    <strong>Importante — ORM ≠ Driver de Abstração:</strong> Bibliotecas como o <strong>PDO</strong> (PHP Data Objects) ou o <strong>JDBC</strong> (Java Database Connectivity) são <em>drivers de abstração</em>: eles simplificam a conexão e execução de queries SQL, mas <strong>não realizam mapeamento automático</strong> entre objetos e tabelas. O programador ainda precisa escrever SQL manualmente. Já um ORM como Hibernate ou Drizzle <strong>mapeia automaticamente</strong> classes/objetos para tabelas/registros, gerenciando inserts, updates e selects sem SQL explícito.
+  </p>
+  <div class="mermaid">
+    graph TD
+        App[Aplicação Orientada a Objetos] <-->|Objetos / Métodos| ORM[Camada ORM / Persistência]
+        ORM <-->|Comandos SQL Gerados| SGBD[(SGBD Relacional: MySQL / PostgreSQL)]
+  </div>
+  <p>
+    <strong>Vantagem Principal:</strong> Isola o acesso ao banco de dados da lógica da aplicação, encapsulando a montagem manual de queries SQL complexas.
+    Isso permite que, teoricamente, o SGBD subjacente possa ser alterado (ex: migrar de MySQL para PostgreSQL) com o mínimo de impacto ou retrabalho no código-fonte.
+  </p>
+  <p>
+    <strong>Cuidado Crítico:</strong> O uso indiscriminado de ferramentas de ORM pode induzir o desenvolvedor a negligenciar o design físico do banco e a qualidade das consultas geradas automaticamente, o que frequentemente resulta em problemas graves de performance (como o clássico problema de consulta <code class="one-line-code">$N+1$</code>).
+  </p>
+
+  <h3>3. Regras Fundamentais de Transposição</h3>
+  <p>
+    Para que a persistência de objetos ocorra de forma consistente com a teoria relacional, aplicam-se regras rigorosas de transposição do modelo conceitual de classes para o esquema físico de banco de dados:
+  </p>
+
+  <p><strong>Regra 1 — Chave de Identificação Única (Identity):</strong> No modelo de classes, a identidade do objeto pode ser definida pela sua referência de memória. No modelo relacional, toda relação (tabela) obrigatoriamente deve conter uma <strong>Chave Primária (PK)</strong> para garantir que nenhuma tupla seja repetida. Se a classe de negócios não possuir um identificador natural óbvio, o ORM deve mapear ou gerar um atributo sintético designado como <code class="one-line-code">id</code> (chave substituta).</p>
+
+  <p><strong>Regra 2 — Classes Simples:</strong> Classes isoladas do modelo de domínio são transpostas diretamente para tabelas homônimas no banco de dados.</p>
+
+  <p><strong>Regra 3 — Associações Um-para-Um (1:1):</strong> Uma das tabelas deve herdar a chave primária da outra como uma <strong>Chave Estrangeira (FK)</strong>. Para que o relacionamento 1:1 seja garantido no nível físico do SGBD, o campo que atua como chave estrangeira deve possuir uma restrição de unicidade (<code class="one-line-code">UNIQUE</code>).</p>
+
+  <p><strong>Regra 4 — Associações Um-para-Muitos (1:N):</strong> A tabela cujos registros correspondem ao lado "Muitos" da relação herda a chave primária da tabela do lado "Um" como <strong>Chave Estrangeira (FK)</strong>. Por exemplo: se um Departamento tem vários Empregados, a tabela <code class="one-line-code">empregado</code> herdará o <code class="one-line-code">id_departamento</code> como FK.</p>
+
+  <p><strong>Regra 5 — Associações Muitos-para-Muitos (M:N):</strong> O modelo relacional não suporta a gravação direta de listas ou coleções multivaloradas dentro de uma única célula (violação da 1FN). Portanto, associações M:N geram uma <strong>Tabela Associativa</strong> (tabela de junção) cuja Chave Primária é composta pela junção das chaves primárias das duas tabelas originais.</p>
+
+  <p><strong>Regra 6 — Transposição de Herança (Generalização/Especialização):</strong> Existem duas abordagens tradicionais para persistir hierarquias de classes no modelo relacional:</p>
+  <ul>
+    <li><strong>Tabela Única (<em>Single Table</em>):</strong> Todos os atributos das subclasses e da superclasse são mapeados para uma única tabela física. Utiliza-se um atributo especial chamado <strong>coluna discriminadora</strong> (<em>flag</em>) para indicar qual classe filha aquele registro específico representa. Atributos exclusivos de outras subclasses aceitam valores NULL.</li>
+    <li><strong>Tabela por Classe Concreta (<em>Class Table / Joined</em>):</strong> Cria-se uma tabela para a superclasse e tabelas separadas para as subclasses. As tabelas das subclasses herdam a chave primária da superclasse e mantêm apenas os seus atributos específicos, estabelecendo um relacionamento físico 1:1 entre si.</li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
-  <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
+  <p>
+    Abaixo, demonstramos o mapeamento de um cenário de associação <strong>1:N (Um-para-Muitos)</strong>: Clientes e seus Pedidos.
+    Primeiro definimos o modelo de domínio (classes), depois comparamos a persistência com um <strong>ORM</strong> (Hibernate/Drizzle) e com um <strong>driver de abstração</strong> (PDO).
+  </p>
 
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
+  <h3>Modelo de Domínio</h3>
+  <div class="code-container">
+    <pre><code class="language-java">// Java — Modelo de Domínio (compartilhado entre ORM e JDBC)
+public class Cliente {
+    private Long id;
+    private String nome;
+    private String email;
+    // Getters e Setters
+}
+
+public class Pedido {
+    private Long id;
+    private LocalDate dataPedido;
+    private BigDecimal valorTotal;
+    private Cliente cliente; // Referência ao objeto (não um ID solto)
+}</code></pre>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-typescript">// TypeScript — Modelo de Domínio (Drizzle ORM)
+export interface Cliente {
+    id: number;
+    nome: string;
+    email: string;
+}
+
+export interface Pedido {
+    id: number;
+    dataPedido: Date;
+    valorTotal: number;
+    idCliente: number; // FK lógica
+}</code></pre>
+  </div>
+
+  <hr>
+
+  <h3>Cenário A — Hibernate (ORM em Java)</h3>
+  <p>
+    O Hibernate mapeia anotações nas classes para gerar automaticamente o DDL e traduzir operações CRUD em SQL. Note como <strong>não escrevemos SQL manualmente</strong>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Entidade mapeada via anotações JPA/Hibernate
+@Entity
+@Table(name = "cliente")
+public class Cliente {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String nome;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+}
+
+@Entity
+@Table(name = "pedido")
+public class Pedido {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private LocalDate dataPedido;
+
+    @Column(nullable = false)
+    private BigDecimal valorTotal;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cliente", nullable = false)
+    private Cliente cliente;
+}</code></pre>
+  </div>
+  <p>Inserção via Hibernate:</p>
+  <div class="code-container">
+    <pre><code class="language-java">// Inserção — o Hibernate gera o SQL automaticamente
+Session session = sessionFactory.openSession();
+Transaction tx = session.beginTransaction();
+
+Cliente cliente = new Cliente();
+cliente.setNome("Carlos Nery");
+cliente.setEmail("carlos@nery.com");
+session.save(cliente); // INSERT INTO cliente (nome, email) VALUES (?, ?)
+
+Pedido pedido = new Pedido();
+pedido.setDataPedido(LocalDate.now());
+pedido.setValorTotal(new BigDecimal("350.50"));
+pedido.setCliente(cliente); // FK propagada automaticamente
+session.save(pedido); // INSERT INTO pedido (data_pedido, valor_total, id_cliente) VALUES (?, ?, ?)
+
+tx.commit(); // Flush: SQL executado de forma batched</code></pre>
+  </div>
+
+  <hr>
+
+  <h3>Cenário B — Drizzle ORM (TypeScript)</h3>
+  <p>
+    Drizzle é um ORM TypeScript leve que define o esquema via código (<em>schema-as-code</em>) e gera SQL tipado. Note como as tabelas são definidas como objetos TypeScript:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-typescript">// Definição do schema (Drizzle)
+import { pgTable, serial, varchar, numeric, integer, date } from "drizzle-orm/pg-core";
+
+export const cliente = pgTable("cliente", {
+    id: serial("id_cliente").primaryKey(),
+    nome: varchar("nome", { length: 100 }).notNull(),
+    email: varchar("email", { length: 100 }).notNull().unique(),
+});
+
+export const pedido = pgTable("pedido", {
+    id: serial("id_pedido").primaryKey(),
+    dataPedido: date("data_pedido").notNull(),
+    valorTotal: numeric("valor_total", { precision: 10, scale: 2 }).notNull(),
+    idCliente: integer("id_cliente").notNull().references(() => cliente.id),
+});</code></pre>
+  </div>
+  <p>Inserção via Drizzle:</p>
+  <div class="code-container">
+    <pre><code class="languagetypescript">// Inserção — Drizzle gera SQL tipado e seguro
+import { drizzle } from "drizzle-orm/node-postgres";
+
+const db = drizzle(pool);
+
+// Inserir cliente e obter ID gerado
+const [novoCliente] = await db.insert(cliente)
+    .values({ nome: "Felipe Machado", email: "felipe@machado.com" })
+    .returning(); // RETURNING id_cliente (PostgreSQL)
+
+// Inserir pedido vinculado
+await db.insert(pedido).values({
+    dataPedido: new Date(),
+    valorTotal: "540.00",
+    idCliente: novoCliente.id_cliente,
+});
+
+// Consulta com JOIN — tipada automaticamente
+const resultado = await db
+    .select()
+    .from(pedido)
+    .innerJoin(cliente, eq(pedido.idCliente, cliente.id));</code></pre>
+  </div>
+
+  <hr>
+
+  <h3>Cenário C — PDO (Driver de Abstração, SEM mapeamento)</h3>
+  <p>
+    O PDO é apenas um <strong>driver de abstração</strong>: ele facilita a conexão e execução de SQL, mas <strong>não mapeia objetos para tabelas</strong>. O programador escreve todo o SQL manualmente:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">// PDO — SQL explícito, sem mapeamento automático
+try {
+    $dsn = "pgsql:host=localhost;port=5432;dbname=loja_web";
+    $pdo = new PDO($dsn, "user_postgres", "senha_postgres");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $sqlCliente = "INSERT INTO cliente (nome, email) VALUES (:nome, :email) RETURNING id_cliente";
+    $stmt = $pdo->prepare($sqlCliente);
+    $stmt->execute([':nome' => 'Carlos Nery', ':email' => 'carlos@nery.com']);
+    $idCliente = $stmt->fetchColumn();
+
+    $sqlPedido = "INSERT INTO pedido (data_pedido, valor_total, id_cliente) VALUES (CURRENT_DATE, :valor, :id)";
+    $stmtPed = $pdo->prepare($sqlPedido);
+    $stmtPed->execute([':valor' => 350.50, ':id' => $idCliente]);
+} catch (PDOException $e) {
+    echo "Erro: " . $e->getMessage();
+}</code></pre>
+  </div>
+
+  <h3>Comparação: ORM vs. Driver de Abstração</h3>
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Aspecto</th>
+          <th>ORM (Hibernate / Drizzle)</th>
+          <th>Driver (PDO / JDBC)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Mapeamento Objeto↔Tabela</strong></td>
+          <td>Automático (via anotações ou schema-as-code)</td>
+          <td>Não existe — o programador escreve SQL manualmente</td>
+        </tr>
+        <tr>
+          <td><strong>SQL Gerado</strong></td>
+          <td>Gerado automaticamente pelo framework</td>
+          <td>Escrito manualmente pelo desenvolvedor</td>
+        </tr>
+        <tr>
+          <td><strong>Abstração de Dialeto</strong></td>
+          <td>SGBD pode ser trocado alterando configuração</td>
+          <td>SQL pode conter sintaxe específica do SGBD</td>
+        </tr>
+        <tr>
+          <td><strong>Controle sobre Queries</strong></td>
+          <td>Limitado (queries complexas podem exigir SQL nativo)</td>
+          <td>Total — qualquer SQL pode ser executado</td>
+        </tr>
+        <tr>
+          <td><strong>Risco de Performance</strong></td>
+          <td>N+1 queries, lazy loading indesejado</td>
+          <td>Otimização manual, mas responsabilidade total no dev</td>
+        </tr>
+        <tr>
+          <td><strong>Exemplos</strong></td>
+          <td>Hibernate (Java), Drizzle (TS), Eloquent (PHP), Prisma (TS)</td>
+          <td>PDO (PHP), JDBC (Java), pg (Node.js)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Principais Diferenças MySQL vs. PostgreSQL no Mapeamento</h3>
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Aspecto Técnico</th>
+          <th>MySQL (InnoDB)</th>
+          <th>PostgreSQL</th>
+          <th>Impacto no ORM</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Geração de PK</strong></td>
+          <td><code class="one-line-code">AUTO_INCREMENT</code></td>
+          <td><code class="one-line-code">GENERATED ALWAYS AS IDENTITY</code> ou <code class="one-line-code">SERIAL</code></td>
+          <td>ORMs modernos (Hibernate, Drizzle) abstraem os dialetos automaticamente.</td>
+        </tr>
+        <tr>
+          <td><strong>Rigor de Tipagem</strong></td>
+          <td>Flexível (conversões implícitas frequentes)</td>
+          <td>Estrito (exige conversão explícita <code class="one-line-code">::tipo</code>)</td>
+          <td>O ORM precisa mapear tipos corretamente para evitar erros no PostgreSQL.</td>
+        </tr>
+        <tr>
+          <td><strong>Integridade Referencial</strong></td>
+          <td>Requer <code class="one-line-code">ENGINE=InnoDB</code></td>
+          <td>Suporte nativo e obrigatório</td>
+          <td>DDL gerado pelo ORM deve especificar engine no MySQL.</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Diagramação</h2>
-  <p>Representação visual dos conceitos abordados:</p>
+  <h2>Diagramação Lógica</h2>
+  <p>Diagrama ER representando o mapeamento 1:N de Clientes e Pedidos:</p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+    erDiagram
+        CLIENTE {
+            int id_cliente PK
+            varchar nome
+            varchar email UK
+        }
+        PEDIDO {
+            int id_pedido PK
+            date data_pedido
+            decimal valor_total
+            int id_cliente FK
+        }
+        CLIENTE ||--o{ PEDIDO : "possui"
+  </div>
+  <p>Diagrama representando a herança via Tabela Única (<em>Single Table</em>):</p>
+  <div class="mermaid">
+    classDiagram
+        class Funcionario {
+            +int id
+            +string nome
+            +string tipo
+        }
+        class Efetivo {
+            +string matricula
+            +float salario
+        }
+        class Temporario {
+            +date data_inicio
+            +date data_fim
+        }
+        Funcionario <|-- Efetivo : extends
+        Funcionario <|-- Temporario : extends
   </div>
 </section>
 
 <div class="tip-box">
   <h4>Dicas & Lembretes</h4>
   <ul>
-    <li>Dica importante sobre Mapeamento ORM aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>ORM ≠ Driver de Abstração:</strong> Não confunda um ORM (Hibernate, Drizzle, Eloquent) com um driver de abstração (PDO, JDBC). O ORM mapeia objetos↔tabelas automaticamente; o driver apenas facilita a conexão e execução de SQL.</li>
+    <li><strong>Tratamento de Exceções:</strong> Ao persistir dados via ORM ou driver, sempre envolva as transações compostas (inserir cliente e depois inserir pedido) dentro de blocos <code class="one-line-code">try/catch</code> (ou equivalente). Se a inserção do pedido falhar, execute um <code class="one-line-code">rollback</code> para manter o banco consistente.</li>
+    <li><strong>Consultas N+1:</strong> O problema de <em>N+1 queries</em> ocorre quando o ORM executa uma consulta para carregar uma lista e depois N consultas adicionais para carregar relacionamentos. No Hibernate, utilize <code class="one-line-code">JOIN FETCH</code> ou <code class="one-line-code">@ManyToOne(fetch = FetchType.EAGER)</code>. No Drizzle, utilize <code class="one-line-code">.innerJoin()</code> ou <code class="one-line-code">.leftJoin()</code>.</li>
+    <li><strong>DDL Automático:</strong> ORMs como Hibernate e Drizzle podem gerar o DDL (CREATE TABLE) automaticamente a partir do mapeamento de classes. No entanto, em produção é recomendável gerar o DDL manualmente ou via migrations para ter controle total sobre o esquema.</li>
+    <li><strong>Abstração vs. Controle:</strong> ORMs são poderosos, mas quando a performance importa, escrever queries SQL manuais (via JDBC, PDO ou <code class="one-line-code">db.execute()</code>) pode ser mais eficiente. A maioria dos ORMs permite misturar SQL nativo com mapeamento.</li>
   </ul>
 </div>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
+  <h2>Como Aplicar na Prática</h2>
   <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
+    <li><strong>Passo 1:</strong> Identifique as classes do domínio e seus relacionamentos (1:1, 1:N, M:N, Herança).</li>
+    <li><strong>Passo 2:</strong> Aplique as 6 regras de transposição para gerar o esquema relacional (DDL).</li>
+    <li><strong>Passo 3:</strong> Defina o mapeamento no ORM escolhido — via anotações (Hibernate) ou schema-as-code (Drizzle).</li>
+    <li><strong>Passo 4:</strong> Utilize o ORM para persistir e consultar dados, verificando o SQL gerado para garantir performance.</li>
+    <li><strong>Passo 5:</strong> Para queries complexas ou performance crítica, recorra a SQL nativo via driver de abstração (JDBC, PDO).</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.
-    </li>
-    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
-      Paulo: DCC-IME-USP, 2005.</li>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
+    <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São Paulo: DCC-IME-USP, 2005.</li>
+    <li>Hibernate ORM Documentation. Disponível em: <a href="https://docs.jboss.org/hibernate/orm/6.4/manual/html_single/" target="_blank" rel="noopener noreferrer">hibernate.org</a>. Acesso em: 2026.</li>
+    <li>Drizzle ORM — TypeScript ORM. Disponível em: <a href="https://orm.drizzle.team/" target="_blank" rel="noopener noreferrer">orm.drizzle.team</a>. Acesso em: 2026.</li>
+    <li>PHP: PDO — PHP Data Objects. Disponível em: <a href="https://www.php.net/manual/pt_BR/intro.pdo.php" target="_blank" rel="noopener noreferrer">php.net</a>. Acesso em: 2026.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Mapeamento ORM com Hibernate e Drizzle</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário sobre ORM, Drivers e Impedância Semântica</a></li>
   </ul>
 </section>

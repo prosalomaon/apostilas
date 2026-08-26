@@ -1,57 +1,414 @@
 ---
 title: "Matrizes: Variáveis Multidimensionais"
 aula_numero: "24"
-description: "Trabalhando com tabelas e grades de dados."
+description: "Trabalhando com tabelas e grades de dados: declaração, acesso, processamento com laços aninhados e aplicações práticas em Java."
 tags:
   - aula
   - "bimestre-03"
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 24 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    Nesta aula vamos estudar as <strong>Matrizes</strong> (arrays
+    multidimensionais), estruturas de dados que nos permitem trabalhar com
+    tabelas, grades e dados bidimensionais organizados em linhas e colunas.
+  </p>
+
+  <h3>1. O que é uma Matriz?</h3>
+  <p>
+    Enquanto um vetor (array unidimensional) representa uma sequência linear de
+    elementos, uma matriz é uma variável composta homogênea estruturada em
+    múltiplas dimensões. A matriz mais comum é a bidimensional (2D), que pode
+    ser visualizada como uma grade retangular ou planilha:
+  </p>
+  <ul>
+    <li>
+      <strong>Linhas (Rows):</strong> Representam a primeira dimensão da matriz.
+    </li>
+    <li>
+      <strong>Colunas (Columns):</strong> Representam a segunda dimensão da
+      matriz.
+    </li>
+  </ul>
+
+  <h3>2. Matrizes na Memória</h3>
+  <p>
+    Embora visualizemos uma matriz como uma tabela física de duas dimensões, a
+    memória principal do computador é essencialmente linear (um bloco sequencial
+    de bytes). Em Java, uma matriz bidimensional é implementada como um
+    <strong>array de arrays</strong>. Isso significa que a matriz é um objeto que
+    contém referências para múltiplos vetores unidimensionais, cada um
+    representando uma linha da tabela.
+  </p>
+  <p>
+    Por conta dessa arquitetura, Java nos dá extrema flexibilidade:
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">matriz.length</code> nos dá o número de linhas
+      da matriz.
+    </li>
+    <li>
+      <code class="one-line-code">matriz[i].length</code> nos dá o número de
+      colunas daquela linha específica.
+    </li>
+    <li>
+      As linhas não precisam necessariamente ter o mesmo tamanho (embora a
+      criação padrão gere linhas uniformes).
+    </li>
+  </ul>
+
+  <h3>2.1. Declaração e Instanciação em Java</h3>
+  <p>
+    Para criar uma matriz em Java, utilizamos dois pares de colchetes
+    <code class="one-line-code">[][]</code>.
+  </p>
+
+  <h4>Criação Padrão (Sem valores iniciais):</h4>
+  <p>
+    Dizemos ao Java o tipo base, a quantidade de linhas e a quantidade de
+    colunas. Ao serem criadas, as posições numéricas são automaticamente
+    inicializadas com 0 (ou 0.0), booleanas com
+    <code class="one-line-code">false</code> e objetos com
+    <code class="one-line-code">null</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Declara uma matriz de números decimais com 3 linhas e 4 colunas (tabela 3x4)
+double[][] tabelaLucros = new double[3][4];</code></pre>
+  </div>
+
+  <h4>Inicialização Direta (Literal):</h4>
+  <p>
+    Se já conhecemos os dados antes de rodar o programa, podemos usar chaves
+    aninhadas para definir as linhas e colunas diretamente:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Matriz de inteiros 3x4 inicializada manualmente
+int[][] matrizNumeros = {
+    { 1, 0, 12, -1 },  // Linha 0
+    { 7, -3, 2, 5 },   // Linha 1
+    { -5, -2, 2, -9 }  // Linha 2
+};</code></pre>
+  </div>
+
+  <h3>3. Acesso e Modificação de Elementos</h3>
+  <p>
+    Para ler ou alterar um dado de uma matriz, precisamos informar a coordenada
+    exata com base na indexação, que sempre inicia em 0 tanto para linhas quanto
+    para colunas:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">// Modificando um valor na linha 1, coluna 3 (coordenadas baseadas em zero)
+matrizNumeros[1][3] = 99;
+
+// Acessando e exibindo o valor da linha 0, coluna 2
+int valor = matrizNumeros[0][2];
+System.out.println("O valor é: " + valor); // Exibe 12</code></pre>
+  </div>
+
+  <h3>4. Processando Matrizes com Laços Aninhados</h3>
+  <p>
+    A maneira padrão e mais eficiente de percorrer todos os elementos de uma
+    grade é utilizando dois laços <code class="one-line-code">for</code>
+    aninhados. O laço externo controla as linhas, enquanto o interno percorre
+    as colunas daquela linha.
+  </p>
+
+  <h4>Exemplo 1: Preenchendo uma Matriz com Zeros</h4>
+  <div class="code-container">
+    <pre><code class="language-java">int[][] grid = new int[3][4];
+
+for (int row = 0; row < grid.length; row++) {
+    for (int col = 0; col < grid[row].length; col++) {
+        grid[row][col] = 0;
+    }
+}</code></pre>
+  </div>
+
+  <h4>Exemplo 2: Somando todos os elementos (for-each aninhado)</h4>
+  <p>
+    Java nos permite simplificar a leitura usando o laço aprimorado
+    <code class="one-line-code">for-each</code>. Lembre-se que cada elemento da
+    matriz principal é, por si só, um array de inteiros
+    (<code class="one-line-code">int[]</code>):
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">int sum = 0;
+for (int[] row : grid) {      // Para cada linha da matriz...
+    for (int item : row) {    // Para cada item dentro dessa linha...
+        sum += item;          // Acumula na soma
+    }
+}
+System.out.println("Soma total: " + sum);</code></pre>
+  </div>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>Exemplo 1: Preenchimento e Exibição de Matriz</h3>
+  <p>Cria uma matriz 3x4, preenche com valores e exibe no formato de tabela.</p>
   <div class="code-container">
-    <pre><code class="language-java">// Em breve...</code></pre>
+    <pre><code class="language-java">public class ExibeMatriz {
+    public static void main(String[] args) {
+        int[][] numeros = {
+            { 1, 0, 12, -1 },
+            { 7, -3, 2, 5 },
+            { -5, -2, 2, -9 }
+        };
+
+        for (int linha = 0; linha < numeros.length; linha++) {
+            for (int coluna = 0; coluna < numeros[linha].length; coluna++) {
+                System.out.printf("%4d", numeros[linha][coluna]);
+            }
+            System.out.println();
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 2: Soma de Todos os Elementos</h3>
+  <p>Percorre a matriz inteira e acumula a soma de todos os valores.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class SomaMatriz {
+    public static void main(String[] args) {
+        int[][] dados = {
+            { 10, 20, 30 },
+            { 40, 50, 60 }
+        };
+
+        int soma = 0;
+        for (int[] linha : dados) {
+            for (int valor : linha) {
+                soma += valor;
+            }
+        }
+
+        System.out.println("Soma total: " + soma); // 210
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Controle de Lucros por Loja e Mês</h3>
+  <p>
+    Calcula o lucro total da empresa e o lucro consolidado de dezembro usando
+    matrizes.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class AnaliseFinanceira {
+    public static void main(String[] args) {
+        // profit[ID da Loja (0-2)][Mês do Ano (0-11)]
+        double[][] profit = {
+            { 1000.50, 1200.00, 800.75, 1500.25, 900.00, 1100.50,
+              1300.75, 1600.00, 1400.25, 1050.00, 1250.50, 1800.75 },
+            { 800.00, 950.25, 700.50, 1100.00, 850.75, 900.00,
+              1050.25, 1200.50, 1000.00, 780.25, 920.00, 1400.75 },
+            { 600.25, 750.00, 500.50, 900.75, 650.00, 700.25,
+              850.00, 1000.50, 800.75, 600.00, 720.25, 1100.00 }
+        };
+
+        // 1. Calculando o Lucro Total da empresa no ano
+        double totalCompanyProfit = 0;
+        for (int store = 0; store < profit.length; store++) {
+            for (int month = 0; month < profit[store].length; month++) {
+                totalCompanyProfit += profit[store][month];
+            }
+        }
+        System.out.printf("Lucro Total do Ano: R$ %.2f%n", totalCompanyProfit);
+
+        // 2. Calculando o lucro consolidado de todas as lojas em Dezembro (mês 11)
+        double decemberProfit = 0.0;
+        for (int store = 0; store < profit.length; store++) {
+            decemberProfit += profit[store][11];
+        }
+        System.out.printf("Lucro Total de Dezembro: R$ %.2f%n", decemberProfit);
+    }
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 4: Tabuleiro de Damas</h3>
+  <p>
+    Representa um tabuleiro 8x8 usando constantes para identificar os estados de
+    cada casa.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class TabuleiroDamas {
+    static final int EMPTY = 0;
+    static final int RED = 1;
+    static final int BLACK = 2;
+
+    public static void main(String[] args) {
+        int[][] board = new int[8][8];
+
+        // Inicializando o tabuleiro padrão
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row < 3 && (row + col) % 2 != 0) {
+                    board[row][col] = RED;
+                } else if (row > 4 && (row + col) % 2 != 0) {
+                    board[row][col] = BLACK;
+                } else {
+                    board[row][col] = EMPTY;
+                }
+            }
+        }
+
+        // Exibindo o tabuleiro
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                System.out.print(board[row][col] + " ");
+            }
+            System.out.println();
+        }
+    }
+}</code></pre>
   </div>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
+
+  <h3>1. Estrutura de uma Matriz 3x4 na Memória</h3>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    graph LR
+    M["Matriz 3x4"] --> L0["Linha 0"]
+    M --> L1["Linha 1"]
+    M --> L2["Linha 2"]
+    L0 --> A0["[0][0]=1"]
+    L0 --> A1["[0][1]=0"]
+    L0 --> A2["[0][2]=12"]
+    L0 --> A3["[0][3]=-1"]
+    L1 --> B0["[1][0]=7"]
+    L1 --> B1["[1][1]=-3"]
+    L1 --> B2["[1][2]=2"]
+    L1 --> B3["[1][3]=5"]
+    L2 --> C0["[2][0]=-5"]
+    L2 --> C1["[2][1]=-2"]
+    L2 --> C2["[2][2]=2"]
+    L2 --> C3["[2][3]=-9"]
+  </div>
+
+  <h3>2. Fluxo de Processamento com Laços Aninhados</h3>
+  <div class="mermaid">
+    flowchart TD
+    Start([Início]) --> InitRow["row = 0"]
+    InitRow --> CheckRow{"row < linhas?"}
+    CheckRow -- Não --> End([Fim])
+    CheckRow -- Sim --> InitCol["col = 0"]
+    InitCol --> CheckCol{"col < colunas?"}
+    CheckCol -- Não --> NextRow["row++"]
+    NextRow --> CheckRow
+    CheckCol -- Sim --> Process["Processar matriz[row][col]"]
+    Process --> NextCol["col++"]
+    NextCol --> CheckCol
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>ArrayIndexOutOfBoundsException:</strong> Este é o erro mais comum
+      no trabalho com matrizes. Lembre-se de que se uma matriz foi declarada
+      como
+      <code class="one-line-code">new int[10][20]</code>, a última linha válida
+      é a 9 e a última coluna é a 19. Usar índices maiores que o limite causará
+      o travamento do programa.
+    </li>
+    <li>
+      <strong>Array de Arrays:</strong> Por se tratar de um array de arrays,
+      você pode criar sub-arrays de comprimentos variados de forma manual
+      (Ragged Arrays). Se fizer isso, evite fixar o limite do laço com números
+      mágicos; use sempre
+      <code class="one-line-code">matriz[row].length</code> para ler o tamanho
+      dinâmico de cada linha individual.
+    </li>
+    <li>
+      <strong>Inicialização Automática:</strong> Matrizes numéricas são
+      inicializadas com 0, booleanas com
+      <code class="one-line-code">false</code> e objetos com
+      <code class="one-line-code">null</code>.
+    </li>
+    <li>
+      <strong>.length vs .length():</strong> Para matrizes e vetores use
+      <code class="one-line-code">.length</code> (sem parênteses); para Strings
+      use <code class="one-line-code">.length()</code> (com parênteses).
+    </li>
+    <li>
+      <strong>Laços Aninhados:</strong> O laço externo sempre percorre as
+      linhas e o interno as colunas. Inverter essa ordem pode causar erros
+      lógicos difíceis de detectar.
+    </li>
+    <li>
+      <strong>Array of Arrays:</strong> Em Java, cada linha de uma matriz é
+      realmente um vetor separado. Isso permite flexibilidade, mas requer
+      atenção ao acessar
+      <code class="one-line-code">matriz[i].length</code> para cada linha.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Controle Financeiro:</strong> Armazenar lucros, despesas ou
+      receitas organizados por categoria (linhas) e período (colunas).
+    </li>
+    <li>
+      <strong>Jogos de Tabuleiro:</strong> Representar grades de xadrez, damas
+      ou jogos da velha usando matrizes para armazenar o estado de cada casa.
+    </li>
+    <li>
+      <strong>Processamento de Imagens:</strong> Imagens digitais são matrizes
+      de pixels, onde cada linha e coluna representa um ponto com cor
+      (RGB).
+    </li>
+    <li>
+      <strong>Mapas e Navegação:</strong> Labirintos, mapas de jogos e rotas
+      podem ser representados como grades bidimensionais.
+    </li>
+    <li>
+      <strong>Dados Científicos:</strong> Tabelas de resultados de
+      experimentos, dados meteorológicos ou estatísticas organizados por
+      variáveis.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      <a
+        href="https://docs.oracle.com/javase/tutorial/java/javaOO/arrays.html"
+        >Java Tutorials — Arrays</a
+      >
+    </li>
+    <li>
+      <a
+        href="https://www.w3schools.com/java/java_arrays_multi.asp"
+        >W3School — Java Multidimensional Arrays</a
+      >
+    </li>
+    <li>
+      <a
+        href="https://www.geeksforgeeks.org/multidimensional-arrays-in-java/"
+        >GeeksforGeeks — Multidimensional Arrays in Java</a
+      >
+    </li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li>
+      <a href="./exercicio-01/"
+        >Exercício 01: Calculadora de Notas da Turma</a
+      >
+    </li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário</a></li>
   </ul>
 </section>
-

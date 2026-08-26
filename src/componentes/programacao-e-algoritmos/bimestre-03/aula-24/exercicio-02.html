@@ -1,18 +1,187 @@
 ---
-layout: exercicio
-title: "Exercício 02 - Matrizes: Variáveis Multidimensionais"
+layout: questionario
+title: "Questionário: Matrizes em Java"
 exercicio_numero: "02"
 aula_numero: "24"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 24."
+description: "Questionário para consolidar o uso de matrizes multidimensionais em Java."
+perguntas:
+  - texto: "O que é uma matriz bidimensional em Java?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Um vetor com apenas uma dimensão."
+      - letra: "b"
+        texto: "Um array de arrays, estruturado em linhas e colunas."
+      - letra: "c"
+        texto: "Uma lista ligada de elementos."
+      - letra: "d"
+        texto: "Um objeto da classe String."
+
+  - texto: "Como se declara uma matriz de inteiros com 3 linhas e 4 colunas em Java?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "int[][] m = new int[3][4];"
+      - letra: "b"
+        texto: "int[] m = new int[3][4];"
+      - letra: "c"
+        texto: "int m = new int[3][4];"
+      - letra: "d"
+        texto: "int[][] m = new int(3)(4);"
+
+  - texto: "Ao criar uma matriz com new double[2][3], quais são os valores iniciais?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Valores aleatórios."
+      - letra: "b"
+        texto: "Valores null."
+      - letra: "c"
+        texto: "0.0 em todas as posições."
+      - letra: "d"
+        texto: "Erro de compilação."
+
+  - texto: "Qual expressão retorna o número de linhas de uma matriz chamada dados?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "dados.length()"
+      - letra: "b"
+        texto: "dados.length"
+      - letra: "c"
+        texto: "dados.rows()"
+      - letra: "d"
+        texto: "dados.size()"
+
+  - texto: "Como acessar o elemento na linha 1, coluna 2 de uma matriz chamada m?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "m[1][2]"
+      - letra: "b"
+        texto: "m[2][1]"
+      - letra: "c"
+        texto: "m(1)(2)"
+      - letra: "d"
+        texto: "m[1,2]"
+
+  - texto: "Qual a complexidade de se acessar um elemento em uma matriz?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "O(n) — depende do tamanho da matriz."
+      - letra: "b"
+        texto: "O(n²) — precisa percorrer toda a matriz."
+      - letra: "c"
+        texto: "O(1) — acesso direto pelo índice."
+      - letra: "d"
+        texto: "O(log n) — busca binária."
+
+  - texto: "Como percorrer todos os elementos de uma matriz m usando laços aninhados?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Um único laço for percorrendo todas as posições."
+      - letra: "b"
+        texto: "Um laço while com condição de parada."
+      - letra: "c"
+        texto: "Dois laços for aninhados, um para linhas e outro para colunas."
+      - letra: "d"
+        texto: "Um laço for-each simples."
+
+  - texto: "O que acontece ao acessar m[5][10] em uma matriz declarada como new int[3][4]?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Lança ArrayIndexOutOfBoundsException."
+      - letra: "b"
+        texto: "Retorna 0."
+      - letra: "c"
+        texto: "Retorna null."
+      - letra: "d"
+        texto: "Cria automaticamente novas posições."
+
+  - texto: "Em Java, o que representa cada elemento de uma matriz bidimensional?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Um objeto da classe Array."
+      - letra: "b"
+        texto: "Um vetor unidimensional (array)."
+      - letra: "c"
+        texto: "Um valor primitivo único."
+      - letra: "d"
+        texto: "Uma referência para um objeto String."
+
+  - texto: "Como declarar e inicializar diretamente uma matriz 2x2 com valores?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "int[][] m = {1, 2, 3, 4};"
+      - letra: "b"
+        texto: "int[][] m = [1, 2; 3, 4];"
+      - letra: "c"
+        texto: "int[][] m = {{1, 2}, {3, 4}};"
+      - letra: "d"
+        texto: "int[][] m = new int{{1, 2}, {3, 4}};"
+
+  - texto: "Qual é a forma correta de usar for-each em uma matriz int[][] m?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "for (int item : m) { ... }"
+      - letra: "b"
+        texto: "for (int[] item : m) { for (int v : item) { ... } }"
+      - letra: "c"
+        texto: "for (int[] item : m) { ... } — acessa diretamente os valores."
+      - letra: "d"
+        texto: "for (int[] linha : m) { for (int valor : linha) { ... } }"
+
+  - texto: "O que é um Ragged Array (matriz irregular) em Java?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Uma matriz com todas as linhas de mesmo tamanho."
+      - letra: "b"
+        texto: "Uma matriz onde cada linha pode ter um número diferente de colunas."
+      - letra: "c"
+        texto: "Uma matriz com apenas uma linha."
+      - letra: "d"
+        texto: "Uma matriz que só armazena valores negativos."
+
+  - texto: "Se uma matriz foi declarada como new int[10][20], qual é o último índice válido para linhas?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "9"
+      - letra: "b"
+        texto: "10"
+      - letra: "c"
+        texto: "19"
+      - letra: "d"
+        texto: "20"
+
+  - texto: "Qual é a diferença entre .length de uma matriz e .length() de uma String?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Não há diferença, ambos são métodos."
+      - letra: "b"
+        texto: ".length é método para matrizes; .length() é atributo para Strings."
+      - letra: "c"
+        texto: ".length é atributo (sem parênteses) para matrizes; .length() é método (com parênteses) para Strings."
+      - letra: "d"
+        texto: "Ambos são atributos sem parênteses."
+
+  - texto: "Em um tabuleiro de xadrez 8x8, qual é a forma correta de declarar a matriz?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "int[][] tabuleiro = new int[8];"
+      - letra: "b"
+        texto: "int[][] tabuleiro = new int[8][8];"
+      - letra: "c"
+        texto: "int[] tabuleiro = new int[8][8];"
+      - letra: "d"
+        texto: "int[][] tabuleiro = new int(8)(8);"
 ---
-
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Aplique os conceitos de lógica e sintaxe aprendidos.</li>
-    <li>Verifique se o resultado atende aos requisitos propostos.</li>
-    <li>Documente seu código para facilitar o entendimento.</li>
-  </ul>
-</div>

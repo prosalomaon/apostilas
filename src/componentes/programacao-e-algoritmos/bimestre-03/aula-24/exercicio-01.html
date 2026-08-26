@@ -1,18 +1,119 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Matrizes: Variáveis Multidimensionais"
+title: "Exercício 01 - Calculadora de Notas da Turma"
 exercicio_numero: "01"
 aula_numero: "24"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 24."
+description: "Atividade prática para consolidar o uso de matrizes em Java."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Você é responsável por criar um sistema simples para gerenciar as notas de
+    uma turma. Cada aluno possui 4 notas bimestrais. Seu programa deve
+    armazenar as notas em uma matriz, calcular a média de cada aluno e
+    identificar os alunos aprovados (média >= 7.0).
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li>
+      <strong>Ambiente:</strong> utilize o VS Code (com extensão Java) ou um
+      compilador Java online (ex: OnlineGDB).
+    </li>
+    <li>
+      <strong>Conhecimento Prévio:</strong> requer domínio de declaração de
+      matrizes, laços aninhados e acesso a elementos por índice.
+    </li>
+    <li>
+      <strong>Documentação:</strong> consulte o conteúdo da aula 24 sobre
+      Matrizes.
+    </li>
+    <li>
+      Crie a classe
+      <code class="one-line-code">CalculadoraNotas</code>.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Código Base</h2>
+  <p>
+    Este código já possui a matriz de notas preenchida. Sua missão é implementar
+    todo o processamento solicitado.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class CalculadoraNotas {
+    public static void main(String[] args) {
+        // notas[aluno][bimestre] — 4 alunos, 4 bimestres
+        double[][] notas = {
+            { 8.0, 7.5, 9.0, 6.5 },   // Aluno 0
+            { 5.0, 6.0, 4.5, 7.0 },   // Aluno 1
+            { 9.5, 8.0, 10.0, 9.0 },  // Aluno 2
+            { 6.0, 5.5, 7.0, 6.0 }    // Aluno 3
+        };
+
+        // Implemente o desafio abaixo
+
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio</h2>
+  <p>Implemente as seguintes funcionalidades:</p>
+  <ul>
+    <li>
+      <strong>Exibição da Matriz:</strong> exiba todas as notas da turma em
+      formato de tabela, mostrando o número do aluno e suas 4 notas.
+    </li>
+    <li>
+      <strong>Cálculo da Média:</strong> para cada aluno, calcule a média das
+      4 notas e exiba o resultado ao lado do nome/desenho do aluno.
+    </li>
+    <li>
+      <strong>Verificação de Aprovação:</strong> se a média for maior ou igual
+      a 7.0, exiba "Aprovado"; caso contrário, exiba "Reprovado".
+    </li>
+    <li>
+      <strong>Soma Geral:</strong> ao final, calcule e exiba a soma de todas as
+      notas da turma.
+    </li>
+    <li>
+      <strong>Maior Nota:</strong> encontre e exiba a maior nota de toda a
+      matriz, indicando qual aluno e qual bimestre ela ocorreu.
+    </li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>5. Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Estrutura do Laço:</strong> utilize dois laços
+      <code class="one-line-code">for</code> aninhados — o externo para percorrer
+      os alunos e o interno para percorrer as notas de cada aluno.
+    </li>
+    <li>
+      <strong>Cuidado com Índices:</strong> lembre-se de que os índices começam
+      em 0. O aluno 0 é o primeiro, o aluno 3 é o último.
+    </li>
+    <li>
+      <strong>Saída Esperada:</strong> para os dados fornecidos, a saída deve
+      ser semelhante a:
+    </li>
   </ul>
+  <div class="code-container">
+    <pre><code class="language-text">=== Notas da Turma ===
+Aluno 1: 8.0 | 7.5 | 9.0 | 6.5 → Média: 7.75 → Aprovado
+Aluno 2: 5.0 | 6.0 | 4.5 | 7.0 → Média: 5.62 → Reprovado
+Aluno 3: 9.5 | 8.0 | 10.0 | 9.0 → Média: 9.12 → Aprovado
+Aluno 4: 6.0 | 5.5 | 7.0 | 6.0 → Média: 6.12 → Reprovado
+
+Soma de todas as notas: 114.0
+Maior nota: 10.0 (Aluno 3, Bimestre 3)</code></pre>
+  </div>
 </div>
