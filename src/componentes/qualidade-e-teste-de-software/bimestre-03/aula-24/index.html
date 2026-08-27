@@ -2,18 +2,381 @@
 title: "Testes Não Funcionais"
 aula_numero: "24"
 subject: "qualidade-e-teste-de-software"
-description: "Conteúdo da aula 04 do bimestre 03: Testes Não Funcionais."
+description: "Esta aula aborda os aspectos de qualidade relacionados à operação, comportamento externo e limitações técnicas do sistema. Ao contrário dos testes funcionais, que validam o que o sistema faz (requisitos funcionais), os Testes Não Funcionais validam como o sistema faz (atributos de qualidade como desempenho, segurança, robustez e usabilidade)."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 04 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. Objetivos da Aula</h3>
+  <ul>
+    <li>Diferenciar <strong>testes funcionais</strong> de <strong>testes não funcionais</strong>.</li>
+    <li>Compreender as principais categorias de testes não funcionais: <strong>usabilidade, performance, carga, estresse, segurança, escalabilidade, robustez e interoperabilidade</strong>.</li>
+    <li>Identificar <strong>métricas de medição</strong> e aplicar <strong>exemplos práticos</strong> de testes para cada uma dessas categorias.</li>
+  </ul>
+
+  <h3>2. Funcional vs. Não Funcional</h3>
+  <p>
+    Enquanto os <strong>testes funcionais</strong> avaliam o comportamento correto do software frente às
+    especificações lógicas <em>(o que o sistema faz)</em>, os <strong>testes não funcionais</strong> analisam o
+    comportamento do sistema sob estresse físico, limitações de hardware, ameaças de segurança e a experiência de
+    uso do usuário final <em>(como o sistema faz)</em>.
+  </p>
+  <p>
+    Eles são essenciais para garantir que o sistema <strong>não apenas funcione</strong>, mas seja
+    <strong>confiável, seguro, ágil e estável</strong> em ambiente de produção. As categorias a seguir se baseiam em
+    padrões de engenharia de software e em normas de qualidade, como a <strong>ISO/IEC 9126</strong> e a
+    <strong>ISO/IEC 25000</strong> (SQuaRE).
+  </p>
+
+  <h3>3. Teste de Usabilidade e Acessibilidade (Usability &amp; Accessibility)</h3>
+  <p>
+    <strong>Definição:</strong> Avalia a facilidade de uso, o esforço exigido pelo usuário para aprender e operar o
+    sistema, e a atratividade da interface sob condições específicas. De acordo com as boas práticas, a usabilidade
+    pode ser decomposta em atributos mensuráveis:
+  </p>
+  <ul>
+    <li>
+      <strong>Acessibilidade:</strong> Facilidade com que os usuários podem entrar, navegar e sair do sistema com
+      relativo conforto.
+    </li>
+    <li>
+      <strong>Responsividade (Estética/Ergonomia):</strong> Clareza visual e fatores ergonômicos como cores, formas,
+      sons e tamanho de fontes.
+    </li>
+    <li>
+      <strong>Eficiência:</strong> Capacidade de realizar tarefas com o menor número de passos e tempo possível.
+    </li>
+    <li>
+      <strong>Compreensibilidade/Apreensibilidade:</strong> O quanto o usuário compreende a estrutura e aprende a
+      operar o produto com o mínimo de esforço.
+    </li>
+  </ul>
+  <p>
+    <strong>Métricas Comuns:</strong> tempo médio para realizar uma tarefa padrão; número de cliques/passos
+    necessários; taxa de erro do usuário principiante; nível de satisfação (via escalas como o
+    <strong>SUS - System Usability Scale</strong>); tempo de aprendizado em minutos.
+  </p>
+  <p>
+    <strong>Exemplo Prático:</strong> Em um aplicativo de <em>Internet Banking</em> para idosos, um grupo de usuários
+    da faixa etária alvo realiza uma transferência monetária. Mede-se o tempo gasto e o número de vezes que recorre
+    ao botão de "Ajuda". O teste avalia se o tamanho da fonte (responsividade), o fluxo de telas (eficiência) e os
+    termos usados (compreensibilidade) estão adequados.
+  </p>
+
+  <h3>4. Teste de Performance ou Desempenho (Performance Testing)</h3>
+  <p>
+    <strong>Definição:</strong> Mede o <em>tempo de resposta</em>, a <em>velocidade de processamento</em> e a
+    <em>taxa de transferência</em> (throughput) do sistema sob condições normais de uso e cargas de trabalho
+    predefinidas.
+  </p>
+  <ul>
+    <li>
+      <strong>Tempo de Resposta de Ponta a Ponta:</strong> tempo total decorrido entre a requisição do usuário e a
+      resposta final na tela.
+    </li>
+    <li>
+      <strong>Vazão (Throughput):</strong> quantidade de transações ou requisições processadas por unidade de tempo
+      (ex: transações por segundo - TPS).
+    </li>
+    <li>
+      <strong>Uso de Recursos:</strong> consumo de CPU, memória RAM, largura de banda de rede e espaço em disco.
+    </li>
+  </ul>
+  <p>
+    <strong>Exemplo Prático:</strong> No processamento de compras de um <em>e-commerce</em>, executa-se um script
+    automatizado que simula <strong>50 usuários comprando simultaneamente</strong>. Mede-se se o tempo de
+    carregamento da página de pagamento se mantém abaixo do limite aceitável de <strong>2 segundos</strong>,
+    monitorando paralelamente se o uso de memória do servidor não ultrapassa <strong>70%</strong>.
+  </p>
+
+  <h3>5. Teste de Carga e Estabilidade (Load &amp; Stability Testing)</h3>
+  <p>
+    <strong>Definição:</strong> Avalia o comportamento e a estabilidade do sistema quando exposto a uma carga de
+    trabalho alta e contínua durante um período prolongado (geralmente horas ou dias). Ele ajuda a identificar
+    problemas acumulativos, como <strong>vazamentos de memória</strong> (memory leaks) ou
+    <strong>saturação de conexões de banco de dados</strong>.
+  </p>
+  <p>
+    <strong>Métricas Comuns:</strong> taxa de falhas ao longo do tempo; variação do tempo de resposta após 12h/24h
+    de execução; degradação incremental no consumo de memória RAM e armazenamento.
+  </p>
+  <p>
+    <strong>Exemplo Prático:</strong> Em um sistema de <em>monitoramento escolar</em> que realiza chamadas por API, o
+    servidor é submetido a uma carga constante de <strong>100 requisições por segundo durante 48 horas
+    ininterruptas</strong>. O objetivo é observar se o sistema apresenta lentidão gradual ao final do período
+    (sinalizando vazamento de memória) ou se permanece estável do início ao fim.
+  </p>
+
+  <h3>6. Teste de Estresse (Stress Testing)</h3>
+  <p>
+    <strong>Definição:</strong> Avalia o comportamento do software quando a carga oferecida <strong>excede os
+    limites de capacidade</strong> para os quais ele foi projetado. O objetivo do estresse não é apenas "quebrar" o
+    sistema, mas entender <strong>como ele falha</strong> (de forma graciosa ou catastrófica) e como ele
+    <strong>se recupera</strong> após a carga excessiva cessar (capacidade de autorrecuperação).
+  </p>
+  <p>
+    <strong>Métricas Comuns:</strong> ponto de ruptura (limite máximo de requisições que causa a falha); tempo de
+    recuperação (<strong>MTTR - Mean Time to Recovery</strong>) após a queda da carga; integridade dos dados
+    pós-falha.
+  </p>
+  <p>
+    <strong>Exemplo Prático:</strong> Em um sistema de inscrições para um <em>vestibular de alta demanda</em> que
+    suporta por especificação <strong>500 conexões simultâneas</strong>, o teste eleva a carga artificialmente para
+    <strong>800, 1.200 e depois 2.000 usuários</strong>. Avalia-se se, ao falhar, o sistema exibe uma mensagem
+    amigável ("Servidor temporariamente indisponível, tente novamente em instantes") em vez de um erro de código
+    exposto que possa comprometer a segurança, e se o serviço se restabelece sozinho quando a carga cai de volta
+    para 500.
+  </p>
+
+  <h3>7. Teste de Escalabilidade (Scalability Testing)</h3>
+  <p>
+    <strong>Definição:</strong> Verifica a capacidade do sistema de expandir sua capacidade operacional de forma
+    <strong>linear</strong> quando mais recursos de hardware (como CPU ou memória - <em>escala vertical</em>) ou mais
+    nós de servidores (<em>escala horizontal</em>) são adicionados.
+  </p>
+  <p>
+    <strong>Métricas Comuns:</strong> eficiência de escalonamento (relação entre aumento de carga suportada e adição
+    de hardware); tempo de resposta com o dobro de usuários e o dobro de capacidade de processamento.
+  </p>
+  <p>
+    <strong>Exemplo Prático:</strong> Em um <em>banco de dados de transações financeiras na nuvem</em>, executam-se
+    testes com <strong>100, 200, 400 e 800 transações por segundo</strong> em um servidor padrão, coletando métricas
+    de CPU e memória. Em seguida, duplica-se a CPU e valida-se se o sistema processa o dobro de transações mantendo o
+    mesmo tempo de resposta, traçando uma <em>curva de projeção</em> para cenários de altíssima escala.
+  </p>
+
+  <h3>8. Teste de Segurança (Security Testing)</h3>
+  <p>
+    <strong>Definição:</strong> Avalia se o sistema atende aos pilares fundamentais da segurança da informação:
+  </p>
+  <ul>
+    <li>
+      <strong>Confidencialidade:</strong> garantia de que os dados e processos só sejam acessados por pessoas
+      autorizadas.
+    </li>
+    <li>
+      <strong>Integridade:</strong> proteção contra modificações ou manipulações não autorizadas de dados na
+      transmissão ou armazenamento.
+    </li>
+    <li>
+      <strong>Disponibilidade:</strong> garantia de que o sistema e seus recursos estejam acessíveis aos usuários
+      autorizados mesmo sob ataques (como DoS/DDoS).
+    </li>
+  </ul>
+  <p>
+    <strong>Métricas Comuns:</strong> número de vulnerabilidades encontradas (críticas, altas, médias, baixas);
+    eficácia na detecção de injeções de código (como <strong>SQL Injection</strong> ou <strong>XSS</strong>);
+    resistência a tentativas de força bruta; tempo de expiração de sessões e cookies.
+  </p>
+  <p>
+    <strong>Exemplo Prático:</strong> Na tela de login de um <em>sistema administrativo</em>, tenta-se submeter
+    comandos SQL maliciosos no campo de usuário (ex: <code class="one-line-code">' OR '1'='1</code>) para burlar a
+    autenticação (<strong>SQL Injection</strong>). O teste avalia se o sistema trata e sanitiza as entradas,
+    impedindo acessos indevidos e protegendo as credenciais (confidencialidade).
+  </p>
+
+  <h3>9. Teste de Robustez e Alta Disponibilidade (Robustness &amp; High Availability)</h3>
+  <p>
+    <strong>Definição:</strong> Analisa o quanto o sistema é sensível a entradas incorretas e mudanças bruscas ou
+    falhas no seu ambiente físico ou operacional. Inclui:
+  </p>
+  <ul>
+    <li>
+      <strong>Teste de Desligamento de Energia (Power Cycling):</strong> garante que o sistema volte à operação
+      normal após oscilações de energia.
+    </li>
+    <li>
+      <strong>Teste de OIR (On-line Insertion and Removal):</strong> capacidade de trocar módulos de hardware falhos
+      a quente (com o sistema rodando) sem causar quedas.
+    </li>
+    <li>
+      <strong>Teste de Tolerância a Falhas/Alta Disponibilidade (1+1 Redundancy):</strong> garante que, se um
+      servidor ativo cair, o servidor de <em>standby</em> (reserva) assuma a operação instantaneamente.
+    </li>
+  </ul>
+  <p>
+    <strong>Métricas Comuns:</strong> tempo de failover (segundos que o servidor reserva leva para assumir o
+    controle); perda de pacotes ou requisições durante a troca de servidores.
+  </p>
+  <p>
+    <strong>Exemplo Prático:</strong> Em um <em>banco de dados bancário</em> operando em alta disponibilidade, com o
+    sistema sob carga ativa, desconecta-se fisicamente o cabo de rede do servidor principal. O teste verifica se o
+    mecanismo de redundância redireciona automaticamente o tráfego para o servidor reserva de forma transparente,
+    sem interrupção perceptível para o cliente que está realizando um saque ou pagamento no mesmo instante.
+  </p>
+
+  <h3>10. Teste de Interoperabilidade e Compatibilidade (Interoperability &amp; Compatibility)</h3>
+  <p>
+    <strong>Definição:</strong> O teste de <strong>Interoperabilidade</strong> avalia a capacidade do software de
+    interagir, comunicar-se e trocar dados de forma correta com sistemas ou produtos de terceiros. O teste de
+    <strong>Compatibilidade</strong> (especialmente a <em>retrocompatibilidade</em>) verifica se o sistema opera
+    perfeitamente em diferentes navegadores, sistemas operacionais e versões anteriores de plataformas.
+  </p>
+  <p>
+    <strong>Métricas Comuns:</strong> percentual de perda de dados na integração de APIs; taxa de sucesso de leitura
+    de arquivos legados de versões anteriores; conformidade visual de páginas em diferentes navegadores.
+  </p>
+  <p>
+    <strong>Exemplo Prático:</strong> Em um sistema <em>ERP</em> que emite <em>Notas Fiscais Eletrônicas</em> integrado
+    com o sistema da <em>Receita Federal</em>, submetem-se requisições de teste do ERP para o webservice externo da
+    Receita Federal, garantindo que o formato do XML transmitido, o protocolo de criptografia e a assinatura digital
+    sejam decodificados perfeitamente por ambas as partes sem corromper as informações de impostos.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 04 em desenvolvimento...</p>
+  <h2>Resumo Comparativo</h2>
+
+  <h3>Carga vs. Estresse vs. Escalabilidade</h3>
+  <p>
+    É muito comum que alunos e profissionais iniciantes confundam esses três conceitos de performance. Use a tabela
+    abaixo para fixar a diferenciação:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo de Teste</th>
+        <th>Pergunta que responde</th>
+        <th>Carga Aplicada</th>
+        <th>Objetivo Principal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Carga (Load)</strong></td>
+        <td>"O sistema aguenta o tráfego esperado por muito tempo sem ficar lento ou vazar memória?"</td>
+        <td>Carga de trabalho prevista em produção (ex: 500 usuários ativos).</td>
+        <td>Avaliar o comportamento geral de desempenho e estabilidade de longo prazo.</td>
+      </tr>
+      <tr>
+        <td><strong>Estresse (Stress)</strong></td>
+        <td>"Qual é o limite máximo que o sistema suporta antes de cair, e como ele cai?"</td>
+        <td>Carga muito acima do limite projetado (ex: 2.000 usuários ativos).</td>
+        <td>Identificar gargalos, pontos de ruptura e a capacidade de autorrecuperação.</td>
+      </tr>
+      <tr>
+        <td><strong>Escalabilidade (Scalability)</strong></td>
+        <td>"Se eu colocar mais hardware, o sistema vai aguentar proporcionalmente mais acessos?"</td>
+        <td>Carga escalonada incrementalmente junto com o aumento de recursos de hardware.</td>
+        <td>Validar se a arquitetura de software permite crescimento de infraestrutura de forma linear.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Diagramação</h2>
+  <p>Representação visual dos principais conceitos abordados nesta aula:</p>
+
+  <h3>1. Funcional vs. Não Funcional</h3>
+  <p>
+    Os testes funcionais validam o <em>que</em> o sistema faz; os testes não funcionais validam <em>como</em> o
+    sistema faz, considerando atributos de qualidade.
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A[Testes de Software] --> B[Testes Funcionais<br/>'O que o sistema faz?']
+    A --> C[Testes Não Funcionais<br/>'Como o sistema faz?']
+    C --> C1[Usabilidade]
+    C --> C2[Performance]
+    C --> C3[Carga / Estabilidade]
+    C --> C4[Estresse]
+    C --> C5[Escalabilidade]
+    C --> C6[Segurança]
+    C --> C7[Robustez / Alta Disponibilidade]
+    C --> C8[Interoperabilidade]
+
+    style A fill:#d1e7dd,stroke:#0f5132
+    style B fill:#f8d7da,stroke:#721c24
+    style C fill:#cfe2ff,stroke:#084298
+  </div>
+
+  <h3>2. Comparativo: Carga, Estresse e Escalabilidade</h3>
+  <div class="mermaid">
+    flowchart LR
+    subgraph C["Carga (Load)"]
+      direction TB
+      C1["Carga prevista em produção"] --> C2["Estabilidade de\nlongo prazo"]
+    end
+    subgraph S["Estresse (Stress)"]
+      direction TB
+      S1["Carga acima do limite"] --> S2["Ponto de ruptura\ne autorrecuperação"]
+    end
+    subgraph E["Escalabilidade (Scalability)"]
+      direction TB
+      E1["Carga + mais hardware"] --> E2["Crescimento\nlinear"]
+    end
+
+    style C fill:#f8d7da,stroke:#721c24
+    style S fill:#fff3cd,stroke:#664d03
+    style E fill:#d1e7dd,stroke:#0f5132
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>Funcional responde "o quê", não funcional responde "como":</strong> guarde essa diferenciação — ela é
+      a base de toda a aula.
+    </li>
+    <li>
+      <strong>Carga ≠ Estresse ≠ Escalabilidade:</strong> carga usa o volume <em>previsto</em>, estresse excede o
+      limite <em>projetado</em>, e escalabilidade relaciona capacidade ao <em>hardware adicionado</em>.
+    </li>
+    <li>
+      <strong>Teste de estresse também observa como o sistema falha:</strong> falhar com mensagem amigável é bem
+      melhor do que expor um erro de código.
+    </li>
+    <li>
+      <strong>Segurança: CID.</strong> Os três pilares são <em>Confidencialidade</em>, <em>Integridade</em> e
+      <em>Disponibilidade</em>.
+    </li>
+    <li>
+      <strong>Interoperabilidade vs. Compatibilidade:</strong> interoperabilidade é trocar dados com sistemas de
+      <em>terceiros</em>; compatibilidade é rodar em diferentes <em>navegadores/SOs/versões</em>.
+    </li>
+    <li>
+      <strong>Ferramentas ajudam:</strong> JMeter, LoadRunner e k6 são comuns para performance/carga/estresse; OWASP
+      ZAP e Burp Suite para segurança; Selenium/Playwright para usabilidade e compatibilidade.
+    </li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>
+      PRESSMAN, Roger S. <em>Engenharia de Software: Uma Abordagem Profissional</em>. 8. ed. Porto Alegre: AMGH,
+      2016.
+    </li>
+    <li>
+      ISO/IEC 9126. <em>Software Engineering - Product Quality</em>. International Organization for
+      Standardization.
+    </li>
+    <li>
+      ISO/IEC 25000. <em>Systems and Software Quality Requirements and Evaluation (SQuaRE)</em>. International
+      Organization for Standardization.
+    </li>
+    <li>
+      MYERS, Glenford J.; SANDLER, Corey; BADGETT, Tom. <em>The Art of Software Testing</em>. 3. ed. Hoboken: John
+      Wiley &amp; Sons, 2012.
+    </li>
+    <li>
+      ISTQB. <em>Certified Tester Foundation Level Syllabus</em>. International Software Testing Qualifications
+      Board. Disponível em: https://www.istqb.org
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Analisando Casos de Testes Não Funcionais</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>

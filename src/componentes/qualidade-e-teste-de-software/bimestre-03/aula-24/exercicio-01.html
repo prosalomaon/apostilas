@@ -1,19 +1,184 @@
 ---
 layout: exercicio
-title: "Testes Não Funcionais"
+title: "Atividade Prática: Analisando Casos de Testes Não Funcionais"
 exercicio_numero: "01"
-aula_numero: "04"
+aula_numero: "24"
 subject: "qualidade-e-teste-de-software"
-description: "Exercício 01 da aula 04 do bimestre 03: Testes Não Funcionais."
+description: "Analisar cenários práticos de diferentes categorias de testes não funcionais (usabilidade, performance, carga, estresse, escalabilidade, segurança, robustez/alta disponibilidade e interoperabilidade), identificando a categoria correta, as métricas aplicáveis e o objetivo principal de cada teste."
 ---
 
-<p>Conteúdo do exercício 01 da aula 04 em desenvolvimento...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    A fábrica de software <strong>TechQuality</strong> atende diversos clientes e precisa classificar corretamente os
+    testes de qualidade que realizará. Você, como analista de qualidade, deve avaliar cada cenário abaixo e aplicar
+    os conceitos de <strong>Testes Não Funcionais</strong> estudados na aula.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Identificação das Categorias</h3>
+  <p>
+    Classifique cada cenário abaixo em uma das categorias de teste não funcional e justifique com base na definição
+    da aula:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Cenário</th>
+        <th>Categoria</th>
+        <th>Justificativa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Um app de Internet Banking para idosos é testado com usuários idosos realizando transferências e
+          medindo-se o tempo e o número de cliques.</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Um e-commerce é submetido a 50 usuários simulando compras simultâneas para verificar se a página de
+          pagamento carrega em menos de 2 segundos.</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Um servidor recebe 100 requisições por segundo durante 48 horas para verificar se há vazamento de
+          memória ao longo do tempo.</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Um sistema de inscrições de vestibular é submetido a 2.000 conexões simultâneas, embora sua
+          especificação seja de 500, para observar como e quando ele falha.</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Um banco de dados na nuvem é testado com 100, 200, 400 e 800 transações por segundo, dobrando-se a CPU
+          para verificar o crescimento linear.</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Um testador tenta submeter <code class="one-line-code">' OR '1'='1</code> no campo de usuário da tela de
+          login para tentar burlar a autenticação.</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Um cabo de rede do servidor principal é desconectado com o sistema em plena operação para verificar se o
+          servidor reserva assume automaticamente.</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Um sistema ERP é testado trocando XMLs de Nota Fiscal Eletrônica com o webservice da Receita Federal para
+          garantir que os dados sejam decodificados sem perdas.</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 2: Métricas de Medição</h3>
+  <p>
+    Para cada categoria a seguir, indique <strong>duas métricas</strong> que podem ser utilizadas para medir o
+    atributo de qualidade:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Categoria</th>
+        <th>Métrica 1</th>
+        <th>Métrica 2</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Usabilidade</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Performance</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Estresse</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Segurança</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Questão 3: Carga x Estresse x Escalabilidade</h3>
+  <p>
+    Considere um sistema de e-commerce que está em produção e foi projetado para aguentar <strong>500 usuários
+    simultâneos</strong>. Descreva, em suas palavras, como seria <strong>cada um</strong> dos três testes abaixo para
+    esse sistema, indicando a carga aplicada e o objetivo:
+  </p>
+  <ul>
+    <li><strong>a)</strong> Teste de Carga (Load).</li>
+    <li><strong>b)</strong> Teste de Estresse (Stress).</li>
+    <li><strong>c)</strong> Teste de Escalabilidade (Scalability).</li>
+  </ul>
+
+  <h3>Questão 4: Segurança - Pilares da Informação</h3>
+  <p>
+    Associe cada situação abaixo ao pilar de segurança da informação (<em>Confidencialidade</em>,
+    <em>Integridade</em> ou <em>Disponibilidade</em>) que está sendo avaliado:
+  </p>
+  <ul>
+    <li>
+      <strong>a)</strong> Um ataque DDoS tenta impedir que usuários autorizados acessem o sistema.
+    </li>
+    <li>
+      <strong>b)</strong> Um invasor consegue ler o banco de dados e visualizar as senhas dos usuários.
+    </li>
+    <li>
+      <strong>c)</strong> Durante a transmissão, um dado é alterado sem autorização antes de chegar ao destino.
+    </li>
+  </ul>
+
+  <h3>Questão 5: Exemplo Prático de Planejamento</h3>
+  <p>
+    A <strong>ETEC Online</strong> lançará um sistema de matrícula que atenderá cerca de <strong>10.000 alunos</strong>
+    na primeira semana de inscrições. Proponha um <strong>plano resumido</strong> de testes não funcionais para esse
+    sistema, indicando:
+  </p>
+  <ul>
+    <li>Qual(is) categoria(s) de teste não funcional você priorizaria e <strong>por quê</strong>.</li>
+    <li>Qual seria a <strong>carga esperada</strong> e qual carga de <strong>estresse</strong> você aplicaria.</li>
+    <li>Duas <strong>métricas</strong> de passagem (aceitação) para o teste de performance.</li>
+  </ul>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia o enunciado com atenção antes de começar.</li>
-    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Revise o conteúdo da aula antes de começar: as 8 categorias de testes não funcionais e suas definições.</li>
+    <li>Na Questão 1, preste atenção na diferença entre <em>carga</em> (volume previsto), <em>estresse</em> (acima do limite) e <em>escalabilidade</em> (relação com hardware adicional).</li>
+    <li>Na Questão 3, lembre-se: carga = comportamento de longo prazo, estresse = ponto de ruptura, escalabilidade = crescimento com mais recursos.</li>
+    <li>Na Questão 4, revise os pilares CID: <em>Confidencialidade</em>, <em>Integridade</em>, <em>Disponibilidade</em>.</li>
     <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>

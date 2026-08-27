@@ -1,0 +1,161 @@
+---
+title: "Anexo - Diagrama de Sequência de Referência (Aula 22)"
+componente: "Análise e Projeto de Sistemas"
+aula_numero: "22"
+description: "Anexo da aula 22: Diagrama de Sequência de referência (gabarito) para comparação com o diagrama construído na atividade prática, a partir do código Java do cenário 'Abertura de Conta' do banco TechBank."
+---
+
+<article class="lesson-content">
+  <header class="lesson-header">
+    <a href="./" class="back-link-class">← Voltar para Aula 22</a>
+    <h1>Anexo - Diagrama de Sequência de Referência</h1>
+    <p class="lesson-intro">
+      Este anexo apresenta o <strong>diagrama de referência (gabarito)</strong> do cenário
+      <em>"Abertura de Conta"</em> da atividade prática do Exercício 01. Use-o apenas <strong>após</strong> tentar
+      construir o seu próprio diagrama, para comparar e conferir os elementos da aula.
+    </p>
+  </header>
+
+  <section class="section-box">
+    <h2>Diagrama de Sequência - Abertura de Conta</h2>
+    <div class="mermaid">
+      sequenceDiagram
+        actor Gerente
+        participant S as umSistema : Sistema
+        participant CLI as umCliente : Cliente
+        participant CTA as umaConta : Conta
+        participant AG as agencia : Agencia
+        participant SMS as notificarSMS : SmsSender
+
+        Gerente->>S: abrirConta(cpf, depositoInicial)
+        activate S
+        S->>CLI: &lt;&lt;create&gt;&gt; new Cliente(cpf)
+        activate CLI
+        deactivate CLI
+        S->>CTA: &lt;&lt;create&gt;&gt; new Conta(cliente)
+        activate CTA
+        S->>CTA: calcularSaldoInicial(depositoInicial)
+        activate CTA
+        CTA->>AG: calcularBonus()
+        activate AG
+        AG-->>CTA: bonus
+        deactivate AG
+        CTA-->>S: saldo
+        deactivate CTA
+        S->>S: validarLimites(saldo)
+        opt saldo &gt; 10000
+          S->>AG: liberarAltaPremium()
+          activate AG
+          AG-->>S: ok
+          deactivate AG
+        end
+        S--)SMS: concluido("Conta aberta com sucesso")
+        S-->>Gerente: conta aberta
+        deactivate S
+    </div>
+  </section>
+
+  <section class="section-box">
+    <h2>Roteiro de verificação (comparação)</h2>
+    <p>
+      Confira se o seu diagrama contém os seguintes elementos. Cada item corresponde a um conceito abordado na
+      aula 22:
+    </p>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Elemento esperado</th>
+            <th>Conceito da aula</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Ator <code class="one-line-code">Gerente</code> envia a mensagem <em>síncrona</em>
+              <code class="one-line-code">abrirConta()</code> ao <code class="one-line-code">umSistema</code></td>
+            <td>Participante (ator) + Mensagem síncrona (seta de ponta preenchida)</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Foco de controle ativado em <code class="one-line-code">umSistema</code> durante toda a execução</td>
+            <td>Foco de controle / ativação (execution specification)</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Criação de <code class="one-line-code">umCliente</code> e <code class="one-line-code">umaConta</code>
+              com o estereótipo <code class="one-line-code">&lt;&lt;create&gt;&gt;</code></td>
+            <td>Criação de objetos</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Chamada síncrona <code class="one-line-code">calcularSaldoInicial()</code> de
+              <code class="one-line-code">umaConta</code> com <em>retorno</em> <code class="one-line-code">saldo</code>
+              (seta tracejada de ponta aberta)</td>
+            <td>Mensagem síncrona + Mensagem de retorno (reply)</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><code class="one-line-code">umaConta</code> chama <code class="one-line-code">calcularBonus()</code> em
+              <code class="one-line-code">agencia</code> e recebe o retorno <code class="one-line-code">bonus</code></td>
+            <td>Participante (objeto) + síncrona + retorno</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Auto-chamada <code class="one-line-code">validarLimites()</code> (seta que retorna ao próprio
+              <code class="one-line-code">umSistema</code>)</td>
+            <td>Auto-chamada (self-message)</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Condição <code class="one-line-code">saldo &gt; 10000</code> representada por um fragmento
+              <code class="one-line-code">opt</code> com a chamada <code class="one-line-code">liberarAltaPremium()</code></td>
+            <td>Lógica condicional (fragmento de interação)</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>Mensagem <em>assíncrona</em> <code class="one-line-code">concluido()</code> enviada ao
+              <code class="one-line-code">SmsSender</code> (seta de ponta aberta, sem retorno)
+            </td>
+            <td>Mensagem assíncrona (não bloqueia o chamador)</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>Retorno final ao ator <code class="one-line-code">Gerente</code></td>
+            <td>Mensagem de retorno</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="tip-box">
+    <h4>Leitura do diagrama</h4>
+    <ul>
+      <li>
+        <strong>Linhas de vida (tracejadas):</strong> os objetos <code class="one-line-code">Cliente</code>,
+        <code class="one-line-code">Conta</code>, <code class="one-line-code">Agencia</code> e
+        <code class="one-line-code">SmsSender</code> existem a partir do momento em que recebem uma mensagem ou são
+        criados.
+      </li>
+      <li>
+        <strong>Ativação (focos de controle):</strong> cada objeto fica ativo apenas durante o processamento das
+        mensagens que recebe; o foco de <code class="one-line-code">umaConta</code> abre e fecha quando recebe
+        <code class="one-line-code">calcularSaldoInicial()</code>.
+      </li>
+      <li>
+        <strong>Assíncrona vs. síncrona:</strong> a notificação de SMS é <em>assíncrona</em> (o sistema segue sem
+        aguardar resposta), enquanto todas as chamadas que precisam de resultado são <em>síncronas</em> com retorno.
+      </li>
+      <li>
+        <strong>Sem destruição neste cenário:</strong> nenhum objeto é marcado com <strong>X</strong>, pois não há
+        encerramento explícito de sessão no código fornecido.
+      </li>
+    </ul>
+  </div>
+
+  <nav class="lesson-pagination">
+    <a href="./" class="back">VOLTAR PARA AULAS</a>
+  </nav>
+</article>

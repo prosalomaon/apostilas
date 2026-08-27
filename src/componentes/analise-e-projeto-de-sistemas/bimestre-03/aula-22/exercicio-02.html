@@ -1,9 +1,10 @@
 ﻿---
 layout: questionario
-title: "Exercício 02 - Diagrama de Sequência - Fundamentos"
+title: "Questionário - Diagrama de Sequência - Fundamentos"
 exercicio_numero: "02"
 aula_numero: "22"
-description: "Questionário de fixação sobre o Diagrama de Sequência da UML: propósito, elementos fundamentais, linha da vida, foco de controle, mensagens síncronas/assíncronas/retorno, criação e destruição."
+subject: "analise-e-projeto-de-sistemas"
+description: "Questionário de fixação sobre o Diagrama de Sequência da UML: propósito, elementos fundamentais, participantes, linha da vida, foco de controle, mensagens síncronas/assíncronas/retorno, criação, destruição, auto-chamadas e fragmentos de interação."
 perguntas:
   - texto: "Qual é o propósito principal do Diagrama de Sequência da UML?"
     resposta_correta: "b"
@@ -27,7 +28,7 @@ perguntas:
         texto: "Os papéis externos (atores) e as instâncias das classes (objetos) que participam da interação."
       - letra: "d"
         texto: "Os módulos do código-fonte, organizados por camada."
-  - texto: "Na sintaxe comum dos objetos em um Diagrama de Sequência, o que indica o termo após os dois pontos em 'umPedido : Pedido'?"
+  - texto: "Na sintaxe comum dos objetos, o que indica o termo após os dois pontos em 'umPedido : Pedido'?"
     resposta_correta: "d"
     alternativas:
       - letra: "a"
@@ -49,7 +50,7 @@ perguntas:
         texto: "Um retângulo fino que mostra o período de execução de uma operação."
       - letra: "d"
         texto: "Uma seta tracejada que devolve o resultado ao chamador."
-  - texto: "O que indica o foco de controle (execution specification)?"
+  - texto: "O que indica o foco de controle (execution specification) em um Diagrama de Sequência?"
     resposta_correta: "b"
     alternativas:
       - letra: "a"
@@ -115,7 +116,7 @@ perguntas:
         texto: "Com uma seta de mensagem apontando diretamente para o retângulo do novo objeto, com o estereótipo <<create>>."
       - letra: "d"
         texto: "Com uma linha tracejada vertical que desce do ator."
-  - texto: "Como é representada a destruição de um objeto?"
+  - texto: "Como é representada a destruição de um objeto em um Diagrama de Sequência?"
     resposta_correta: "b"
     alternativas:
       - letra: "a"
@@ -126,6 +127,28 @@ perguntas:
         texto: "Com uma seta de ponta aberta apontando para o ator."
       - letra: "d"
         texto: "Com uma mensagem assíncrona de encerramento da sessão."
+  - texto: "O que é uma auto-chamada (self-message) em um Diagrama de Sequência?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Uma mensagem que um objeto envia para si mesmo, mantendo o foco de controle no próprio objeto."
+      - letra: "b"
+        texto: "Uma mensagem que o ator envia a todos os objetos ao mesmo tempo."
+      - letra: "c"
+        texto: "Uma mensagem de retorno que percorre dois participantes."
+      - letra: "d"
+        texto: "Uma mensagem assíncrona destinada ao banco de dados."
+  - texto: "Em um Diagrama de Sequência, um fragmento 'loop' (laço repetitivo) é utilizado para:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Mostrar a criação de objetos em paralelo."
+      - letra: "b"
+        texto: "Representar uma decisão exclusiva (ou um, ou outro)."
+      - letra: "c"
+        texto: "Representar a repetição de um conjunto de mensagens enquanto uma condição for verdadeira."
+      - letra: "d"
+        texto: "Indicar o envio de mensagens sem esperar resposta."
   - texto: "Qual é a principal diferença entre o Diagrama de Sequência e o Diagrama de Comunicação?"
     resposta_correta: "a"
     alternativas:
@@ -149,3 +172,14 @@ perguntas:
       - letra: "d"
         texto: "Representar algoritmos complexos com muitos laços e condições, onde é melhor usar código ou Diagramas de Atividades."
 ---
+
+<p>Responda as questões abaixo para consolidar os conhecimentos sobre o Diagrama de Sequência da UML e seus fundamentos.</p>
+
+<div class="tip-box">
+  <h4>Orientações</h4>
+  <ul>
+    <li>Leia o enunciado com atenção antes de começar.</li>
+    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
+  </ul>
+</div>

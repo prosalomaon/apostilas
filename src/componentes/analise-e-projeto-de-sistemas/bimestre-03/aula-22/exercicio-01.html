@@ -1,68 +1,201 @@
 ﻿---
 layout: exercicio
-title: "Exercício 01 - Diagrama de Sequência - Fundamentos"
+title: "Atividade Prática - Do Código Java ao Diagrama de Sequência"
 exercicio_numero: "01"
 aula_numero: "22"
-description: "Atividade prática: construir e analisar Diagramas de Sequência UML, identificando participantes, linhas de vida, foco de controle e mensagens síncronas, assíncronas e de retorno."
+description: "Exercício prático: dado um código Java que implementa a abertura de uma conta bancária, o aluno deve construir o Diagrama de Sequência correspondente, aplicando todos os conceitos da aula (participantes, linha da vida, foco de controle, mensagens síncronas, assíncronas, de retorno, auto-chamadas, criação e destruição)."
 ---
 
 <section class="section-box">
   <h2>Enunciado</h2>
   <p>
-    Uma loja virtual deseja documentar o comportamento dinâmico do cenário
-    <em>"Finalizar Compra"</em> do sistema de vendas. A análise já definiu as classes
-    <code class="one-line-code">CarrinhoDeCompras</code>, <code class="one-line-code">Pedido</code>,
-    <code class="one-line-code">Pagamento</code> e <code class="one-line-code">Cliente</code>. Agora a equipe precisa do
-    Diagrama de Sequência para orientar a implementação.
+    O banco <strong>TechBank</strong> desenvolveu o trecho de código Java abaixo para o cenário
+    <em>"Abertura de Conta"</em>. Sua tarefa é <strong>transformar esse código em um Diagrama de Sequência UML</strong>,
+    utilizando <strong>todos os conceitos estudados na aula</strong>.
   </p>
 
-  <h3>Parte 1 – Construir o Diagrama de Sequência</h3>
+  <h3>Parte 1 – O Código Java</h3>
+  <div class="code-container">
+    <pre><code class="language-java">// Ponto de entrada: chamado pelo ator (gerente)
+public void abrirConta(String cpf, double depositoInicial) {
+    // 1. Criação do objeto cliente (estereótipo &lt;&lt;create&gt;&gt;)
+    Cliente cliente = new Cliente(cpf);
+
+    // 2. Criação do objeto conta (estereótipo &lt;&lt;create&gt;&gt;)
+    Conta conta = new Conta(cliente);
+
+    // 3. Chamada síncrona com retorno (reply)
+    double saldo = conta.calcularSaldoInicial(depositoInicial);
+
+    // 4. Auto-chamada (self-message) para validar as regras da agência
+    this.validarLimites(saldo);
+
+    // 5. Chamada assíncrona: dispara e segue sem esperar resposta
+    this.notificarSMS.concluido("Conta aberta com sucesso");
+
+    // 6. Retorno ao ator
+    System.out.println("Conta " + conta.getNumero() + " aberta");
+}
+
+public double calcularSaldoInicial(double depositoInicial) {
+    double bonus = this.agencia.calcularBonus();   // chamada síncrona a outro objeto
+    return depositoInicial + bonus;                // retorna o saldo (mensagem de retorno)
+}
+
+public void validarLimites(double saldo) {
+    if (saldo &gt; 10000) {
+        this.agencia.liberarAltaPremium();          // chamada síncrona
+    }
+}</code></pre>
+  </div>
   <p>
-    Desenhe (à mão ou com ferramenta de modelagem) o Diagrama de Sequência do cenário abaixo:
+    <strong>Classes envolvidas:</strong> o sistema <code class="one-line-code">umSistema : Sistema</code> (que executa
+    o método <code class="one-line-code">abrirConta()</code>), <code class="one-line-code">umCliente : Cliente</code>,
+    <code class="one-line-code">umaConta : Conta</code>, a <code class="one-line-code">agencia : Agencia</code>
+    (que concentra as regras de negócio, como <code class="one-line-code">calcularBonus()</code> e
+    <code class="one-line-code">liberarAltaPremium()</code>) e o serviço externo
+    <code class="one-line-code">notificarSMS : SmsSender</code>.
   </p>
-  <ol>
-    <li>O ator <strong>Cliente</strong> envia a mensagem síncrona <code class="one-line-code">finalizarCompra()</code>
-      para o objeto <code class="one-line-code">umCarrinho : CarrinhoDeCompras</code>.</li>
-    <li><code class="one-line-code">umCarrinho</code> entra em <strong>foco de controle</strong> e cria um
-      <code class="one-line-code">umPedido : Pedido</code> com o estereótipo
-      <code class="one-line-code">&lt;&lt;create&gt;&gt;</code>.</li>
-    <li><code class="one-line-code">umCarrinho</code> envia <code class="one-line-code">calcularTotal()</code> ao
-      <code class="one-line-code">umPedido</code>, que devolve o valor total (mensagem de retorno).</li>
-    <li><code class="one-line-code">umCarrinho</code> cria <code class="one-line-code">umPagamento : Pagamento</code> e
-      envia a mensagem <strong>assíncrona</strong> <code class="one-line-code">processarCartão(dadosCartão)</code> para
-      o serviço externo de pagamento, sem esperar resposta para continuar.</li>
-    <li><code class="one-line-code">umCarrinho</code> executa uma <strong>auto-chamada</strong>
-      <code class="one-line-code">confirmarPedido()</code> e, ao final, retorna ao ator
-      <code class="one-line-code">compraConcluída</code>.</li>
-    <li>O objeto <code class="one-line-code">umPedido</code> é <strong>destruído</strong> (marcado com um X) ao final da
-      interação, pois a sessão de compra foi encerrada.</li>
-  </ol>
+</section>
 
-  <h3>Parte 2 – Análise do Diagrama</h3>
-  <ol>
-    <li>Identifique em seu diagrama: atores, objetos, linhas de vida e focos de controle.</li>
-    <li>Explique a diferença entre as mensagens enviadas em (3) e (4): por que a mensagem do pagamento é assíncrona e a
-      <code class="one-line-code">calcularTotal()</code> é síncrona?</li>
-    <li>Explique por que a mensagem de retorno em (3) é representada por uma seta tracejada de ponta aberta.</li>
-    <li>O que representa o X no final da linha da vida do objeto <code class="one-line-code">umPedido</code>?</li>
-  </ol>
+<section class="section-box">
+  <h2>Parte 2 – Construção do Diagrama</h2>
+  <p>
+    Desenhe (à mão ou com ferramenta de modelagem) o <strong>Diagrama de Sequência</strong> correspondente ao código,
+    <strong>na ordem de ocorrência</strong>, incluindo:
+  </p>
+  <ul>
+    <li>O ator <strong>Gerente</strong> e os objetos participantes.</li>
+    <li>As <strong>linhas de vida</strong> e os <strong>focos de controle</strong> (ativações).</li>
+    <li>
+      As <strong>mensagens de criação</strong> dos objetos <code class="one-line-code">Cliente</code> e
+      <code class="one-line-code">Conta</code>, com o estereótipo <code class="one-line-code">&lt;&lt;create&gt;&gt;</code>.
+    </li>
+    <li>A <strong>mensagem síncrona</strong> <code class="one-line-code">calcularSaldoInicial()</code> e a respectiva
+      <strong>mensagem de retorno</strong> (reply).</li>
+    <li>A <strong>auto-chamada</strong> <code class="one-line-code">validarLimites()</code>.</li>
+    <li>A <strong>mensagem assíncrona</strong> para o serviço externo de SMS.</li>
+  </ul>
 
-  <h3>Parte 3 – Revisão crítica</h3>
-  <ol>
-    <li>Compare seu Diagrama de Sequência com um possível <strong>Diagrama de Comunicação</strong> do mesmo cenário:
-      destaque uma semelhança e uma diferença entre os dois.</li>
-    <li>Proponha uma mudança que você faria no diagrama para dar destaque ao fluxo de controle, sem mostrar detalhes de
-      implementação do código.</li>
-  </ol>
+  <h3>Roteiro guiado para conferir o diagrama</h3>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Etapa</th>
+        <th>Elemento no diagrama</th>
+        <th>Base no código</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Ator Gerente &rarr; <code class="one-line-code">Agencia</code> (síncrona <code class="one-line-code">abrirConta()</code>)</td>
+        <td><code class="one-line-code">public void abrirConta(...)</code></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Criação <code class="one-line-code">&lt;&lt;create&gt;&gt;</code> de <code class="one-line-code">umCliente : Cliente</code></td>
+        <td><code class="one-line-code">new Cliente(cpf)</code></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Criação <code class="one-line-code">&lt;&lt;create&gt;&gt;</code> de <code class="one-line-code">umaConta : Conta</code></td>
+        <td><code class="one-line-code">new Conta(cliente)</code></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Síncrona <code class="one-line-code">calcularSaldoInicial()</code> + retorno <code class="one-line-code">saldo</code></td>
+        <td><code class="one-line-code">double saldo = conta.calcularSaldoInicial(...)</code></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Síncrona <code class="one-line-code">calcularBonus()</code> em <code class="one-line-code">agencia</code></td>
+        <td><code class="one-line-code">this.agencia.calcularBonus()</code></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Auto-chamada <code class="one-line-code">validarLimites()</code> (foco em <code class="one-line-code">Agencia</code>)</td>
+        <td><code class="one-line-code">this.validarLimites(saldo)</code></td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Síncrona condicional <code class="one-line-code">liberarAltaPremium()</code> (se saldo &gt; 10000)</td>
+        <td><code class="one-line-code">if (saldo &gt; 10000) { ... }</code></td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Assíncrona <code class="one-line-code">concluido(texto)</code> para <code class="one-line-code">SmsSender</code></td>
+        <td><code class="one-line-code">this.notificarSMS.concluido(...)</code></td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Retorno final ao ator Gerente</td>
+        <td><code class="one-line-code">System.out.println(...)</code></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Parte 3 – Questões</h2>
+
+  <h3>Questão 1: Participantes e Linhas de Vida</h3>
+  <p>
+    Liste todos os <strong>participantes</strong> do diagrama (ator e objetos). Para cada objeto, escreva o nome no
+    formato <code class="one-line-code">nomeObjeto : NomeClasse</code> e explique o que a <strong>linha da vida</strong>
+    representa nesse cenário.
+  </p>
+
+  <h3>Questão 2: Focos de Controle</h3>
+  <p>
+    Indique em quais trechos do diagrama cada objeto entra em <strong>foco de controle</strong> (ativação). Explique por
+    que o objeto <code class="one-line-code">umaConta : Conta</code> entra e sai de ativação mais de uma vez.
+  </p>
+
+  <h3>Questão 3: Mensagens Síncronas e de Retorno</h3>
+  <p>
+    Identifique as mensagens <strong>síncronas</strong> do diagrama e, para cada uma, descreva a correspondente
+    <strong>mensagem de retorno</strong> (reply). Explique o que acontece com o chamador (ex: o objeto
+    <code class="one-line-code">Agencia</code>) durante uma chamada síncrona ao <code class="one-line-code">Conta</code>.
+  </p>
+
+  <h3>Questão 4: Mensagem Assíncrona</h3>
+  <p>
+    Explique por que a mensagem <code class="one-line-code">concluido()</code> para o serviço de SMS é
+    <strong>assíncrona</strong> e qual é a diferença de comportamento do chamador em relação a uma chamada síncrona.
+  </p>
+
+  <h3>Questão 5: Auto-chamada e Criação</h3>
+  <p>
+    Descreva a <strong>auto-chamada</strong> <code class="one-line-code">validarLimites()</code> apresentada no roteiro.
+    Em seguida, explique como as <strong>mensagens de criação</strong> (<code class="one-line-code">&lt;&lt;create&gt;&gt;</code>)
+    são representadas e por que a linha da vida de um objeto criado tem início no momento em que recebe a seta de criação.
+  </p>
+
+  <h3>Questão 6: Condição no Diagrama</h3>
+  <p>
+    O código contém um <code class="one-line-code">if (saldo &gt; 10000)</code>. Em um Diagrama de Sequência, como você
+    representaria essa <strong>lógica condicional</strong> (ex: fragmento <code class="one-line-code">alt</code>/
+    <code class="one-line-code">opt</code>)? Descreva como ficaria o fragmento para a chamada
+    <code class="one-line-code">liberarAltaPremium()</code>.
+  </p>
+
+  <h3>Questão 7: Destruição</h3>
+  <p>
+    No código fornecido nenhum objeto é explicitamente destruído. Explique <strong>quando e como</strong> o recurso de
+    <strong>destruição</strong> (marcado com um <strong>X</strong> no final da linha da vida) seria aplicado em um
+    cenário como este, e em qual participantes poderia ser usado.
+  </p>
 </section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
     <li>Releia o conteúdo da aula antes de começar; a tabela de elementos fundamentais ajuda na construção.</li>
+    <li>Organize as mensagens <strong>de cima para baixo</strong>, respeitando a ordem de execução do código.</li>
     <li>Use a sintaxe <code class="one-line-code">nomeObjeto : NomeClasse</code> para nomear os objetos.</li>
-    <li>Organize as mensagens <strong>de cima para baixo</strong>, na ordem de ocorrência.</li>
+    <li>Cada chamada de método vira uma seta; cada <code class="one-line-code">return</code> vira uma mensagem de retorno.</li>
+    <li>Lembre-se: síncrona = seta de ponta preenchida; assíncrona = seta de ponta aberta; retorno = seta tracejada de ponta aberta; criação = seta com <code class="one-line-code">&lt;&lt;create&gt;&gt;</code>; destruição = X no fim da linha da vida.</li>
     <li>Não polua o diagrama: mostre apenas as chamadas cruciais para entender a lógica do design.</li>
-    <li>Para cenários com laços e condições complexas, lembre-se de que o Diagrama de Atividades é mais adequado.</li>
   </ul>
 </div>
