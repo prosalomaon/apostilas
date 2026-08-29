@@ -22,19 +22,22 @@
           <a class="back-link" href="{{ '/' | url }}"
           >Apostilas - Prof. Salomão</a>
         </nav>
-        <div class="dropdown">
-          <button class="logo-toggle">
-            Disciplinas <span class="arrow">▼</span>
-          </button>
-          <div class="dropdown-content">
-            <a href="{{ '/' | url }}" class="dropdown-home">Início</a>
-            <div class="dropdown-divider"></div>
-            {% for subject in collections.subjects %}
-              <a href="{{ subject.url | url }}">{{
-                subject.data.subject_title
-              }}</a>
-            {% endfor %}
+        <div class="nav-actions">
+          <div class="dropdown">
+            <button class="logo-toggle">
+              Disciplinas <span class="arrow">▼</span>
+            </button>
+            <div class="dropdown-content">
+              <a href="{{ '/' | url }}" class="dropdown-home">Início</a>
+              <div class="dropdown-divider"></div>
+              {% for subject in collections.subjects %}
+                <a href="{{ subject.url | url }}">{{
+                  subject.data.subject_title
+                }}</a>
+              {% endfor %}
+            </div>
           </div>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Alternar tema">🌙</button>
         </div>
       </div>
     </header>
