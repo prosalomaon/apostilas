@@ -121,44 +121,86 @@ if (faturamentoAnual &lt;= 81000) {
     <code class="one-line-code">for</code> para percorrer essa matriz do primeiro ao último item de forma automatizada.
   </p>
 
-  <h3>Tabela de Dados Brutos (Transações Contábeis)</h3>
-  <p>Para o nosso simulador, considere a seguinte lista de faturamentos mensais da empresa contábil de janeiro a maio:</p>
-  <table>
+  <h3>A Planilha de Origem (A1:D7)</h3>
+  <p>
+    Para o nosso simulador, considere a seguinte planilha com os faturamentos mensais da empresa contábil de janeiro a
+    maio. A <strong>coluna A</strong> guarda os meses e a <strong>coluna B</strong>, os valores (intervalo
+    <code class="one-line-code">B2:B6</code>). Já as <strong>colunas C e D</strong> trazem as fórmulas que o nosso
+    código JavaScript vai reproduzir: a <strong>Soma acumulada</strong> (=SOMA arrastada) e o <strong>Alerta</strong>
+    de faturamento atípico (um SE de comparação).
+  </p>
+  <div class="overflow-inline">
+    <table class="spreadsheet-table">
     <thead>
       <tr>
-        <th>Célula (Sheets)</th>
-        <th>Mês</th>
-        <th>Faturamento bruto (R$)</th>
+        <th class="spreadsheet-corner" scope="col"></th>
+        <th scope="col">A</th>
+        <th scope="col">B</th>
+        <th scope="col">C</th>
+        <th scope="col">D</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><code class="one-line-code">A2:B2</code></td>
+        <th class="spreadsheet-index" scope="row">1</th>
+        <th class="spreadsheet-header" scope="col">Mês</th>
+        <th class="spreadsheet-header" scope="col">Faturamento bruto (R$)</th>
+        <th class="spreadsheet-header" scope="col">Soma acumulada (R$)</th>
+        <th class="spreadsheet-header" scope="col">Alerta (&gt; R$ 90.000)</th>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">2</th>
         <td>Jan</td>
         <td>82000</td>
+        <td>82000</td>
+        <td></td>
       </tr>
       <tr>
-        <td><code class="one-line-code">A3:B3</code></td>
+        <th class="spreadsheet-index" scope="row">3</th>
         <td>Fev</td>
         <td>85000</td>
+        <td>167000</td>
+        <td></td>
       </tr>
       <tr>
-        <td><code class="one-line-code">A4:B4</code></td>
+        <th class="spreadsheet-index" scope="row">4</th>
         <td>Mar</td>
         <td>88000</td>
+        <td>255000</td>
+        <td></td>
       </tr>
       <tr>
-        <td><code class="one-line-code">A5:B5</code></td>
+        <th class="spreadsheet-index" scope="row">5</th>
         <td>Abr</td>
         <td>91000</td>
+        <td>346000</td>
+        <td>[ALERTA] Faturamento alto</td>
       </tr>
       <tr>
-        <td><code class="one-line-code">A6:B6</code></td>
+        <th class="spreadsheet-index" scope="row">6</th>
         <td>Mai</td>
         <td>94000</td>
+        <td>440000</td>
+        <td>[ALERTA] Faturamento alto</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">7</th>
+        <th class="spreadsheet-label" scope="row">TOTAL</th>
+        <td>440000</td>
+        <td>440000</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
+  </div>
+  <p class="spreadsheet-legend">
+    <strong>Fórmulas:</strong> <code class="one-line-code">C2</code> a <code class="one-line-code">C6</code> =
+    <code class="one-line-code">=SOMA($B$2:B2)</code> (arrastada para baixo);
+    <code class="one-line-code">D2</code> a <code class="one-line-code">D6</code> =
+    <code class="one-line-code">=SE(B2&gt;90000; "[ALERTA] Faturamento alto"; "")</code>;
+    <code class="one-line-code">B7</code> = <code class="one-line-code">=SOMA(B2:B6)</code> (e
+    <code class="one-line-code">C7</code> = <code class="one-line-code">=B7</code>).
+  </p>
 
   <h3>Exemplo 1: Otimizando a Soma e Auditoria de Lançamentos com for</h3>
   <p>
@@ -203,7 +245,8 @@ Soma Total do Período: R$ 440000</code></pre>
   </div>
 
   <h3>Anatomia do Código</h3>
-  <table>
+  <div class="overflow-inline">
+    <table>
     <thead>
       <tr>
         <th>Parte do Código</th>
@@ -234,22 +277,105 @@ Soma Total do Período: R$ 440000</code></pre>
       </tr>
       <tr>
         <td><code class="one-line-code">faturamentoTotal += valorMensal</code></td>
-        <td><code class="one-line-code">=SOMA(B2:B6)</code></td>
-        <td>Operador de acúmulo: soma o valor mensal ao total acumulado.</td>
+        <td>Coluna C: <code class="one-line-code">=SOMA($B$2:B2)</code> arrastada</td>
+        <td>Operador de acúmulo: soma o valor mensal ao total acumulado (linha a linha).</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">if (valorMensal &gt; 90000) { ... }</code></td>
+        <td>Coluna D: <code class="one-line-code">=SE(B2&gt;90000; "[ALERTA]"; "")</code></td>
+        <td>Condicional interna de auditoria: só emite o alerta quando a meta é superada.</td>
       </tr>
       <tr>
         <td><code class="one-line-code">`[ALERTA] ${mesCorrente}`</code></td>
         <td>Concatenação de texto com célula</td>
         <td>Template String: interpola variáveis dentro do texto usando crases e ${}.</td>
       </tr>
+      <tr>
+        <td><code class="one-line-code">Soma Total do Período</code></td>
+        <td>Célula B7: <code class="one-line-code">=SOMA(B2:B6)</code></td>
+        <td>Saída final: total consolidado dos cinco meses (R$ 440.000).</td>
+      </tr>
     </tbody>
   </table>
+  </div>
 
   <h3>Exemplo 2: Monitoramento Preventivo de Caixa com while</h3>
   <p>
     No planejamento financeiro corporativo, simular a queima de caixa e prevenir crises de liquidez é vital. O código
     abaixo simula um algoritmo de feedback que consome o saldo de caixa inicial para pagar custos operacionais mensais
     (OPEX), interrompendo o loop se o caixa atingir o limite crítico de segurança:
+  </p>
+
+  <h3>A Planilha de Origem da Simulação (A1:E5)</h3>
+  <p>
+    A mesma lógica do <code class="one-line-code">while</code> aparece em uma planilha: o <strong>saldo final</strong>
+    (coluna D) de um mês vira o <strong>saldo inicial</strong> (coluna B) do mês seguinte, e a <strong>coluna E</strong>
+    testa exatamente a condição do loop (<code class="one-line-code">saldo &gt;= OPEX</code>). Quando a condição passa a
+    ser falsa (linha 5), o loop <em>não executa</em> mais uma volta:
+  </p>
+  <div class="overflow-inline">
+    <table class="spreadsheet-table">
+    <thead>
+      <tr>
+        <th class="spreadsheet-corner" scope="col"></th>
+        <th scope="col">A</th>
+        <th scope="col">B</th>
+        <th scope="col">C</th>
+        <th scope="col">D</th>
+        <th scope="col">E</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th class="spreadsheet-index" scope="row">1</th>
+        <th class="spreadsheet-header" scope="col">Mês</th>
+        <th class="spreadsheet-header" scope="col">Saldo inicial (R$)</th>
+        <th class="spreadsheet-header" scope="col">OPEX mensal (R$)</th>
+        <th class="spreadsheet-header" scope="col">Saldo final (R$)</th>
+        <th class="spreadsheet-header" scope="col">Condição while (B &gt;= C?)</th>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">2</th>
+        <td>1</td>
+        <td>120000</td>
+        <td>35000</td>
+        <td>85000</td>
+        <td>Verdadeira → executa</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">3</th>
+        <td>2</td>
+        <td>85000</td>
+        <td>35000</td>
+        <td>50000</td>
+        <td>Verdadeira → executa</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">4</th>
+        <td>3</td>
+        <td>50000</td>
+        <td>35000</td>
+        <td>15000</td>
+        <td>Verdadeira → executa</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">5</th>
+        <td>4</td>
+        <td>15000</td>
+        <td>35000</td>
+        <td>— (não executa)</td>
+        <td>Falsa → loop para</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="spreadsheet-legend">
+    <strong>Fórmulas:</strong> <code class="one-line-code">B3 = D2</code>,
+    <code class="one-line-code">B4 = D3</code> e <code class="one-line-code">B5 = D4</code> (saldo inicial = saldo final
+    do mês anterior); <code class="one-line-code">D = B - C</code>;
+    <code class="one-line-code">E = SE(B&gt;=C; "Executa"; "Loop para")</code>. Na linha 5 a condição falha
+    (15000 &lt; 35000), então o <code class="one-line-code">while</code> encerra e o aviso
+    <em>"[CRÍTICO] Falência de fluxo de caixa"</em> é emitido.
   </p>
   <div class="code-container">
     <pre><code class="language-javascript">let saldoCaixa = 120000;       // Caixa inicial
@@ -288,12 +414,9 @@ Saldo de caixa final indisponível para OPEX: R$ 15000</code></pre>
 <section class="section-box">
   <h2>O Desafio Prático da Aula</h2>
   <p>
-    Com base no conteúdo apresentado, monte o algoritmo de auditoria a seguir no seu ambiente de desenvolvimento
-    (VS Code ou Console do Navegador).
+    Você foi contratado como <strong>auditor financeiro</strong> da empresa <strong>AuditPro Consultoria</strong> e
+    recebeu o relatório de margens de lucro líquido (%) de quatro projetos contábeis auditados:
   </p>
-
-  <h3>Contexto do Desafio</h3>
-  <p>Você recebeu uma lista com as margens de lucro líquido (%) de quatro projetos contábeis auditados:</p>
   <table>
     <thead>
       <tr>
@@ -320,31 +443,22 @@ Saldo de caixa final indisponível para OPEX: R$ 15000</code></pre>
       </tr>
     </tbody>
   </table>
-
-  <h3>Sua Tarefa</h3>
-  <ol>
-    <li>
-      Crie uma matriz (Array) contendo as margens de lucro:
-      <code class="one-line-code">const margens = [15, 8, -3, 22];</code> e outra com os nomes:
-      <code class="one-line-code">const projetos = ["Alfa", "Beta", "Gama", "Delta"];</code>
-    </li>
-    <li>Escreva um loop <code class="one-line-code">for</code> que percorra as matrizes.</li>
-    <li>
-      Dentro do loop, insira uma estrutura condicional para avaliar a margem:
-      <ul>
-        <li>
-          Se a margem for menor que 0, imprima: <em>"[ALERTA] O Projeto [Nome] está dando prejuízo!"</em>
-        </li>
-        <li>
-          Se for entre 0 e 10 (inclusive), imprima: <em>"[ATENÇÃO] O Projeto [Nome] está com baixa lucratividade."</em>
-        </li>
-        <li>
-          Se for maior que 10, imprima: <em>"[OK] O Projeto [Nome] é altamente rentável."</em>
-        </li>
-      </ul>
-    </li>
-    <li>Certifique-se de que o código execute sem erros e que a saída de dados seja impressa de forma nítida.</li>
-  </ol>
+  <p>
+    Monte um algoritmo de auditoria em JavaScript que percorra as margens com um loop
+    <code class="one-line-code">for</code> e classifique cada projeto com
+    <code class="one-line-code">if / else if / else</code>, exibindo:
+  </p>
+  <ul>
+    <li><strong>Margem &lt; 0:</strong> <em>"[ALERTA] O Projeto [Nome] está dando prejuízo!"</em></li>
+    <li><strong>Margem entre 0 e 10 (inclusive):</strong> <em>"[ATENÇÃO] O Projeto [Nome] está com baixa lucratividade."</em></li>
+    <li><strong>Margem &gt; 10:</strong> <em>"[OK] O Projeto [Nome] é altamente rentável."</em></li>
+  </ul>
+  <p>
+    A <strong>solução completa do desafio</strong> — código comentado, resultado esperado e exemplos que transformam
+    <strong>código em planilha</strong> e depois <strong>planilha em código</strong> — está pronta na página de
+    demonstração:
+  </p>
+  <a class="btn" href="./demonstracao-pratica" target="_blank">para Demonstração</a>
 </section>
 
 <section class="section-box">
@@ -441,4 +555,7 @@ Saldo de caixa final indisponível para OPEX: R$ 15000</code></pre>
     <li><a href="./exercicio-01/">Exercício 01: Auditoria de Rentabilidade de Projetos com Loops</a></li>
     <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
   </ul>
+
+  <hr>
+  <a class="btn" href="./demonstracao-pratica" target="_blank">Para Demonstração</a>
 </section>

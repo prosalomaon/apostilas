@@ -411,6 +411,58 @@ th {
   font-weight: 800;
 }
 
+/* Spreadsheet-style tables (raw data grids) */
+.spreadsheet-table {
+  width: auto;
+  min-width: 320px;
+  font-variant-numeric: tabular-nums;
+}
+
+.spreadsheet-table th,
+.spreadsheet-table td {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.spreadsheet-table .spreadsheet-corner,
+.spreadsheet-table .spreadsheet-index {
+  background-color: var(--accent);
+  color: var(--fg);
+  text-transform: none;
+}
+
+.spreadsheet-table thead th {
+  background-color: var(--accent);
+  color: var(--fg);
+  text-transform: none;
+  font-weight: 800;
+  text-align: center;
+}
+
+.spreadsheet-table .spreadsheet-index {
+  font-weight: 800;
+  text-align: center;
+}
+
+.spreadsheet-table .spreadsheet-header {
+  background-color: var(--fg);
+  color: var(--bg);
+  text-transform: none;
+}
+
+.spreadsheet-table .spreadsheet-label {
+  background-color: var(--accent);
+  color: var(--fg);
+  font-weight: 800;
+  text-transform: none;
+  text-align: left;
+}
+
+.spreadsheet-legend {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.9rem;
+}
+
 /* Pagination */
 .lesson-pagination {
   display: flex;

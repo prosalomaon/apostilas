@@ -1,0 +1,331 @@
+---
+layout: exercicio
+title: "Código para Demonstração Prática - Auditoria de Rentabilidade de Projetos"
+exercicio_numero: "00"
+aula_numero: "23"
+description: "Demonstração prática da aula 23: algoritmo de auditoria que percorre matrizes com o loop for e classifica a rentabilidade de projetos com if / else if / else — incluindo exemplos que transformam código em planilha e planilha em código."
+---
+
+<section class="section-box">
+  <h2>Contexto</h2>
+  <p>
+    Você foi contratado como <strong>auditor financeiro</strong> da empresa <strong>AuditPro Consultoria</strong>. A
+    equipe recebeu o relatório de margens de lucro líquido (%) de quatro projetos contábeis auditados e precisa
+    classificar cada um automaticamente. A regra de negócio é:
+  </p>
+  <ul>
+    <li><strong>Margem &lt; 0:</strong> <em>"[ALERTA] O Projeto [Nome] está dando prejuízo!"</em></li>
+    <li><strong>Margem entre 0 e 10 (inclusive):</strong> <em>"[ATENÇÃO] O Projeto [Nome] está com baixa lucratividade."</em></li>
+    <li><strong>Margem &gt; 10:</strong> <em>"[OK] O Projeto [Nome] é altamente rentável."</em></li>
+  </ul>
+  <p>
+    Esta página reúne a <strong>solução completa do desafio</strong> e dois exemplos que fazem o caminho de ida e volta
+    entre a planilha e o código: primeiro transformamos um <strong>código em planilha</strong> e depois transformamos
+    essa <strong>planilha em código</strong>.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Exemplo A: Transformando Código em Planilha</h2>
+  <p>
+    Tudo começa no <strong>código</strong>: os quatro projetos e suas margens foram declarados em duas matrizes
+    (Arrays) — os dados que o programa mantém em memória:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-javascript">// Dados de entrada declarados em JavaScript (matrizes)
+const projetos = ["Alfa", "Beta", "Gama", "Delta"];
+const margens  = [15, 8, -3, 22];</code></pre>
+  </div>
+  <p>
+    Esse mesmo conjunto de dados pode ser <strong>materializado como uma planilha</strong>: cada posição da matriz
+    vira uma linha e cada valor vira uma célula. A cadeia
+    <code class="one-line-code">if / else if / else</code> do código passa a ser uma fórmula
+    <code class="one-line-code">SE(...)</code> aninhada na coluna de diagnóstico:
+  </p>
+  <div class="overflow-inline">
+    <table class="spreadsheet-table">
+    <thead>
+      <tr>
+        <th class="spreadsheet-corner" scope="col"></th>
+        <th scope="col">A</th>
+        <th scope="col">B</th>
+        <th scope="col">C</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th class="spreadsheet-index" scope="row">1</th>
+        <th class="spreadsheet-header" scope="col">Projeto</th>
+        <th class="spreadsheet-header" scope="col">Margem de lucro (%)</th>
+        <th class="spreadsheet-header" scope="col">Diagnóstico</th>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">2</th>
+        <td>Alfa</td>
+        <td>15</td>
+        <td>[OK] O Projeto Alfa é altamente rentável.</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">3</th>
+        <td>Beta</td>
+        <td>8</td>
+        <td>[ATENÇÃO] O Projeto Beta está com baixa lucratividade.</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">4</th>
+        <td>Gama</td>
+        <td>-3</td>
+        <td>[ALERTA] O Projeto Gama está dando prejuízo!</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">5</th>
+        <td>Delta</td>
+        <td>22</td>
+        <td>[OK] O Projeto Delta é altamente rentável.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="spreadsheet-legend">
+    <strong>Fórmula da coluna C</strong> (<code class="one-line-code">C2</code> arrastada até
+    <code class="one-line-code">C5</code>):
+    <code class="one-line-code">=SE(B2&lt;0; "[ALERTA] O Projeto "&amp;A2&amp;" está dando prejuízo!"; SE(B2&lt;=10; "[ATENÇÃO] O Projeto "&amp;A2&amp;" está com baixa lucratividade."; "[OK] O Projeto "&amp;A2&amp;" é altamente rentável."))</code>
+  </p>
+  <p>
+    Repare na correspondência: <code class="one-line-code">projetos[0]</code> (Alfa) é a célula
+    <code class="one-line-code">A2</code>, <code class="one-line-code">margens[0]</code> (15) é a célula
+    <code class="one-line-code">B2</code>, e o encadeamento de <code class="one-line-code">if / else if / else</code> é
+    exatamente a estrutura do <code class="one-line-code">SE(...)</code> aninhado.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Exemplo B: Transformando Planilha em Código</h2>
+  <p>
+    Agora o caminho inverso. Partimos da <strong>planilha</strong> — lendo a fórmula da coluna C — e escrevemos o
+    <strong>código JavaScript</strong> que reproduz o mesmo resultado:
+  </p>
+  <div class="overflow-inline">
+    <table class="spreadsheet-table">
+    <thead>
+      <tr>
+        <th class="spreadsheet-corner" scope="col"></th>
+        <th scope="col">A</th>
+        <th scope="col">B</th>
+        <th scope="col">C</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th class="spreadsheet-index" scope="row">1</th>
+        <th class="spreadsheet-header" scope="col">Projeto</th>
+        <th class="spreadsheet-header" scope="col">Margem de lucro (%)</th>
+        <th class="spreadsheet-header" scope="col">Fórmula do diagnóstico</th>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">2</th>
+        <td>Alfa</td>
+        <td>15</td>
+        <td>
+          <code class="one-line-code">=SE(B2&lt;0; "[ALERTA] O Projeto "&amp;A2&amp;" está dando prejuízo!"; SE(B2&lt;=10;
+          "[ATENÇÃO] O Projeto "&amp;A2&amp;" está com baixa lucratividade."; "[OK] O Projeto "&amp;A2&amp;" é
+          altamente rentável."))</code>
+        </td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">3</th>
+        <td>Beta</td>
+        <td>8</td>
+        <td>Mesma fórmula da célula C2 (arrastada para baixo)</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">4</th>
+        <td>Gama</td>
+        <td>-3</td>
+        <td>Mesma fórmula da célula C2 (arrastada para baixo)</td>
+      </tr>
+      <tr>
+        <th class="spreadsheet-index" scope="row">5</th>
+        <td>Delta</td>
+        <td>22</td>
+        <td>Mesma fórmula da célula C2 (arrastada para baixo)</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p>
+    Traduzindo, a função <code class="one-line-code">SE</code> do Sheets vira o bloco
+    <code class="one-line-code">if / else if / else</code>, o <code class="one-line-code">&amp;</code> de concatenação
+    vira a <em>Template String</em> com <code class="one-line-code">${}</code>, e o ato de <em>arrastar a fórmula</em>
+    vira o loop <code class="one-line-code">for</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-javascript">// 1. Entrada de dados: matrizes (colunas A e B da planilha)
+const projetos = ["Alfa", "Beta", "Gama", "Delta"];
+const margens  = [15, 8, -3, 22];
+
+console.log("--- AUDITORIA DE RENTABILIDADE ---");
+
+// 2. "Arrastar a fórmula": percorrer cada linha com o loop for
+for (let i = 0; i &lt; margens.length; i++) {
+    const nome   = projetos[i];   // célula da coluna A na linha atual
+    const margem = margens[i];    // célula da coluna B na linha atual
+
+    // 3. Decisão encadeada: equivalente ao SE(...) aninhado
+    if (margem &lt; 0) {
+        console.log(`[ALERTA] O Projeto ${nome} está dando prejuízo!`);
+    } else if (margem &lt;= 10) {
+        console.log(`[ATENÇÃO] O Projeto ${nome} está com baixa lucratividade.`);
+    } else {
+        console.log(`[OK] O Projeto ${nome} é altamente rentável.`);
+    }
+}
+
+console.log("--------------------------------");
+console.log("Fim da auditoria.");</code></pre>
+  </div>
+  <p>Resultado esperado ao executar (<code class="one-line-code">node</code> ou Console do Navegador):</p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">--- AUDITORIA DE RENTABILIDADE ---
+[OK] O Projeto Alfa é altamente rentável.
+[ATENÇÃO] O Projeto Beta está com baixa lucratividade.
+[ALERTA] O Projeto Gama está dando prejuízo!
+[OK] O Projeto Delta é altamente rentável.
+--------------------------------
+Fim da auditoria.</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Código Completo para a Demonstração em Sala</h2>
+  <p>
+    Versão comentada e pronta para ser demonstrada. Copie o bloco abaixo em um arquivo
+    <code class="one-line-code">auditoria-projetos.js</code> e execute com o comando
+    <code class="one-line-code">node auditoria-projetos.js</code>, ou cole no console do navegador (tecla F12):
+  </p>
+  <div class="code-container">
+    <pre><code class="language-javascript">// ============================================================
+// AUDITORIA DE RENTABILIDADE DE PROJETOS - Aula 23 (PTIC)
+// Execute no VS Code (node) ou no Console do Navegador (F12)
+// ============================================================
+
+// 1. Entrada de dados: as matrizes (colunas A e B da planilha)
+const projetos = ["Alfa", "Beta", "Gama", "Delta"];
+const margens  = [15, 8, -3, 22];
+
+console.log("--- AUDITORIA DE RENTABILIDADE ---");
+
+// 2. Loop for: percorre a matriz do primeiro ao último item
+for (let i = 0; i &lt; margens.length; i++) {
+    const nome   = projetos[i];  // célula da coluna A da linha atual
+    const margem = margens[i];   // célula da coluna B da linha atual
+
+    // 3. Classificação: equivalente ao SE(SE(...)) aninhado
+    if (margem &lt; 0) {                              // margem menor que 0
+        console.log(`[ALERTA] O Projeto ${nome} está dando prejuízo!`);
+    } else if (margem &lt;= 10) {                     // margem entre 0 e 10
+        console.log(`[ATENÇÃO] O Projeto ${nome} está com baixa lucratividade.`);
+    } else {                                        // margem maior que 10
+        console.log(`[OK] O Projeto ${nome} é altamente rentável.`);
+    }
+}
+
+console.log("--------------------------------");
+console.log("Fim da auditoria.");</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Anatomia do Código</h2>
+  <div class="overflow-inline">
+    <table>
+    <thead>
+      <tr>
+        <th>Parte do Código</th>
+        <th>Equivalente na Planilha</th>
+        <th>Significado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="one-line-code">const projetos = ["Alfa", ...]</code></td>
+        <td>Intervalo A2:A5</td>
+        <td>Matriz com os nomes; cada posição corresponde a uma célula da coluna A.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">const margens = [15, 8, -3, 22]</code></td>
+        <td>Intervalo B2:B5</td>
+        <td>Matriz com os valores numéricos; cada posição corresponde a uma célula da coluna B.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">margens.length</code></td>
+        <td>Contagem de células preenchidas (CONT.NÚM)</td>
+        <td>Informa quantos itens existem na matriz, definindo o limite do loop.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">projetos[i]</code> / <code class="one-line-code">margens[i]</code></td>
+        <td>Células A{linha} e B{linha} da linha atual</td>
+        <td>Acessa o item da posição <code class="one-line-code">i</code> (o índice começa em 0).</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">for (let i = 0; i &lt; margens.length; i++)</code></td>
+        <td>Arrastar a fórmula até a última linha</td>
+        <td>Inicializa o contador, testa a condição e incrementa a cada volta.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">if / else if / else</code></td>
+        <td><code class="one-line-code">=SE(...; SE(...; ...; ...))</code> aninhado</td>
+        <td>Decisão encadeada: testa cada faixa de margem até achar a correta.</td>
+      </tr>
+      <tr>
+        <td><code class="one-line-code">`[OK] ... ${nome} ...`</code></td>
+        <td>Valor exibido na célula</td>
+        <td>Template String: interpola variáveis dentro do texto usando crases e ${}.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Desafios para a Turma</h2>
+  <ol>
+    <li>
+      Reescreva a auditoria usando um loop <code class="one-line-code">while</code> em vez do
+      <code class="one-line-code">for</code>. Que cuidados extras foram necessários?
+    </li>
+    <li>
+      A diretoria quer saber <strong>quantos projetos estão dando prejuízo</strong>. Crie uma variável acumuladora
+      <code class="one-line-code">let projetosEmPrejuizo = 0;</code>, incremente-a dentro do loop quando a margem for
+      negativa e exiba o total ao final.
+    </li>
+    <li>
+      Adicione à matriz um <strong>Projeto Ômega</strong> com margem exatamente igual a
+      <code class="one-line-code">10</code>. Qual mensagem ele recebe? E se a condição do segundo bloco fosse
+      <code class="one-line-code">margem &gt;= 0 &amp;&amp; margem &lt; 10</code>, o diagnóstico mudaria? Justifique.
+    </li>
+  </ol>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas para Rodar a Demonstração em Sala</h4>
+  <ul>
+    <li>
+      <strong>Índice começa em 0:</strong> <code class="one-line-code">margens[0]</code> é o primeiro item. Acessar
+      <code class="one-line-code">margens[4]</code> nessa lista geraria <code class="one-line-code">undefined</code>,
+      pois só existem índices 0 a 3.
+    </li>
+    <li>
+      <strong>Identação:</strong> mantenha os blocos do <code class="one-line-code">for</code> e do
+      <code class="one-line-code">if</code> recuados com TAB — a clareza visual evita "chaves perdidas".
+    </li>
+    <li>
+      <strong>Case Sensitive:</strong> escreva <code class="one-line-code">For</code> com F maiúsculo e o terminal
+      acusará erro <code class="one-line-code">SyntaxError</code>. Em JavaScript, estruturas são sempre minúsculas.
+    </li>
+    <li>
+      <strong>Loop infinito:</strong> se alterar para <code class="one-line-code">while</code>, não se esqueça de
+      mudar a variável de controle (<code class="one-line-code">i++</code>) dentro do bloco.
+    </li>
+  </ul>
+</div>
