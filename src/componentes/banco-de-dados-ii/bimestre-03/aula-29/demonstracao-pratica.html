@@ -1,0 +1,331 @@
+---
+layout: exercicio
+title: "Revisão do 3º Bimestre - Demonstração Prática"
+exercicio_numero: "01"
+aula_numero: "29"
+description: "Demonstração completa e integrada de Stored Procedures, Functions, Triggers e Tratamento de Exceções em um sistema de vendas, consolidando a revisão do terceiro bimestre."
+---
+
+<section class="section-box">
+  <h2>Cenário: Sistema de Vendas "TechStore"</h2>
+  <p>
+    Esta demonstração pratica <strong>todos os conceitos do terceiro bimestre</strong> em um único sistema integrado
+    de vendas de uma loja de tecnologia: <strong>blocos SQL</strong>, <strong>Stored Procedures</strong> (com
+    transação, tratamento de exceções e <strong>cursores</strong>), <strong>Stored Functions</strong>,
+    <strong>Triggers</strong>, além de relembrar <strong>transações</strong> e <strong>consultas avançadas</strong>.
+  </p>
+  <p>
+    Copie e execute cada bloco de código <strong>na ordem apresentada</strong> no MySQL Workbench ou terminal. Ao
+    final, você terá 1 banco, 1 function, 2 procedures (uma com transação + exceções e outra com cursor), 1 trigger e
+    1 consulta de consolidação funcionando.
+  </p>
+
+  <div class="mermaid">
+    erDiagram
+    VENDEDORES {
+    int id PK
+    varchar nome
+    varchar email
+    decimal meta_mensal
+    }
+    PRODUTOS {
+    int id PK
+    varchar nome
+    decimal preco
+    int estoque
+    }
+    PEDIDOS {
+    int id PK
+    int id_vendedor FK
+    date data_pedido
+    decimal valor_total
+    varchar status
+    }
+    VENDEDORES ||--o{ PEDIDOS : "realiza"
+    PEDIDOS }o--|| PRODUTOS : "contém"
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Etapa 1: Criação do Banco e das Tabelas</h2>
+  <p>
+    Começamos recriando o esquema base, relembrando <strong>DDL</strong>, <strong>constraints</strong> e
+    <strong>integridade referencial</strong> já vistos em bimestres anteriores.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- 1. Criar o banco
+CREATE DATABASE IF NOT EXISTS techstore_revisao;
+USE techstore_revisao;
+
+-- 2. Tabela de vendedores
+CREATE TABLE vendedores (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    meta_mensal DECIMAL(10,2) NOT NULL DEFAULT 0.00
+);
+
+-- 3. Tabela de produtos
+CREATE TABLE produtos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(120) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    estoque INT NOT NULL DEFAULT 0
+);
+
+-- 4. Tabela de pedidos (integridade referencial)
+CREATE TABLE pedidos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_vendedor INT NOT NULL,
+    id_produto INT NOT NULL,
+    data_pedido DATE NOT NULL,
+    valor_total DECIMAL(10,2) NOT NULL,
+    status ENUM('PENDENTE', 'PAGO', 'CANCELADO') DEFAULT 'PENDENTE',
+    FOREIGN KEY (id_vendedor) REFERENCES vendedores(id),
+    FOREIGN KEY (id_produto) REFERENCES produtos(id)
+);
+
+-- 5. Tabela de auditoria (usada pelo trigger)
+CREATE TABLE auditoria_pedidos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    acao VARCHAR(10) NOT NULL,
+    id_pedido INT,
+    data_log DATETIME DEFAULT NOW()
+);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Etapa 2: Stored Function para Cálculo</h2>
+  <p>
+    Criamos uma <strong>function</strong> para calcular o imposto sobre um valor. Funções podem ser usadas dentro de
+    consultas SQL.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE FUNCTION CalcularImposto(valor DECIMAL(10,2)) RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+    RETURN valor * 0.18; -- 18% de imposto
+END //
+
+DELIMITER ;
+
+-- Teste: função dentro de um SELECT
+SELECT CalcularImposto(1000.00) AS imposto; -- 180.00</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Etapa 3: Stored Procedure com Transação e Exceções</h2>
+  <p>
+    Esta <strong>procedure</strong> consolida procedure + transação + tratamento de exceções. Ela registra um pedido,
+    dá baixa no estoque e — se qualquer passo falhar — faz <code class="one-line-code">ROLLBACK</code> e lança um
+    erro customizado com <code class="one-line-code">SIGNAL</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE RegistrarPedido(
+    IN p_vendedor INT,
+    IN p_produto INT,
+    IN p_quantidade INT
+)
+BEGIN
+    DECLARE v_preco DECIMAL(10,2);
+    DECLARE v_estoque INT;
+    DECLARE v_total DECIMAL(10,2);
+
+    -- Tratamento de exceções: qualquer erro desfaz a transação
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Erro ao registrar pedido - rollback executado';
+    END;
+
+    START TRANSACTION;
+
+    -- Validação de regra de negócio com SIGNAL
+    IF v_quantidade &lt;= 0 THEN
+        SIGNAL SQLSTATE '22000' SET MESSAGE_TEXT = 'Quantidade deve ser maior que zero';
+    END IF;
+
+    SELECT preco, estoque INTO v_preco, v_estoque
+    FROM produtos WHERE id = p_produto
+    FOR UPDATE;
+
+    IF v_estoque &lt; v_quantidade THEN
+        SIGNAL SQLSTATE '22000' SET MESSAGE_TEXT = 'Estoque insuficiente';
+    END IF;
+
+    SET v_total = v_preco * v_quantidade;
+
+    INSERT INTO pedidos (id_vendedor, id_produto, data_pedido, valor_total, status)
+    VALUES (p_vendedor, p_produto, CURDATE(), v_total, 'PENDENTE');
+
+    -- Baixa no estoque (atualização com segurança)
+    UPDATE produtos SET estoque = estoque - v_quantidade WHERE id = p_produto;
+
+    COMMIT;
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Etapa 4: Stored Procedure com Cursor</h2>
+  <p>
+    Esta <strong>procedure</strong> percorre <strong>linha por linha</strong> os pedidos pendentes com um
+    <strong>cursor</strong> e aplica uma regra de negócio para cada um. Observe a ordem correta das declarações:
+    variáveis → cursor → <code class="one-line-code">HANDLER</code>. O <code class="one-line-code">CONTINUE HANDLER
+    FOR NOT FOUND</code> é o que encerra o loop quando as linhas acabam.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE ProcessarPedidosPendentes()
+BEGIN
+    -- 1. Variáveis locais
+    DECLARE v_id INT;
+    DECLARE v_total DECIMAL(10,2);
+    DECLARE fim_cursor BOOLEAN DEFAULT FALSE;
+
+    -- 2. Cursor: percorre os pedidos pendentes
+    DECLARE cur_pedidos CURSOR FOR
+        SELECT id, valor_total FROM pedidos WHERE status = 'PENDENTE';
+
+    -- 3. Handler: quando não houver mais linhas, encerra o loop
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET fim_cursor = TRUE;
+
+    OPEN cur_pedidos;
+
+    processa: LOOP
+        FETCH cur_pedidos INTO v_id, v_total;
+
+        IF fim_cursor THEN
+            LEAVE processa;
+        END IF;
+
+        -- Regra de negócio: pedidos acima de R$ 1.000,00 tornam-se PAGO
+        IF v_total &gt;= 1000.00 THEN
+            UPDATE pedidos SET status = 'PAGO' WHERE id = v_id;
+        END IF;
+    END LOOP processa;
+
+    CLOSE cur_pedidos;
+END //
+
+DELIMITER ;
+
+CALL ProcessarPedidosPendentes();</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Cursor dentro da demonstração</h4>
+    <p>
+      O cursor é usado quando uma consulta precisa ser processada <strong>linha a linha</strong>. Sem o
+      <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code>, o <code class="one-line-code">FETCH</code>
+      depois da última linha dispararia um erro (código <code class="one-line-code">02000</code>).
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Etapa 5: Trigger de Auditoria</h2>
+  <p>
+    Um <strong>trigger</strong> que registra automaticamente na auditoria sempre que um pedido for inserido
+    (<code class="one-line-code">AFTER INSERT</code>). Ele usa <code class="one-line-code">NEW</code> para acessar a
+    nova linha.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE TRIGGER trg_auditoria_insercao
+AFTER INSERT ON pedidos
+FOR EACH ROW
+BEGIN
+    INSERT INTO auditoria_pedidos (acao, id_pedido)
+    VALUES ('INSERT', NEW.id);
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Etapa 6: Dados de Demonstração</h2>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Vendedores
+INSERT INTO vendedores (nome, email, meta_mensal) VALUES
+('Ana Souza', 'ana@techstore.com', 5000.00),
+('Bruno Lima', 'bruno@techstore.com', 4000.00);
+
+-- Produtos
+INSERT INTO produtos (nome, preco, estoque) VALUES
+('Notebook', 3500.00, 10),
+('Monitor', 1200.00, 20),
+('Teclado', 180.00, 50);
+
+-- Pedidos usando a procedure (cenários de sucesso)
+CALL RegistrarPedido(1, 1, 2);  -- Nota: insere pedido e baixa estoque
+CALL RegistrarPedido(2, 2, 1);
+
+-- Cenário de falha (estoque insuficiente -> exceção -> rollback)
+CALL RegistrarPedido(1, 3, 999);
+
+-- Processa os pedidos pendentes com o cursor
+-- (marca como PAGO os pedidos com valor_total >= 1000.00)
+CALL ProcessarPedidosPendentes();</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Etapa 7: Consulta de Consolidação (DQL Avançada)</h2>
+  <p>
+    Uma consulta que consolida o desempenho dos vendedores usando <strong>JOIN</strong>, <strong>agregação</strong>,
+    <strong>GROUP BY</strong>, <strong>HAVING</strong> e a <strong>function</strong> criada.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">SELECT
+    v.nome AS vendedor,
+    COUNT(p.id) AS total_pedidos,
+    SUM(p.valor_total) AS faturamento,
+    CalcularImposto(SUM(p.valor_total)) AS imposto_estimado
+FROM vendedores v
+LEFT JOIN pedidos p ON p.id_vendedor = v.id
+WHERE p.status != 'CANCELADO' OR p.status IS NULL
+GROUP BY v.nome
+HAVING SUM(p.valor_total) > 1000.00
+ORDER BY faturamento DESC;
+
+-- Verificar a auditoria preenchida pelo trigger
+SELECT * FROM auditoria_pedidos;</code></pre>
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li><strong>DELIMITER:</strong> Sempre use <code class="one-line-code">DELIMITER //</code> antes de criar
+      procedures, functions e triggers de múltiplas linhas no MySQL.</li>
+    <li><strong>Transação + Handler:</strong> combine <code class="one-line-code">START TRANSACTION</code> com
+      <code class="one-line-code">EXIT HANDLER FOR SQLEXCEPTION</code> e <code class="one-line-code">ROLLBACK</code>
+      para garantir atomicidade. Lembre-se: o <code class="one-line-code">DECLARE HANDLER</code> deve vir
+      <strong>após</strong> as variáveis e <strong>antes</strong> de qualquer comando executável (inclusive o
+      <code class="one-line-code">START TRANSACTION</code>) — posição errada gera erro de sintaxe.</li>
+    <li><strong>FOR UPDATE:</strong> o <code class="one-line-code">SELECT ... FOR UPDATE</code> bloqueia a linha para
+      evitar problemas de concorrência dentro da transação.</li>
+    <li><strong>SIGNAL:</strong> use <code class="one-line-code">SIGNAL SQLSTATE '22000'/'23000'</code> para validar
+      regras de negócio que as constraints não alcançam.</li>
+    <li><strong>Cursor:</strong> para percorrer linha a linha um resultado, use o ciclo
+      <code class="one-line-code">OPEN</code> → <code class="one-line-code">FETCH</code> (em um
+      <code class="one-line-code">LOOP</code>) → <code class="one-line-code">CLOSE</code>, sempre com um
+      <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code> para encerrar o loop ao fim das linhas.</li>
+    <li><strong>Trigger NEW/OLD:</strong> <code class="one-line-code">NEW</code> é a linha nova; use em
+      <code class="one-line-code">AFTER INSERT/UPDATE</code>.</li>
+    <li><strong>Recompilação:</strong> ao alterar um objeto, use <code class="one-line-code">DROP ... IF EXISTS</code>
+      antes do <code class="one-line-code">CREATE</code>.</li>
+  </ul>
+</div>

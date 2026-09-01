@@ -1,18 +1,200 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Revisão Transações"
+title: "Exercício 01 - Revisão Prática do 3º Bimestre"
 exercicio_numero: "01"
 aula_numero: "29"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 29."
+description: "Atividade prática que consolida Stored Procedures, Functions, Triggers, Tratamento de Exceções e DQL avançada em um sistema de vendas completo."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você está responsável por automatizar o sistema de uma loja. Utilizando os conceitos de <strong>programabilidade e
+    automação</strong> vistos no terceiro bimestre — <strong>blocos SQL, procedures, functions, triggers e tratamento
+    de exceções</strong> — resolva as questões abaixo, conectando-os também às consultas avançadas (joins, agregações)
+    e às transações dos bimestres anteriores.
+  </p>
+  <p>Considere as tabelas já criadas no banco <code class="one-line-code">loja_revisao</code>:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE clientes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE
+);
+
+CREATE TABLE produtos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(120) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    estoque INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE vendas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_cliente INT NOT NULL,
+    id_produto INT NOT NULL,
+    quantidade INT NOT NULL,
+    valor_total DECIMAL(10,2) NOT NULL,
+    data_venda DATETIME DEFAULT NOW(),
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id),
+    FOREIGN KEY (id_produto) REFERENCES produtos(id)
+);
+
+INSERT INTO clientes (nome, email) VALUES
+('Carlos', 'carlos@email.com'),
+('Mariana', 'mariana@email.com');
+
+INSERT INTO produtos (nome, preco, estoque) VALUES
+('Geladeira', 2800.00, 5),
+('Fogão', 1600.00, 8),
+('Micro-ondas', 750.00, 12);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Stored Function com Validação</h3>
+  <p>
+    Crie uma <strong>function</strong> <code class="one-line-code">AplicarDesconto</code> que receba o valor e um
+    percentual de desconto e retorne o valor com o desconto aplicado.
+  </p>
+  <p>Requisitos:</p>
+  <ul>
+    <li>Se o percentual for menor que 0 ou maior que 50, lance erro com <code class="one-line-code">SIGNAL</code>.</li>
+    <li>Retorne <code class="one-line-code">valor - (valor * percentual / 100)</code>.</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+-- Escreva sua function aqui
+
+DELIMITER ;</code></pre>
+  </div>
+  <p>Teste: <code class="one-line-code">SELECT AplicarDesconto(1000.00, 10);</code> deve retornar
+    <code class="one-line-code">900.00</code>.</p>
+
+  <h3>Questão 2: Stored Procedure com Transação</h3>
+  <p>
+    Crie uma <strong>procedure</strong> <code class="one-line-code">RegistrarVenda</code> que receba
+    <code class="one-line-code">id_cliente</code>, <code class="one-line-code">id_produto</code> e
+    <code class="one-line-code">quantidade</code>.
+  </p>
+  <p>Requisitos:</p>
+  <ul>
+    <li>Declare o <code class="one-line-code">EXIT HANDLER FOR SQLEXCEPTION</code> <strong>antes</strong> de qualquer
+      comando executável (logo após as variáveis locais e antes do <code class="one-line-code">START TRANSACTION</code>)
+      — lembre-se da regra de posição obrigatória das <code class="one-line-code">DECLARE</code>.</li>
+    <li>Inicie uma transação (<code class="one-line-code">START TRANSACTION</code>).</li>
+    <li>Verifique o estoque; se insuficiente, lance erro com <code class="one-line-code">SIGNAL</code> e faça
+      <code class="one-line-code">ROLLBACK</code>.</li>
+    <li>Insira a venda e dê baixa no estoque.</li>
+    <li>Inclua um <code class="one-line-code">EXIT HANDLER FOR SQLEXCEPTION</code> que execute
+      <code class="one-line-code">ROLLBACK</code>.</li>
+    <li>Finalize com <code class="one-line-code">COMMIT</code>.</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+-- Escreva sua procedure aqui
+
+DELIMITER ;</code></pre>
+  </div>
+
+  <h3>Questão 3: Trigger de Auditoria</h3>
+  <p>
+    Crie a tabela de auditoria abaixo e um <strong>trigger</strong> <code class="one-line-code">trg_audita_venda</code>
+    que registre automaticamente cada venda inserida.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE auditoria_vendas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_venda INT NOT NULL,
+    descricao VARCHAR(200),
+    data_log DATETIME DEFAULT NOW()
+);
+
+-- Escreva seu trigger aqui (AFTER INSERT ON vendas FOR EACH ROW)</code></pre>
+  </div>
+
+  <h3>Questão 4: Stored Procedure com Cursor</h3>
+  <p>
+    Crie uma <strong>procedure</strong> <code class="one-line-code">AtualizaComissoes</code> que percorra
+    <strong>linha a linha</strong> as vendas registradas usando um <strong>cursor</strong> e aplique uma comissão de
+    <code class="one-line-code">5%</code> sobre o <code class="one-line-code">valor_total</code> de cada venda.
+  </p>
+  <p>Requisitos — respeite a ordem correta das declarações:</p>
+  <ul>
+    <li>Declare as <strong>variáveis locais</strong> (para receber os valores do cursor e uma flag de fim).</li>
+    <li>Declare o <strong>cursor</strong> para o <code class="one-line-code">SELECT id, valor_total FROM vendas</code>.</li>
+    <li>Declare o <strong><code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code></strong> que ativa a flag de
+      fim (antes de qualquer comando executável).</li>
+    <li>Use <code class="one-line-code">OPEN</code>, um <code class="one-line-code">LOOP</code> com
+      <code class="one-line-code">FETCH</code> e <code class="one-line-code">LEAVE</code>, e finalize com
+      <code class="one-line-code">CLOSE</code>.</li>
+    <li>Dentro do loop, atualize cada venda com: <code class="one-line-code">UPDATE vendas SET valor_total = valor_total
+        + (valor_total * 0.05) WHERE id = <var></code>.</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER $$
+
+-- Escreva sua procedure aqui
+
+DELIMITER ;</code></pre>
+  </div>
+  <p>Teste: <code class="one-line-code">CALL AtualizaComissoes();</code></p>
+
+  <h3>Questão 5: Consulta de Consolidação</h3>
+  <p>
+    Escreva uma consulta que exiba o <strong>nome do cliente</strong>, o <strong>total de vendas</strong> e o
+    <strong>faturamento</strong> (soma do <code class="one-line-code">valor_total</code>) de cada cliente, ordenando
+    do maior para o menor faturamento. Use <code class="one-line-code">JOIN</code>, <code
+      class="one-line-code">COUNT</code>, <code class="one-line-code">SUM</code> e <code
+      class="one-line-code">GROUP BY</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Escreva sua consulta aqui</code></pre>
+  </div>
+
+  <h3>Questão 6: Teste e Validação</h3>
+  <p>Execute o cenário abaixo e registre o resultado esperado de cada chamada:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Venda válida (esperado: sucesso, estoque reduzido em 1)
+CALL RegistrarVenda(1, 1, 1);
+
+-- Estoque insuficiente (esperado: erro + rollback)
+CALL RegistrarVenda(2, 1, 100);
+
+-- Function com desconto válido (esperado: 1350.00)
+SELECT AplicarDesconto(1500.00, 10);
+
+-- Function com percentual inválido (esperado: erro via SIGNAL)
+SELECT AplicarDesconto(1500.00, 60);
+
+-- Verificar a auditoria preenchida pelo trigger
+SELECT * FROM auditoria_vendas;
+
+-- Executar a procedure com cursor e conferir as comissões aplicadas
+CALL AtualizaComissoes();
+SELECT * FROM vendas;</code></pre>
+  </div>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>Revise o conteúdo da aula antes de começar, especialmente procedures, functions, triggers e exceções.</li>
+    <li>Use <code class="one-line-code">DELIMITER $$</code> antes de criar stored programs no MySQL.</li>
+    <li>Sempre inclua <code class="one-line-code">ROLLBACK</code> no <code class="one-line-code">EXIT HANDLER</code>
+      quando trabalhar com transações.</li>
+    <li>Coloque o <code class="one-line-code">DECLARE HANDLER</code> no <strong>topo do bloco</strong>: depois das
+      variáveis e <strong>antes</strong> do <code class="one-line-code">START TRANSACTION</code> — uma posição errada
+      gera erro de sintaxe na criação da procedure.</li>
+    <li>Em procedures com <strong>cursor</strong>, declare primeiro as variáveis, depois o cursor e então o
+      <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code> — nesta ordem específica.</li>
+    <li>Para o <code class="one-line-code">SIGNAL</code>, use <code class="one-line-code">'22000'</code> (dados) ou
+      <code class="one-line-code">'23000'</code> (integridade).</li>
+    <li>Teste cada objeto individualmente antes de seguir para o próximo.</li>
+    <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>

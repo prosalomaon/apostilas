@@ -1,49 +1,445 @@
 ---
 title: "Conexão segura com banco de dados utilizando a classe PDO (PHP Data Objects)"
 aula_numero: "22"
-description: "Conexão segura com banco de dados utilizando a classe PDO (PHP Data Objects)."
+description: "Conexão segura com banco de dados utilizando a classe PDO (PHP Data Objects): conexão robusta, CRUD com prepared statements, transações e proteção contra SQL Injection."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 22 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    O acesso a bancos de dados é um elemento crucial no desenvolvimento de aplicações web modernas, servindo como o
+    repositório central de informações dinâmicas. Esta aula aborda de maneira aprofundada como utilizar a extensão
+    <strong>PDO</strong> (<em>PHP Data Objects</em>) no PHP 8.x para estabelecer conexões robustas, realizar
+    manipulações de dados (CRUD) e aplicar técnicas fundamentais de segurança para blindar o sistema contra as
+    principais vulnerabilidades da web.
+  </p>
+
+  <h3>1.1. O que é o PDO (PHP Data Objects)?</h3>
+  <p>
+    O <strong>PDO</strong> é uma extensão nativa do PHP que define uma camada de abstração leve e consistente para o
+    acesso a bancos de dados. Diferente das extensões específicas (como a antiga <code class="one-line-code">mysql</code>
+    ou a <code class="one-line-code">mysqli</code>), o PDO não conversa diretamente com um SGBD específico; ele utiliza
+    <strong>drivers de banco de dados modulares</strong> para fazer essa ponte.
+  </p>
+  <ul>
+    <li>
+      <strong>Portabilidade:</strong> a maior vantagem da abstração do PDO é que a assinatura de métodos e a lógica de
+      persistência permanecem idênticas, independentemente do banco utilizado. Mudar a aplicação de MySQL para
+      PostgreSQL ou SQLite pode ser tão simples quanto alterar a <em>string de conexão</em> no arquivo de configuração.
+    </li>
+    <li>
+      <strong>Segurança Nativa:</strong> o PDO foi projetado com suporte nativo a recursos de segurança modernos, como
+      consultas parametrizadas (<em>Prepared Statements</em>), que separam a lógica estrutural da consulta dos dados
+      inseridos pelo usuário.
+    </li>
+  </ul>
+
+  <h3>1.2. DSN (Data Source Name) e Estabelecendo a Conexão</h3>
+  <p>
+    Para iniciar a conexão, o construtor da classe PDO exige três parâmetros básicos: o <strong>DSN</strong>
+    (<em>Data Source Name</em>), o <strong>usuário</strong> e a <strong>senha</strong>.
+  </p>
+  <p>
+    O DSN é uma string contendo a assinatura de conexão que varia conforme o driver do banco. Para o MySQL, ele é
+    composto por:
+  </p>
+  <ul>
+    <li>O prefixo do driver (<code class="one-line-code">mysql:</code>);</li>
+    <li>O endereço do servidor (<code class="one-line-code">host=localhost</code>);</li>
+    <li>O nome do banco de dados (<code class="one-line-code">dbname=library</code>);</li>
+    <li>Opcionalmente, o conjunto de caracteres padrão (<code class="one-line-code">charset=utf8mb4</code>).</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-php">$dsn = "mysql:host=localhost;dbname=biblioteca;charset=utf8mb4";
+$pdo = new PDO($dsn, $username, $password);</code></pre>
+  </div>
+
+  <h3>1.3. Gestão Segura de Erros com Exceções (PDOException)</h3>
+  <p>
+    Tentar se conectar a um banco de dados é um procedimento sujeito a falhas de infraestrutura (servidor offline, rede
+    instável, credenciais inválidas). Se uma falha ocorrer e a conexão não estiver protegida, o PHP pode lançar um
+    <em>erro fatal</em> expondo o rastro de pilha (<em>stack trace</em>). Esse rastro pode revelar dados altamente
+    confidenciais na tela, como o usuário e a senha do banco.
+  </p>
+  <p>
+    Para evitar essa brecha de segurança, a conexão e as operações devem ser encapsuladas em estruturas de controle
+    <code class="one-line-code">try...catch</code>. Caso o bloco <code class="one-line-code">try</code> falhe, a execução
+    é interrompida imediatamente e desviada para o bloco <code class="one-line-code">catch</code>, onde o objeto
+    <code class="one-line-code">PDOException</code> é capturado para tratamento e registro seguro nos logs do servidor.
+  </p>
+
+  <h3>1.4. O Perigo de SQL Injection e a Solução por Prepared Statements</h3>
+  <p>
+    O <strong>SQL Injection</strong> (Injeção de SQL) ocorre quando dados fornecidos pelo usuário são concatenados
+    diretamente na string de uma consulta SQL sem saneamento prévio. Um atacante pode inserir comandos SQL maliciosos
+    na tentativa de burlar mecanismos de login ou manipular dados.
+  </p>
+  <p>Exemplo de vulnerabilidade crítica por concatenação:</p>
+  <div class="code-container">
+    <pre><code class="language-php">// Entrada maliciosa do usuário: admin' --
+$usuario = $_POST['username'];
+$sql = "SELECT * FROM usuarios WHERE username = '$usuario' AND password = '$password';</code></pre>
+  </div>
+  <p>
+    A consulta resultante executará apenas <code class="one-line-code">SELECT * FROM usuarios WHERE username = 'admin'</code>,
+    pois o caractere <code class="one-line-code">--</code> anula o restante da <em>query</em> na base MySQL, permitindo o
+    login ilegal na conta administrativa.
+  </p>
+  <p>
+    <strong>A Solução Definitiva: Prepared Statements (Instruções Preparadas).</strong> O uso de Prepared Statements
+    elimina o SQL Injection separando rigidamente o comando estrutural das variáveis em duas etapas:
+  </p>
+  <ul>
+    <li>
+      <strong>Preparação (<code class="one-line-code">prepare</code>):</strong> o template da <em>query</em> contendo
+      marcações de parâmetros chamadas <em>placeholders</em> (nomeados <code class="one-line-code">:campo</code> ou
+      posicionais <code class="one-line-code">?</code>) é compilado no servidor do banco de dados.
+    </li>
+    <li>
+      <strong>Execução (<code class="one-line-code">execute</code>):</strong> os dados reais de entrada são enviados
+      separadamente e associados aos placeholders. Como o plano de execução já foi fixado na primeira etapa, o SGBD
+      trata os valores inseridos estritamente como literais (dados puros), e nunca como código executável.
+    </li>
+  </ul>
+
+  <h3>1.5. O Papel das Transações (Garantia ACID)</h3>
+  <p>
+    Em processos complexos onde múltiplas <em>queries</em> dependem umas das outras para manter a consistência física
+    dos dados (ex.: uma transação financeira de débito e crédito), utilizamos as <strong>Transações</strong>. Uma
+    transação assegura que:
+  </p>
+  <ul>
+    <li>Ou todas as operações sejam realizadas com sucesso definitivo (<code class="one-line-code">commit</code>);</li>
+    <li>
+      Ou nenhuma alteração seja aplicada, restaurando o banco ao estado original em caso de falha
+      (<code class="one-line-code">rollBack</code>).
+    </li>
+  </ul>
+  <p>
+    O PDO manipula transações de forma limpa por meio de métodos dedicados associados ao fluxo
+    <code class="one-line-code">try...catch</code>.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>Exemplos de Código</h2>
+
+  <h3>Exemplo 1: Conexão Isolada e Segura com Atributos do PDO</h3>
+  <p>
+    Este script demonstra a criação de uma conexão segura utilizando o tratamento de exceções e a ativação de flags
+    importantes para desativar simulações de instruções preparadas.
+  </p>
   <div class="code-container">
-    <pre><code class="language-php">// Em breve...</code></pre>
+    <pre><code class="language-php">// Configurações de credenciais privadas (idealmente protegidas fora do diretório público)
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'biblioteca');
+define('DB_USER', 'usuario_seguro');
+define('DB_PASS', 'SenhaAltamenteComplexa123!');
+
+// Declarada fora do try para ficar disponível ao restante do script
+$pdo = null;
+
+try {
+    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+
+    // $options é um array associativo com as configurações de comportamento do PDO
+    $options = [
+        // Garante que o PDO lance exceções (PDOException) quando houver erros de SQL
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        // Define que os resultados sejam retornados como arrays associativos por padrão
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        // Força a utilização de prepared statements nativos do SGBD, desativando a emulação do PHP
+        PDO::ATTR_EMULATE_PREPARES => false
+    ];
+
+    // Passamos DSN, usuário, senha e o array $options como quarto argumento
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+
+    // Exemplo de uso: consulta simples para confirmar que a conexão está ativa
+    $stmt = $pdo->query("SELECT 1");
+    $stmt->fetch();
+
+} catch (PDOException $e) {
+    // Registra o erro técnico em local seguro no servidor
+    error_log("Falha técnica de conexão: " . $e->getMessage());
+
+    // Exibe uma resposta amigável e limpa para evitar vazamentos de infraestrutura
+    die("Desculpe, ocorreu um problema técnico de comunicação. Tente novamente mais tarde.");
+}
+
+// A partir daqui, $pdo está disponível para as demais operações (Exemplos 2 a 5)</code></pre>
+  </div>
+
+  <h3>Exemplo 2: Operação de CREATE (INSERT com Placeholders Nomeados)</h3>
+  <p>
+    Neste exemplo, vinculamos as variáveis a uma instrução <code class="one-line-code">INSERT</code> de maneira segura
+    através de placeholders nomeados (<code class="one-line-code">:campo</code>) e tipagem estrita com
+    <code class="one-line-code">bindValue</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">// Continuação do Exemplo 1: $pdo já está conectado ao banco
+
+try {
+    // Template da query parametrizada
+    $sql = "INSERT INTO livros (titulo, autor_id, isbn, ano_publicacao)
+            VALUES (:titulo, :autor_id, :isbn, :ano)";
+
+    $stmt = $pdo->prepare($sql);
+
+    // Simulação de dados de entrada recebidos via formulário
+    $titulo  = "PHP 8 Objects, Patterns, and Practice";
+    $autorId = 4;
+    $isbn    = "9781484267912";
+    $ano     = 2021;
+
+    // Vinculação estrita dos parâmetros
+    $stmt->bindValue(':titulo',   $titulo,  PDO::PARAM_STR);
+    $stmt->bindValue(':autor_id', $autorId, PDO::PARAM_INT);
+    $stmt->bindValue(':isbn',     $isbn,    PDO::PARAM_STR);
+    $stmt->bindValue(':ano',      $ano,     PDO::PARAM_INT);
+
+    $stmt->execute();
+
+    // lastInsertId recupera o ID autogerado no banco
+    $novoId = $pdo->lastInsertId();
+    echo "Livro cadastrado com sucesso! ID gerado: " . $novoId;
+
+} catch (PDOException $e) {
+    error_log("Erro ao salvar dados: " . $e->getMessage());
+    echo "Não foi possível cadastrar o registro.";
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Operação de READ (SELECT com Placeholders Posicionais)</h3>
+  <p>
+    Exemplo prático de busca textual utilizando placeholder posicional (<code class="one-line-code">?</code>), ideal
+    para filtros de pesquisa.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">// Continuação do Exemplo 1: $pdo já está conectado ao banco
+
+try {
+    $busca = "PHP%"; // Parâmetro de busca
+
+    // Preparação da consulta estruturada
+    $stmt = $pdo->prepare("SELECT id, titulo, isbn FROM livros WHERE titulo LIKE ?");
+
+    // Passando o valor como array diretamente no método execute
+    $stmt->execute([$busca]);
+
+    // fetchAll retorna todas as linhas associativas localizadas
+    $livros = $stmt->fetchAll();
+
+    if (count($livros) > 0) {
+        foreach ($livros as $livro) {
+            // Aplicação de htmlspecialchars contra Cross-Site Scripting (XSS) ao exibir
+            $tituloSeguro = htmlspecialchars($livro['titulo'], ENT_QUOTES, 'UTF-8');
+            $isbnSeguro   = htmlspecialchars($livro['isbn'], ENT_QUOTES, 'UTF-8');
+
+            echo "ID: {$livro['id']} | Livro: {$tituloSeguro} | ISBN: {$isbnSeguro}<br>";
+        }
+    } else {
+        echo "Nenhum livro localizado.";
+    }
+
+} catch (PDOException $e) {
+    error_log("Erro de leitura: " . $e->getMessage());
+    echo "Ocorreu uma falha no processamento da consulta.";
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 4: Operações de UPDATE e DELETE</h3>
+  <p>
+    Demonstração das modificações de dados e controle de alteração física utilizando o método
+    <code class="one-line-code">rowCount</code> para verificar o impacto no banco.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">// Continuação do Exemplo 1: $pdo já está conectado ao banco
+
+try {
+    // 1. UPDATE Seguro
+    $novoTitulo = "Descomplicando o Docker (2ª Edição)";
+    $idUpdate   = 12;
+
+    $stmtUpdate = $pdo->prepare("UPDATE livros SET titulo = :titulo WHERE id = :id");
+    $stmtUpdate->execute([':titulo' => $novoTitulo, ':id' => $idUpdate]);
+
+    // rowCount() retorna o número de registros alterados fisicamente
+    echo "Registros alterados: " . $stmtUpdate->rowCount() . "<br>";
+
+    // 2. DELETE Seguro
+    $idDelete = 15;
+    $stmtDelete = $pdo->prepare("DELETE FROM livros WHERE id = ?");
+    $stmtDelete->execute([$idDelete]);
+
+    echo "Registros removidos: " . $stmtDelete->rowCount();
+
+} catch (PDOException $e) {
+    error_log("Erro nas operações de alteração: " . $e->getMessage());
+    echo "Falha ao atualizar ou remover dados.";
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 5: Transações Robustas (Garantia de Consistência)</h3>
+  <p>
+    O script a seguir garante a atomicidade em processos críticos que dependem de operações encadeadas.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">// Continuação do Exemplo 1: $pdo já está conectado ao banco
+
+try {
+    // Suspende o autocommit das queries
+    $pdo->beginTransaction();
+
+    // Passo 1: Atualizar o saldo de uma conta (Débito)
+    $stmtDebito = $pdo->prepare("UPDATE contas SET saldo = saldo - :valor WHERE id = :conta");
+    $stmtDebito->execute([':valor' => 500.00, ':conta' => 1]);
+
+    // Passo 2: Atualizar o saldo de outra conta (Crédito)
+    $stmtCredito = $pdo->prepare("UPDATE contas SET saldo = saldo + :valor WHERE id = :conta");
+    $stmtCredito->execute([':valor' => 500.00, ':conta' => 2]);
+
+    // Confirma e grava definitivamente as alterações de forma segura
+    $pdo->commit();
+    echo "Transferência realizada com sucesso!";
+
+} catch (Exception $e) {
+    // Caso ocorra qualquer falha em alguma das queries, desfaz todo o fluxo
+    $pdo->rollBack();
+    error_log("Transferência bancária cancelada: " . $e->getMessage());
+    echo "Erro na transação. Nenhuma movimentação financeira foi efetuada.";
+}</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>Representações Gráficas (Diagramas Conceituais)</h2>
+
+  <h3>3.1. Prepared Statements vs. Consultas Convencionais (SQL Injection)</h3>
+  <p>
+    Este diagrama ilustra por que o Prepared Statement é imune a ataques de injeção de código, separando a estrutura da
+    consulta dos dados inseridos pelo usuário.
+  </p>
+
+  <p><strong>Fluxo Inseguro — Concatenação Direta:</strong></p>
   <div class="mermaid">
     graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    A[Dados Brutos do Usuário] -->|Concatenados diretamente| B[Query SQL final com dados misturados]
+    B -->|Enviada diretamente| C{Compilador do Banco}
+    C -->|Executa| D[Dado interpretado como Comando SQL]
+    style D fill:#f8d7da,stroke:#f5c6cb
+  </div>
+
+  <p><strong>Fluxo Seguro — Prepared Statement:</strong></p>
+  <div class="mermaid">
+    graph TD
+    E[Query com Placeholders] -->|1. prepare| F{Compilador do Banco}
+    F -->|Compila e fixa| G[Plano de Execução Rígido]
+    H[Dados Brutos do Usuário] -->|2. execute| G
+    G -->|Associa com Segurança| I[Dado interpretado estritamente como Valor Puro]
+    style I fill:#d4edda,stroke:#c3e6cb
+  </div>
+
+  <h3>3.2. Ciclo de Vida da Conexão e Tratamento de Exceções</h3>
+  <p>
+    Visualização de como a exceção <code class="one-line-code">PDOException</code> é direcionada quando ocorre uma
+    falha na infraestrutura de banco de dados.
+  </p>
+  <div class="mermaid">
+    sequenceDiagram
+    participant App as Aplicação PHP
+    participant PDO as Classe PDO
+    participant DB as Banco de Dados
+    participant Log as Log de Erros
+
+    App->>PDO: Instancia new PDO()
+    PDO->>DB: Solicita conexão física
+    alt Sucesso de Comunicação
+        DB-->>PDO: Conectado
+        PDO-->>App: Retorna instância do objeto PDO
+        Note over App: Continua execução do código
+    else Credenciais Incorretas / Banco Fora
+        DB-->>PDO: Negado / Timeout
+        PDO-->>App: Lança exceção PDOException
+        Note over App: Execução desvia para bloco catch
+        App->>Log: Grava erro detalhado silenciosamente
+        App-->>App: die() com mensagem amigável ao usuário
+    end
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas, Lembretes e Boas Práticas</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Ative a Tipagem Estrita (<code class="one-line-code">strict_types</code>):</strong> declare
+      <code class="one-line-code">declare(strict_types=1);</code> no início do seu script. Isso impede que o PHP
+      realize conversões de tipos de dados de forma silenciosa e insegura em suas funções, reduzindo comportamentos
+      lógicos imprevisíveis.
+    </li>
+    <li>
+      <strong>Prepared Statements protegem a entrada, não a saída:</strong> prepared statements evitam ataques do tipo
+      SQL Injection ao persistir dados. No entanto, não previnem ataques de Cross-Site Scripting (XSS). Quando você for
+      exibir no navegador dados recuperados do banco, passe-os sempre pela função
+      <code class="one-line-code">htmlspecialchars()</code> para neutralizar scripts maliciosos.
+    </li>
+    <li>
+      <strong>Isolamento de Credenciais:</strong> mantenha as configurações de banco de dados (Host, DB, Usuário e
+      Senha) em arquivos específicos (ex.: <code class="one-line-code">app_config.php</code> ou arquivos de variáveis
+      de ambiente <code class="one-line-code">.env</code>) e coloque-os em pastas restritas nas quais usuários web não
+      tenham acesso direto.
+    </li>
+    <li>
+      <strong>Princípio de Menor Privilégio:</strong> crie um usuário de banco de dados específico para a sua aplicação
+      web. Não utilize o usuário <code class="one-line-code">root</code> para conexões comuns da aplicação. Atribua
+      apenas os privilégios mínimos necessários às tabelas em uso (ex.: <code class="one-line-code">SELECT</code>,
+      <code class="one-line-code">INSERT</code>, <code class="one-line-code">UPDATE</code>), removendo direitos de
+      comandos estruturais perigosos como <code class="one-line-code">DROP</code> ou <code class="one-line-code">ALTER</code>.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Login de usuários sem SQL Injection:</strong> use prepared statements com placeholder
+      <code class="one-line-code">?</code> ou <code class="one-line-code">:email</code> para verificar credenciais,
+      protegendo a consulta contra injeção maliciosa.
+    </li>
+    <li>
+      <strong>CRUD completo de uma biblioteca:</strong> unindo os Exemplos 2, 3 e 4, monte um sistema capaz de
+      cadastrar, listar, atualizar e excluir livros de forma segura.
+    </li>
+    <li>
+      <strong>Transferências financeiras:</strong> envolva débito e crédito em uma transação
+      (<code class="one-line-code">beginTransaction</code> / <code class="one-line-code">commit</code> /
+      <code class="one-line-code">rollBack</code>) para garantir a integridade física dos dados.
+    </li>
+    <li>
+      <strong>Exibição segura de dados:</strong> ao renderizar resultados vindos do banco, aplique sempre
+      <code class="one-line-code">htmlspecialchars()</code> para neutralizar ameaças de XSS.
+    </li>
+    <li>
+      <strong>Tratamento de erro uniforme:</strong> centralize <code class="one-line-code">try...catch</code> registrando
+      erros técnicos com <code class="one-line-code">error_log</code> e exibindo mensagens amigáveis ao usuário final.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>TATROE, Kevin; MACINTYRE, Peter; LERDORF, Rasmus. <em>Programming PHP</em>. 3ª Edição. O'Reilly Media.</li>
+    <li>MCLAUGHLIN, Brett. <em>PHP &amp; MySQL: The Missing Manual</em>. O'Reilly Media.</li>
+    <li>SOMMERFELD, Roni. <em>Unlock PHP 8: From Basic to Advanced</em>. 1ª Edição. BPB Publications, 2024.</li>
+    <li>
+      CENTRO PAULA SOUZA. <em>Plano de Curso do Componente de Desenvolvimento de Sistemas</em>. Eixo Tecnológico de
+      Informação e Comunicação, MTEC, 2026.
+    </li>
   </ul>
 </section>
 

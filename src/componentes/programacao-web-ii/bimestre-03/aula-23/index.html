@@ -1,49 +1,482 @@
 ---
-title: "Operação Create: Inserindo registros no banco de dados com segurança"
+title: "Operação Create — Inserindo Registros no Banco de Dados com Segurança"
 aula_numero: "23"
-description: "Operação Create: Inserindo registros no banco de dados com segurança."
+description: "Operação Create (INSERT) com PHP 8 e PDO: prepared statements nomeados e posicionais, bindValue vs bindParam, lastInsertId, inserção em lote e cadastros relacionais transacionais."
 tags:
   - aula
   - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 23 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    A persistência de dados é um dos pontos mais sensíveis e críticos de qualquer aplicação web. No desenvolvimento de
+    software, a operação de inserção (Create) representa o momento em que dados externos entram no ecossistema interno do
+    nosso banco de dados. Se essa operação for realizada de forma incorreta ou negligente, o sistema estará vulnerável a
+    invasões, corrupção de dados e colapso de infraestrutura.
+  </p>
+  <p>
+    Esta aula detalha os fundamentos teóricos e a implementação prática de inserções de dados robustas, seguras e
+    eficientes utilizando o <strong>PHP 8</strong> e a extensão <strong>PDO</strong> (<em>PHP Data Objects</em>).
+  </p>
+
+  <h3>1.1. O "C" do CRUD: Persistência de Dados</h3>
+  <p>
+    No padrão de desenvolvimento de software, a sigla <strong>CRUD</strong> resume as quatro operações fundamentais que
+    realizamos em repositórios de dados: <strong>Create</strong> (Criar), <strong>Read</strong> (Ler),
+    <strong>Update</strong> (Atualizar) e <strong>Delete</strong> (Deletar).
+  </p>
+  <p>
+    A operação Create é realizada no banco de dados através da instrução SQL <code class="one-line-code">INSERT</code>.
+    Ela cria fisicamente uma nova linha (registro) em uma determinada tabela, mapeando os dados vindos da nossa aplicação
+    para as colunas apropriadas.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Anatomia básica de um comando INSERT tradicional
+INSERT INTO clientes (nome, email, telefone) VALUES ('Aline', 'aline@email.com', '11999998888');</code></pre>
+  </div>
+
+  <h3>1.2. O Perigo Oculto: SQL Injection no INSERT</h3>
+  <p>
+    Um erro grave de programação é assumir que os dados enviados pelo usuário por meio de formulários HTML, parâmetros de
+    URL ou payloads JSON são <strong>legítimos e seguros</strong>. <em>Nunca confie em dados externos.</em>
+  </p>
+  <p>
+    Quando concatenamos variáveis diretamente no corpo do comando INSERT, abrimos uma brecha de segurança chamada
+    <strong>SQL Injection</strong> (Injeção de SQL).
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">// CÓDIGO ALTAMENTE VULNERÁVEL - NUNCA REPRODUZA
+$nome = $_POST['nome']; // Suponha que o invasor digite: Roberta', 'hack@db.com'); DROP TABLE clientes; --
+$email = $_POST['email'];
+
+$sql = "INSERT INTO clientes (nome, email) VALUES ('$nome', '$email')";</code></pre>
+  </div>
+  <p>
+    Nesse cenário de concatenação, a instrução final executada pelo banco de dados se tornará:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">INSERT INTO clientes (nome, email) VALUES ('Roberta', 'hack@db.com'); DROP TABLE clientes; --', '...')</code></pre>
+  </div>
+  <p>
+    O caractere de aspa simples <code class="one-line-code">'</code> fecha prematuramente o campo de dados, o ponto e
+    vírgula <code class="one-line-code">;</code> finaliza a <em>query</em> de inserção, e um novo comando destrutivo
+    (<code class="one-line-code">DROP TABLE</code>) é inserido na sequência. O caractere
+    <code class="one-line-code">--</code> transforma o restante do código em um mero comentário, inutilizando as aspas de
+    fechamento e permitindo que o ataque aconteça.
+  </p>
+
+  <h3>1.3. A Solução Definitiva: Prepared Statements (Consultas Parametrizadas)</h3>
+  <p>
+    Para anular completamente o risco de injeção de SQL, a especificação da linguagem de consulta estruturada (SQL) e os
+    drivers modernos de bancos de dados utilizam o mecanismo de <strong>Prepared Statements</strong> (Instruções
+    Preparadas).
+  </p>
+  <p>
+    Esse mecanismo consiste em dividir o envio da informação ao servidor de banco de dados em duas etapas isoladas:
+  </p>
+  <ul>
+    <li>
+      <strong>Etapa de Preparação (prepare):</strong> a aplicação envia apenas o "molde" ou template estrutural da
+      consulta, utilizando marcações especiais chamadas <em>placeholders</em>. O SGBD compila essa estrutura de forma
+      estática, gerando um plano de execução rígido.
+    </li>
+    <li>
+      <strong>Etapa de Vinculação e Execução (execute):</strong> os dados reais enviados pelo usuário são vinculados aos
+      <em>placeholders</em> correspondentes. Como o plano de execução já foi previamente fixado pelo compilador do banco,
+      o SGBD trata essas entradas estritamente como valores literais (dados). Mesmo que o usuário envie comandos SQL na
+      string, o interpretador do banco os tratará puramente como caracteres de texto, nunca como comandos executáveis.
+    </li>
+  </ul>
+  <p><strong>Tipos de Placeholders Suportados pelo PDO</strong></p>
+  <ul>
+    <li>
+      <strong>Placeholders Nomeados (<code class="one-line-code">:nome</code>):</strong> utilizam um rótulo precedido por
+      dois pontos <code class="one-line-code">:</code>. São amplamente recomendados por tornarem o código
+      autoexplicativo e menos propenso a falhas de ordenação quando a <em>query</em> possui dezenas de colunas.
+    </li>
+    <li>
+      <strong>Placeholders Posicionais (<code class="one-line-code">?</code>):</strong> utilizam pontos de interrogação
+      como marcações sem nome. Os dados devem ser informados em um array simples obedecendo rigorosamente à ordem
+      sequencial em que as interrogações aparecem na <em>query</em>.
+    </li>
+  </ul>
+
+  <h3>1.4. Vinculando Parâmetros: bindValue() vs. bindParam()</h3>
+  <p>
+    A extensão PDO nos fornece dois métodos principais para vincular dados dinâmicos às instruções preparadas:
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">bindValue($placeholder, $valor, $tipo)</code>:</strong> vincula o
+      <em>valor atual</em> da variável ao parâmetro. O valor é lido e fixado no exato instante em que o método é
+      invocado. É a opção mais segura e recomendada para inserções isoladas.
+    </li>
+    <li>
+      <strong><code class="one-line-code">bindParam($placeholder, &amp;$variavel, $tipo)</code>:</strong> vincula o
+      parâmetro à <em>referência</em> da variável na memória. O PDO só lê o valor real da variável no momento em que o
+      método <code class="one-line-code">execute()</code> for disparado. Isso permite declarar o mapeamento de parâmetros
+      uma única vez e alterar o conteúdo das variáveis dentro de uma estrutura de repetição (loop) para inserções
+      múltiplas de forma muito mais eficiente.
+    </li>
+  </ul>
+  <p>
+    Para maximizar a segurança e o desempenho, o PDO permite tipificar explicitamente os valores passados por meio de
+    constantes de classe:
+  </p>
+  <ul>
+    <li><code class="one-line-code">PDO::PARAM_STR</code>: para dados textuais, strings, e-mails e datas.</li>
+    <li>
+      <code class="one-line-code">PDO::PARAM_INT</code>: para inteiros estritos (importante para chaves estrangeiras,
+      limites de paginação e IDs).
+    </li>
+    <li><code class="one-line-code">PDO::PARAM_BOOL</code>: para booleanos.</li>
+    <li><code class="one-line-code">PDO::PARAM_NULL</code>: para representar valores explicitamente nulos.</li>
+  </ul>
+
+  <h3>1.5. Recuperação da Chave Primária Autogerada (lastInsertId())</h3>
+  <p>
+    Em bancos de dados bem projetados, as tabelas costumam conter chaves primárias numéricas com a propriedade de
+    auto-incremento (<code class="one-line-code">AUTO_INCREMENT</code>), delegando ao próprio banco a responsabilidade de
+    gerar identificadores exclusivos sequenciais para cada novo registro criado.
+  </p>
+  <p>
+    Durante um fluxo de inserção, o PHP não tem conhecimento prévio de qual ID o banco de dados associará ao novo
+    registro. No entanto, após uma inserção bem-sucedida, podemos invocar o método
+    <code class="one-line-code">lastInsertId()</code> do objeto PDO. Ele retorna uma string contendo o ID numérico
+    autogerado pela última operação de gravação no banco de dados ativo.
+  </p>
+  <p>
+    Esse recurso é de extrema utilidade prática na engenharia de software relacional, pois permite encadear cadastros de
+    forma consistente (ex.: salvar um Pedido no banco de dados, obter seu ID instantaneamente e usá-lo para registrar os
+    itens na tabela relacionada de <code class="one-line-code">Itens_Pedido</code>).
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>Exemplos de Código</h2>
+  <p>
+    Abaixo estão três cenários práticos implementados sob padrões profissionais do PHP 8. Todos partem da conexão segura
+    criada na aula anterior (o objeto <code class="one-line-code">$pdo</code> já conectado ao banco) e seguem o mesmo
+    fluxo: <code class="one-line-code">prepare()</code> &rarr; vincular &rarr; <code class="one-line-code">execute()</code>.
+  </p>
+
+  <h3>Exemplo 1: Cadastro Básico de Usuário (Prepared Statement Nomeado)</h3>
+  <p>
+    Este exemplo demonstra o fluxo padrão para cadastrar um único registro utilizando placeholders nomeados e vinculação
+    direta com <code class="one-line-code">bindValue()</code> de forma blindada contra SQL Injection.
+  </p>
   <div class="code-container">
-    <pre><code class="language-php">// Em breve...</code></pre>
+    <pre><code class="language-php">// Garantindo a tipagem estrita no topo do script para evitar coerções perigosas
+declare(strict_types=1);
+
+require_once 'conexao.php'; // Arquivo que instancia o objeto $pdo
+
+// Dados brutos vindos de uma requisição limpa e validada externamente
+$dadosFormulario = [
+    'nome'  => 'Matheus Nobre',
+    'email' => 'matheus.nobre@etec.sp.gov.br',
+    'senha' => 'Etec@2026!'
+];
+
+try {
+    // 1. Escrevemos a instrução SQL contendo placeholders nomeados (:nome, :email, etc.)
+    $sql = "INSERT INTO usuarios (nome, email, senha) VALUES (:nome, :email, :senha)";
+
+    // 2. Preparamos a instrução estruturada no SGBD
+    $stmt = $pdo->prepare($sql);
+
+    // Hash seguro de senha usando o algoritmo padrão moderno do PHP (bcrypt/argon2)
+    $senhaHash = password_hash($dadosFormulario['senha'], PASSWORD_DEFAULT);
+
+    // 3. Vinculamos os valores de forma estrita com bindValue()
+    $stmt->bindValue(':nome',  $dadosFormulario['nome'],  PDO::PARAM_STR);
+    $stmt->bindValue(':email', $dadosFormulario['email'], PDO::PARAM_STR);
+    $stmt->bindValue(':senha', $senhaHash,                PDO::PARAM_STR);
+
+    // 4. Executamos de fato a inserção compilada
+    $stmt->execute();
+
+    // Recuperamos o ID gerado pelo banco para este usuário
+    $idUsuario = $pdo->lastInsertId();
+
+    echo "Cadastro concluído com absoluto sucesso! ID do Usuário: " . $idUsuario;
+
+} catch (PDOException $e) {
+    // Registramos a falha real nos logs privados do servidor
+    error_log("Erro de inserção (usuarios): " . $e->getMessage());
+
+    // Exibimos uma resposta amigável e segura ao usuário
+    echo "Desculpe, ocorreu uma falha técnica ao salvar o cadastro.";
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 2: Inserção Eficiente em Lote (Bulk Insert com bindParam())</h3>
+  <p>
+    Quando precisamos inserir dezenas ou centenas de registros de uma só vez (como a importação de uma planilha ou
+    sincronização de listas), preparar o mesmo comando repetidamente gera gargalos de rede e consumo excessivo de CPU.
+  </p>
+  <p>
+    Para otimizar o desempenho, utilizamos placeholders posicionais, compilamos a <em>query</em> apenas uma vez no SGBD e
+    usamos o método <code class="one-line-code">bindParam()</code> para vincular variáveis por referência, atualizando
+    seus conteúdos em um loop.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">declare(strict_types=1);
+
+require_once 'conexao.php';
+
+// Array contendo vários registros a serem inseridos
+$novosProdutos = [
+    ['nome' => 'Monitor 24" IPS',      'preco' => 899.90, 'estoque' => 15],
+    ['nome' => 'Teclado Mecânico RGB', 'preco' => 349.50, 'estoque' => 30],
+    ['nome' => 'Mouse Gamer Wireless', 'preco' => 249.90, 'estoque' => 50],
+];
+
+try {
+    // 1. Escrevemos a query com placeholders posicionais (?)
+    $sql = "INSERT INTO produtos (nome, preco, estoque) VALUES (?, ?, ?)";
+
+    // 2. Preparamos o comando no banco apenas UMA vez
+    $stmt = $pdo->prepare($sql);
+
+    // 3. Declaramos as variáveis de trabalho na memória
+    $nome = "";
+    $preco = 0.0;
+    $estoque = 0;
+
+    // 4. Vinculamos as variáveis físicas de trabalho por referência usando bindParam()
+    $stmt->bindParam(1, $nome,    PDO::PARAM_STR);
+    $stmt->bindParam(2, $preco,   PDO::PARAM_STR); // Floats são vinculados com PARAM_STR para maior precisão decimal
+    $stmt->bindParam(3, $estoque, PDO::PARAM_INT);
+
+    // 5. Executamos o loop atualizando os dados. O PDO lerá a memória a cada iteração!
+    foreach ($novosProdutos as $produto) {
+        $nome    = $produto['nome'];
+        $preco   = $produto['preco'];
+        $estoque = $produto['estoque'];
+
+        $stmt->execute(); // Executa enviando apenas os novos valores
+    }
+
+    echo "Todos os " . count($novosProdutos) . " produtos foram cadastrados com máxima performance!";
+
+} catch (PDOException $e) {
+    error_log("Erro de Bulk Insert (produtos): " . $e->getMessage());
+    echo "Falha durante o cadastro dos itens em lote.";
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Cadastro Relacional Transacional (Garantia ACID)</h3>
+  <p>
+    Em sistemas integrados, é comum que uma ação de criação dependa de inserções em múltiplas tabelas associadas. Por
+    exemplo, ao cadastrar um cliente, também precisamos registrar o seu endereço físico em outra tabela.
+  </p>
+  <p>
+    Se a inserção do cliente funcionar, mas a gravação do endereço falhar (por exemplo, falta de energia ou violação de
+    regra no banco de dados), o sistema ficará em um estado inconsistente de dados órfãos.
+  </p>
+  <p>
+    Para evitar isso, encapsulamos o fluxo em uma <strong>Transação (ACID)</strong>, garantindo que tudo seja gravado
+    perfeitamente ou que todo o progresso seja anulado instantaneamente.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">declare(strict_types=1);
+
+require_once 'conexao.php';
+
+// Payload unificado simulando os dados de um formulário de cadastro único
+$dadosCadastro = [
+    'cliente' => [
+        'nome' => 'Bruno Alencar',
+        'cpf'  => '12345678901'
+    ],
+    'endereco' => [
+        'rua'    => 'Rua Vergueiro, 3185',
+        'cidade' => 'São Paulo',
+        'estado' => 'SP'
+    ]
+];
+
+try {
+    // 1. Iniciamos a transação monitorada no SGBD (desativa o autocommit temporariamente)
+    $pdo->beginTransaction();
+
+    // ==========================================
+    // PASSO A: Inserir dados do Cliente
+    // ==========================================
+    $sqlCliente = "INSERT INTO clientes (nome, cpf) VALUES (:nome, :cpf)";
+    $stmtCliente = $pdo->prepare($sqlCliente);
+    $stmtCliente->bindValue(':nome', $dadosCadastro['cliente']['nome'], PDO::PARAM_STR);
+    $stmtCliente->bindValue(':cpf',  $dadosCadastro['cliente']['cpf'],  PDO::PARAM_STR);
+    $stmtCliente->execute();
+
+    // Recuperamos o ID sequencial que o banco acabou de gerar para este novo cliente
+    $idClienteGerado = (int) $pdo->lastInsertId();
+
+    // ==========================================
+    // PASSO B: Inserir dados do Endereço (usando a FK correspondente)
+    // ==========================================
+    $sqlEndereco = "INSERT INTO enderecos (cliente_id, rua, cidade, estado)
+                    VALUES (:cliente_id, :rua, :cidade, :estado)";
+    $stmtEndereco = $pdo->prepare($sqlEndereco);
+
+    // Vinculamos o ID obtido no passo anterior como chave estrangeira de relacionamento!
+    $stmtEndereco->bindValue(':cliente_id', $idClienteGerado,                      PDO::PARAM_INT);
+    $stmtEndereco->bindValue(':rua',        $dadosCadastro['endereco']['rua'],    PDO::PARAM_STR);
+    $stmtEndereco->bindValue(':cidade',     $dadosCadastro['endereco']['cidade'], PDO::PARAM_STR);
+    $stmtEndereco->bindValue(':estado',     $dadosCadastro['endereco']['estado'], PDO::PARAM_STR);
+    $stmtEndereco->execute();
+
+    // 2. Se ambos os passos ocorreram sem problemas, gravamos definitivamente no banco de dados
+    $pdo->commit();
+
+    echo "Transação concluída com sucesso! Cliente ID {$idClienteGerado} e seu respectivo endereço foram salvos.";
+
+} catch (Exception $e) {
+    // 3. Se qualquer erro, exceção ou problema ocorrer no caminho, descartamos todas as operações pendentes!
+    $pdo->rollBack();
+
+    error_log("Transação cancelada. Rollback executado. Motivo: " . $e->getMessage());
+    echo "Não foi possível concluir o cadastro. O banco de dados foi restaurado ao estado íntegro original.";
+}</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>Representações Gráficas (Diagramas Conceituais)</h2>
+
+  <h3>3.1. Processamento Seguro de Prepared Statements</h3>
+  <p>
+    Este diagrama ilustra o fluxo de dados na memória do SGBD durante a compilação e execução de uma <em>query</em>
+    INSERT parametrizada, demonstrando por que o SQL Injection é neutralizado.
+  </p>
   <div class="mermaid">
     graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    subgraph Servidor_Web_PHP
+        A[Dados do Formulário]
+        B[Query Template: INSERT INTO clientes VALUES :nome, :email]
+    end
+
+    subgraph Servidor_Banco_Dados_SGBD
+        B -->|1. prepare| C{Compilador SQL}
+        C -->|Compila e Fixa Estrutura| D[Plano de Execução Rígido]
+        A -->|2. execute| E[Área de Valores Literais]
+        E -->|Preenche Placeholders| D
+        D -->|Grava com Segurança| F[Registro no Disco]
+    end
+
+    style B fill:#fff3e0,stroke:#e65100
+    style D fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style E fill:#e1f5fe,stroke:#01579b
+    style F fill:#e8f5e9,stroke:#2e7d32
+  </div>
+
+  <h3>3.2. Fluxo Transacional Relacional com lastInsertId</h3>
+  <p>
+    Visualização de como as inserções encadeadas dependem da recuperação do ID autogerado e como a transação protege o
+    sistema em caso de falha física na segunda operação.
+  </p>
+  <div class="mermaid">
+    sequenceDiagram
+    participant App as Código PHP
+    participant SGBD as Servidor de Banco
+    participant Log as Log de Erros
+
+    App->>SGBD: beginTransaction()
+    Note over SGBD: Autocommit Desativado
+
+    App->>SGBD: INSERT INTO clientes (nome, cpf)
+    SGBD-->>App: OK (Registro Pré-salvo)
+
+    App->>SGBD: lastInsertId()
+    SGBD-->>App: Retorna ID: 42
+
+    alt Inserção do Endereço com ID 42 Funciona
+        App->>SGBD: INSERT INTO enderecos (cliente_id, rua...)
+        SGBD-->>App: OK (Registro Pré-salvo)
+        App->>SGBD: commit()
+        Note over SGBD: Dados gravados permanentemente no disco
+        SGBD-->>App: Sucesso Total
+    else Falha de gravação ou falta de luz
+        App->>SGBD: INSERT INTO enderecos (cliente_id, rua...)
+        SGBD-->>App: Falha ou Exception lançada!
+        Note over App: Código desvia para bloco Catch
+        App->>SGBD: rollBack()
+        Note over SGBD: Todas as pendências limpas. ID 42 cancelado!
+        App->>Log: Grava detalhes do erro silenciosamente
+        App-->>App: Encerra com mensagem de segurança amigável
+    end
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas, Lembretes e Erros Comuns</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Evite o erro do Cifrão no Placeholder:</strong> ao escrever placeholders nomeados na <em>query</em>, use
+      dois pontos seguidos pelo nome desejado (ex.: <code class="one-line-code">:nome</code>). Não inclua o cifrão
+      (<code class="one-line-code">$</code>) dentro do placeholder (como <code class="one-line-code">:$nome</code> ou
+      <code class="one-line-code">:nome</code>), o que causará erro de sintaxe ou de binding.
+    </li>
+    <li>
+      <strong>Declaração de Campos Obrigatórios (NOT NULL):</strong> atributos definidos no banco de dados como
+      <code class="one-line-code">NOT NULL</code> que não possuem valor padrão no banco precisam obrigatoriamente de
+      valores vinculados no INSERT. Se você tentar ignorá-los ou passar um valor nulo por desatenção, o PDO disparará uma
+      exceção crítica (<code class="one-line-code">PDOException</code>) de violação de restrição.
+    </li>
+    <li>
+      <strong>Prepared Statements protegem a ingestão, não a saída:</strong> prepared statements impedem ataques de
+      injeção SQL. No entanto, se o usuário cadastrar um texto contendo tags de script (ex.:
+      <code class="one-line-code">&lt;script&gt;alert('XSS')&lt;/script&gt;</code>) e você renderizar esse texto
+      diretamente no navegador de outro usuário sem o devido tratamento de saída com
+      <code class="one-line-code">htmlspecialchars()</code>, sua aplicação estará exposta ao ataque de XSS
+      (<em>Cross-Site Scripting</em>). Lembre-se de que a segurança trabalha de forma holística em camadas.
+    </li>
+    <li>
+      <strong>Tratando Inserções Vazias (lastInsertId em loops):</strong> o método <code class="one-line-code">lastInsertId()</code>
+      retorna o ID correspondente ao último registro inserido na conexão ativa. Se você chamar esse método dentro de um
+      loop antes que a inserção de fato ocorra na mesma iteração, ele retornará o ID da iteração anterior, o que pode
+      corromper seus relacionamentos de chaves estrangeiras.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Cadastro de usuários:</strong> use prepared statement nomeado com <code class="one-line-code">bindValue()</code>
+      e <code class="one-line-code">PASSWORD_DEFAULT</code> no hash da senha, recuperando o
+      <code class="one-line-code">lastInsertId()</code> para confirmar o novo registro.
+    </li>
+    <li>
+      <strong>Importação de planilhas e listas:</strong> para carregar muitos registros de uma vez, compile a instrução
+      uma única vez e use <code class="one-line-code">bindParam()</code> dentro de um loop, maximizando o desempenho.
+    </li>
+    <li>
+      <strong>Cadastro relacional (pedido + itens):</strong> encapsule as inserções em
+      <code class="one-line-code">beginTransaction()</code>, use o <code class="one-line-code">lastInsertId()</code> do
+      primeiro insert como chave estrangeira do segundo e finalize com <code class="one-line-code">commit()</code>; em
+      caso de erro, execute <code class="one-line-code">rollBack()</code>.
+    </li>
+    <li>
+      <strong>Never trust input:</strong> trate todo dado externo como potencialmente malicioso e valide-o antes do
+      <code class="one-line-code">prepare()</code>, evitando SQL Injection e dados inconsistentes.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>ZANDSTRA, Matt. <em>PHP 8 Objects, Patterns, and Practice</em>. Apress, 2021.</li>
+    <li>WELLING, Luke; THOMSON, Laura. <em>PHP and MySQL Web Development</em>. 4ª Edição, Addison-Wesley.</li>
+    <li>SOMMERFELD, Roni. <em>Unlock PHP 8: From Basic to Advanced</em>. BPB Publications, 2024.</li>
+    <li>
+      CENTRO PAULA SOUZA. <em>Plano de Curso nº 1062 - Técnico em Desenvolvimento de Sistemas</em>. Eixo Tecnológico de
+      Informação e Comunicação, 2026.
+    </li>
   </ul>
 </section>
 

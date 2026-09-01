@@ -1,18 +1,221 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Conexão segura com banco de dados utilizando a classe PDO (PHP Data Objects)"
+title: "Exercício 01 - Conexão e CRUD seguro com PHP PDO"
 exercicio_numero: "01"
 aula_numero: "22"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 22."
+description: "Atividade prática para consolidar a conexão segura com o banco via PDO, o CRUD com prepared statements e o uso de transações — exatamente como visto na aula 22."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado(a) para desenvolver o back-end de um pequeno sistema de biblioteca. O objetivo desta atividade é
+    construir, passo a passo, uma camada de acesso a dados <strong>segura</strong> usando a classe
+    <strong>PDO</strong> — do estabelecimento da conexão até as operações de CRUD e uma transação, aplicando
+    <code class="one-line-code">prepare()</code> + <code class="one-line-code">execute()</code> em todas as consultas.
+  </p>
+  <p>
+    Execute e valide cada etapa no seu ambiente com PHP 8 e MySQL antes de prosseguir para a próxima.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li><strong>Ambiente:</strong> garanta PHP 8+ com a extensão <code class="one-line-code">pdo_mysql</code> habilitada
+      (<code class="one-line-code">php -m</code>) e um servidor MySQL local.</li>
+    <li><strong>Banco:</strong> execute o script da seção "1. Preparação do Banco" para criar o banco e a tabela
+      <code class="one-line-code">livros</code>.</li>
+    <li><strong>Organização:</strong> crie os arquivos conforme indicado, mantendo as credenciais em um arquivo separado
+      (fora do diretório público, idealmente).</li>
+    <li><strong>Validação:</strong> após cada bloco, rode o código e confirme a saída esperada no navegador.</li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Preparação do Banco (MySQL)</h2>
+  <p>Crie o banco e a tabela que serão usados na atividade:</p>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE DATABASE biblioteca;
+USE biblioteca;
+
+CREATE TABLE livros (
+    id INT NOT NULL AUTO_INCREMENT,
+    titulo VARCHAR(200) NOT NULL,
+    isbn VARCHAR(20) UNIQUE,
+    ano_publicacao INT,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO livros (titulo, isbn, ano_publicacao) VALUES
+('Introdução ao PHP 8', '9781111111111', 2022),
+('Banco de Dados com MySQL', '9782222222222', 2023);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>2. Estrutura de Arquivos Proposta</h2>
+  <ul>
+    <li><code class="one-line-code">conexao.php</code> — abre a conexão segura com o PDO (reutilizado por todos os blocos).</li>
+    <li><code class="one-line-code">create.php</code> — insere um novo livro (Exemplo 2 da aula).</li>
+    <li><code class="one-line-code">read.php</code> — busca livros por título (Exemplo 3 da aula).</li>
+    <li><code class="one-line-code">update_delete.php</code> — altera e remove registros (Exemplo 4 da aula).</li>
+    <li><code class="one-line-code">transacao.php</code> — realiza uma transferência atômica (Exemplo 5 da aula).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Conexão Segura (conexao.php)</h3>
+  <ol>
+    <li>
+      Crie o arquivo <code class="one-line-code">conexao.php</code> com as credenciais e a instância do PDO, usando
+      <code class="one-line-code">try...catch</code>, <code class="one-line-code">ERRMODE_EXCEPTION</code>,
+      <code class="one-line-code">FETCH_ASSOC</code> e <code class="one-line-code">EMULATE_PREPARES => false</code>:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+// conexao.php - reutilize este arquivo em todos os blocos (require_once 'conexao.php')
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'biblioteca');
+define('DB_USER', 'root');
+define('DB_PASS', 'SUA_SENHA');
+
+try {
+    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false
+    ]);
+} catch (PDOException $e) {
+    error_log("Falha de conexão: " . $e->getMessage());
+    die("Falha de comunicação. Tente novamente.");
+}</code></pre>
+      </div>
+    </li>
+    <li>
+      Responda e valide: altere a <code class="one-line-code">$dsn</code> para apontar para outro driver (ex.:
+      <code class="one-line-code">sqlite</code>). O que precisa mudar? O que permanece igual? Confirme que a portabilidade
+      do PDO é real.
+    </li>
+  </ol>
+
+  <h3>Bloco 2: CREATE Seguro (create.php)</h3>
+  <ol>
+    <li>
+      Com <code class="one-line-code">require_once 'conexao.php';</code>, insira um novo livro usando placeholders
+      nomeados (<code class="one-line-code">:titulo</code>, <code class="one-line-code">:isbn</code>,
+      <code class="one-line-code">:ano</code>) e exiba o <code class="one-line-code">$pdo->lastInsertId()</code>:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+require_once 'conexao.php';
+
+$sql = "INSERT INTO livros (titulo, isbn, ano_publicacao)
+        VALUES (:titulo, :isbn, :ano)";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+    ':titulo' => 'Descomplicando APIs REST',
+    ':isbn'   => '9783333333333',
+    ':ano'    => 2024
+]);
+echo "Novo ID gerado: " . $pdo->lastInsertId();</code></pre>
+      </div>
+    </li>
+    <li>Tente inserir um livro com ISBN duplicado. O que acontece? Isso é uma falha ou uma proteção do banco?</li>
+  </ol>
+
+  <h3>Bloco 3: READ Seguro (read.php)</h3>
+  <ol>
+    <li>
+      Busque livros cujo título contenha o termo "PHP" usando placeholder posicional (<code class="one-line-code">?</code>)
+      e exiba os resultados com <code class="one-line-code">htmlspecialchars()</code>:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+require_once 'conexao.php';
+
+$busca = "%PHP%";
+$stmt = $pdo->prepare("SELECT id, titulo, isbn, ano_publicacao FROM livros WHERE titulo LIKE ?");
+$stmt->execute([$busca]);
+
+foreach ($stmt->fetchAll() as $livro) {
+    echo htmlspecialchars($livro['titulo'], ENT_QUOTES, 'UTF-8')
+       . " | " . htmlspecialchars($livro['isbn'], ENT_QUOTES, 'UTF-8')
+       . " | " . $livro['ano_publicacao'] . "&lt;br&gt;";
+}</code></pre>
+      </div>
+    </li>
+    <li>Explique por que o retorno do banco precisa passar por <code class="one-line-code">htmlspecialchars()</code>.</li>
+  </ol>
+
+  <h3>Bloco 4: UPDATE e DELETE (update_delete.php)</h3>
+  <ol>
+    <li>
+      Altere o título e remova um registro, verificando o impacto com
+      <code class="one-line-code">rowCount()</code>:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+require_once 'conexao.php';
+
+$stmtUpdate = $pdo->prepare("UPDATE livros SET titulo = :titulo WHERE id = :id");
+$stmtUpdate->execute([':titulo' => 'Descomplicando APIs REST (2ª ed.)', ':id' => 3]);
+echo "Linhas alteradas: " . $stmtUpdate->rowCount() . "&lt;br&gt;";
+
+$stmtDelete = $pdo->prepare("DELETE FROM livros WHERE id = ?");
+$stmtDelete->execute([4]);
+echo "Linhas removidas: " . $stmtDelete->rowCount();</code></pre>
+      </div>
+    </li>
+    <li>O que <code class="one-line-code">rowCount()</code> retorna quando o <code class="one-line-code">WHERE</code> não
+      encontra nenhum registro? Teste para confirmar.</li>
+  </ol>
+
+  <h3>Bloco 5: Transação Atômica (transacao.php)</h3>
+  <ol>
+    <li>
+      Simule uma transferência entre duas contas usando
+      <code class="one-line-code">beginTransaction()</code>, <code class="one-line-code">commit()</code> e
+      <code class="one-line-code">rollBack()</code>:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+require_once 'conexao.php';
+
+// Preparação: crie antes a tabela contas:
+// CREATE TABLE contas (id INT PRIMARY KEY, saldo DECIMAL(10,2));
+// INSERT INTO contas VALUES (1, 1000.00), (2, 1000.00);
+
+try {
+    $pdo->beginTransaction();
+
+    $debito = $pdo->prepare("UPDATE contas SET saldo = saldo - :v WHERE id = :c");
+    $debito->execute([':v' => 500.00, ':c' => 1]);
+
+    $credito = $pdo->prepare("UPDATE contas SET saldo = saldo + :v WHERE id = :c");
+    $credito->execute([':v' => 500.00, ':c' => 2]);
+
+    $pdo->commit();
+    echo "Transferência realizada com sucesso!";
+} catch (Exception $e) {
+    $pdo->rollBack();
+    error_log("Transação cancelada: " . $e->getMessage());
+    echo "Erro: nenhuma movimentação foi efetuada.";
+}</code></pre>
+      </div>
+    </li>
+    <li>Modifique o valor do débito para exceder o saldo da conta 1 e simule uma falha. A conta 2 continua recebendo o
+      crédito? Explique o papel do <code class="one-line-code">rollBack()</code>.</li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li><strong>Prepared statements em tudo:</strong> nunca concatene valores vindos do usuário na string SQL — sempre
+      <code class="one-line-code">prepare()</code> + <code class="one-line-code">execute()</code>.</li>
+    <li><strong>Proteja a saída:</strong> ao exibir dados do banco, use
+      <code class="one-line-code">htmlspecialchars()</code> para evitar XSS.</li>
+    <li><strong>Não exponha credenciais:</strong> mantenha host, banco, usuário e senha fora do diretório público da
+      aplicação.</li>
+    <li><strong>Menor privilégio:</strong> use um usuário de banco específico (não <code class="one-line-code">root</code>)
+      com apenas <code class="one-line-code">SELECT</code>, <code class="one-line-code">INSERT</code>,
+      <code class="one-line-code">UPDATE</code>, <code class="one-line-code">DELETE</code>.</li>
   </ul>
 </div>

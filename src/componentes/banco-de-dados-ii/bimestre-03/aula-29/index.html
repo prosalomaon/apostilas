@@ -1,70 +1,645 @@
 ---
-title: "Revisão Transações"
+title: "Revisão Completa do 3º Bimestre"
+componente: "Banco de Dados II"
 aula_numero: "29"
-description: "Transações e concorrência."
+description: "Revisão completa do terceiro bimestre: consolidação dos conceitos de programabilidade e automação (Stored Procedures, Functions, Triggers, Tratamento de Exceções e ORM) integrados aos fundamentos de transações, DQL, junções, agregações, subconsultas, views e índices vistos nos bimestres anteriores."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo em desenvolvimento...</p>
-</section>
+  <h2>Visão Geral da Revisão</h2>
+  <p>
+    Esta aula é uma <strong>revisão completa do terceiro bimestre</strong>, cujo tema central é
+    <strong>Programabilidade e Automação</strong>. Aqui consolidamos os conceitos de programação no SGBD — blocos de
+    linguagem SQL, Stored Procedures, Stored Functions, Triggers, Tratamento de Exceções e Mapeamento ORM — e os
+    conectamos com os fundamentos vistos nos bimestres anteriores, como <strong>transações</strong>,
+    <strong>integridade</strong>, <strong>DQL avançada</strong>, <strong>junções</strong>, <strong>agregações</strong>,
+    <strong>subconsultas</strong>, <strong>views</strong> e <strong>índices</strong>.
+  </p>
 
-<section class="section-box">
-  <h2>Exemplo de Código</h2>
-  <p>Abaixo, apresentamos exemplos práticos comparando as sintaxes entre os dois ambientes.</p>
-  <div class="code-container">
-    <pre><code class="language-sql">-- [ MySQL ]
--- Código em desenvolvimento...
-
--- [ PostgreSQL ]
--- Código em desenvolvimento...</code></pre>
-  </div>
-</section>
-
-<section class="section-box">
-  <h2>Diagramação</h2>
-  <p>Representação visual dos conceitos abordados:</p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B{Processo}
-    B --> C[Fim]
+    graph LR
+      subgraph Anteriores ["Bimestres 1 e 2 (Fundamentos)"]
+        A1[Integridade e Constraints]
+        A2[DQL, Joins e Agregações]
+        A3[Subqueries, Views e Índices]
+        A4[Transações]
+      end
+      subgraph Terceiro ["3º Bimestre (Programabilidade)"]
+        B1[Blocos SQL]
+        B2[Stored Procedures]
+        B3[Stored Functions]
+        B4[Triggers]
+        B5[Tratamento de Exceções]
+        B6[ORM]
+      end
+      A1 --> B1
+      A4 --> B5
+      B1 --> B2
+      B1 --> B3
+      B4 --> B5
+      B2 --> B6
+      B3 --> B6
   </div>
+</section>
+
+<section class="section-box">
+  <h2>1. Revisão Rápida dos Fundamentos</h2>
+  <p>
+    Antes de revisarmos os conteúdos do terceiro bimestre, vamos relembrar rapidamente as bases que sustentam a
+    programabilidade no banco de dados.
+  </p>
+
+  <h3>1.1 Transações e Controle de Concorrência</h3>
+  <p>
+    Uma <strong>transação</strong> é uma sequência de operações executada como uma unidade atômica. Ela deve respeitar
+    as propriedades <strong>ACID</strong>:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Propriedade</th>
+        <th>Significado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Atomicidade</strong></td>
+        <td>Tudo ou nada: ou todas as operações são aplicadas ou nenhuma delas.</td>
+      </tr>
+      <tr>
+        <td><strong>Consistência</strong></td>
+        <td>A transação leva o banco de um estado válido a outro estado válido.</td>
+      </tr>
+      <tr>
+        <td><strong>Isolamento</strong></td>
+        <td>Transações concorrentes não interferem umas nas outras.</td>
+      </tr>
+      <tr>
+        <td><strong>Durabilidade</strong></td>
+        <td>Após o commit, as mudanças persistem mesmo em caso de falha.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="code-container">
+    <pre><code class="language-sql">START TRANSACTION;
+
+UPDATE contas SET saldo = saldo - 100.00 WHERE id_conta = 1;
+UPDATE contas SET saldo = saldo + 100.00 WHERE id_conta = 2;
+
+-- Se tudo der certo:
+COMMIT;
+-- Se algo falhar:
+-- ROLLBACK;</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Por que transações importam para esta revisão?</h4>
+    <p>
+      Dentro de Stored Procedures e Triggers, as transações precisam ser gerenciadas com cuidado. É um dos pontos que
+      mais conectam o conteúdo do 2º com o 3º bimestre: uma procedure que manipula múltiplas tabelas deve garantir que
+      todas as operações sejam <strong>atômicas</strong>.
+    </p>
+  </div>
+
+  <h3>1.2 DQL Avançada, Joins e Agregações</h3>
+  <p>
+    Consultas de leitura são a base de toda a extração de dados. Relembre os principais agrupamentos conceituais:
+  </p>
+  <ul>
+    <li><strong>Predicados:</strong> <code class="one-line-code">IN</code>, <code class="one-line-code">LIKE</code> e
+      <code class="one-line-code">BETWEEN</code> para filtrar conjuntos de valores, padrões e intervalos.</li>
+    <li><strong>Junções (Joins):</strong> <code class="one-line-code">INNER JOIN</code>,
+      <code class="one-line-code">LEFT/RIGHT JOIN</code> e <code class="one-line-code">FULL JOIN</code> para combinar
+      dados de múltiplas tabelas.</li>
+    <li><strong>Agregações:</strong> <code class="one-line-code">COUNT</code>, <code class="one-line-code">SUM</code>,
+      <code class="one-line-code">AVG</code>, <code class="one-line-code">MIN</code> e <code
+        class="one-line-code">MAX</code> combinadas com <code class="one-line-code">GROUP BY</code> e a condição
+      <code class="one-line-code">HAVING</code>.</li>
+    <li><strong>Subqueries:</strong> consultas aninhadas usadas na cláusula <code class="one-line-code">WHERE</code>,
+      no <code class="one-line-code">FROM</code> ou na lista de seleção.</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">SELECT v.nome,
+       COUNT(p.id_pedido) AS total_pedidos,
+       SUM(p.valor_total) AS faturamento
+FROM vendedores v
+LEFT JOIN pedidos p ON p.id_vendedor = v.id
+WHERE v.nome LIKE 'A%'
+GROUP BY v.nome
+HAVING SUM(p.valor_total) > 1000.00
+ORDER BY faturamento DESC;</code></pre>
+  </div>
+
+  <h3>1.3 Views e Índices</h3>
+  <ul>
+    <li><strong>Views:</strong> são consultas nomeadas que se comportam como tabelas virtuais, encapsulando consultas
+      complexas e restringindo o acesso a colunas sensíveis.</li>
+    <li><strong>Índices:</strong> estruturas físicas que aceleram a busca, mas que precisam ser planejados com cuidado
+      (colunas muito seletivas e muito consultadas).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>2. Blocos de Linguagem SQL</h2>
+  <p>
+    Todo o conteúdo de programação do 3º bimestre começa pelos <strong>blocos de linguagem SQL</strong> — estruturas
+    que agrupam uma ou mais instruções para execução procedural no servidor.
+  </p>
+  <ul>
+    <li><strong>Bloco <code class="one-line-code">BEGIN...END</code>:</strong> agrupa múltiplas instruções em uma única
+      unidade lógica.</li>
+    <li><strong>Variáveis locais:</strong> declaradas com <code class="one-line-code">DECLARE</code> e usadas apenas
+      dentro do bloco.</li>
+    <li><strong>Estruturas de controle:</strong> <code class="one-line-code">IF...ELSE</code>,
+      <code class="one-line-code">CASE</code>, <code class="one-line-code">WHILE</code>,
+      <code class="one-line-code">LOOP</code> e <code class="one-line-code">REPEAT</code>.</li>
+    <li><strong>Cursores:</strong> permitem percorrer linha a linha o resultado de uma consulta dentro do programa
+      armazenado.</li>
+  </ul>
+
+  <h3>2.1 Exemplo com Cursor</h3>
+  <p>
+    O cursor é usado quando precisamos processar <strong>linha por linha</strong> o resultado de um
+    <code class="one-line-code">SELECT</code>. O ciclo básico é:
+    <code class="one-line-code">DECLARE cursor</code> → <code class="one-line-code">OPEN</code> →
+    <code class="one-line-code">FETCH</code> (dentro de um loop) → <code class="one-line-code">CLOSE</code>. Para saber
+    quando as linhas acabaram, usamos um <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code> — que, seguindo
+    a regra de posição, deve vir logo após as variáveis/locais de cursor e antes de qualquer comando executável.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE AtualizarStatusPedidos()
+BEGIN
+    -- 1. Variáveis locais
+    DECLARE v_id INT;
+    DECLARE v_total DECIMAL(10,2);
+    DECLARE fim_cursor BOOLEAN DEFAULT FALSE;
+
+    -- 2. Cursor: percorre os pedidos pendentes
+    DECLARE cur_pedidos CURSOR FOR
+        SELECT id, valor_total FROM pedidos WHERE status = 'PENDENTE';
+
+    -- 3. Handler: define a flag quando não houver mais linhas
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET fim_cursor = TRUE;
+
+    OPEN cur_pedidos;
+
+    leitura: LOOP
+        FETCH cur_pedidos INTO v_id, v_total;
+
+        IF fim_cursor THEN
+            LEAVE leitura;
+        END IF;
+
+        -- Marca como PAGO se o valor atender à regra de negócio
+        IF v_total &gt;= 1000.00 THEN
+            UPDATE pedidos SET status = 'PAGO' WHERE id = v_id;
+        END IF;
+    END LOOP leitura;
+
+    CLOSE cur_pedidos;
+END //
+
+DELIMITER ;
+
+CALL AtualizarStatusPedidos();</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Cursores: dica importante</h4>
+    <p>
+      Observe a ordem das declarações: <strong>variáveis</strong> → <strong>cursor</strong> →
+      <strong>HANDLER</strong>. O <code class="one-line-code">NOT FOUND</code> (código <code
+        class="one-line-code">02000</code>) é fundamental: sem ele o loop em <code class="one-line-code">FETCH</code>
+      não saberia quando parar e entraria em erro ao tentar ler após a última linha.
+    </p>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE ExemploBloco(IN p_valor INT)
+BEGIN
+    DECLARE v_dobro INT;
+
+    SET v_dobro = p_valor * 2;
+
+    IF v_dobro > 100 THEN
+        SELECT 'Valor alto' AS resultado;
+    ELSE
+        SELECT 'Valor baixo' AS resultado;
+    END IF;
+END //
+
+DELIMITER ;
+
+CALL ExemploBloco(60);</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>3. Stored Procedures</h2>
+  <p>
+    Uma <strong>Stored Procedure</strong> é um objeto que agrupa comandos SQL em uma unidade lógica no servidor, sendo
+    invocada pelo seu nome. Ela encapsula regras de negócio, melhora a segurança (concedendo apenas
+    <code class="one-line-code">EXECUTE</code>) e reduz o tráfego de rede.
+  </p>
+
+  <h3>3.1 Parâmetros IN, OUT e INOUT</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Parâmetro</th>
+        <th>Direção</th>
+        <th>Uso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>IN</strong></td>
+        <td>Entrada</td>
+        <td>Valor enviado da aplicação para a procedure (padrão).</td>
+      </tr>
+      <tr>
+        <td><strong>OUT</strong></td>
+        <td>Saída</td>
+        <td>A procedure preenche o valor, lido pela aplicação após a execução.</td>
+      </tr>
+      <tr>
+        <td><strong>INOUT</strong></td>
+        <td>Entrada e saída</td>
+        <td>Entra com um valor, pode ser modificado e retorna o novo valor.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE AplicarDesconto(INOUT valor DECIMAL(10,2), IN percentual DECIMAL(5,2))
+BEGIN
+    SET valor = valor - (valor * percentual / 100);
+END //
+
+DELIMITER ;
+
+SET @preco = 1000.00;
+CALL AplicarDesconto(@preco, 10);
+SELECT @preco; -- 900.00</code></pre>
+  </div>
+
+  <h3>3.2 MySQL vs. PostgreSQL</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th>MySQL</th>
+        <th>PostgreSQL (PL/pgSQL)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Criação</strong></td>
+        <td><code class="one-line-code">CREATE PROCEDURE nome(...)</code></td>
+        <td><code class="one-line-code">CREATE OR REPLACE PROCEDURE nome(...)</code></td>
+      </tr>
+      <tr>
+        <td><strong>Delimitador</strong></td>
+        <td>Requer <code class="one-line-code">DELIMITER //</code></td>
+        <td>Usa <code class="one-line-code">$$</code> para o corpo</td>
+      </tr>
+      <tr>
+        <td><strong>Linguagem</strong></td>
+        <td>SQL procedural nativo</td>
+        <td><code class="one-line-code">LANGUAGE plpgsql</code></td>
+      </tr>
+      <tr>
+        <td><strong>Avisos/Erros</strong></td>
+        <td>Usa <code class="one-line-code">SIGNAL</code></td>
+        <td>Usa <code class="one-line-code">RAISE NOTICE</code></td>
+      </tr>
+      <tr>
+        <td><strong>Invocação</strong></td>
+        <td colspan="2" style="text-align:center"><code class="one-line-code">CALL nome(...)</code></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>4. Stored Functions</h2>
+  <p>
+    Diferente da procedure, a <strong>Function</strong> <em>sempre retorna um valor</em> e pode ser usada dentro de
+    expressões SQL. Enquanto a procedure é chamada com <code class="one-line-code">CALL</code>, a função é chamada
+    dentro de um <code class="one-line-code">SELECT</code> ou em cláusulas como <code
+      class="one-line-code">WHERE</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE FUNCTION CalcularImposto(valor DECIMAL(10,2)) RETURNS DECIMAL(10,2)
+BEGIN
+    RETURN valor * 0.20; -- 20% de imposto
+END //
+
+DELIMITER ;
+
+SELECT CalcularImposto(1000.00) AS imposto; -- 200.00</code></pre>
+  </div>
+
+  <div class="mermaid">
+    flowchart TD
+    P{"Precisa retornar um valor\nusado em SELECT/expressões?"}
+    P -->|"Sim"| F["Function\n(RETURN valor)\ncálculos e valores escalares"]
+    P -->|"Não"| PR["Stored Procedure\n(CALL nome)\nmodifica dados ou produz múltiplos resultados"]
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>5. Triggers (Gatilhos)</h2>
+  <p>
+    Um <strong>Trigger</strong> é um programa que é <em>disparado automaticamente</em> antes ou depois de um evento
+    <code class="one-line-code">INSERT</code>, <code class="one-line-code">UPDATE</code> ou <code
+      class="one-line-code">DELETE</code> em uma tabela. Ele é usado para manter integridade, auditoria e regras de
+    negócio que devem ser aplicadas "no banco".
+  </p>
+  <ul>
+    <li><strong>BEFORE vs AFTER:</strong> <code class="one-line-code">BEFORE</code> valida/ajusta dados antes da escrita;
+      <code class="one-line-code">AFTER</code> reage após a operação (ex.: auditoria).</li>
+    <li><strong>NEW vs OLD:</strong> <code class="one-line-code">NEW</code> referencia a nova linha (INSERT/UPDATE);
+      <code class="one-line-code">OLD</code> referencia a antiga (UPDATE/DELETE).</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE TRIGGER trg_audita_pedido
+AFTER INSERT ON pedidos
+FOR EACH ROW
+BEGIN
+    INSERT INTO auditoria (tabela, acao, id_registro, data)
+    VALUES ('pedidos', 'INSERT', NEW.id, NOW());
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Cuidado com triggers</h4>
+    <p>
+      Triggers podem causar <strong>cascatas de execução</strong> e dificultar a depuração. Use-os com moderação e
+      sempre documente o comportamento. Encadeamentos excessivos podem degradar a performance de escrita.
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>6. Tratamento de Exceções</h2>
+  <p>
+    O tratamento de erros é essencial para a <strong>robustez</strong> das rotinas automatizadas. Três conceitos
+    centrais:
+  </p>
+  <ul>
+    <li><strong>Os três valores de erro:</strong> número do erro (ex.: <code class="one-line-code">1062</code>),
+      mensagem descritiva e código <code class="one-line-code">SQLSTATE</code> (padronizado ANSI/ODBC).</li>
+    <li><strong><code class="one-line-code">DECLARE ... HANDLER</code>:</strong> captura condições dentro do stored
+      program. <code class="one-line-code">CONTINUE</code> segue o fluxo; <code class="one-line-code">EXIT</code>
+      encerra o bloco.</li>
+    <li><strong><code class="one-line-code">SIGNAL</code>:</strong> lança erros customizados para validar regras de
+      negócio que as constraints não alcançam.</li>
+  </ul>
+
+  <h3>6.1 A posição correta do DECLARE HANDLER</h3>
+  <p>
+    <strong>Não</strong> é possível colocar o <code class="one-line-code">DECLARE EXIT HANDLER</code> em qualquer
+    lugar do código. No MySQL, a declaração de manipuladores de erro (Handlers) segue regras <strong>bem estritas de
+    posição</strong> dentro do bloco <code class="one-line-code">BEGIN ... END</code>.
+  </p>
+
+  <h4>Regra de Posição Obrigatória</h4>
+  <p>
+    Dentro de um bloco <code class="one-line-code">BEGIN ... END</code>, existe uma ordem exata para as declarações. O
+    <code class="one-line-code">HANDLER</code> deve obrigatoriamente ficar <strong>após as variáveis</strong> e
+    <strong>após os cursores</strong>, mas <strong>antes de qualquer instrução SQL executável</strong>
+    (<code class="one-line-code">START TRANSACTION</code>, <code class="one-line-code">IF</code>,
+    <code class="one-line-code">SELECT</code>, <code class="one-line-code">UPDATE</code>,
+    <code class="one-line-code">SET</code>, etc.).
+  </p>
+  <p>A ordem correta é:</p>
+  <ol>
+    <li><code class="one-line-code">DECLARE</code> de variáveis locais (<code class="one-line-code">DECLARE v_preco
+        ...</code>)</li>
+    <li><code class="one-line-code">DECLARE</code> de condições (<code class="one-line-code">DECLARE condicao
+        ...</code>)</li>
+    <li><code class="one-line-code">DECLARE</code> de cursores (<code class="one-line-code">DECLARE cursor ...</code>)</li>
+    <li><code class="one-line-code">DECLARE HANDLER</code> (tratamento de exceções)</li>
+    <li>Comandos executáveis (<code class="one-line-code">START TRANSACTION</code>, <code
+        class="one-line-code">IF</code>, <code class="one-line-code">INSERT</code>, etc.)</li>
+  </ol>
+  <p>
+    Se você colocar o <code class="one-line-code">DECLARE EXIT HANDLER</code> <strong>depois</strong> do
+    <code class="one-line-code">START TRANSACTION</code> ou de um <code class="one-line-code">SET</code>, o MySQL
+    retornará um <strong>erro de sintaxe</strong> na hora de compilar/criar a procedure.
+  </p>
+
+  <h4>Regra de Escopo (onde o Handler funciona)</h4>
+  <p>
+    O Handler protege <strong>apenas o bloco <code class="one-line-code">BEGIN ... END</code></strong> onde ele foi
+    declarado e os <strong>blocos internos filhos</strong>.
+  </p>
+  <ul>
+    <li>Se você declarar o Handler no <code class="one-line-code">BEGIN</code> principal da procedure, ele escutará e
+      capturará erros de <strong>qualquer linha executada naquela procedure</strong>.</li>
+    <li>Se você declará-lo dentro de um bloco <code class="one-line-code">BEGIN ... END</code> secundário (como dentro
+      de um <code class="one-line-code">IF</code> ou um <code class="one-line-code">LOOP</code>), ele só protegerá os
+      comandos que estiverem <strong>dentro daquele bloco específico</strong>.</li>
+  </ul>
+
+  <div class="mermaid">
+    flowchart TD
+    A([Início do Bloco BEGIN...END]) --> B["1. DECLARE variáveis locais\nDECLARE v_preco DECIMAL..."]
+    B --> C["2. DECLARE condições\nDECLARE condicao..."]
+    C --> D["3. DECLARE cursores\nDECLARE cursor..."]
+    D --> E["4. DECLARE HANDLER\n(tratamento de exceções)"]
+    E --> F["5. Comandos executáveis\nSTART TRANSACTION, IF, INSERT, UPDATE..."]
+    F --> G([Fim do Bloco])
+  </div>
+
+  <h4>Exemplo corrigido com a ordem certa</h4>
+  <p>
+    Perceba que o <code class="one-line-code">DECLARE EXIT HANDLER</code> fica no <strong>topo</strong>, logo abaixo
+    das variáveis locais e <strong>antes</strong> do <code class="one-line-code">START TRANSACTION</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">DELIMITER //
+
+CREATE PROCEDURE TransacaoSegura(IN id_cliente INT, IN valor DECIMAL(10,2))
+BEGIN
+    -- 1. Variáveis locais (sempre primeiro)
+    DECLARE v_novo_saldo DECIMAL(10,2);
+
+    -- 2. Handler de exceção (antes de qualquer comando executável)
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Erro na transação — operações desfeitas';
+    END;
+
+    -- 3. Comandos executáveis (somente depois de TODAS as DECLAREs)
+    SET v_novo_saldo = valor * 1.10;
+
+    START TRANSACTION;
+    UPDATE contas SET saldo = saldo + valor WHERE id_cliente = id_cliente;
+    COMMIT;
+END //
+
+DELIMITER ;</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Resumo prático</h4>
+    <p>
+      Para a sua Stored Procedure funcionar perfeitamente, o <code class="one-line-code">HANDLER</code> precisa ficar
+      <strong>no topo</strong>, logo abaixo da criação das variáveis <code class="one-line-code">DECLARE v_...</code>,
+      e <strong>antes</strong> de dar o <code class="one-line-code">START TRANSACTION</code>.
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>7. Mapeamento ORM</h2>
+  <p>
+    O <strong>Mapeamento Objeto-Relacional (ORM)</strong> resolve a <strong>incompatibilidade de impedância
+    semântica</strong> entre o paradigma de objetos da aplicação e o paradigma relacional do banco. Ele permite
+    persistir objetos sem escrever SQL manualmente.
+  </p>
+  <ul>
+    <li><strong>Entidades:</strong> classes que representam tabelas do banco.</li>
+    <li><strong>Mapeamento de relacionamentos:</strong> one-to-one, one-to-many e many-to-many.</li>
+    <li><strong>Persistência declarativa:</strong> o ORM gera o SQL automaticamente a partir do modelo de objetos.</li>
+    <li><strong>Benefícios:</strong> produtividade e portabilidade; <strong>desafios:</strong> perda de controle sobre
+      o SQL gerado e risco de consultas ineficientes (N+1).</li>
+  </ul>
+  <div class="tip-box">
+    <h4>ORM não substitui o SQL</h4>
+    <p>
+      Saber escrever SQL e conhecer Stored Procedures continua sendo essencial. O ORM encapsula, mas quem entende o
+      banco consegue otimizar consultas e aproveitar recursos como procedures, funções e triggers.
+    </p>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>8. Quadro-Resumo do 3º Bimestre</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Conceito</th>
+        <th>Papel</th>
+        <th>Comando/Exemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Bloco SQL</strong></td>
+        <td>Agrupa instruções procedurais</td>
+        <td><code class="one-line-code">BEGIN...END</code></td>
+      </tr>
+      <tr>
+        <td><strong>Cursor</strong></td>
+        <td>Percorre linha a linha o resultado de uma consulta</td>
+        <td><code class="one-line-code">OPEN</code>, <code class="one-line-code">FETCH</code>,
+          <code class="one-line-code">CLOSE</code> + <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code></td>
+      </tr>
+      <tr>
+        <td><strong>Stored Procedure</strong></td>
+        <td>Automatiza processos / múltiplos resultados</td>
+        <td><code class="one-line-code">CREATE PROCEDURE ... CALL</code></td>
+      </tr>
+      <tr>
+        <td><strong>Stored Function</strong></td>
+        <td>Retorna valor escalar em expressões</td>
+        <td><code class="one-line-code">CREATE FUNCTION ... RETURN</code></td>
+      </tr>
+      <tr>
+        <td><strong>Trigger</strong></td>
+        <td>Dispara automaticamente em DML</td>
+        <td><code class="one-line-code">CREATE TRIGGER ... FOR EACH ROW</code></td>
+      </tr>
+      <tr>
+        <td><strong>Exceções</strong></td>
+        <td>Trata erros e valida regras de negócio</td>
+        <td><code class="one-line-code">DECLARE HANDLER</code>, <code class="one-line-code">SIGNAL</code></td>
+      </tr>
+      <tr>
+        <td><strong>ORM</strong></td>
+        <td>Persiste objetos eliminando o SQL manual</td>
+        <td>Entidades + relacionamentos</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Dica importante sobre Revisão Transações aparecerá aqui.</li>
-    <li>Sempre verifique a sintaxe específica do seu SGBD.</li>
+    <li><strong>Transação + Handler:</strong> procedures que manipulam várias tabelas devem usar transação combinada
+      com <code class="one-line-code">EXIT HANDLER</code> e <code class="one-line-code">ROLLBACK</code>.</li>
+    <li><strong>Posição do HANDLER:</strong> o <code class="one-line-code">DECLARE HANDLER</code> deve ficar
+      <strong>após</strong> as variáveis/cursores e <strong>antes</strong> de qualquer comando executável (inclusive o
+      <code class="one-line-code">START TRANSACTION</code>); caso contrário, ocorre erro de sintaxe.</li>
+    <li><strong>Escopo do Handler:</strong> ele protege apenas o bloco <code class="one-line-code">BEGIN...END</code>
+      onde foi declarado e os blocos filhos.</li>
+    <li><strong>Delimiter esquecido:</strong> no MySQL, os stored programs requerem <code class="one-line-code">DELIMITER
+        //</code> antes da criação.</li>
+    <li><strong>Cursor:</strong> use o ciclo <code class="one-line-code">OPEN</code> →
+      <code class="one-line-code">FETCH</code> (em <code class="one-line-code">LOOP</code>) →
+      <code class="one-line-code">CLOSE</code> para processar linhas uma a uma, sempre com um
+      <code class="one-line-code">CONTINUE HANDLER FOR NOT FOUND</code> para encerrar o loop corretamente.</li>
+    <li><strong>Procedure vs Function:</strong> precisa usar o retorno em um <code class="one-line-code">SELECT</code>?
+      Use <strong>Function</strong>; caso contrário, use <strong>Procedure</strong>.</li>
+    <li><strong>Trigger com cautela:</strong> evite encadeamentos profundos; documente cada gatilho criado.</li>
+    <li><strong>SQLSTATE:</strong> baseie o tratamento de erros no SQLSTATE, pois é mais estável entre SGBDs.</li>
+    <li><strong>ORM:</strong> entenda o SQL por trás das ferramentas para identificar consultas ineficientes.</li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
   <ul>
-    <li>Passo 1: Analise os requisitos.</li>
-    <li>Passo 2: Desenvolva o script SQL.</li>
-    <li>Passo 3: Valide os resultados.</li>
+    <li><strong>Passo 1:</strong> Revise o esquema e as consultas que compõem a base do projeto (joins, agregações,
+      views).</li>
+    <li><strong>Passo 2:</strong> Encapsule as regras de negócio em procedures e funções, garantindo atomicidade com
+      transações.</li>
+    <li><strong>Passo 3:</strong> Adicione triggers para auditoria e integridade automática, com tratamento de exceções
+      robusto.</li>
+    <li><strong>Passo 4:</strong> Quando uma regra exigir processamento linha a linha (ex.: importar/atualizar registros
+      em lote), implemente uma procedure com <strong>cursor</strong> + <code class="one-line-code">CONTINUE HANDLER FOR
+        NOT FOUND</code>.</li>
+    <li><strong>Passo 5:</strong> Integre o modelo com a aplicação via ORM, validando o SQL gerado e a performance.</li>
+    <li><strong>Passo 6:</strong> Teste todos os cenários (sucesso, falha, concorrência) antes da entrega do projeto
+      integrador.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.
-    </li>
+    <li>MACHADO, Felipe Nery Rodrigues. Projeto e implementação de banco de dados. 3. ed. São Paulo: Érica, 2014.</li>
     <li>TAKAI, Osvaldo Kotaro; ITALIANO, Isabel Cristina; FERREIRA, João Eduardo. Introdução a Banco de Dados. São
       Paulo: DCC-IME-USP, 2005.</li>
+    <li>MySQL 8.0 Reference Manual — Stored Programs and Views.</li>
+    <li>MySQL 8.0 Reference Manual — Cursors and the Cursor SET Statement.</li>
+    <li>MySQL 8.0 Reference Manual — Trigger Syntax and Examples.</li>
+    <li>PostgreSQL Documentation — PL/pgSQL — SQL Procedural Language.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Revisão Prática do 3º Bimestre</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação Integrado</a></li>
   </ul>
+
+  <hr>
+  <a class="btn" href="./demonstracao-pratica" target="_blank">Para Demonstração</a>
 </section>
