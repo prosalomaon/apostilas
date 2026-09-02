@@ -1,0 +1,157 @@
+---
+layout: exercicio
+title: "Cascata, Heranca e Variaveis CSS"
+exercicio_numero: "01"
+aula_numero: "12"
+description: "Pratica de especificidade, heranca de propriedades e uso de Custom Properties para criacao de temas dinamicos."
+---
+
+<section class="section-box">
+  <h2>Atividade Pratica: Sistema de Temas com Variaveis CSS</h2>
+
+  <h3>1. Enunciado</h3>
+  <p>Nesta atividade, voce criara uma pagina HTML com dois componentes de cartao (card) estilizados exclusivamente
+    com CSS. O objetivo e praticar a cascata, a heranca e o uso de variaveis CSS (Custom Properties) para alternar
+    entre um tema claro e um tema escuro sem reescrever regras de propriedades.</p>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparacao</h2>
+  <ul>
+    <li><strong>Localizacao:</strong> Crie os arquivos dentro da pasta do exercicio.</li>
+    <li><strong>Arquivos Necessarios:</strong>
+      <ul>
+        <li><code class="one-line-code">index.html</code>: Estrutura HTML da pagina.</li>
+        <li><code class="one-line-code">estilos.css</code>: Arquivo CSS externo com todos os estilos.</li>
+      </ul>
+    </li>
+    <li><strong>Conhecimento Previo:</strong> Seletores CSS, especificidade, heranca e sintaxe de variaveis CSS.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Codigo Base</h2>
+  <p>Crie o arquivo <code class="one-line-code">index.html</code> com a seguinte estrutura:</p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Sistema de Temas - CSS Variables&lt;/title&gt;
+  &lt;link rel="stylesheet" href="estilos.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header class="cabecalho"&gt;
+    &lt;h1 class="cabecalho-titulo"&gt;Sistema de Temas&lt;/h1&gt;
+    &lt;p class="cabecalho-sub"&gt;Praticando Cascata, Heranca e Variaveis CSS&lt;/p&gt;
+  &lt;/header&gt;
+
+  &lt;main class="conteudo"&gt;
+    &lt;section class="secao-tema"&gt;
+      &lt;h2&gt;Tema Claro (Padrao)&lt;/h2&gt;
+      &lt;div class="card"&gt;
+        &lt;h3 class="card-titulo"&gt;Card Padrão&lt;/h3&gt;
+        &lt;p class="card-texto"&gt;Este card usa as variaveis definidas no :root. As cores sao herdadas
+          normalmente pela cascata do CSS.&lt;/p&gt;
+        &lt;a href="#" class="card-link"&gt;Saiba mais&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class="secao-tema"&gt;
+      &lt;h2&gt;Tema Escuro&lt;/h2&gt;
+      &lt;div class="card card--escuro"&gt;
+        &lt;h3 class="card-titulo"&gt;Card Dark Mode&lt;/h3&gt;
+        &lt;p class="card-texto"&gt;Este card redefinir as variaveis locais dentro da classe .card--escuro.
+          O mesmo componente se adapta automaticamente.&lt;/p&gt;
+        &lt;a href="#" class="card-link"&gt;Saiba mais&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class="secao-tema"&gt;
+      &lt;h2&gt;Tema de Atencao&lt;/h2&gt;
+      &lt;div class="card card--atencao"&gt;
+        &lt;h3 class="card-titulo"&gt;Card de Atencao&lt;/h3&gt;
+        &lt;p class="card-texto"&gt;Este card demonstra como uma terceira paleta de cores pode ser criada
+          apenas redefinindo as mesmas variaveis CSS.&lt;/p&gt;
+        &lt;a href="#" class="card-link"&gt;Saiba mais&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+
+  &lt;footer class="rodape"&gt;
+    &lt;p&gt;Exercicio 01 - Aula 12&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio</h2>
+  <p>Crie o arquivo <code class="one-line-code">estilos.css</code> implementando os seguintes requisitos:</p>
+
+  <h3>Requisito 1: Variaveis Globais no :root</h3>
+  <p>Declare as variaveis CSS no seletor <code class="one-line-code">:root</code> com a paleta do tema claro:</p>
+  <ul>
+    <li><code class="one-line-code">--cor-fundo</code>: cor de fundo do card</li>
+    <li><code class="one-line-code">--cor-texto</code>: cor do texto principal</li>
+    <li><code class="one-line-code">--cor-titulo</code>: cor do titulo do card</li>
+    <li><code class="one-line-code">--cor-borda</code>: cor da borda do card</li>
+    <li><code class="one-line-code">--cor-link</code>: cor dos links dentro do card</li>
+  </ul>
+
+  <h3>Requisito 2: Componente Card Generico</h3>
+  <p>Estilize a classe <code class="one-line-code">.card</code> utilizando exclusivamente as variaveis declaradas.
+    Inclua padding, border-radius, borda solida e uma transicao suave.</p>
+
+  <h3>Requisito 3: Redefinicao de Escopo para Temas</h3>
+  <p>Crie as classes <code class="one-line-code">.card--escuro</code> e <code class="one-line-code">.card--atencao</code>
+    redefinindo apenas o valor das variaveis CSS. Nao crie novas regras de propriedades para essas classes.</p>
+
+  <h3>Requisito 4: Heranca de Tipografia</h3>
+  <p>Defina <code class="one-line-code">font-family</code> e <code class="one-line-code">line-height</code> no
+    <code class="one-line-code">body</code> e verifique que todos os elementos herdam essas propriedades
+    automaticamente.</p>
+
+  <h3>Requisito 5: Resolucao de Conflito de Especificidade</h3>
+  <p>Adicione a regra abaixo no final do CSS e explique (em comentario no codigo) por que o link dentro do
+    <code class="one-line-code">.card--escuro</code> fica com a cor indicada:</p>
+  <div class="code-container">
+    <pre><code class="language-css">/* Adicione esta regra e comente o resultado esperado */
+a {
+    color: gray;
+}
+
+.card--escuro .card-link {
+    color: cyan;
+}</code></pre>
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>5. Desafios Extras</h4>
+  <ul>
+    <li><strong>Fallback:</strong> Adicione um valor de fallback na funcao <code class="one-line-code">var()</code>
+      para o caso de uma variavel nao ser definida.</li>
+    <li><strong>Heranca com inherit:</strong> Crie um bloco <code class="one-line-code">&lt;blockquote&gt;</code>
+      dentro de um card e force-o a herdar a cor de texto do card usando <code class="one-line-code">color: inherit</code>.</li>
+    <li><strong>Case Sensitivity:</strong> Crie uma segunda variavel <code class="one-line-code">--Cor-Principal</code>
+      (com maiusculas) e use-as em elementos diferentes. Documente a diferenca.</li>
+    <li><strong>!important:</strong> Adicione <code class="one-line-code">color: red !important</code> em um seletor
+      de tipo e observe se ele sobrescreve as variaveis. Comente o resultado.</li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>6. Resultado Esperado</h2>
+  <p>Ao abrir o arquivo <code class="one-line-code">index.html</code> no navegador, voce deve ver:</p>
+  <ul>
+    <li>Um cabecalho com titulo e subtitulo herdando a tipografia do body</li>
+    <li>Tres cards lado a lado (ou empilhados em telas estreitas) cada um com uma paleta de cores diferente</li>
+    <li>O primeiro card com cores claras (tema padrao do :root)</li>
+    <li>O segundo card com cores escuras (tema escuro)</li>
+    <li>O terceiro card com cores de alerta/atencao</li>
+    <li>Todos os cards compartilhando a mesma estrutura de layout, diferenciando-se apenas pelas variaveis</li>
+  </ul>
+</section>

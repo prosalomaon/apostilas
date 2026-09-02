@@ -1,7 +1,7 @@
 ---
-title: "Cascata, Herança e Variáveis"
+title: "Cascata, Herança e Variáveis em CSS"
 aula_numero: "12"
-description: "Entendimento do fluxo de prioridade do CSS e uso de Custom Properties para organização."
+description: "Entendendo o algoritmo de resolução de conflitos do CSS, a propagação de estilos pela árvore do DOM e o uso de Custom Properties para organização."
 tags:
   - aula
   - bimestre-02
@@ -9,48 +9,217 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 12 em desenvolvimento...</p>
+  <p>O entendimento correto dos tres pilares estruturais do CSS - a Cascata, a Heranca e o uso moderno de Variaveis CSS (Custom Properties) - e o que diferencia o desenvolvimento web amador da engenharia de estilos escalavel e previsivel. Esses conceitos determinam exatamente quais regras visuais serao aplicadas a cada elemento de uma pagina HTML quando ha multiplos seletores competindo.</p>
+
+  <h3>1. A Cascata (The Cascade)</h3>
+  <p>A Cascata e o algoritmo fundamental do CSS (Cascading Style Sheets) que resolve conflitos quando duas ou mais declaracoes tentam definir o valor da mesma propriedade no mesmo elemento. Para decidir qual regra prevalecera (o chamado <em>cascaded value</em>), o navegador avalia de forma independente tres criterios principais nesta exata ordem de prioridade:</p>
+
+  <h3>A. Origem da Folha de Estilo (Stylesheet Origin)</h3>
+  <p>As folhas de estilo que afetam uma pagina vêm de diferentes origens. A ordem de relevancia (da menor para a maior) e:</p>
+  <ul>
+    <li><strong>Estilos do Agente do Usuario (User Agent Styles):</strong> Estilos padrao fornecidos pelo proprio navegador (ex: o azul padrao de links ou margens de cabecalhos).</li>
+    <li><strong>Estilos do Autor (Author Styles):</strong> Os arquivos CSS criados pelo desenvolvedor da aplicacao.</li>
+    <li><strong>Estilos do Autor com !important:</strong> Declaracoes que usam a anotacao <code>!important</code> sobrescrevem as regras normais do desenvolvedor.</li>
+  </ul>
+
+  <h3>B. Especificidade (Specificity)</h3>
+  <p>Se as regras concorrentes pertencerem a mesma origem, a cascata passara a avaliar a especificidade dos seletores. A especificidade e calculada como uma pontuacao representada por quatro numeros (a, b, c, d):</p>
+  <ul>
+    <li><strong>a (Inline):</strong> Estilos aplicados diretamente na tag via atributo <code>style</code> no HTML - (1, 0, 0, 0).</li>
+    <li><strong>b (ID):</strong> Quantidade de seletores de ID na regra - (0, 1, 0, 0).</li>
+    <li><strong>c (Classes e Atributos):</strong> Classes (<code>.card</code>), pseudo-classes (<code>:hover</code>, <code>:active</code>) e seletores de atributo (<code>[type="text"]</code>) - (0, 0, 1, 0).</li>
+    <li><strong>d (Elementos):</strong> Tags (<code>p</code>, <code>div</code>) e pseudo-elementos (<code>::before</code>, <code>::after</code>) - (0, 0, 0, 1).</li>
+  </ul>
+  <p>O seletor universal (<code>*</code>) e os combinadores (<code>&gt;</code>, <code>+</code>, <code>~</code>, espaco em branco) possuem especificidade nula (0, 0, 0, 0) e nao afetam essa contagem.</p>
+
+  <h3>C. Ordem de Origem (Source Order)</h3>
+  <p>Se duas regras possuirem a mesma origem e a mesma pontuacao de especificidade, o criterio de desempate final sera a ordem de leitura fisica do arquivo: a regra que foi declarada por ultimo no codigo sobrescrevera as anteriores.</p>
+
+  <h3>2. Heranca (Inheritance)</h3>
+  <p>Enquanto a cascata atua sobre elementos mirados diretamente por seletores, a Heranca dita como as propriedades de estilizacao se propagam dos elementos pais para seus descendentes diretos ou indiretos na arvore do DOM.</p>
+  <ul>
+    <li><strong>Propriedades Herdadas automaticamente:</strong> Geralmente ligadas a formatacao de texto e fontes, como <code>color</code>, <code>font-family</code>, <code>font-size</code>, <code>line-height</code>, <code>letter-spacing</code> e <code>text-align</code>.</li>
+    <li><strong>Propriedades Nao Herdadas:</strong> Propriedades fisicas de layout, bordas, dimensoes ou planos de fundo (como <code>border</code>, <code>margin</code>, <code>padding</code>, <code>width</code>, <code>height</code>, <code>background-color</code>) nao sao herdadas para nao quebrar a estrutura visual de blocos filhos.</li>
+  </ul>
+  <p>Palavras-Chave de Manipulacao:</p>
+  <ul>
+    <li><code>inherit</code>: Forca o elemento a herdar explicitamente o valor do elemento pai para aquela propriedade. Muito utilizado para reverter estilos padrao de links em menus ou rodapes.</li>
+    <li><code>initial</code>: Cancela a heranca e os valores da cascata, resetando a propriedade para o valor original estipulado pela especificacao tecnica oficial do CSS.</li>
+  </ul>
+
+  <h3>3. Variaveis CSS (Custom Properties)</h3>
+  <p>As Variaveis CSS fornecem uma maneira de armazenar valores reutilizaveis no proprio codigo CSS nativo.</p>
+  <ul>
+    <li><strong>Escopo e Cascata:</strong> Assim como as propriedades tradicionais do CSS, as variaveis se submetem a heranca e a cascata. Se voce redefinir uma variavel dentro de uma classe, a alteracao se propagara apenas para os elementos herdeiros daquele contenedor.</li>
+    <li><strong>Declaracao:</strong> Devem ser declaradas utilizando o prefixo de hifen duplo (<code>--</code>) e invocadas por meio da funcao nativa <code>var(--nome-da-variavel)</code>.</li>
+    <li><strong>Valor de Fallback:</strong> A funcao <code>var()</code> aceita um segundo argumento opcional para atuar caso a variavel nao seja localizada.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>Exemplo de Codigo</h2>
+
+  <h3>Exemplo 1: Calculo de Especificidade e Ordem de Origem</h3>
+  <p>Neste exemplo, veremos como a pontuacao de especificidade e a ordem do arquivo de estilos determinam a cor final de um link de menu.</p>
   <div class="code-container">
-    <pre><code class="language-css">// Em breve...</code></pre>
+    <pre><code class="language-html">&lt;!-- index.html --&gt;
+&lt;header class="page-header"&gt;
+    &lt;ul id="main-nav" class="nav"&gt;
+        &lt;li&gt;&lt;a href="/specials" class="featured"&gt;Promocoes&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/header&gt;</code></pre>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-css">/* Regra A: 1 ID e 1 Tag -> Especificidade: (0, 1, 0, 1) -> 101 pontos */
+#main-nav a {
+    color: white;
+}
+
+/* Regra B: 1 Classe -> Especificidade: (0, 0, 1, 0) -> 10 pontos */
+.featured {
+    color: orange;
+}
+
+/* Resultado: O link de Promocoes sera branco (A vence B em especificidade) */</code></pre>
+  </div>
+  <p>Se quisermos que o link <code>.featured</code> se torne laranja mesmo estando dentro do <code>#main-nav</code>, precisamos elevar a especificidade da regra de estilo, evitando o uso de <code>!important</code> como recurso imediatista:</p>
+  <div class="code-container">
+    <pre><code class="language-css">/* Correcao Segura: 1 ID, 1 Classe -> Especificidade: (0, 1, 1, 0) -> 110 pontos */
+#main-nav a.featured {
+    color: orange; /* Agora este seletor vence a Regra A */
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 2: Heranca e a Palavra-Chave inherit</h3>
+  <p>Se criarmos um rodape cinza, os links dentro dele ignorarao a cor padrao azul do navegador e adotarao o cinza do rodape graças ao uso de <code>inherit</code>.</p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!-- index.html --&gt;
+&lt;footer class="rodape"&gt;
+    &lt;p&gt;Acesse o nosso &lt;a href="sobre.html"&gt;Sobre Nos&lt;/a&gt;.&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-css">/* Estilo global dos links da pagina */
+a:link {
+    color: blue;
+}
+
+/* Container do rodape */
+.rodape {
+    color: #666666;
+    background-color: #cccccc;
+    font-family: sans-serif;
+}
+
+/* Forcando o link herdar o comportamento visual do pai */
+.rodape a {
+    color: inherit; /* O link adotara a cor cinza #666666 do rodape */
+    text-decoration: underline;
+}</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Variaveis CSS e Redefinicao de Escopo para Temas</h3>
+  <p>Demonstracao de como estruturar variaveis de modo global no <code>:root</code> e redefini-las em uma classe especifica para criar temas dinamicos sem reescrever regras de propriedades.</p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!-- index.html --&gt;
+&lt;div class="card"&gt;
+    &lt;h2 class="card-title"&gt;Card Padrão&lt;/h2&gt;
+    &lt;p&gt;Este card herda as cores claras declaradas no root.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div class="card tema-escuro"&gt;
+    &lt;h2 class="card-title"&gt;Card Dark&lt;/h2&gt;
+    &lt;p&gt;Este card redefine o escopo das variaveis locais.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-css">/* 1. Escopo Global: Declarado no no raiz do documento */
+:root {
+    --cor-fundo: #ffffff;
+    --cor-texto: #2e4255;
+    --cor-borda: #cccccc;
+}
+
+/* 2. Componente Generico que utiliza os valores dinamicos */
+.card {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-borda);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* 3. Escopo Local: Redefinindo o valor das variaveis apenas para o card escuro */
+.tema-escuro {
+    --cor-fundo: #2a3042;
+    --cor-texto: #ffffff;
+    --cor-borda: #4286f4;
+    /* Nota: O bloco .card se adaptara as variaveis atualizadas automaticamente */
+}</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>Representacao Grafica</h2>
+
+  <h3>Fluxo de Decisao da Cascata</h3>
+  <p>Este diagrama demonstra a ordem de prioridade que o navegador avalia ao resolver conflitos entre regras CSS:</p>
   <div class="mermaid">
     graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+        A[Conflito de Regras CSS] --> B{1. Origem e Importancia?}
+        B -->|Diferentes| C[Vence a Origem mais importante]
+        B -->|Iguais| D{2. Especificidade do Seletor?}
+        D -->|Diferentes| E[Vence a Maior Especificidade]
+        D -->|Iguais| F{3. Ordem de Origem?}
+        F --> G[Vence a regra declarada por ultimo]
+  </div>
+
+  <h3>Relacao de Heranca na Arvore do DOM</h3>
+  <p>As regras declaradas no topo da arvore (ex: no <code>body</code>) descem recursivamente ate as tags filhas, a menos que sejam bloqueadas por regras de maior especificidade:</p>
+  <div class="mermaid">
+    graph TD
+        body[body: font-family Montserrat] --> header[header]
+        body --> main[main]
+        header --> h1[h1: herda fonte Montserrat]
+        main --> section[section: --card-bg white]
+        section --> card[div.card: background var card-bg]
+        section --> p[p: herda Montserrat]
   </div>
 </section>
 
 <div class="tip-box">
   <h4>Dicas & Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li><strong>Shorthands Sobrescrevendo Valores Omitidos:</strong> Tenha extremo cuidado ao usar propriedades abreviadas (shorthand properties) apos definir regras individuais. Valores omitidos no shorthand retornam automaticamente ao seu valor padrao de fabrica.</li>
+    <li><strong>Case Sensitivity em Variaveis:</strong> Variaveis CSS diferenciam estritamente letras maiusculas de minusculas. <code>--cor-principal</code> e uma variavel completamente isolada de <code>--Cor-Principal</code>.</li>
+    <li><strong>Evite o Uso de IDs no CSS:</strong> Evite acoplar IDs em seletores de estilo. IDs inflam artificialmente a especificidade da cascata, impedindo que classes utilitarias ou modificadores de estado apliquem regras com facilidade.</li>
+    <li><strong>Cuidado com o !important:</strong> Seu uso exagerado cria barreiras na manutencao do projeto. Se um estilo nao estiver funcionando, revise as regras de especificidade do seletor em vez de forcar o uso de prioridades artificiais.</li>
   </ul>
 </div>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <h2>Como aplicar na Pratica</h2>
+  <ul>
+    <li><strong>Refatoracao Tardia Simplificada:</strong> Ao centralizar sua paleta de cores ou margens em propriedades personalizadas no <code>:root</code>, voce evita ter que alterar dezenas de referencias e seletores de estilo caso a identidade visual da marca mude tardiamente no projeto.</li>
+    <li><strong>Modularizacao Consistente:</strong> Facilita o empacotamento de componentes (como cabecalhos e botoes), nos quais as herancas visuais de tipografia sao propagadas de forma transparente pelos pais sem a necessidade de redefinir seletores em cada bloco aninhado.</li>
+    <li><strong>Projetos Multi-idiomas ou Acessibilidade:</strong> Permite alterar escalas de texto (<code>font-size</code> em <code>rem</code> ou <code>em</code>) modificando apenas o elemento raiz <code>&lt;html&gt;</code>, assegurando que todo o restante do layout se ajuste de maneira proporcional e responsiva.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Referências</h2>
+  <h2>Referencias</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>GRANT, Keith J. CSS in Depth. Manning, 2018.</li>
+    <li>CENTRO PAULA SOUZA. Plano de Curso no 1062 - Tecnico em Desenvolvimento de Sistemas. Eixo Tecnologico de Informacao e Comunicacao, 2026.</li>
+    <li>CAELUM. Apostila HTML, CSS e JavaScript.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercicio 01: Praticando Conteudo</a></li>
+    <li><a href="./exercicio-02/">Exercicio 02: Desafio de Fixacao</a></li>
   </ul>
 </section>
