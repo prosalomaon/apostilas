@@ -1,18 +1,246 @@
 ---
-layout: exercicio
-title: "Exercício 02 - Introdução à Modularização: Funções e Procedimentos"
+layout: questionario
+title: "Questionário: Modularização, Funções e Procedimentos"
 exercicio_numero: "02"
 aula_numero: "25"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 25."
----
+description: "Questionário para consolidar os conceitos de modularização, procedimentos, funções, passagem de parâmetros e escopo de variáveis em Java."
+perguntas:
+  - texto: "O que é modularização em programação?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Criar um único bloco de código gigante e linear."
+      - letra: "b"
+        texto: "Remover todos os métodos de um programa."
+      - letra: "c"
+        texto: "Dividir o código em unidades menores, independentes e reutilizáveis."
+      - letra: "d"
+        texto: "Usar apenas variáveis globais em todo o programa."
 
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
+  - texto: "Na analogia da caixa preta (black box), qual parte define como o resto do programa interage com o módulo?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "A implementação."
+      - letra: "b"
+        texto: "A interface."
+      - letra: "c"
+        texto: "O compilador."
+      - letra: "d"
+        texto: "O método main."
 
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Aplique os conceitos de lógica e sintaxe aprendidos.</li>
-    <li>Verifique se o resultado atende aos requisitos propostos.</li>
-    <li>Documente seu código para facilitar o entendimento.</li>
-  </ul>
-</div>
+  - texto: "O que é ocultação de informação (information hiding)?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Esconder os detalhes internos de funcionamento do módulo, expondo apenas a interface."
+      - letra: "b"
+        texto: "Esconder o nome dos métodos do resto do programa."
+      - letra: "c"
+        texto: "Impedir o acesso a qualquer variável do programa."
+      - letra: "d"
+        texto: "Ocultar erros de compilação."
+
+  - texto: "Em Java, qual tipo de retorno indica que um método é um procedimento (não retorna valor)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "int"
+      - letra: "b"
+        texto: "double"
+      - letra: "c"
+        texto: "void"
+      - letra: "d"
+        texto: "boolean"
+
+  - texto: "Qual é a principal diferença entre procedimento e função?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Procedimentos usam apenas parâmetros inteiros."
+      - letra: "b"
+        texto: "Funções não possuem nome."
+      - letra: "c"
+        texto: "Procedimentos são mais rápidos que funções."
+      - letra: "d"
+        texto: "Funções retornam um valor; procedimentos não retornam valor."
+
+  - texto: "Qual palavra-chave encerra imediatamente a execução de uma função e devolve um valor?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "break"
+      - letra: "b"
+        texto: "return"
+      - letra: "c"
+        texto: "continue"
+      - letra: "d"
+        texto: "stop"
+
+  - texto: "O que são parâmetros formais de um método?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Variáveis declaradas no cabeçalho da sub-rotina que recebem as entradas."
+      - letra: "b"
+        texto: "Os valores concretos passados na chamada do método."
+      - letra: "c"
+        texto: "Variáveis globais da classe."
+      - letra: "d"
+        texto: "O nome da classe que contém o método."
+
+  - texto: "E o que são argumentos (parâmetros reais)?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "As variáveis declaradas dentro do corpo do método."
+      - letra: "b"
+        texto: "Os tipos de retorno do método."
+      - letra: "c"
+        texto: "Os valores ou variáveis concretas passados quando o método é chamado."
+      - letra: "d"
+        texto: "Os comentários do código."
+
+  - texto: "Considerando o método public static int somar(int a, int b) { return a + b; }, e a chamada int r = somar(5, 7); quais são os argumentos reais?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "a e b"
+      - letra: "b"
+        texto: "5 e 7"
+      - letra: "c"
+        texto: "somar e r"
+      - letra: "d"
+        texto: "int e static"
+
+  - texto: "O que é uma variável local?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Uma variável acessível por todas as classes do programa."
+      - letra: "b"
+        texto: "Uma variável declarada fora de todas as sub-rotinas."
+      - letra: "c"
+        texto: "Uma variável que nunca pode ser alterada."
+      - letra: "d"
+        texto: "Uma variável declarada dentro de uma sub-rotina, que só existe enquanto o método executa."
+
+  - texto: "O que é o fenômeno de sombreamento (shadowing) em Java?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Uma variável local com o mesmo nome de uma global tem preferência dentro do seu método, sombreando a global."
+      - letra: "b"
+        texto: "Um método com o nome igual ao da classe."
+      - letra: "c"
+        texto: "Esconder o código-fonte de outros programadores."
+      - letra: "d"
+        texto: "Usar o mesmo nome de variável em classes diferentes."
+
+  - texto: "Em Java, como os tipos primitivos (int, double, boolean) são passados para métodos?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Por referência (apelido)."
+      - letra: "b"
+        texto: "Por posição de memória."
+      - letra: "c"
+        texto: "Por valor (uma cópia do valor)."
+      - letra: "d"
+        texto: "Depende do tamanho do número."
+
+  - texto: "Se um método recebe um int e o modifica internamente, o valor da variável original no chamador...?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Também muda, pois é a mesma variável."
+      - letra: "b"
+        texto: "Não muda, pois a modificação ocorre em uma cópia."
+      - letra: "c"
+        texto: "Muda apenas se o int for par."
+      - letra: "d"
+        texto: "Gera erro de compilação."
+
+  - texto: "Quando passamos um vetor (array) para um método em Java, o que é copiado?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Todos os elementos do array."
+      - letra: "b"
+        texto: "Apenas o primeiro elemento."
+      - letra: "c"
+        texto: "Nada, arrays não podem ser passados."
+      - letra: "d"
+        texto: "A referência (endereço de memória) que aponta para o array."
+
+  - texto: "Se um método recebe um vetor e altera um elemento (ex: vetor[0] = 999), o que acontece no array original do chamador?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "O elemento do array original é alterado, pois ambos apontam para a mesma memória."
+      - letra: "b"
+        texto: "O array original permanece inalterado."
+      - letra: "c"
+        texto: "O programa lança uma exceção."
+      - letra: "d"
+        texto: "Apenas a cópia do array é alterada."
+
+  - texto: "Qual é o ponto de partida de execução de uma aplicação Java?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "O primeiro método declarado na classe."
+      - letra: "b"
+        texto: "O método main."
+      - letra: "c"
+        texto: "A classe com mais métodos."
+      - letra: "d"
+        texto: "O construtor da classe."
+
+  - texto: "Qual é um exemplo correto de declaração de uma função em Java?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "public static void soma(int a, int b) { return a + b; }"
+      - letra: "b"
+        texto: "public soma(int a, int b) return a + b;"
+      - letra: "c"
+        texto: "public static int soma(int a, int b) { return a + b; }"
+      - letra: "d"
+        texto: "int public static soma(a, b) { return a + b; }"
+
+  - texto: "Qual das vantagens da modularização facilita o trabalho em equipe?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Elimina a necessidade de testes."
+      - letra: "b"
+        texto: "Impede o reuso de código."
+      - letra: "c"
+        texto: "Aumenta a repetição de instruções."
+      - letra: "d"
+        texto: "Permite que diferentes programadores trabalhem em módulos independentes simultaneamente."
+
+  - texto: "No exemplo public static double obterMedia(double n1, double n2), o que é 'double'?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "O tipo de retorno da função."
+      - letra: "b"
+        texto: "O modificador de acesso."
+      - letra: "c"
+        texto: "O nome do método."
+      - letra: "d"
+        texto: "Um parâmetro formal."
+
+  - texto: "Qual é o papel correto de uma função em um programa?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Imprimir o resultado diretamente na tela."
+      - letra: "b"
+        texto: "Calcular e retornar um valor; quem decide o que fazer com ele é o código que a chamou."
+      - letra: "c"
+        texto: "Sempre receber dados do teclado."
+      - letra: "d"
+        texto: "Declarar variáveis globais."

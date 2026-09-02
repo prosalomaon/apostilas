@@ -1,49 +1,250 @@
 ---
 title: "Introdução à Modularização: Funções e Procedimentos"
 aula_numero: "25"
-description: "Divisão de código em blocos reutilizáveis."
+description: "Divisão do código-fonte em unidades menores, independentes e reutilizáveis: conceitos de caixa preta, procedimentos, funções, passagem de parâmetros e escopo de variáveis em Java."
 tags:
   - aula
-  - "bimestre-03"
+  - bimestre-03
 ---
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 25 em desenvolvimento...</p>
+  <p>A modularização representa um dos conceitos mais importantes na engenharia de software para lidar com a complexidade de grandes sistemas. Conforme os programas de computador crescem, torna-se virtualmente impossível escrevê-los ou compreendê-los se não houver uma forma de estruturá-los em blocos menores.</p>
+  <p>Nesta aula, estudaremos como dividir o código-fonte em unidades menores, independentes e reutilizáveis, conhecidas como sub-rotinas, subprogramas, módulos ou, na linguagem Java, <strong>métodos</strong>.</p>
+
+  <h3>1. O que é Modularizar?</h3>
+  <p>A modularização está estreitamente ligada à <strong>abstração de processos</strong>. Abstrair um processo significa simplificar a execução de uma aplicação complexa, dividindo-a em partes menores (sub-processos) que podem ser desenvolvidas, compreendidas e testadas separadamente.</p>
+  <p>Quando modularizamos um algoritmo, estamos dividindo o programa em subprogramas. Esse planejamento estruturado oferece diversas vantagens práticas:</p>
+  <ul>
+    <li><strong>Reutilização de Código:</strong> Evita a repetição desnecessária de instruções. Uma tarefa que precisa ser executada em vários pontos do sistema pode ser escrita uma única vez e invocada sempre que necessário.</li>
+    <li><strong>Facilidade de Manutenção:</strong> Se houver um erro em um cálculo específico, basta corrigir a sub-rotina responsável por aquela tarefa, sem afetar o restante do programa.</li>
+    <li><strong>Divisão de Trabalho:</strong> Permite que diferentes programadores trabalhem em partes distintas do mesmo projeto simultaneamente, já que cada módulo funciona de maneira independente.</li>
+  </ul>
+
+  <h3>2. O Conceito de "Caixa Preta" e Ocultação de Informação</h3>
+  <p>Para entender o funcionamento de um módulo, utilizamos a analogia de uma <strong>caixa preta</strong> (black box). Uma caixa preta possui uma especificação clara de sua utilidade, mas esconde seus detalhes internos de funcionamento. Ela é composta por dois elementos fundamentais:</p>
+  <ul>
+    <li><strong>Interface:</strong> É a parte visível e utilizável da caixa preta. Ela define como o restante do programa interage com o módulo (o que ele precisa receber de entrada e o que devolve de saída). Pense nos botões e no controle remoto de uma televisão: você os utiliza para mudar de canal sem precisar entender os circuitos eletrônicos internos do aparelho.</li>
+    <li><strong>Implementação:</strong> É o código que roda dentro do módulo para realizar a tarefa. Ele fica "escondido" do restante do programa.</li>
+  </ul>
+  <p>Essa separação é chamada de <strong>ocultação de informação</strong> (information hiding). Ela protege os dados do programa, garantindo que eles só sejam manipulados de maneiras conhecidas e seguras através das interfaces disponíveis.</p>
+
+  <h3>3. Anatomia de uma Sub-rotina em Java</h3>
+  <p>Em Java, toda sub-rotina deve ser declarada dentro de uma classe. O formato padrão de definição de um método estático (independente de objetos) segue a seguinte estrutura:</p>
+  <div class="code-container">
+    <pre><code class="language-java">&lt;modificadores&gt; &lt;tipo-de-retorno&gt; &lt;nome-do-metodo&gt; ( &lt;lista-de-parametros&gt; ) {
+    // Corpo do método: bloco de comandos executado na chamada
+}</code></pre>
+  </div>
+  <ul>
+    <li><strong>Modificadores:</strong> Definem as propriedades de acesso e comportamento (como <code class="one-line-code">public</code> e <code class="one-line-code">static</code>).</li>
+    <li><strong>Tipo de Retorno:</strong> Especifica o tipo de dado que o método devolverá para quem o chamou (ex: <code class="one-line-code">int</code>, <code class="one-line-code">double</code>, <code class="one-line-code">String</code>). Caso o método não devolva nada, utiliza-se a palavra-chave <code class="one-line-code">void</code>.</li>
+    <li><strong>Nome do Método:</strong> Identificador único usado para invocar a sub-rotina.</li>
+    <li><strong>Lista de Parâmetros:</strong> Variáveis especiais que servem como porta de entrada para que o método receba dados necessários para realizar seu processamento.</li>
+  </ul>
+  <p>Toda aplicação em Java deve possuir um bloco principal onde a execução do programa se inicia, chamado de <strong>método principal</strong> ou <code class="one-line-code">main</code>.</p>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>4. Procedimentos vs. Funções</h3>
+  <p>Dependendo de como lidamos com a saída de dados de uma sub-rotina, os módulos são classificados em duas categorias principais: <strong>procedimentos</strong> e <strong>funções</strong>.</p>
+
+  <h4>A. Procedimentos (void)</h4>
+  <p>Um <strong>procedimento</strong> é um módulo que executa uma tarefa específica (como imprimir uma mensagem na tela ou alterar uma configuração), mas <strong>não retorna nenhum valor de saída</strong> para o código que o chamou. Em Java, identificamos um procedimento utilizando o tipo de retorno <code class="one-line-code">void</code>.</p>
+  <p><strong>Exemplo Prático (Procedimento):</strong> Um método que desenha uma linha divisória personalizada na tela utilizando um caractere específico:</p>
   <div class="code-container">
-    <pre><code class="language-java">// Em breve...</code></pre>
+    <pre><code class="language-java">public class ExemploProcedimento {
+
+    // Definição do Procedimento (void)
+    public static void imprimirDivisoria(char caractere, int tamanho) {
+        for (int i = 1; i <= tamanho; i++) {
+            System.out.print(caractere); // Executa a impressão
+        }
+        System.out.println(); // Quebra de linha ao final
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Iniciando o Relatório...");
+        // Chamada do procedimento
+        imprimirDivisoria('*', 30);
+        System.out.println("Fim do Relatório.");
+    }
+}</code></pre>
   </div>
+
+  <h4>B. Funções</h4>
+  <p>Uma <strong>função</strong> é um módulo cujo objetivo principal é realizar uma computação e <strong>retornar obrigatoriamente um valor</strong> para o ponto do programa onde foi chamada. Para enviar esse valor de volta, utiliza-se a instrução <code class="one-line-code">return</code> (retorne), que encerra imediatamente a execução da função.</p>
+  <p><strong>Exemplo Prático (Função):</strong> Uma função matemática que calcula o próximo termo da famosa sequência matemática <strong>$3N+1$</strong> (Sequência de Collatz):</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class ExemploFuncao {
+
+    // Definição da Função (Retorna um inteiro)
+    public static int obterProximoCollatz(int numeroAtual) {
+        if (numeroAtual % 2 == 1) { // Se for ímpar
+            return 3 * numeroAtual + 1; // Retorna o valor calculado
+        } else { // Se for par
+            return numeroAtual / 2; // Retorna a divisão inteira
+        }
+    }
+
+    public static void main(String[] args) {
+        int valor = 27;
+        // Chamada da função: o valor retornado é guardado na variável
+        int proximo = obterProximoCollatz(valor);
+        System.out.println("O próximo termo após " + valor + " é: " + proximo);
+    }
+}</code></pre>
+  </div>
+  <p><strong>Nota pedagógica importante:</strong> Um erro comum de iniciantes é fazer a função imprimir o resultado diretamente na tela em vez de retorná-lo. O papel da função é apenas calcular e devolver o valor; quem decide o que fazer com ele (imprimir, guardar ou usar em outra expressão) é o código que realizou a chamada.</p>
+
+  <h3>5. Passagem de Parâmetros: Formais vs. Reais</h3>
+  <p>A comunicação com os módulos ocorre por meio de <strong>parâmetros</strong>. É importante distinguir duas nomenclaturas técnicas:</p>
+  <ul>
+    <li><strong>Parâmetros Formais:</strong> São as variáveis declaradas no cabeçalho de definição da sub-rotina. Funcionam como variáveis locais que existem para receber as entradas do método.</li>
+    <li><strong>Parâmetros Reais (ou Argumentos):</strong> São os valores ou variáveis concretas passados para o método no momento em que ele é chamado.</li>
+  </ul>
+  <p>Quando o computador executa uma chamada de método, ele realiza um mapeamento: avalia os argumentos reais e atribui seus respectivos valores aos parâmetros formais equivalentes, na mesma ordem em que foram declarados.</p>
+  <div class="code-container">
+    <pre><code class="language-java">// O parâmetro formal é "nota"
+public static char obterConceito(int nota) {
+    if (nota >= 90) return 'A';
+    else if (nota >= 80) return 'B';
+    else return 'C';
+}
+
+public static void main(String[] args) {
+    int minhaNotaFinal = 85;
+    // "minhaNotaFinal" é o argumento real passado para a função
+    char conceito = obterConceito(minhaNotaFinal);
+}</code></pre>
+  </div>
+
+  <h3>6. Escopo de Variáveis: Local vs. Global</h3>
+  <p>O <strong>escopo</strong> de uma variável refere-se à região do código-fonte onde seu nome é válido e seu valor pode ser manipulado.</p>
+  <ul>
+    <li><strong>Variáveis Locais:</strong> São declaradas dentro de uma sub-rotina (ou em sua lista de parâmetros formais). Elas só existem enquanto o método está sendo executado. A memória para elas é alocada ao entrar no método e liberada assim que ele termina. Módulos diferentes podem ter variáveis locais com o mesmo nome sem que uma interfira na outra.</li>
+    <li><strong>Variáveis Globais (ou de Classe/Membro):</strong> São declaradas fora de todas as sub-rotinas, no escopo da classe. Elas são visíveis e podem ser acessadas ou alteradas por qualquer método daquela classe.</li>
+  </ul>
+  <p><strong>O Fenômeno do Sombreamento (Shadowing):</strong> Se uma variável local for declarada com o mesmo nome de uma variável global, a variável local terá preferência dentro do escopo de seu método. A variável global correspondente fica "sombreada" e inacessível de forma direta naquele bloco.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class ControleEscopo {
+    // Variável Global
+    static int x = 100;
+
+    public static void alterarValor() {
+        // Variável Local (Sombreia a global 'x')
+        int x = 50;
+        System.out.println("x local no método: " + x); // Imprime 50
+    }
+
+    public static void main(String[] args) {
+        alterarValor();
+        System.out.println("x global no main: " + x); // Imprime 100
+    }
+}</code></pre>
+  </div>
+
+  <h3>7. Mecanismos de Passagem: Valor vs. Referência</h3>
+  <p>Como o computador lida com os dados passados para um método? Existem dois modelos conceituais:</p>
+  <ul>
+    <li><strong>Passagem por Valor (Cópia):</strong> O parâmetro formal recebe uma cópia do valor do argumento real. Qualquer alteração feita no parâmetro formal dentro do método ocorre apenas na cópia e não afeta a variável original no escopo chamador. <strong>Java utiliza estritamente a passagem por valor para todos os seus tipos de dados.</strong></li>
+    <li><strong>Passagem por Referência (Apelido):</strong> O parâmetro formal funciona como um apelido (alias) da própria variável original. Nenhuma cópia é feita. Qualquer alteração no parâmetro formal altera diretamente a variável original no escopo de quem a chamou. No pseudocódigo, representamos isso explicitamente com a palavra-chave <code class="one-line-code">ref</code>.</li>
+  </ul>
+  <p><strong>A Regra de Ouro do Java:</strong> Embora Java passe tudo por valor, o comportamento visual muda dependendo do tipo de dado:</p>
+  <ul>
+    <li><strong>Tipos Primitivos</strong> (<code class="one-line-code">int</code>, <code class="one-line-code">double</code>, <code class="one-line-code">boolean</code>, etc.): O valor numérico é copiado. O método de forma alguma consegue alterar a variável primitiva original.</li>
+    <li><strong>Objetos e Vetores (Arrays):</strong> O que é copiado para o método é a referência de memória (o endereço que aponta para o objeto). Isso significa que, embora você não possa fazer a variável original apontar para um objeto totalmente novo, você pode alterar o conteúdo das posições internas do objeto ou array original através dessa referência.</li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-java">public class TestePassagem {
+
+    // Tentativa de alterar um valor primitivo (não funciona fora do método)
+    public static void tentarAlterarPrimitivo(int numero) {
+        numero = 999; // Altera apenas a cópia local
+    }
+
+    // Alteração de um vetor (funciona, pois manipulamos os elementos da referência)
+    public static void alterarVetor(int[] array) {
+        array[0] = 999; // Altera o primeiro elemento na memória compartilhada
+    }
+
+    public static void main(String[] args) {
+        int n = 10;
+        tentarAlterarPrimitivo(n);
+        System.out.println("n após o método: " + n); // Continua sendo 10
+
+        int[] meusNumeros = {10, 20, 30};
+        alterarVetor(meusNumeros);
+        System.out.println("Primeiro elemento após o método: " + meusNumeros[0]); // Imprime 999
+    }
+}</code></pre>
+  </div>
+  <p>Com este modelo de controle e divisão de tarefas, podemos projetar códigos modulares altamente eficientes, organizados e fáceis de ler.</p>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
+
+  <h3>O Conceito de Caixa Preta</h3>
+  <p>Este diagrama ilustra como um módulo (caixa preta) interage com o restante do programa: recebe entradas pela interface, realiza o processamento oculto e devolve saídas.</p>
+  <div class="mermaid">
+    graph LR
+        E["Entrada (Parâmetros)"] --> I["Interface"]
+        I --> P["Implementação<br>Caixa Preta"]
+        P --> S["Saída (Retorno)"]
+  </div>
+
+  <h3>Fluxo de Chamada de uma Sub-rotina</h3>
+  <p>Quando o método principal encontra uma chamada, o fluxo de execução é desviado para a sub-rotina e, ao término, retorna ao ponto seguinte da chamada.</p>
   <div class="mermaid">
     graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+        A[main: início] --> B[Chamada agregaFuncao]
+        B --> C[Executa corpo da função]
+        C --> D[return valor]
+        D --> E[Volta ao ponto seguinte da chamada no main]
+        E --> F[Continua a execução do main]
+  </div>
+
+  <h3>Classificação dos Módulos</h3>
+  <div class="mermaid">
+    graph TD
+        A[Módulos] --> B[Procedimentos<br>void]
+        A --> C[Funções<br>tipo de retorno]
+        B --> D[Executam tarefa, não retornam valor]
+        C --> E[Computam e retornam valor com return]
   </div>
 </section>
 
 <div class="tip-box">
   <h4>Dicas & Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li><strong>Função não imprime:</strong> Uma função deve <em>retornar</em> o valor, não imprimi-lo diretamente. Quem imprime (ou usa o valor) é o código que realizou a chamada.</li>
+    <li><strong>Método main:</strong> Toda aplicação Java precisa de um método <code class="one-line-code">main</code>, que é o ponto de partida da execução.</li>
+    <li><strong>Escopo local vs. global:</strong> Variáveis locais existem apenas dentro do método; variáveis globais (dependendo do modificador) são visíveis em toda a classe. Cuidado com o sombreamento (shadowing).</li>
+    <li><strong>Passagem por valor:</strong> Em Java, tipos primitivos são sempre passados por valor. Vetores e objetos copiam a referência, permitindo alterar o conteúdo interno.</li>
+    <li><strong>return encerra a função:</strong> A instrução <code class="one-line-code">return</code> encerra imediatamente a execução da função, devolvendo o controle ao chamador.</li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li><strong>Divida o problema:</strong> Antes de programar, identifique tarefas repetitivas ou cálculos isolados que possam virar funções ou procedimentos reutilizáveis.</li>
+    <li><strong>Nomes descritivos:</strong> Dê nomes significativos aos métodos (ex: <code class="one-line-code">calcularMedia</code>, <code class="one-line-code">imprimirRelatorio</code>) para tornar o código autoexplicativo.</li>
+    <li><strong>Manutenibilidade:</strong> Ao corrigir um erro, altere apenas a sub-rotina responsável, garantindo que outras partes do sistema continuem funcionando.</li>
+    <li><strong>Teste cada módulo:</strong> Desenvolva e teste cada função ou procedimento isoladamente antes de integrá-lo ao programa completo.</li>
+    <li><strong>Valide entradas:</strong> Utilize os parâmetros formais como porta de entrada e valide seus valores dentro do módulo antes de processá-los.</li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>CAELUM. Apostila Java.</li>
+    <li>CENTRO PAULA SOUZA. Plano de Curso nº 1062 - Técnico em Desenvolvimento de Sistemas. Eixo Tecnológico de Informação e Comunicação, 2026.</li>
+    <li>ASCENCIO, Ana Fernanda Gomes; CAMPOS, Edilene Aparecida Veneruchi de. Fundamentos da programação de computadores. 3. ed. São Paulo: Pearson Prentice Hall, 2012.</li>
   </ul>
 </section>
 
@@ -54,4 +255,3 @@ tags:
     <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
   </ul>
 </section>
-

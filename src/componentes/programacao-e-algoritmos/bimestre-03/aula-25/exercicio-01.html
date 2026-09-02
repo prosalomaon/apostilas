@@ -1,18 +1,171 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Introdução à Modularização: Funções e Procedimentos"
+title: "Exercício 01 - Biblioteca de Funções e Procedimentos"
 exercicio_numero: "01"
 aula_numero: "25"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 25."
+description: "Atividade prática para consolidar a criação e o uso de procedimentos e funções em Java, aplicando conceitos de parâmetros, retorno e escopo."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>1. Enunciado</h2>
+  <p>
+    Você foi contratado para desenvolver um sistema que gerencia o desempenho de
+    alunos em uma disciplina. O sistema deve ser <strong>modular</strong>: cada
+    tarefa (cálculos, exibição de resultados e formatação) deve ser feita em
+    uma função ou procedimento separado, evitando a repetição de código.
+  </p>
+  <p>
+    O programa deverá calcular a média de um aluno a partir de três notas,
+    determinar o conceito (A, B, C, D ou E), verificar se o número é par ou
+    ímpar e exibir um relatório final formatado.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>2. Preparação</h2>
+  <ul>
+    <li>
+      <strong>Ambiente:</strong> utilize o VS Code (com extensão Java) ou um
+      compilador Java online (ex: OnlineGDB).
+    </li>
+    <li>
+      <strong>Conhecimento Prévio:</strong> requer domínio de declaração de
+      variáveis, operadores relacionais e lógicos, e a estrutura de métodos
+      (modificadores, tipo de retorno, parâmetros e <code class="one-line-code">return</code>).
+    </li>
+    <li>
+      <strong>Documentação:</strong> consulte o conteúdo da aula 25 sobre
+      Modularização, Funções e Procedimentos.
+    </li>
+    <li>
+      Crie a classe <code class="one-line-code">SistemaDesempenho</code>.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>3. Código Base</h2>
+  <p>
+    Este código já possui a estrutura dos métodos declarados, porém vazios.
+    Sua missão é implementar o corpo de cada um deles conforme as instruções.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class SistemaDesempenho {
+
+    // Procedimento: imprime uma linha divisória personalizada
+    public static void imprimirDivisoria(char caractere, int tamanho) {
+        // COMPLETE: imprima o 'caractere' repetido 'tamanho' vezes
+        // e depois quebre a linha
+    }
+
+    // Função: retorna a média de três notas
+    public static double calcularMedia(double nota1, double nota2, double nota3) {
+        // COMPLETE: retorne a média aritmética (soma / 3)
+        return 0.0;
+    }
+
+    // Função: retorna 'true' se o número for par
+    public static boolean ehPar(int numero) {
+        // COMPLETE: use o operador % (resto da divisão por 2)
+        return false;
+    }
+
+    // Função: retorna o conceito a partir da média
+    public static char obterConceito(double media) {
+        // media >= 9  -> 'A'
+        // media >= 8  -> 'B'
+        // media >= 7  -> 'C'
+        // media >= 6  -> 'D'
+        // caso contrário -> 'E'
+        return 'F'; // Ajuste este retorno
+    }
+
+    public static void main(String[] args) {
+        // Dados de exemplo de três alunos
+        double[][] alunos = {
+            { 9.5, 8.0, 10.0 }, // Aluno 1
+            { 5.0, 6.5, 7.0 },  // Aluno 2
+            { 7.0, 7.5, 6.0 }   // Aluno 3
+        };
+
+        imprimirDivisoria('=', 40);
+        System.out.println("RELATÓRIO DE DESEMPENHO");
+        imprimirDivisoria('=', 40);
+
+        for (int i = 0; i &lt; alunos.length; i++) {
+            double media = calcularMedia(alunos[i][0], alunos[i][1], alunos[i][2]);
+            System.out.println("Aluno " + (i + 1) + ": média " + media
+                    + " - Conceito " + obterConceito(media));
+
+            if (ehPar(i + 1)) {
+                System.out.println("  (Número do aluno é par)");
+            } else {
+                System.out.println("  (Número do aluno é ímpar)");
+            }
+        }
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>4. O Desafio</h2>
+  <p>Implemente o corpo de cada método seguindo as especificações abaixo:</p>
+  <ul>
+    <li>
+      <strong>imprimirDivisoria:</strong> use o laço
+      <code class="one-line-code">for</code> para imprimir o caractere recebido
+      o número de vezes indicado em <code class="one-line-code">tamanho</code> e
+      finalize com <code class="one-line-code">System.out.println()</code>.
+    </li>
+    <li>
+      <strong>calcularMedia:</strong> some as três notas e retorne o resultado
+      da divisão por 3 (utilize divisão por <code class="one-line-code">3.0</code>
+      ou conte com o fato de as notas serem <code class="one-line-code">double</code>).
+    </li>
+    <li>
+      <strong>ehPar:</strong> retorne <code class="one-line-code">true</code> se
+      o resto da divisão de <code class="one-line-code">numero</code> por 2 for
+      igual a 0; caso contrário, retorne <code class="one-line-code">false</code>.
+    </li>
+    <li>
+      <strong>obterConceito:</strong> utilize condicionais encadeadas
+      (<code class="one-line-code">if/else if</code>) para retornar a letra
+      correspondente à faixa da média, conforme comentários no código.
+    </li>
+  </ul>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>5. Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Função não imprime:</strong> as funções
+      <code class="one-line-code">calcularMedia</code>,
+      <code class="one-line-code">ehPar</code> e
+      <code class="one-line-code">obterConceito</code> devem apenas retornar
+      valores. Quem imprime é o <code class="one-line-code">main</code>.
+    </li>
+    <li>
+      <strong>Retorno correto:</strong> o tipo de retorno da função deve casar
+      com o valor devolvido (ex: <code class="one-line-code">double</code> para
+      média, <code class="one-line-code">boolean</code> para par, e
+      <code class="one-line-code">char</code> para conceito).
+    </li>
+    <li>
+      <strong>Saída Esperada:</strong> para os dados fornecidos, a saída deve
+      ser semelhante a:
+    </li>
   </ul>
+  <div class="code-container">
+    <pre><code class="language-text">========================================
+RELATÓRIO DE DESEMPENHO
+========================================
+Aluno 1: média 9.166666666666666 - Conceito A
+  (Número do aluno é ímpar)
+Aluno 2: média 6.166666666666667 - Conceito D
+  (Número do aluno é par)
+Aluno 3: média 6.833333333333333 - Conceito D
+  (Número do aluno é ímpar)</code></pre>
+  </div>
 </div>
