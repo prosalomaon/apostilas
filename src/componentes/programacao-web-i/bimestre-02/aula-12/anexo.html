@@ -1,0 +1,1341 @@
+---
+layout: base
+title: "Demonstracao Interativa - Cascata, Heranca e Variaveis CSS"
+---
+
+<style>
+  .demo-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    border-bottom: 3px solid var(--border);
+  }
+  .demo-nav a {
+    text-decoration: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: var(--fg);
+    border: 2px solid var(--border);
+    padding: 0.4rem 0.8rem;
+    transition: all 0.2s ease;
+  }
+  .demo-nav a:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .demo-section {
+    display: none;
+  }
+  .demo-section.active {
+    display: block;
+  }
+  .demo-controls {
+    background: var(--accent);
+    border: 2px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .demo-controls label {
+    display: block;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+  }
+  .demo-controls select,
+  .demo-controls input[type="text"] {
+    width: 100%;
+    padding: 0.6rem;
+    font-family: inherit;
+    font-size: 1rem;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    color: var(--fg);
+    margin-bottom: 1rem;
+  }
+  .demo-controls select:focus,
+  .demo-controls input[type="text"]:focus {
+    outline: none;
+    box-shadow: 4px 4px 0px var(--fg);
+  }
+  .demo-output {
+    border: 2px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    min-height: 60px;
+  }
+  .demo-output-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    color: #666;
+  }
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85rem;
+  }
+  .spec-table th,
+  .spec-table td {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.8rem;
+    text-align: center;
+  }
+  .spec-table th {
+    background: var(--fg);
+    color: var(--bg);
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 0.75rem;
+  }
+  .spec-highlight {
+    background: var(--accent);
+    font-weight: 800;
+  }
+  .inherit-tree {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+  .inherit-tree .node {
+    border-left: 3px solid var(--border);
+    padding-left: 1rem;
+    margin-left: 0.5rem;
+  }
+  .inherit-tree .node-root {
+    border-left: none;
+    margin-left: 0;
+    padding-left: 0;
+    font-weight: 800;
+  }
+  .inherit-tree .prop {
+    display: inline-block;
+    background: var(--accent);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.4rem;
+    margin: 0.1rem;
+    font-size: 0.8rem;
+  }
+  .inherit-tree .prop-inherited {
+    background: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+  }
+  .inherit-tree .prop-not-inherited {
+    background: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+  }
+  .var-swatch {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    vertical-align: middle;
+    margin-right: 0.5rem;
+  }
+  .theme-demo-card {
+    border: 2px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+  .conflict-box {
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border: 2px solid var(--border);
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .btn-demo {
+    display: inline-block;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border: 2px solid var(--border);
+    padding: 0.5rem 1rem;
+    background: var(--fg);
+    color: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .btn-demo:hover {
+    background: var(--bg);
+    color: var(--fg);
+  }
+  .btn-demo.active {
+    background: var(--bg);
+    color: var(--fg);
+    box-shadow: 4px 4px 0px var(--fg);
+  }
+  .code-inline {
+    display: inline;
+    font-family: "JetBrains Mono", monospace;
+    background-color: #e7e7e7;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.85rem;
+  }
+  .step-counter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--fg);
+    color: var(--bg);
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .step-text {
+    flex: 1;
+  }
+  .live-code {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85rem;
+    padding: 1rem;
+    border: 2px solid var(--border);
+    white-space: pre-wrap;
+    overflow-x: auto;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .live-code .kw { color: #569cd6; }
+  .live-code .prop { color: #9cdcfe; }
+  .live-code .val { color: #ce9178; }
+  .live-code .sel { color: #d7ba7d; }
+  .live-code .cmt { color: #6a9955; }
+</style>
+
+<article class="lesson-content">
+  <header class="lesson-header">
+    <a href="../" class="back-link-class">&larr; Voltar para Aula 12</a>
+    <h1>Demonstracao Interativa</h1>
+    <p class="lesson-intro">Explore os tres pilares do CSS - Cascata, Heranca e Variaveis Customizadas - com exemplos vivos que voce pode manipular em tempo real.</p>
+  </header>
+
+  <nav class="demo-nav" id="demo-nav">
+    <a href="#" data-section="cascata" class="active">1. Cascata</a>
+    <a href="#" data-section="especificidade">2. Especificidade</a>
+    <a href="#" data-section="heranca">3. Heranca</a>
+    <a href="#" data-section="variaveis">4. Variaveis CSS</a>
+    <a href="#" data-section="conflitos">5. Resolucao de Conflitos</a>
+  </nav>
+
+  <!-- ============================================ -->
+  <!-- SECAO 1: CASCATA                             -->
+  <!-- ============================================ -->
+  <section class="demo-section active" id="sec-cascata">
+    <section class="section-box">
+      <h2>A Cascata: Ordem de Prioridade</h2>
+      <p>A Cascata e o algoritmo que resolve conflitos quando multiplas regras tentam definir a mesma propriedade no mesmo elemento. O navegador avalia tres criterios nesta ordem exata:</p>
+
+      <div class="step-item">
+        <span class="step-counter">1</span>
+        <div class="step-text">
+          <strong>Origem da Folha de Estilo</strong> - De qual fonte a regra vem? (User Agent &lt; Autor &lt; Autor com !important)
+        </div>
+      </div>
+      <div class="step-item">
+        <span class="step-counter">2</span>
+        <div class="step-text">
+          <strong>Especificidade</strong> - Quao especifico e o seletor? (Tag &lt; Classe &lt; ID &lt; Inline)
+        </div>
+      </div>
+      <div class="step-item">
+        <span class="step-counter">3</span>
+        <div class="step-text">
+          <strong>Ordem de Origem</strong> - Qual regra aparece por ultimo no CSS?
+        </div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Simulador de Cascata por Origem</h2>
+      <p>Selecione a origem de cada regra e observe qual prevalece. Todas as regras definem a mesma propriedade (<span class="code-inline">color</span>) no mesmo elemento.</p>
+
+      <div class="demo-controls">
+        <label for="cascata-origem">Origem da regra vencedora:</label>
+        <select id="cascata-origem">
+          <option value="user-agent">User Agent (navegador padrao)</option>
+          <option value="autor-externo" selected>Autor - CSS Externo</option>
+          <option value="autor-interno">Autor - CSS Interno</option>
+          <option value="autor-inline">Autor - CSS Inline</option>
+          <option value="autor-important">Autor com !important</option>
+        </select>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Resultado:</div>
+        <div class="conflict-box" id="cascata-resultado" style="color: #2e7d32;">
+          Este texto demonstra a cor definida pela origem selecionada.
+        </div>
+      </div>
+
+      <div class="live-code" id="cascata-codigo"></div>
+    </section>
+
+    <section class="section-box">
+      <h2>Tabela de Precedencia de Origens</h2>
+      <div class="overflow-inline">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>Origem</th>
+              <th>Precedencia</th>
+              <th>Exemplo</th>
+              <th>Quando Usar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>User Agent</td>
+              <td>1 (menor)</td>
+              <td>Estilos padrao do navegador</td>
+              <td>Nunca modifique diretamente</td>
+            </tr>
+            <tr>
+              <td>Autor (Externo/Interno)</td>
+              <td>2</td>
+              <td>Seu arquivo .css</td>
+              <td>Padrao para desenvolvimento</td>
+            </tr>
+            <tr>
+              <td>Autor (Inline)</td>
+              <td>3</td>
+              <td>style="color: red"</td>
+              <td>Evite - mistura conteudo com estilo</td>
+            </tr>
+            <tr class="spec-highlight">
+              <td>Autor com !important</td>
+              <td>4 (maior)</td>
+              <td>color: red !important</td>
+              <td>Ultimo recurso - dificulta manutencao</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- SECAO 2: ESPECIFICIDADE                      -->
+  <!-- ============================================ -->
+  <section class="demo-section" id="sec-especificidade">
+    <section class="section-box">
+      <h2>Calculadora de Especificidade</h2>
+      <p>Selecione os componentes do seletor e observe a pontuacao sendo calculada em tempo real. A especificidade e representada pelo vetor (a, b, c, d):</p>
+
+      <div class="demo-controls">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div>
+            <label for="spec-inline">a - Inline (style="...")</label>
+            <select id="spec-inline">
+              <option value="0" selected>Nao</option>
+              <option value="1">Sim</option>
+            </select>
+          </div>
+          <div>
+            <label for="spec-id">b - IDs (#)</label>
+            <select id="spec-id">
+              <option value="0" selected>0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+            </select>
+          </div>
+          <div>
+            <label for="spec-classe">c - Classes / Pseudo-classes</label>
+            <select id="spec-classe">
+              <option value="0" selected>0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div>
+            <label for="spec-tag">d - Tags / Pseudo-elementos</label>
+            <select id="spec-tag">
+              <option value="0" selected>0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Pontuacao:</div>
+        <div id="spec-pontuacao" style="font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; letter-spacing: 0.1em;">
+          (0, 0, 0, 0)
+        </div>
+        <div id="spec-pontos" style="font-size: 1.2rem; margin-top: 0.5rem;">
+          0 pontos
+        </div>
+        <div id="spec-seletor" style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; margin-top: 1rem; padding: 0.5rem; background: var(--accent); border: 1px solid var(--border);">
+          Seletor gerado: *
+        </div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Comparacao de Especificidade</h2>
+      <p>Insira dois seletores e veja qual vence. A regra vencedora sera aplicada ao paragrafo de demonstracao.</p>
+
+      <div class="demo-controls">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label for="comp-sel-a">Seletor A</label>
+            <select id="comp-sel-a">
+              <option value="p">p (tag)</option>
+              <option value=".texto">.texto (classe)</option>
+              <option value="#destaque">#destaque (ID)</option>
+              <option value="p.texto">p.texto (tag + classe)</option>
+              <option value="#menu .item p">#menu .item p</option>
+              <option value=".card .titulo">.card .titulo</option>
+            </select>
+          </div>
+          <div>
+            <label for="comp-sel-b">Seletor B</label>
+            <select id="comp-sel-b">
+              <option value="p">p (tag)</option>
+              <option value=".texto" selected>.texto (classe)</option>
+              <option value="#destaque">#destaque (ID)</option>
+              <option value="p.texto">p.texto (tag + classe)</option>
+              <option value="#menu .item p">#menu .item p</option>
+              <option value=".card .titulo">.card .titulo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Resultado:</div>
+        <div id="comp-resultado" style="margin-bottom: 1rem;"></div>
+        <div class="conflict-box" id="comp-preview" style="color: black;">
+          Texto de demonstracao
+        </div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Tabela de Especificidade</h2>
+      <div class="overflow-inline">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>Componente</th>
+              <th>Sintaxe</th>
+              <th>Vetor (a,b,c,d)</th>
+              <th>Pontos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Inline</td>
+              <td>style="..."</td>
+              <td>(1, 0, 0, 0)</td>
+              <td>1000</td>
+            </tr>
+            <tr>
+              <td>ID</td>
+              <td>#meu-id</td>
+              <td>(0, 1, 0, 0)</td>
+              <td>100</td>
+            </tr>
+            <tr>
+              <td>Classe / Pseudo-classe</td>
+              <td>.minha-classe, :hover</td>
+              <td>(0, 0, 1, 0)</td>
+              <td>10</td>
+            </tr>
+            <tr>
+              <td>Tag / Pseudo-elemento</td>
+              <td>p, ::before</td>
+              <td>(0, 0, 0, 1)</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>Universal / Combinador</td>
+              <td>*, &gt;, +, ~</td>
+              <td>(0, 0, 0, 0)</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- SECAO 3: HERANCA                             -->
+  <!-- ============================================ -->
+  <section class="demo-section" id="sec-heranca">
+    <section class="section-box">
+      <h2>Heranca: Propagacao de Propriedades</h2>
+      <p>A Heranca define como as propriedades de estilizacao se propagam dos elementos pais para seus descendentes na arvore do DOM. Nem todas as propriedades sao herdadas.</p>
+    </section>
+
+    <section class="section-box">
+      <h2>Arvore de Heranca Interativa</h2>
+      <p>Clique em um elemento da arvore para ver quais propriedades ele herda do pai e quais nao herda.</p>
+
+      <div class="demo-output">
+        <div class="inherit-tree" id="arvore-dom">
+          <div class="node node-root" data-elem="body">
+            <strong>&lt;body&gt;</strong> <span class="code-inline">font-family: Arial</span> <span class="code-inline">color: #333</span>
+            <div class="node" data-elem="header">
+              <strong>&lt;header&gt;</strong> <span class="code-inline">background: #f5f5f5</span>
+              <div class="node" data-elem="h1">
+                <strong>&lt;h1&gt;</strong> <span class="code-inline">color: #000</span>
+              </div>
+              <div class="node" data-elem="p-header">
+                <strong>&lt;p&gt;</strong> <span class="code-inline">font-size: 1.2rem</span>
+              </div>
+            </div>
+            <div class="node" data-elem="main">
+              <strong>&lt;main&gt;</strong> <span class="code-inline">padding: 20px</span>
+              <div class="node" data-elem="section">
+                <strong>&lt;section&gt;</strong> <span class="code-inline">border: 1px solid #ccc</span>
+                <div class="node" data-elem="p-section">
+                  <strong>&lt;p&gt;</strong> (clique para ver heranca)
+                </div>
+                <div class="node" data-elem="a-section">
+                  <strong>&lt;a&gt;</strong> (clique para ver heranca)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-output" id="heranca-detalhes" style="display: none;">
+        <div class="demo-output-label">Propriedades do elemento selecionado:</div>
+        <div id="heranca-info"></div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Heranca vs. Nao-Heranca</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div>
+          <h3 style="color: #28a745;">Herdados Automaticamente</h3>
+          <p>Propriedades de texto e tipografia:</p>
+          <ul>
+            <li><span class="code-inline">color</span></li>
+            <li><span class="code-inline">font-family</span></li>
+            <li><span class="code-inline">font-size</span></li>
+            <li><span class="code-inline">line-height</span></li>
+            <li><span class="code-inline">letter-spacing</span></li>
+            <li><span class="code-inline">text-align</span></li>
+            <li><span class="code-inline">font-weight</span></li>
+            <li><span class="code-inline">text-decoration</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color: #dc3545;">NAO Herdados</h3>
+          <p>Propriedades de layout e dimensoes:</p>
+          <ul>
+            <li><span class="code-inline">border</span></li>
+            <li><span class="code-inline">margin</span></li>
+            <li><span class="code-inline">padding</span></li>
+            <li><span class="code-inline">width</span></li>
+            <li><span class="code-inline">height</span></li>
+            <li><span class="code-inline">background-color</span></li>
+            <li><span class="code-inline">display</span></li>
+            <li><span class="code-inline">position</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Demonstracao Ao Vivo: Heranca de Cores</h2>
+      <p>Altere a cor do elemento pai e observe como os filhos reagem. Depois, ative a propriedade <span class="code-inline">inherit</span> no link para forcar a heranca.</p>
+
+      <div class="demo-controls">
+        <label for="heranca-pai-cor">Cor do elemento pai (&lt;p class="pai"&gt;):</label>
+        <select id="heranca-pai-cor">
+          <option value="#333333" selected>Cinza Escuro (#333)</option>
+          <option value="#1565c0">Azul (#1565c0)</option>
+          <option value="#c62828">Vermelho (#c62828)</option>
+          <option value="#2e7d32">Verde (#2e7d32)</option>
+          <option value="#6a1b9a">Roxo (#6a1b9a)</option>
+        </select>
+
+        <label for="heranca-link-inherit" style="margin-top: 1rem;">Forcar heranca no link:</label>
+        <select id="heranca-link-inherit">
+          <option value="normal" selected>Nao (link fica azul padrao)</option>
+          <option value="inherit">Sim (link herda cor do pai)</option>
+        </select>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Resultado:</div>
+        <div id="heranca-live-demo">
+          <p id="heranca-pai" style="font-size: 1.1rem; line-height: 1.6;">
+            Este e o elemento pai. O texto aqui reflete a cor selecionada.
+            <a id="heranca-link" href="#" style="margin-left: 0.5rem;">Este e um link</a>
+          </p>
+        </div>
+        <div class="live-code" id="heranca-live-code" style="margin-top: 1rem;"></div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Palavras-Chave: inherit e initial</h2>
+      <div class="demo-controls">
+        <label for="kw-demo-select">Selecione a palavra-chave:</label>
+        <select id="kw-demo-select">
+          <option value="normal" selected>Normal (valor padrao)</option>
+          <option value="inherit">inherit (herdar do pai)</option>
+          <option value="initial">initial (valor oficial do CSS)</option>
+        </select>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Demonstracao:</div>
+        <div id="kw-demo-container" style="padding: 1rem; background: #e3f2fd; border: 1px solid #90caf9;">
+          <p id="kw-demo-texto" style="font-size: 1rem;">
+            Este paragrafo tem <span id="kw-demo-span" style="font-weight: bold;">um trecho em negrito</span> que reage a palavra-chave selecionada.
+          </p>
+        </div>
+        <div class="live-code" id="kw-demo-code" style="margin-top: 1rem;"></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- SECAO 4: VARIAVEIS CSS                       -->
+  <!-- ============================================ -->
+  <section class="demo-section" id="sec-variaveis">
+    <section class="section-box">
+      <h2>Variaveis CSS (Custom Properties)</h2>
+      <p>Variaveis CSS permitem armazenar valores reutilizaveis que se submetem a heranca e a cascata. Elas sao declaradas com o prefixo <span class="code-inline">--</span> e invocadas com <span class="code-inline">var()</span>.</p>
+    </section>
+
+    <section class="section-box">
+      <h2>Sistema de Temas com Variaveis</h2>
+      <p>Selecione um tema e observe como as variaveis CSS redefinem todo o visual dos cards sem alterar nenhuma regra de propriedade.</p>
+
+      <div class="demo-controls" style="margin-bottom: 0;">
+        <label>Tema Ativo:</label>
+        <div>
+          <button class="btn-demo active" data-theme="claro" onclick="trocarTema('claro')">Claro</button>
+          <button class="btn-demo" data-theme="escuro" onclick="trocarTema('escuro')">Escuro</button>
+          <button class="btn-demo" data-theme="azul" onclick="trocarTema('azul')">Azul</button>
+          <button class="btn-demo" data-theme="verde" onclick="trocarTema('verde')">Verde</button>
+          <button class="btn-demo" data-theme="contraste" onclick="trocarTema('contraste')">Alto Contraste</button>
+        </div>
+      </div>
+
+      <div id="tema-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+        <div class="theme-demo-card" id="card-tema-1">
+          <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Card Titulo</h3>
+          <p style="margin-bottom: 1rem; font-size: 0.9rem;">Este card usa as variaveis CSS do tema ativo. As cores, bordas e textos se adaptam automaticamente.</p>
+          <a href="#" style="font-weight: 800; text-decoration: none;">Acao &rarr;</a>
+        </div>
+        <div class="theme-demo-card" id="card-tema-2">
+          <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Segundo Card</h3>
+          <p style="margin-bottom: 1rem; font-size: 0.9rem;">Todos os cards compartilham a mesma estrutura. Apenas as variaveis mudam entre temas.</p>
+          <a href="#" style="font-weight: 800; text-decoration: none;">Acao &rarr;</a>
+        </div>
+        <div class="theme-demo-card" id="card-tema-3">
+          <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Terceiro Card</h3>
+          <p style="margin-bottom: 1rem; font-size: 0.9rem;">Para criar um novo tema, basta redefinir as variaveis dentro de uma nova classe.</p>
+          <a href="#" style="font-weight: 800; text-decoration: none;">Acao &rarr;</a>
+        </div>
+      </div>
+
+      <div class="live-code" id="tema-codigo" style="margin-top: 1.5rem;"></div>
+    </section>
+
+    <section class="section-box">
+      <h2>Escopo de Variaveis</h2>
+      <p>Variaveis CSS seguem a mesma logica de heranca da cascata. Uma variavel declarada no <span class="code-inline">:root</span> esta disponivel em toda a pagina. Se redefinida dentro de uma classe, afeta apenas os descendentes daquele contenedor.</p>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Exemplo de escopo:</div>
+        <div class="live-code"><span class="cmt">/* Escopo Global - disponivel em toda a pagina */</span>
+<span class="sel">:root</span> {
+  <span class="prop">--cor-destaque</span>: <span class="val">#1565c0</span>;
+}
+
+<span class="cmt">/* Escopo Local - afeta apenas descendentes de .container-azul */</span>
+<span class="sel">.container-azul</span> {
+  <span class="prop">--cor-destaque</span>: <span class="val">#c62828</span>; <span class="cmt">/* Sobrescreve o global */</span>
+}
+
+<span class="cmt">/* Ambos usam a mesma variavel, mas com valores diferentes */</span>
+<span class="sel">.botao</span> {
+  <span class="prop">background</span>: <span class="val">var(--cor-destaque)</span>;
+}</div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Valor de Fallback em var()</h2>
+      <p>A funcao <span class="code-inline">var()</span> aceita um segundo argumento opcional que e usado quando a variavel nao e encontrada.</p>
+
+      <div class="demo-controls">
+        <label for="fallback-demo">Simular variavel ausente:</label>
+        <select id="fallback-demo">
+          <option value="definida" selected>Variavel definida (--meu-espacamento: 20px)</option>
+          <option value="indefinida">Variavel NAO definida (fallback: 10px)</option>
+        </select>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Resultado:</div>
+        <div id="fallback-container" style="border: 2px solid var(--border); padding: 1rem;">
+          <div id="fallback-box" style="background: var(--accent); padding: var(--meu-espacamento, 10px); text-align: center; border: 1px solid var(--border);">
+            Este bloco usa <span class="code-inline">var(--meu-espacamento, 10px)</span> no padding.
+          </div>
+        </div>
+        <div class="live-code" id="fallback-code" style="margin-top: 1rem;"></div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Sintaxe de Declaracao e Uso</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div>
+          <h3>Declaracao</h3>
+          <div class="live-code"><span class="sel">:root</span> {
+  <span class="cmt">/* Use -- (hifen duplo) para declarar */</span>
+  <span class="prop">--cor-primaria</span>: <span class="val">#1565c0</span>;
+  <span class="prop">--tamanho-fonte</span>: <span class="val">16px</span>;
+  <span class="prop">--espacamento</span>: <span class="val">1.5rem</span>;
+}</div>
+        </div>
+        <div>
+          <h3>Uso</h3>
+          <div class="live-code"><span class="sel">.botao</span> {
+  <span class="cmt">/* Use var() para invocar */</span>
+  <span class="prop">background</span>: <span class="val">var(--cor-primaria)</span>;
+  <span class="prop">font-size</span>: <span class="val">var(--tamanho-fonte)</span>;
+  <span class="prop">padding</span>: <span class="val">var(--espacamento)</span>;
+  <span class="cmt">/* Com fallback: var(--nao-existe, 10px) */</span>
+}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Case Sensitivity</h2>
+      <p>Variaveis CSS diferenciam maiusculas de minusculas. <span class="code-inline">--cor-principal</span> e <span class="code-inline">--Cor-Principal</span> sao variaveis completamente isoladas.</p>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Demonstracao:</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div style="padding: 1rem; border: 2px solid var(--border); text-align: center;">
+            <span class="code-inline">--cor-principal</span>
+            <div id="case-minusc" style="margin-top: 0.5rem; padding: 0.5rem; font-weight: 800;">Valor: minusc.</div>
+          </div>
+          <div style="padding: 1rem; border: 2px solid var(--border); text-align: center;">
+            <span class="code-inline">--Cor-Principal</span>
+            <div id="case-maiusc" style="margin-top: 0.5rem; padding: 0.5rem; font-weight: 800;">Valor: maiusc.</div>
+          </div>
+        </div>
+        <div class="live-code" style="margin-top: 1rem;"><span class="sel">:root</span> {
+  <span class="prop">--cor-principal</span>: <span class="val">"valor com minusculas"</span>;
+  <span class="prop">--Cor-Principal</span>: <span class="val">"valor com maiusculas"</span>;
+}
+<span class="cmt">/* Sao duas variaveis completamente diferentes! */</span></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- SECAO 5: RESOLUCAO DE CONFLITOS              -->
+  <!-- ============================================ -->
+  <section class="demo-section" id="sec-conflitos">
+    <section class="section-box">
+      <h2>Resolucao de Conflitos na Pratica</h2>
+      <p>Nesta secao, voce pode aplicar multiplas regras ao mesmo elemento e observar qual prevalece, aplicando todos os conceitos da Cascata, Especificidade e Heranca.</p>
+    </section>
+
+    <section class="section-box">
+      <h2>Simulador de Conflito Completo</h2>
+      <p>Ative ou desative cada regra e observe o resultado final no paragrafo-alvo. O painel ao lado mostra a especificidade de cada regra ativa.</p>
+
+      <div class="demo-controls">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div>
+            <label>Regra 1: Seletor de Tipo</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn-demo" id="regra-tipo-btn" onclick="toggleRegra('tipo')">Desativada</button>
+              <span class="code-inline">p { color: gray; }</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 0.3rem;">Especificidade: (0, 0, 0, 1) = 1 ponto</div>
+          </div>
+          <div>
+            <label>Regra 2: Seletor de Classe</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn-demo" id="regra-classe-btn" onclick="toggleRegra('classe')">Desativada</button>
+              <span class="code-inline">.texto { color: blue; }</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 0.3rem;">Especificidade: (0, 0, 1, 0) = 10 pontos</div>
+          </div>
+          <div>
+            <label>Regra 3: Seletor de ID</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn-demo" id="regra-id-btn" onclick="toggleRegra('id')">Desativada</button>
+              <span class="code-inline">#destaque { color: green; }</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 0.3rem;">Especificidade: (0, 1, 0, 0) = 100 pontos</div>
+          </div>
+          <div>
+            <label>Regra 4: Combinacao ID + Classe</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn-demo" id="regra-idclasse-btn" onclick="toggleRegra('idclasse')">Desativada</button>
+              <span class="code-inline">#destaque.texto { color: orange; }</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 0.3rem;">Especificidade: (0, 1, 1, 0) = 110 pontos</div>
+          </div>
+          <div>
+            <label>Regra 5: Inline</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn-demo" id="regra-inline-btn" onclick="toggleRegra('inline')">Desativada</button>
+              <span class="code-inline">style="color: purple"</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 0.3rem;">Especificidade: (1, 0, 0, 0) = 1000 pontos</div>
+          </div>
+          <div>
+            <label>Regra 6: !important</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn-demo" id="regra-important-btn" onclick="toggleRegra('important')">Desativada</button>
+              <span class="code-inline">p { color: red !important; }</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 0.3rem;">Sobrescreve todas as outras</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Elemento-alvo:</div>
+        <div id="conflito-preview" style="padding: 1.5rem; border: 2px solid var(--border); font-size: 1.3rem; text-align: center;">
+          Texto de demonstracao de conflito
+        </div>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Regras ativas (em ordem de precedencia):</div>
+        <div id="conflito-regras-ativas" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+          Nenhuma regra ativa.
+        </div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Caso Real: Shorthand Sobrescrevendo Valores</h2>
+      <p>Uma armadilha comum e usar propriedades abreviadas (shorthands) apos definir valores individuais. O shorthand reseta silenciosamente valores omitidos para o padrao.</p>
+
+      <div class="demo-controls">
+        <label>Ativar shorthand <span class="code-inline">font: 20px Arial</span>:</label>
+        <div>
+          <button class="btn-demo" id="shorthand-btn" onclick="toggleShorthand()">Desativado</button>
+        </div>
+      </div>
+
+      <div class="demo-output">
+        <div class="demo-output-label">Resultado:</div>
+        <div id="shorthand-preview" style="padding: 1rem; border: 2px solid var(--border);">
+          <span id="shorthand-texto" style="font-weight: bold; font-size: 14px;">Este texto tem font-weight: bold e font-size: 14px definidos.</span>
+        </div>
+        <div class="live-code" id="shorthand-code" style="margin-top: 1rem;"></div>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>Resumo: Fluxo Completo de Decisao</h2>
+      <div class="demo-output">
+        <div class="live-code"><span class="cmt">/* O navegador segue esta ordem para decidir qual valor aplicar: */</span>
+
+<span class="kw">PASSO 1</span> - Origem da Folha de Estilo
+  User Agent &lt; Autor (externo/interno) &lt; Autor (inline) &lt; Autor com !important
+  <span class="cmt">Se as origens sao iguais, vai para o Passo 2.</span>
+
+<span class="kw">PASSO 2</span> - Especificidade do Seletor
+  * (0) &lt; tag (1) &lt; classe (10) &lt; ID (100) &lt; inline (1000)
+  <span class="cmt">Se a especificidade e igual, vai para o Passo 3.</span>
+
+<span class="kw">PASSO 3</span> - Ordem de Origem
+  A regra declarada por <span class="val">ULTIMO</span> no CSS vence.
+  <span class="cmt">Este e o criterio de desempate final.</span></div>
+      </div>
+    </section>
+  </section>
+
+  <nav class="lesson-pagination">
+    <a href="../" class="back">VOLTAR PARA AULA</a>
+  </nav>
+</article>
+
+<script>
+  // ==========================================
+  // NAVEGACAO ENTRE SECOES
+  // ==========================================
+  document.querySelectorAll('.demo-nav a').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var section = this.getAttribute('data-section');
+
+      document.querySelectorAll('.demo-nav a').forEach(function(a) { a.classList.remove('active'); });
+      this.classList.add('active');
+
+      document.querySelectorAll('.demo-section').forEach(function(s) { s.classList.remove('active'); });
+      document.getElementById('sec-' + section).classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // ==========================================
+  // SECAO 1: CASCATA POR ORIGEM
+  // ==========================================
+  var cascataOrigem = document.getElementById('cascata-origem');
+  var cascataResultado = document.getElementById('cascata-resultado');
+  var cascataCodigo = document.getElementById('cascata-codigo');
+
+  var origemCores = {
+    'user-agent': { cor: '#0000ee', nome: 'User Agent (azul padrao do navegador)' },
+    'autor-externo': { cor: '#2e7d32', nome: 'Autor - Externo (verde)' },
+    'autor-interno': { cor: '#1565c0', nome: 'Autor - Interno (azul)' },
+    'autor-inline': { cor: '#6a1b9a', nome: 'Autor - Inline (roxo)' },
+    'autor-important': { cor: '#c62828', nome: 'Autor - !important (vermelho)' }
+  };
+
+  var origemCodigos = {
+    'user-agent': '<span class="cmt">/* Estilo padrao do navegador (User Agent) */</span>\n<span class="sel">a</span> {\n  <span class="prop">color</span>: <span class="val">blue</span>; <span class="cmt">/* Precedencia: 1 (menor) */</span>\n}',
+    'autor-externo': '<span class="cmt">/* styles.css - Arquivo Externo */</span>\n<span class="sel">a</span> {\n  <span class="prop">color</span>: <span class="val">#2e7d32</span>; <span class="cmt">/* Precedencia: 2 */</span>\n}',
+    'autor-interno': '<span class="cmt">/* Dentro de &lt;style&gt; no &lt;head&gt; */</span>\n<span class="sel">a</span> {\n  <span class="prop">color</span>: <span class="val">#1565c0</span>; <span class="cmt">/* Precedencia: 2 (mesma que externa, depende da ordem) */</span>\n}',
+    'autor-inline': '<span class="cmt">/* No proprio elemento HTML */</span>\n<span class="kw">&lt;a</span> <span class="prop">style</span>=<span class="val">"color: #6a1b9a"</span><span class="kw">&gt;</span>...<span class="kw">&lt;/a&gt;</span>\n<span class="cmt">/* Precedencia: 3 */</span>',
+    'autor-important': '<span class="cmt">/* Usando !important - ultimo recurso */</span>\n<span class="sel">a</span> {\n  <span class="prop">color</span>: <span class="val">#c62828</span> <span class="kw">!important</span>; <span class="cmt">/* Precedencia: 4 (maior) */</span>\n}'
+  };
+
+  function atualizarCascata() {
+    var origem = cascataOrigem.value;
+    var dados = origemCores[origem];
+    cascataResultado.style.color = dados.cor;
+    cascataResultado.textContent = 'Cor aplicada: ' + dados.nome;
+    cascataCodigo.innerHTML = origemCodigos[origem];
+  }
+
+  cascataOrigem.addEventListener('change', atualizarCascata);
+  atualizarCascata();
+
+  // ==========================================
+  // SECAO 2: CALCULADORA DE ESPECIFICIDADE
+  // ==========================================
+  var specInline = document.getElementById('spec-inline');
+  var specId = document.getElementById('spec-id');
+  var specClasse = document.getElementById('spec-classe');
+  var specTag = document.getElementById('spec-tag');
+  var specPontuacao = document.getElementById('spec-pontuacao');
+  var specPontos = document.getElementById('spec-pontos');
+  var specSeletor = document.getElementById('spec-seletor');
+
+  function gerarSeletor() {
+    var parts = [];
+    if (specInline.value === '1') parts.push('style="..."');
+    if (specId.value >= 1) {
+      for (var i = 0; i < specId.value; i++) parts.push('#id' + (specId.value > 1 ? (i + 1) : ''));
+    }
+    if (specClasse.value >= 1) {
+      for (var i = 0; i < specClasse.value; i++) parts.push('.classe' + (specClasse.value > 1 ? (i + 1) : ''));
+    }
+    if (specTag.value >= 1) {
+      for (var i = 0; i < specTag.value; i++) parts.push('div');
+    }
+    if (parts.length === 0) return '*';
+    return parts.join(' ');
+  }
+
+  function atualizarEspecificidade() {
+    var a = parseInt(specInline.value);
+    var b = parseInt(specId.value);
+    var c = parseInt(specClasse.value);
+    var d = parseInt(specTag.value);
+    var pontos = a * 1000 + b * 100 + c * 10 + d;
+
+    specPontuacao.textContent = '(' + a + ', ' + b + ', ' + c + ', ' + d + ')';
+    specPontos.textContent = pontos + ' pontos';
+    specSeletor.innerHTML = 'Seletor gerado: <strong>' + gerarSeletor() + '</strong>';
+  }
+
+  specInline.addEventListener('change', atualizarEspecificidade);
+  specId.addEventListener('change', atualizarEspecificidade);
+  specClasse.addEventListener('change', atualizarEspecificidade);
+  specTag.addEventListener('change', atualizarEspecificidade);
+  atualizarEspecificidade();
+
+  // Comparacao de especificidade
+  var specMap = {
+    'p': { v: [0,0,0,1], p: 1, cor: '#999' },
+    '.texto': { v: [0,0,1,0], p: 10, cor: '#1565c0' },
+    '#destaque': { v: [0,1,0,0], p: 100, cor: '#2e7d32' },
+    'p.texto': { v: [0,0,1,1], p: 11, cor: '#e65100' },
+    '#menu .item p': { v: [0,1,1,1], p: 111, cor: '#6a1b9a' },
+    '.card .titulo': { v: [0,0,2,0], p: 20, cor: '#c62828' }
+  };
+
+  var compSelA = document.getElementById('comp-sel-a');
+  var compSelB = document.getElementById('comp-sel-b');
+  var compResultado = document.getElementById('comp-resultado');
+  var compPreview = document.getElementById('comp-preview');
+
+  function atualizarComparacao() {
+    var selA = compSelA.value;
+    var selB = compSelB.value;
+    var specA = specMap[selA];
+    var specB = specMap[selB];
+
+    var vencedor, vencedorCor, vencedorSel;
+    if (specA.p > specB.p) {
+      vencedor = 'A'; vencedorCor = specA.cor; vencedorSel = selA;
+    } else if (specB.p > specA.p) {
+      vencedor = 'B'; vencedorCor = specB.cor; vencedorSel = selB;
+    } else {
+      vencedor = 'Empate (ordem decide)'; vencedorCor = '#333'; vencedorSel = 'mesma pontuacao';
+    }
+
+    compResultado.innerHTML =
+      '<strong>Seletor A:</strong> <span class="code-inline">' + selA + '</span> = (' + specA.v.join(', ') + ') = ' + specA.p + ' pts | ' +
+      '<strong>Seletor B:</strong> <span class="code-inline">' + selB + '</span> = (' + specB.v.join(', ') + ') = ' + specB.p + ' pts<br>' +
+      '<strong>Vencedor:</strong> ' + (typeof vencedor === 'string' && vencedor.length === 1 ? 'Seletor ' + vencedor + ' (' + vencedorSel + ')' : vencedor);
+    compPreview.style.color = vencedorCor;
+  }
+
+  compSelA.addEventListener('change', atualizarComparacao);
+  compSelB.addEventListener('change', atualizarComparacao);
+  atualizarComparacao();
+
+  // ==========================================
+  // SECAO 3: HERANCA INTERATIVA
+  // ==========================================
+  var herancaPropriedades = {
+    'body': { herda: [], declara: ['font-family', 'color', 'line-height'] },
+    'header': { herda: ['font-family', 'color', 'line-height'], declara: ['background'] },
+    'h1': { herda: ['font-family', 'line-height'], declara: ['color', 'font-size'] },
+    'p-header': { herda: ['font-family', 'line-height'], declara: ['font-size'] },
+    'main': { herda: ['font-family', 'color', 'line-height'], declara: ['padding'] },
+    'section': { herda: ['font-family', 'color', 'line-height'], declara: ['border'] },
+    'p-section': { herda: ['font-family', 'color', 'line-height', 'font-size'], declara: [] },
+    'a-section': { herda: ['font-family'], declara: ['color'] }
+  };
+
+  document.querySelectorAll('.inherit-tree .node').forEach(function(node) {
+    node.style.cursor = 'pointer';
+    node.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var elem = this.getAttribute('data-elem');
+      if (!elem || !herancaPropriedades[elem]) return;
+
+      var info = herancaPropriedades[elem];
+      var html = '<strong>&lt;' + elem + '&gt;</strong><br><br>';
+
+      if (info.herda.length > 0) {
+        html += '<strong>Propriedades herdadas:</strong><br>';
+        info.herda.forEach(function(p) {
+          html += '<span class="prop prop-inherited">' + p + '</span> ';
+        });
+        html += '<br><br>';
+      }
+
+      if (info.declara.length > 0) {
+        html += '<strong>Propriedades declaradas (nao herdadas):</strong><br>';
+        info.declara.forEach(function(p) {
+          html += '<span class="prop prop-not-inherited">' + p + '</span> ';
+        });
+      }
+
+      if (info.herda.length === 0 && info.declara.length === 0) {
+        html += '<em>Nenhuma propriedade relevante declarada.</em>';
+      }
+
+      document.getElementById('heranca-info').innerHTML = html;
+      document.getElementById('heranca-detalhes').style.display = 'block';
+    });
+  });
+
+  // Heranca ao vivo
+  var herancaPaiCor = document.getElementById('heranca-pai-cor');
+  var herancaLinkInherit = document.getElementById('heranca-link-inherit');
+  var herancaPai = document.getElementById('heranca-pai');
+  var herancaLink = document.getElementById('heranca-link');
+  var herancaLiveCode = document.getElementById('heranca-live-code');
+
+  function atualizarHerancaLive() {
+    var cor = herancaPaiCor.value;
+    var inherit = herancaLinkInherit.value;
+    herancaPai.style.color = cor;
+    herancaLink.style.color = inherit === 'inherit' ? 'inherit' : '#1565c0';
+
+    var codeHtml = '<span class="sel">.pai</span> {\n  <span class="prop">color</span>: <span class="val">' + cor + '</span>;\n}\n\n';
+    if (inherit === 'inherit') {
+      codeHtml += '<span class="sel">.pai a</span> {\n  <span class="prop">color</span>: <span class="val">inherit</span>; <span class="cmt">/* Herda a cor do pai */</span>\n}';
+    } else {
+      codeHtml += '<span class="cmt">/* O link usa a cor padrao do navegador (user agent) */</span>';
+    }
+    herancaLiveCode.innerHTML = codeHtml;
+  }
+
+  herancaPaiCor.addEventListener('change', atualizarHerancaLive);
+  herancaLinkInherit.addEventListener('change', atualizarHerancaLive);
+  atualizarHerancaLive();
+
+  // Kw demo
+  var kwDemoSelect = document.getElementById('kw-demo-select');
+  var kwDemoSpan = document.getElementById('kw-demo-span');
+  var kwDemoCode = document.getElementById('kw-demo-code');
+
+  function atualizarKwDemo() {
+    var kw = kwDemoSelect.value;
+    kwDemoSpan.style.color = kw;
+
+    var codeHtml = '<span class="sel">.texto</span> {\n  <span class="prop">color</span>: <span class="val">' + (kw === 'normal' ? 'inherit' : kw) + '</span>';
+    if (kw === 'inherit') {
+      codeHtml += '; <span class="cmt">/* Herda a cor do elemento pai */</span>';
+    } else if (kw === 'initial') {
+      codeHtml += '; <span class="cmt">/* Reseta para o valor padrao do CSS (preto) */</span>';
+    } else {
+      codeHtml += '; <span class="cmt">/* Valor padrao: herda do pai */</span>';
+    }
+    codeHtml += '\n}';
+    kwDemoCode.innerHTML = codeHtml;
+  }
+
+  kwDemoSelect.addEventListener('change', atualizarKwDemo);
+  atualizarKwDemo();
+
+  // ==========================================
+  // SECAO 4: TEMAS COM VARIAVEIS
+  // ==========================================
+  var temas = {
+    'claro': { fundo: '#ffffff', texto: '#2e4255', titulo: '#1a237e', borda: '#cccccc', link: '#1565c0', cardFundo: '#f8f9fa', nome: 'Claro' },
+    'escuro': { fundo: '#1a1a2e', texto: '#e0e0e0', titulo: '#ffffff', borda: '#4a4a6a', link: '#64b5f6', cardFundo: '#16213e', nome: 'Escuro' },
+    'azul': { fundo: '#e3f2fd', texto: '#1565c0', titulo: '#0d47a1', borda: '#90caf9', link: '#0d47a1', cardFundo: '#bbdefb', nome: 'Azul' },
+    'verde': { fundo: '#e8f5e9', texto: '#2e7d32', titulo: '#1b5e20', borda: '#a5d6a7', link: '#1b5e20', cardFundo: '#c8e6c9', nome: 'Verde' },
+    'contraste': { fundo: '#000000', texto: '#ffffff', titulo: '#ffff00', borda: '#ffffff', link: '#00ffff', cardFundo: '#1a1a1a', nome: 'Alto Contraste' }
+  };
+
+  function trocarTema(nome) {
+    var t = temas[nome];
+    document.querySelectorAll('[data-theme]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === nome);
+    });
+
+    var container = document.getElementById('tema-container');
+    container.style.background = t.fundo;
+
+    var cards = container.querySelectorAll('.theme-demo-card');
+    cards.forEach(function(card) {
+      card.style.background = t.cardFundo;
+      card.style.borderColor = t.borda;
+      card.style.color = t.texto;
+    });
+
+    var titulos = container.querySelectorAll('h3');
+    titulos.forEach(function(h) { h.style.color = t.titulo; });
+
+    var links = container.querySelectorAll('a');
+    links.forEach(function(a) { a.style.color = t.link; });
+
+    var codeHtml = '<span class="cmt">/* Tema: ' + t.nome + ' */</span>\n';
+    codeHtml += '<span class="sel">.tema-' + nome + '</span> {\n';
+    codeHtml += '  <span class="prop">--cor-fundo</span>: <span class="val">' + t.fundo + '</span>;\n';
+    codeHtml += '  <span class="prop">--cor-texto</span>: <span class="val">' + t.texto + '</span>;\n';
+    codeHtml += '  <span class="prop">--cor-titulo</span>: <span class="val">' + t.titulo + '</span>;\n';
+    codeHtml += '  <span class="prop">--cor-borda</span>: <span class="val">' + t.borda + '</span>;\n';
+    codeHtml += '  <span class="prop">--cor-link</span>: <span class="val">' + t.link + '</span>;\n';
+    codeHtml += '}\n\n';
+    codeHtml += '<span class="cmt">/* O componente .card usa as variaveis: */</span>\n';
+    codeHtml += '<span class="sel">.card</span> {\n';
+    codeHtml += '  <span class="prop">background</span>: <span class="val">var(--cor-fundo)</span>;\n';
+    codeHtml += '  <span class="prop">color</span>: <span class="val">var(--cor-texto)</span>;\n';
+    codeHtml += '  <span class="prop">border</span>: <span class="val">var(--cor-borda)</span>;\n';
+    codeHtml += '}';
+
+    document.getElementById('tema-codigo').innerHTML = codeHtml;
+  }
+
+  // Fallback demo
+  var fallbackDemo = document.getElementById('fallback-demo');
+  var fallbackContainer = document.getElementById('fallback-container');
+  var fallbackCode = document.getElementById('fallback-code');
+
+  function atualizarFallback() {
+    var valor = fallbackDemo.value;
+    if (valor === 'definida') {
+      fallbackContainer.style.setProperty('--meu-espacamento', '20px');
+    } else {
+      fallbackContainer.style.removeProperty('--meu-espacamento');
+    }
+
+    var codeHtml = '<span class="sel">:root</span> {\n';
+    if (valor === 'definida') {
+      codeHtml += '  <span class="prop">--meu-espacamento</span>: <span class="val">20px</span>;\n';
+    } else {
+      codeHtml += '  <span class="cmt">/* --meu-espacamento NAO foi definida */</span>\n';
+    }
+    codeHtml += '}\n\n';
+    codeHtml += '<span class="sel">.bloco</span> {\n';
+    codeHtml += '  <span class="prop">padding</span>: <span class="val">var(--meu-espacamento, 10px)</span>;\n';
+    if (valor === 'indefinida') {
+      codeHtml += '  <span class="cmt">/* Como a variavel nao existe, usa o fallback: 10px */</span>\n';
+    }
+    codeHtml += '}';
+    fallbackCode.innerHTML = codeHtml;
+  }
+
+  fallbackDemo.addEventListener('change', atualizarFallback);
+  atualizarFallback();
+
+  // ==========================================
+  // SECAO 5: RESOLUCAO DE CONFLITOS
+  // ==========================================
+  var regras = {
+    tipo: { ativa: false, cor: 'gray', estilo: 'color: gray;' },
+    classe: { ativa: false, cor: 'blue', estilo: 'color: blue;' },
+    id: { ativa: false, cor: 'green', estilo: 'color: green;' },
+    idclasse: { ativa: false, cor: 'orange', estilo: 'color: orange;' },
+    inline: { ativa: false, cor: 'purple', estilo: 'color: purple;' },
+    important: { ativa: false, cor: 'red', estilo: 'color: red !important;' }
+  };
+
+  var conflitoPreview = document.getElementById('conflito-preview');
+  var conflitoRegrasAtivas = document.getElementById('conflito-regras-ativas');
+
+  function toggleRegra(nome) {
+    regras[nome].ativa = !regras[nome].ativa;
+    var btn = document.getElementById('regra-' + nome + '-btn');
+    btn.textContent = regras[nome].ativa ? 'Ativada' : 'Desativada';
+    btn.classList.toggle('active', regras[nome].ativa);
+    atualizarConflito();
+  }
+
+  function atualizarConflito() {
+    // Remove inline style
+    conflitoPreview.removeAttribute('style');
+    conflitoPreview.style.padding = '1.5rem';
+    conflitoPreview.style.border = '2px solid var(--border)';
+    conflitoPreview.style.fontSize = '1.3rem';
+    conflitoPreview.style.textAlign = 'center';
+
+    // Aplica regras na ordem de precedencia
+    var ordem = ['tipo', 'classe', 'id', 'idclasse', 'inline', 'important'];
+    var regrasAtivasHtml = '';
+    var corFinal = 'black';
+    var fonteFinal = '';
+
+    // !important e inline precisam de tratamento especial
+    if (regras.important.ativa) {
+      corFinal = regras.important.cor;
+      fonteFinal = 'p { color: red !important; }';
+    }
+
+    if (regras.inline.ativa && !regras.important.ativa) {
+      corFinal = regras.inline.cor;
+      fonteFinal = 'style="color: purple"';
+    }
+
+    if (regras.idclasse.ativa && !regras.inline.ativa && !regras.important.ativa) {
+      corFinal = regras.idclasse.cor;
+      fonteFinal = '#destaque.texto { color: orange; }';
+    }
+
+    if (regras.id.ativa && !regras.idclasse.ativa && !regras.inline.ativa && !regras.important.ativa) {
+      corFinal = regras.id.cor;
+      fonteFinal = '#destaque { color: green; }';
+    }
+
+    if (regras.classe.ativa && !regras.id.ativa && !regras.idclasse.ativa && !regras.inline.ativa && !regras.important.ativa) {
+      corFinal = regras.classe.cor;
+      fonteFinal = '.texto { color: blue; }';
+    }
+
+    if (regras.tipo.ativa && !regras.classe.ativa && !regras.id.ativa && !regras.idclasse.ativa && !regras.inline.ativa && !regras.important.ativa) {
+      corFinal = regras.tipo.cor;
+      fonteFinal = 'p { color: gray; }';
+    }
+
+    conflitoPreview.style.color = corFinal;
+
+    // Constroi o codigo ativo
+    var html = '';
+    ordem.forEach(function(nome) {
+      if (regras[nome].ativa) {
+        html += '<div style="padding: 0.3rem 0; border-bottom: 1px solid #eee;">';
+        html += '<span style="color: ' + regras[nome].cor + '; font-weight: 800;">&#9654;</span> ';
+        html += regras[nome].estilo;
+        html += '</div>';
+      }
+    });
+
+    if (html === '') {
+      html = '<span style="color: #999;">Nenhuma regra ativa. O elemento usa a cor herdada do navegador.</span>';
+    }
+
+    document.getElementById('conflito-regras-ativas').innerHTML = html;
+  }
+
+  // Shorthand demo
+  var shorthandAtivo = false;
+  var shorthandBtn = document.getElementById('shorthand-btn');
+  var shorthandTexto = document.getElementById('shorthand-texto');
+  var shorthandCode = document.getElementById('shorthand-code');
+
+  function toggleShorthand() {
+    shorthandAtivo = !shorthandAtivo;
+    shorthandBtn.textContent = shorthandAtivo ? 'Ativado' : 'Desativado';
+    shorthandBtn.classList.toggle('active', shorthandAtivo);
+
+    if (shorthandAtivo) {
+      shorthandTexto.removeAttribute('style');
+      shorthandTexto.style.font = '20px Arial';
+    } else {
+      shorthandTexto.removeAttribute('style');
+      shorthandTexto.style.fontWeight = 'bold';
+      shorthandTexto.style.fontSize = '14px';
+    }
+
+    var codeHtml = '';
+    if (!shorthandAtivo) {
+      codeHtml = '<span class="sel">.texto</span> {\n';
+      codeHtml += '  <span class="prop">font-weight</span>: <span class="val">bold</span>;\n';
+      codeHtml += '  <span class="prop">font-size</span>: <span class="val">14px</span>;\n';
+      codeHtml += '}\n\n';
+      codeHtml += '<span class="cmt">/* Resultado: texto em negrito e tamanho 14px */</span>';
+    } else {
+      codeHtml = '<span class="sel">.texto</span> {\n';
+      codeHtml += '  <span class="prop">font-weight</span>: <span class="val">bold</span>;\n';
+      codeHtml += '  <span class="prop">font-size</span>: <span class="val">14px</span>;\n';
+      codeHtml += '}\n\n';
+      codeHtml += '<span class="sel">.texto</span> {\n';
+      codeHtml += '  <span class="prop">font</span>: <span class="val">20px Arial</span>; <span class="cmt">/* Shorthand reseta: bold -> normal, 14px -> 20px */</span>\n';
+      codeHtml += '}\n\n';
+      codeHtml += '<span class="cmt">/* O shorthand "font" reseta TODOS os sub-propriedades nao especificadas */</span>\n';
+      codeHtml += '<span class="cmt">/* font-weight voltou para "normal" silenciosamente! */</span>';
+    }
+    shorthandCode.innerHTML = codeHtml;
+  }
+</script>
