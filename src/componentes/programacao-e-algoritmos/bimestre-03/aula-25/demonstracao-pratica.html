@@ -1,0 +1,193 @@
+---
+layout: exercicio
+title: "Para Demonstração: Função Gigante vs. Modularização"
+exercicio_numero: "01"
+aula_numero: "25"
+description: "Demonstração prática que compara um mesmo relatório escrito como uma única função gigante e depois refatorado em funções e procedimentos menores, mostrando o valor da modularização em Java."
+---
+
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Esta demonstração coloca em prática o conceito de
+    <strong>modularização</strong>: observe o mesmo programa escrito de duas
+    formas. O primeiro exemplo concentra <strong>todo</strong> o processamento
+    em um único bloco gigante dentro do <code class="one-line-code">main</code>.
+    O segundo exemplo <em>refatora</em> esse mesmo código, quebrando-o em
+    funções e procedimentos menores, cada um com um nome descritivo e uma única
+    responsabilidade.
+  </p>
+  <p>
+    O programa gera o <strong>relatório de desempenho de uma turma</strong>:
+    calcula a média de cada aluno, determina o conceito (A–E), identifica os
+    aprovados e exibe a média geral.
+  </p>
+
+  <hr>
+
+  <h3>A. Versão Gigante (Sem Modularização)</h3>
+  <p>Tudo em um único método: cálculos, lógica de conceito, contagem e impressão misturados em um só bloco extenso.</p>
+  <div class="code-container">
+    <pre><code class="language-java">public class RelatorioGigante {
+
+    public static void main(String[] args) {
+        // TODO: todos os passos amontoados em um único método
+
+        String[] nomes = {"Aline", "Bruno", "Carla", "Diego", "Elias"};
+        double[][] notas = {
+            {9.5, 8.0, 10.0},
+            {5.0, 6.5, 7.0},
+            {7.0, 7.5, 6.0},
+            {4.0, 5.0, 3.5},
+            {10.0, 9.5, 9.0}
+        };
+
+        System.out.println("=====================================");
+        System.out.println("RELATÓRIO DA TURMA");
+        System.out.println("=====================================");
+
+        double[] medias = new double[nomes.length];
+        double somaTurma = 0.0;
+        int aprovados = 0;
+
+        for (int i = 0; i &lt; nomes.length; i++) {
+            double media = (notas[i][0] + notas[i][1] + notas[i][2]) / 3.0;
+            medias[i] = media;
+            somaTurma = somaTurma + media;
+
+            char conceito;
+            if (media &gt;= 9.0) {
+                conceito = 'A';
+            } else if (media &gt;= 8.0) {
+                conceito = 'B';
+            } else if (media &gt;= 7.0) {
+                conceito = 'C';
+            } else if (media &gt;= 6.0) {
+                conceito = 'D';
+            } else {
+                conceito = 'E';
+            }
+
+            boolean aprovado = media &gt;= 6.0;
+            if (aprovado) {
+                aprovados++;
+            }
+
+            System.out.println(nomes[i] + ": média " + media
+                    + " - Conceito " + conceito
+                    + (aprovado ? " - APROVADO" : " - REPROVADO"));
+        }
+
+        double mediaTurma = somaTurma / nomes.length;
+        System.out.println("-------------------------------------");
+        System.out.println("Média da turma: " + mediaTurma);
+        System.out.println("Aprovados: " + aprovados + " de " + nomes.length);
+    }
+}</code></pre>
+  </div>
+
+  <hr>
+
+  <h3>B. Versão Modular (Funções e Procedimentos)</h3>
+  <p>
+    O mesmo relatório, agora organizado em unidades pequenas e reutilizáveis.
+    Cada sub-rotina tem <strong>uma única responsabilidade</strong> e o
+    <code class="one-line-code">main</code> se torna apenas um "roteiro" que
+    orquestra as chamadas.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-java">public class RelatorioModular {
+
+    // Procedimento: desenha uma linha divisória
+    public static void imprimirLinha(String simbolo, int tamanho) {
+        for (int i = 0; i &lt; tamanho; i++) {
+            System.out.print(simbolo);
+        }
+        System.out.println();
+    }
+
+    // Função: retorna a média de três notas
+    public static double calcularMedia(double n1, double n2, double n3) {
+        return (n1 + n2 + n3) / 3.0;
+    }
+
+    // Função: retorna o conceito a partir da média
+    public static char obterConceito(double media) {
+        if (media &gt;= 9.0) return 'A';
+        else if (media &gt;= 8.0) return 'B';
+        else if (media &gt;= 7.0) return 'C';
+        else if (media &gt;= 6.0) return 'D';
+        else return 'E';
+    }
+
+    // Função: retorna se o aluno foi aprovado
+    public static boolean foiAprovado(double media) {
+        return media &gt;= 6.0;
+    }
+
+    // Função: retorna a média geral da turma
+    public static double calcularMediaTurma(double[] medias) {
+        double soma = 0.0;
+        for (int i = 0; i &lt; medias.length; i++) {
+            soma = soma + medias[i];
+        }
+        return soma / medias.length;
+    }
+
+    public static void main(String[] args) {
+        String[] nomes = {"Aline", "Bruno", "Carla", "Diego", "Elias"};
+        double[][] notas = {
+            {9.5, 8.0, 10.0},
+            {5.0, 6.5, 7.0},
+            {7.0, 7.5, 6.0},
+            {4.0, 5.0, 3.5},
+            {10.0, 9.5, 9.0}
+        };
+
+        imprimirLinha("=", 40);
+        System.out.println("RELATÓRIO DA TURMA");
+        imprimirLinha("=", 40);
+
+        double[] medias = new double[nomes.length];
+        int aprovados = 0;
+
+        for (int i = 0; i &lt; nomes.length; i++) {
+            double media = calcularMedia(notas[i][0], notas[i][1], notas[i][2]);
+            medias[i] = media;
+
+            if (foiAprovado(media)) {
+                aprovados++;
+            }
+
+            System.out.println(nomes[i] + ": média " + media
+                    + " - Conceito " + obterConceito(media)
+                    + (foiAprovado(media) ? " - APROVADO" : " - REPROVADO"));
+        }
+
+        System.out.println("-------------------------------------------");
+        System.out.println("Média da turma: " + calcularMediaTurma(medias));
+        System.out.println("Aprovados: " + aprovados + " de " + nomes.length);
+    }
+}</code></pre>
+  </div>
+</section>
+
+<div class="tip-box">
+  <h4>O que mudou?</h4>
+  <ul>
+    <li><strong>Legibilidade:</strong> O <code class="one-line-code">main</code> agora é curto e descreve, de cima para baixo, os passos do relatório.</li>
+    <li><strong>Reutilização:</strong> <code class="one-line-code">calcularMedia</code>, <code class="one-line-code">obterConceito</code> e <code class="one-line-code">imprimirLinha</code> podem ser usadas em qualquer outro trecho do sistema.</li>
+    <li><strong>Manutenção:</strong> Para mudar a regra de conceito, basta alterar apenas <code class="one-line-code">obterConceito</code>. Para trocar o traço da divisória, altere apenas a chamada de <code class="one-line-code">imprimirLinha</code>.</li>
+    <li><strong>Teste isolado:</strong> Cada função pode ser testada independentemente (ex: <code class="one-line-code">calcularMedia(10, 9, 8)</code> deve retornar <code class="one-line-code">9.0</code>).</li>
+  </ul>
+</div>
+
+<div class="tip-box">
+  <h4>Dica de demonstração em sala</h4>
+  <ol>
+    <li>Compile e execute primeiro o <code class="one-line-code">RelatorioGigante</code>.</li>
+    <li>Depois compile e execute o <code class="one-line-code">RelatorioModular</code>.</li>
+    <li>Observe que <strong>a saída é idêntica</strong>, mas a versão modular é mais fácil de ler, manter e testar.</li>
+    <li>Pergunte aos alunos: para adicionar um novo tipo de cálculo (ex: desvio padrão), em qual das versões seria mais fácil?</li>
+  </ol>
+</div>
