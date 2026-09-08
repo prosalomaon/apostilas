@@ -82,7 +82,7 @@ layout: base
 
     function gerarCodigoUnico(nome) {
       const timestamp = Date.now();
-      const componente = '{{ sigla_componente | default("XX") }}';
+      const componente = '{{ sigla_componente | default("XX") + "." + aula_numero }}';
       const nomeCodificado = codificarNome(nome);
       return `${timestamp}:${componente}:${nomeCodificado}`;
     }

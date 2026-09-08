@@ -1,22 +1,188 @@
 ---
-layout: exercicio
-title: "Introdução aos Bancos de Dados: Evolução histórica e papel nas organizações."
+layout: questionario
+title: "Questionário - Introdução à Normalização: Por que normalizar?"
 exercicio_numero: "02"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 01."
+aula_numero: "21"
+sigla_componente: "BDI"
+description: "Questionário de fixação sobre a introdução à normalização: o que é, seus objetivos (reduzir redundância, evitar inconsistências e anomalias), a solução do Tabelão e quando aplicar no projeto do banco de dados."
+perguntas:
+  - texto: "O que é a normalização de um banco de dados?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Um processo matemático formal, criado por Edgar F. Codd, que aplica regras (Formas Normais) para verificar se as tabelas estão corretamente projetadas."
+      - letra: "b"
+        texto: "Uma técnica de criptografia que protege os dados armazenados nas tabelas contra acesso não autorizado."
+      - letra: "c"
+        texto: "Um comando SQL que simplesmente apaga registros duplicados das tabelas de um banco de dados."
+      - letra: "d"
+        texto: "Um método de backup que copia os dados para várias tabelas diferentes para garantir a segurança."
+
+  - texto: "Qual é o principal objetivo da normalização?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Aumentar a velocidade das consultas duplicando os dados em várias tabelas."
+      - letra: "b"
+        texto: "Reduzir o número de tabelas do banco de dados para economizar espaço."
+      - letra: "c"
+        texto: "Minimizar redundância, eliminar inconsistências e evitar anomalias de inserção, deleção e modificação."
+      - letra: "d"
+        texto: "Impedir que usuários sem permissão consigam visualizar os dados."
+
+  - texto: "O que caracteriza a redundância de dados?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Armazenar cada informação apenas uma única vez em todo o banco de dados."
+      - letra: "b"
+        texto: "Armazenar o mesmo dado de forma repetida em vários lugares."
+      - letra: "c"
+        texto: "Utilizar chaves estrangeiras para relacionar tabelas diferentes."
+      - letra: "d"
+        texto: "Aplicar índices para acelerar a busca de registros."
+
+  - texto: "Qual problema grave a redundância de dados pode causar?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Aumento da velocidade de leitura das consultas."
+      - letra: "b"
+        texto: "Impossibilidade de criar chaves primárias."
+      - letra: "c"
+        texto: "Perda automática de dados ao reiniciar o servidor."
+      - letra: "d"
+        texto: "Inconsistência de dados e desperdício de espaço de armazenamento."
+
+  - texto: "No exemplo do \"Tabelão\", por que o nome e o endereço de Davi B. aparecem duas vezes?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Porque a tabela mistura Pedido, Cliente e Produto, repetindo os dados do cliente a cada pedido."
+      - letra: "b"
+        texto: "Porque o banco de dados aplicou um processo de desnormalização automática."
+      - letra: "c"
+        texto: "Porque Davi B. fez dois cadastros separados no sistema de clientes."
+      - letra: "d"
+        texto: "Porque todos os clientes precisam obrigatoriamente aparecer em todas as tabelas."
+
+  - texto: "O que é uma anomalia de inserção?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "A perda de informações importantes ao apagar um registro do banco de dados."
+      - letra: "b"
+        texto: "A necessidade de modificar várias linhas para efetivar uma única mudança de dado."
+      - letra: "c"
+        texto: "A impossibilidade de cadastrar uma informação porque ela depende de outra que ainda não existe."
+      - letra: "d"
+        texto: "A duplicação automática de registros com chaves primárias iguais."
+
+  - texto: "Se, ao apagar o único pedido de um cliente, os dados de cadastro dele (telefone, endereço) também desaparecem, ocorre uma:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Anomalia de inserção."
+      - letra: "b"
+        texto: "Anomalia de deleção (exclusão)."
+      - letra: "c"
+        texto: "Anomalia de modificação (alteração)."
+      - letra: "d"
+        texto: "Ação maliciosa do banco de dados."
+
+  - texto: "Quando é necessário localizar e alterar múltiplas linhas para efetuar uma única mudança de fato, e uma linha esquecida torna os dados inconsistentes, temos uma:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Anomalia de modificação (alteração)."
+      - letra: "b"
+        texto: "Anomalia de deleção (exclusão)."
+      - letra: "c"
+        texto: "Anomalia de inserção."
+      - letra: "d"
+        texto: "Chave estrangeira mal definida."
+
+  - texto: "Qual é a \"Regra da Tabela\" na normalização?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Toda tabela deve ter pelo menos dez colunas para ser considerada válida."
+      - letra: "b"
+        texto: "Toda tabela deve possuir obrigatoriamente duas chaves primárias."
+      - letra: "c"
+        texto: "Toda tabela deve ser criada com exatamente uma coluna de cada tipo de dado."
+      - letra: "d"
+        texto: "Uma tabela bem projetada deve representar apenas um assunto (entidade ou relacionamento)."
+
+  - texto: "Na versão normalizada do exemplo, onde o endereço do cliente passa a ser armazenado?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Em cada linha da tabela de pedidos, junto com o produto comprado."
+      - letra: "b"
+        texto: "Na própria tabela do Tabelão, mantendo a repetição dos dados."
+      - letra: "c"
+        texto: "Somente na tabela clientes, uma única vez por cliente."
+      - letra: "d"
+        texto: "Em uma tabela nova e exclusiva para endereços de todos os produtos."
+
+  - texto: "Como é possível reconstruir a visão original do \"Tabelão\" a partir das tabelas normalizadas?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "Criando uma nova tabela que duplique manualmente todos os dados."
+      - letra: "b"
+        texto: "Utilizando uma consulta com JOIN entre as tabelas clientes, produtos e pedidos."
+      - letra: "c"
+        texto: "Exportando os dados para uma planilha e importando novamente."
+      - letra: "d"
+        texto: "Executando um comando DELETE para limpar as tabelas menores."
+
+  - texto: "Se Davi B. mudar de endereço, qual é a vantagem da estrutura normalizada em relação ao Tabelão?"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "Basta alterar uma única linha na tabela clientes para atualizar o endereço."
+      - letra: "b"
+        texto: "É necessário atualizar o novo endereço em todas as linhas de seus pedidos."
+      - letra: "c"
+        texto: "O endereço não pode mais ser alterado depois que o cliente faz um pedido."
+      - letra: "d"
+        texto: "É preciso apagar o cliente e recadastrá-lo do zero com o novo endereço."
+
+  - texto: "Qual benefício a normalização traz em relação às anomalias de inserção e deleção?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Impede a criação de novos clientes ou produtos no sistema."
+      - letra: "b"
+        texto: "Exige que todo cliente tenha ao menos um pedido cadastrado."
+      - letra: "c"
+        texto: "Faz com que apagar um pedido apague também os dados do cliente."
+      - letra: "d"
+        texto: "Permite cadastrar um cliente sem pedidos e apagar um pedido sem perder os dados do cliente."
+
+  - texto: "O que é a desnormalização e quando ela é utilizada?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "É a aplicação das Formas Normais para organizar melhor as tabelas relacionais."
+      - letra: "b"
+        texto: "É reverter a normalização em casos específicos, como Data Warehouse, para priorizar a velocidade de consultas complexas."
+      - letra: "c"
+        texto: "É um recurso que obriga todas as tabelas a manterem dados duplicados."
+      - letra: "d"
+        texto: "É um processo que elimina todas as chaves estrangeiras do banco de dados."
+
+  - texto: "Em que momento do projeto do banco de dados a normalização deve ser aplicada?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "Somente após o banco de dados estar em produção e populado com dados reais."
+      - letra: "b"
+        texto: "Apenas quando o sistema apresentar erros de desempenho em consultas."
+      - letra: "c"
+        texto: "Logo após o modelo lógico, antes da implementação física (DDL)."
+      - letra: "d"
+        texto: "Nunca, pois a normalização é opcional em sistemas relacionais."
 ---
-
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
-
-
-
-
-
