@@ -2,18 +2,362 @@
 title: "Testes de Segurança"
 aula_numero: "25"
 subject: "qualidade-e-teste-de-software"
-description: "Conteúdo da aula 05 do bimestre 03: Testes de Segurança."
+description: "Esta aula apresenta os fundamentos dos Testes de Segurança de software. Aborda a Tríade CIA (Confidencialidade, Integridade e Disponibilidade), vulnerabilidades comuns como SQL Injection, XSS, Buffer Overflow e Backdoors, o princípio de Falha Segura (Fail-Secure) e a elaboração de cenários de testes negativos baseados em Casos de Abuso (Misuse Cases)."
 tags:
 - aula
 - bimestre-03
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 05 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+
+  <h3>1. Objetivos da Aula</h3>
+  <ul>
+    <li>Compreender os conceitos e objetivos fundamentais do <strong>Teste de Segurança</strong> de software.</li>
+    <li>Conhecer e validar a <strong>Tríade CIA</strong> (Confidencialidade, Integridade e Disponibilidade).</li>
+    <li>Identificar as <strong>vulnerabilidades de código</strong> mais comuns, como SQL Injection, XSS, Buffer Overflows e Backdoors.</li>
+    <li>Aplicar o princípio de <strong>Falha Segura (Fail-Secure)</strong> no tratamento de erros.</li>
+    <li>Aprender a elaborar cenários de <strong>testes negativos</strong> baseados em <strong>Casos de Abuso (Misuse Cases)</strong>.</li>
+  </ul>
+
+  <h3>2. O que é Teste de Segurança?</h3>
+  <p>
+    Diferentemente dos testes funcionais tradicionais, que verificam se o sistema faz o que foi projetado para fazer, o
+    <strong>teste de segurança</strong> enfoca o que o software <strong>não deve fazer</strong>. Ele busca garantir que
+    o sistema se comporte de maneira segura e consistente sob todas as condições (esperadas ou inesperadas), e que falhas
+    acidentais não exponham recursos a invasores.
+  </p>
+  <p>
+    Um dos princípios de ouro do desenvolvimento seguro é o <strong>Fail-Secure (Falha Segura)</strong>: quando o
+    software falhar, o tratamento de erros e exceções deve resolver a falha de forma a não deixar dados, recursos ou o
+    ambiente vulneráveis a ataques ou modificações não autorizadas.
+  </p>
+
+  <h3>3. A Tríade CIA (CIA Triad)</h3>
+  <p>
+    Qualquer estratégia de segurança da informação é construída sobre três pilares fundamentais, que devem ser validados
+    pelo testador:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Pilar</th>
+        <th>Descrição</th>
+        <th>Foco dos Testes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Confidencialidade</strong></td>
+        <td>Garante que dados e processos sejam protegidos contra revelação ou acesso por pessoas e sistemas não
+          autorizados.</td>
+        <td>Autenticação (login, expiração de senha, proteção de cookies e sessões) e controle de acesso a arquivos e
+          diretórios.</td>
+      </tr>
+      <tr>
+        <td><strong>Integridade</strong></td>
+        <td>Garante que as informações e processos não sofram modificações, inserções ou adulterações não autorizadas,
+          seja em trânsito pela rede ou armazenadas em disco.</td>
+        <td>Robustez de algoritmos de criptografia e assinaturas digitais.</td>
+      </tr>
+      <tr>
+        <td><strong>Disponibilidade</strong></td>
+        <td>Garante que os dados e processos estejam sempre acessíveis aos usuários autorizados, mesmo sob estresse,
+          picos de tráfego ou tentativas de interrupção de serviço.</td>
+        <td>Resistência a ataques de negação de serviço e restabelecimento íntegro.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4. Principais Ameaças e Vulnerabilidades de Software</h3>
+  <p>
+    Os testadores de segurança devem ter um olhar crítico voltado para as brechas mais exploradas por atacantes. No
+    desenvolvimento de sistemas, as mais críticas incluem:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Vulnerabilidade</th>
+        <th>Descrição</th>
+        <th>Risco</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Buffer Overflow</strong></td>
+        <td>Ocorre quando uma aplicação grava mais dados em uma área de memória temporária (buffer) do que ela é capaz de
+          suportar.</td>
+        <td>Permite que atacantes corrompam dados e executem comandos arbitrários no sistema.</td>
+      </tr>
+      <tr>
+        <td><strong>SQL Injection</strong></td>
+        <td>Comandos SQL maliciosos são inseridos em campos de entrada (inputs) e enviados diretamente ao banco de dados
+          sem sanitização adequada.</td>
+        <td>Permite acesso não autorizado, manipulação ou destruição de dados no banco.</td>
+      </tr>
+      <tr>
+        <td><strong>Cross-Site Scripting (XSS)</strong></td>
+        <td>Scripts maliciosos de terceiros são injetados em páginas web legítimas e executados no navegador de outros
+          usuários.</td>
+        <td>Roubo de sessões, cookies e credenciais de usuários.</td>
+      </tr>
+      <tr>
+        <td><strong>Backdoors</strong></td>
+        <td>Atalhos ou mecanismos de acesso alternativos deixados intencionalmente (ou por descuido) por desenvolvedores
+          na aplicação.</td>
+        <td>Comprometem todo o sistema ao fornecer caminhos ocultos de acesso.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5. Protocolos de Comunicação Segura</h3>
+  <p>
+    Para proteger a transmissão de dados contra interceptação (<em>eavesdropping</em>) ou intrusão, o software deve
+    utilizar protocolos que garantam canais seguros:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Protocolo</th>
+        <th>Camada</th>
+        <th>Finalidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SSL/TLS (HTTPS)</strong></td>
+        <td>Transporte (Layer 4)</td>
+        <td>Autenticação de servidores e criptografia de comunicações em sessões web.</td>
+      </tr>
+      <tr>
+        <td><strong>IPSec</strong></td>
+        <td>Rede (Layer 3)</td>
+        <td>Confidencialidade e integridade da comunicação ao nível de rede (muito usado em VPNs).</td>
+      </tr>
+      <tr>
+        <td><strong>Wireless (EAP, PEAP, TLS, TTLS)</strong></td>
+        <td>Enlace de dados</td>
+        <td>Autenticação e tráfego seguro em redes sem fio.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>6. Princípio de Falha Segura (Fail-Secure)</h3>
+  <p>
+    Quando um sistema encontra uma falha ou exceção, o comportamento deve ser <strong>seguro por padrão</strong>. Isso
+    significa que:
+  </p>
+  <ul>
+    <li>Exceções <strong>não tratadas</strong> não devem expor dados internos (caminhos de diretório, strings de
+      conexão, stack traces).</li>
+    <li>O sistema deve <strong>reverter</strong> qualquer estado parcial e bloquear a operação até que a validação
+      seja confirmada.</li>
+    <li>Mensagens de erro devem ser <strong>genéricas e amigáveis</strong>, evitando revelar detalhes de infraestrutura
+      a atacantes.</li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 05 em desenvolvimento...</p>
+  <h2>Exemplos Práticos</h2>
+
+  <h3>1. Teste de Penetração em SQL Injection</h3>
+  <p>
+    Imagine uma tela de autenticação administrativa simples que conecta a um banco de dados SQL.
+  </p>
+  <p><strong>Código vulnerável por trás da tela:</strong></p>
+  <pre><code>SELECT * FROM usuarios WHERE login = '$usuario' AND senha = '$password';</code></pre>
+  <p><strong>Abordagem do Testador (Caso de Abuso):</strong></p>
+  <p>
+    No campo de login, em vez de digitar um usuário válido, o testador insere o seguinte comando:
+  </p>
+  <pre><code>admin' OR '1'='1</code></pre>
+  <p><strong>Resultado do teste de penetração:</strong></p>
+  <p>
+    Como a entrada <strong>não foi sanitizada</strong>, a query enviada ao banco de dados se torna:
+  </p>
+  <pre><code>SELECT * FROM usuarios WHERE login = 'admin' OR '1'='1' AND senha = '...';</code></pre>
+  <p>
+    Como a condição <code class="one-line-code">'1'='1'</code> é sempre verdadeira, o banco de dados ignora a senha e
+    concede acesso total ao testador de segurança.
+  </p>
+
+  <h3>2. Testando o Princípio de Falha Segura (Fail-Secure)</h3>
+  <p>
+    <strong>Cenário:</strong> O sistema de faturamento de uma empresa consome uma API externa de pagamentos para aprovar
+    uma transação.
+  </p>
+  <p><strong>Abordagem do Testador:</strong></p>
+  <ul>
+    <li>O testador simula uma <strong>falha catastrófica de rede</strong> ou a indisponibilidade total da API externa
+      durante o momento do clique de "Pagar".</li>
+  </ul>
+  <p><strong>Análise do comportamento de erro:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Comportamento</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:#dc3545;">Falha Insegura</strong></td>
+        <td>O sistema dispara uma exceção não tratada na tela (exibindo caminhos de diretório, strings de conexão ou
+          stack trace do código) e aprova a transação localmente sem a confirmação de recebimento da API.</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#198754;">Falha Segura (Esperado)</strong></td>
+        <td>O sistema captura a exceção de forma robusta, exibe uma mensagem genérica amigável ao usuário, reverte
+          qualquer estado de banco de dados e bloqueia a liberação do serviço até que o recebimento seja confirmado e
+          validado com segurança.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>Diagramação</h2>
+  <p>Representação visual dos principais conceitos abordados nesta aula:</p>
+
+  <h3>1. A Tríade CIA</h3>
+  <p>
+    Os três pilares fundamentais da segurança da informação que o testador deve validar:
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    C["CIA Triad"]
+    C --> A["Confidencialidade\nProteção contra acesso não autorizado"]
+    C --> I["Integridade\nProteção contra adulteração"]
+    C --> D["Disponibilidade\nAcessível aos usuários autorizados"]
+
+    A --> A1["Autenticação\ne controle de acesso"]
+    I --> I1["Criptografia\ne assinaturas digitais"]
+    D --> D1["Resistência a\nataques DDoS"]
+
+    style C fill:#212529,color:#fff,stroke:#495057,stroke-width:2px
+    style A fill:#cfe2ff,stroke:#084298
+    style I fill:#cfe2ff,stroke:#084298
+    style D fill:#cfe2ff,stroke:#084298
+  </div>
+
+  <h3>2. Fluxo de um Ataque SQL Injection</h3>
+  <p>
+    Demonstra como uma entrada não sanitizada pode manipular uma consulta SQL:
+  </p>
+  <div class="mermaid">
+    flowchart LR
+    U["Usuário malicioso"] -->|"admin' OR '1'='1"| I["Input não sanitizado"]
+    I --> Q["Query modificada"]
+    Q --> B["Banco de dados"]
+    B --> R["Acesso não autorizado"]
+
+    style U fill:#f8d7da,stroke:#721c24
+    style R fill:#f8d7da,stroke:#721c24
+    style I fill:#fff3cd,stroke:#664d03
+    style B fill:#d1e7dd,stroke:#0f5132
+  </div>
+
+  <h3>3. Princípio Fail-Secure</h3>
+  <p>
+    Comportamento esperado do sistema quando uma falha é detectada:
+  </p>
+  <div class="mermaid">
+    flowchart TD
+    A([Operação Iniciada]) --> B{Falha detectada?}
+    B -->|Não| C[Operação concluída com sucesso]
+    B -->|Sim| D{Tratamento de exceção}
+    D -->|Inseguro| E[Expor dados internos\n+ Operação indevida]
+    D -->|Seguro| F[Reverter estado\n+ Mensagem genérica]
+    F --> G[Bloquear até validação]
+    G --> H([Operação interrompida com segurança])
+
+    style E fill:#f8d7da,stroke:#721c24
+    style H fill:#d1e7dd,stroke:#0f5132
+    style B fill:#fff3cd,stroke:#664d03
+    style D fill:#fff3cd,stroke:#664d03
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Ferramentas de Teste de Segurança</h2>
+  <p>
+    Para as aulas práticas de laboratório, o plano de curso sugere a utilização de ferramentas consolidadas:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Ferramenta</th>
+        <th>Finalidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Wireshark</strong></td>
+        <td>Análise de protocolos de rede para capturar e inspecionar pacotes em tempo real. Permite verificar se o
+          software transmite dados confidenciais ou credenciais em texto claro (HTTP) em vez de conexões criptografadas
+          (HTTPS).</td>
+      </tr>
+      <tr>
+        <td><strong>Nmap</strong></td>
+        <td>Varredura de portas abertas, descoberta de serviços ativos e análise preliminar de vulnerabilidades em
+          sistemas de rede antes de testes de penetração específicos.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>Fail-Secure é o padrão:</strong> sempre que o sistema falhar, ele deve se comportar de forma segura —
+      nunca expor dados internos ou permitir operações indevidas.
+    </li>
+    <li>
+      <strong>Sanitização de entradas:</strong> toda entrada do usuário deve ser validada e sanitizada antes de ser
+      processada — isso previne SQL Injection, XSS e outras vulnerabilidades de injeção.
+    </li>
+    <li>
+      <strong>Casos de Abuso (Misuse Cases):</strong> ao elaborar testes negativos, pense como um atacante: qual o
+      pior cenário que pode ocorrer se o sistema falhar ou for mal utilizado?
+    </li>
+    <li>
+      <strong>Tríade CIA:</strong> todo teste de segurança deve, direta ou indiretamente, validar pelo menos um dos
+      três pilares (Confidencialidade, Integridade ou Disponibilidade).
+    </li>
+    <li>
+      <strong>Protocolos seguros:</strong> sempre valide se o software utiliza HTTPS/TLS para transmissão de dados
+      sensíveis e não envia credenciais em texto claro.
+    </li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>
+      PRESSMAN, Roger S. <em>Engenharia de Software: Uma Abordagem Profissional</em>. 8. ed. Porto Alegre: AMGH,
+      2016.
+    </li>
+    <li>
+      MYERS, Glenford J.; SANDLER, Corey; BADGETT, Tom. <em>The Art of Software Testing</em>. 3. ed. Hoboken: John
+      Wiley &amp; Sons, 2012.
+    </li>
+    <li>
+      OWASP Foundation. <em>OWASP Top Ten</em>. Open Web Application Security Project. Disponível em:
+      https://owasp.org/www-project-top-ten/
+    </li>
+    <li>
+      ISTQB. <em>Certified Tester Foundation Level Syllabus</em>. International Software Testing Qualifications
+      Board. Disponível em: https://www.istqb.org
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Elaborando um Plano de Casos de Abuso (Misuse Cases)</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
 </section>

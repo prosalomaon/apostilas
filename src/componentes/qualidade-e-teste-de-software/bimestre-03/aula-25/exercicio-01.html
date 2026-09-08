@@ -1,19 +1,222 @@
 ---
 layout: exercicio
-title: "Testes de Segurança"
+title: "Atividade Prática: Elaborando um Plano de Casos de Abuso (Misuse Cases)"
 exercicio_numero: "01"
-aula_numero: "05"
+aula_numero: "25"
 subject: "qualidade-e-teste-de-software"
-description: "Exercício 01 da aula 05 do bimestre 03: Testes de Segurança."
+description: "Elaborar um plano de Casos de Abuso (Misuse Cases) para um sistema web de Recuperação de Senha, aplicando os conceitos de Confidencialidade, Integridade e Disponibilidade da Tríade CIA."
 ---
 
-<p>Conteúdo do exercício 01 da aula 05 em desenvolvimento...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    A empresa <strong>SecurePass</strong> está desenvolvendo um sistema web simples de
+    <strong>Recuperação de Senha</strong> — aquele que envia um link para o e-mail do usuário quando ele esquece a
+    senha. O módulo ainda não passou por nenhum teste de segurança e você foi contratado como
+    <strong>testador de segurança</strong>.
+  </p>
+  <hr>
+  <h3>Descrição do Sistema</h3>
+  <p>
+    Quando um usuário esquece a senha, ele informa seu e-mail na tela de login. O sistema gera um
+    <strong>token de recuperação</strong>, envia um e-mail com um link para o usuário e permite que ele defina uma
+    nova senha a partir desse link.
+  </p>
+  <p>
+    A URL do link de recuperação tem o seguinte formato:
+  </p>
+  <pre><code>https://site.com/recuperar?id=45</code></pre>
+  <ul>
+    <li>O parâmetro <code class="one-line-code">id</code> identifica o usuário que está recuperando a senha.</li>
+    <li>O token de recuperação é enviado por e-mail e é usado apenas uma vez.</li>
+    <li>O servidor de e-mails da aplicação tem recursos limitados de processamento.</li>
+  </ul>
+  <p>
+    Trabalhando <strong>em duplas (programação/teste em pares)</strong>, vocês devem criar uma
+    <strong>planilha de Casos de Abuso (Misuse Cases)</strong> para este sistema.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Questões</h2>
+
+  <h3>Questão 1: Caso de Abuso — Confidencialidade</h3>
+  <p>
+    A <strong>Confidencialidade</strong> garante que dados e processos sejam protegidos contra revelação ou acesso por
+    pessoas e sistemas não autorizados.
+  </p>
+  <p>
+    Descreva como testar se um <strong>usuário malicioso</strong> consegue <strong>interceptar o token de recuperação</strong>
+    que vai para o e-mail de outro usuário. Preencha o modelo abaixo:
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Campo</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Nome do Caso de Abuso</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Ameaça</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Passo a passo do ataque</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Resultado esperado (falha segura)</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Pilar da CIA afetado</strong></td>
+        <td>Confidencialidade</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <em>Dica: pense em como o token está sendo transmitido — via HTTPS ou HTTP? O e-mail pode ser lido na rede? O link
+      expira?</em>
+  </p>
+
+  <h3>Questão 2: Caso de Abuso — Integridade</h3>
+  <p>
+    A <strong>Integridade</strong> garante que as informações e processos não sofram modificações, inserções ou
+    adulterações não autorizadas.
+  </p>
+  <p>
+    Descreva como testar se <strong>alterar o ID do usuário na URL</strong> do link de recuperação
+    (<code class="one-line-code">https://site.com/recuperar?id=45</code>) permite que o atacante altere a senha de um
+    <strong>usuário diferente</strong> (ex.: mudando o parâmetro para <code class="one-line-code">id=46</code>).
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Campo</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Nome do Caso de Abuso</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Ameaça</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Passo a passo do ataque</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Resultado esperado (falha segura)</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Pilar da CIA afetado</strong></td>
+        <td>Integridade</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <em>Dica: um link de recuperação válido deve estar vinculado ao token gerado para aquele usuário — o sistema deve
+      validar se o id da URL corresponde ao usuário dono do token.</em>
+  </p>
+
+  <h3>Questão 3: Caso de Abuso — Disponibilidade</h3>
+  <p>
+    A <strong>Disponibilidade</strong> garante que os dados e processos estejam sempre acessíveis aos usuários
+    autorizados, mesmo sob estresse ou tentativas de interrupção.
+  </p>
+  <p>
+    Descreva como testar se <strong>disparar 1.000 requisições consecutivas</strong> de "esqueci minha senha" para o
+    mesmo e-mail gera um <strong>travamento ou exaustão de memória</strong> no servidor de e-mails da aplicação
+    (teste de negação de serviço local).
+  </p>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>Campo</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Nome do Caso de Abuso</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Ameaça</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Passo a passo do ataque</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Resultado esperado (falha segura)</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Pilar da CIA afetado</strong></td>
+        <td>Disponibilidade</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <em>Dica: um sistema seguro deve limitar a frequência de solicitações (rate limiting) e bloquear requisições
+      excessivas para evitar a exaustão de recursos.</em>
+  </p>
+
+  <h3>Questão 4: Teste de Vulnerabilidades de Código</h3>
+  <p>
+    Além dos Casos de Abuso, identifique quais das <strong>vulnerabilidades</strong> abaixo poderiam estar presentes no
+    sistema de recuperação de senha e explique <strong>como você testaria cada uma</strong>:
+  </p>
+  <ul>
+    <li><strong>SQL Injection</strong> — poderia o campo de e-mail ser manipulado para injetar comandos SQL?</li>
+    <li><strong>XSS</strong> — poderia o token ou o parâmetro <code class="one-line-code">id</code> da URL ser usado
+      para executar scripts maliciosos no navegador de outro usuário?</li>
+    <li><strong>Buffer Overflow</strong> — poderia um campo receber mais dados do que suporta e corromper a memória?</li>
+    <li><strong>Backdoor</strong> — existe algum acesso alternativo oculto que ignore a validação do token?</li>
+  </ul>
+  <p>
+    Descreva, para cada vulnerabilidade, um <strong>caso de teste negativo</strong> simples que você executaria.
+  </p>
+
+  <h3>Questão 5: Falha Segura (Fail-Secure)</h3>
+  <p>
+    Durante seus testes, o sistema da SecurePass apresentou duas falhas. Classifique cada uma como
+    <strong>Falha Segura</strong> ou <strong>Falha Insegura</strong> e justifique a sua resposta:
+  </p>
+  <ul>
+    <li>
+      <strong>Cenário A:</strong> Quando a API de envio de e-mails está indisponível, o sistema exibe na tela a
+      mensagem de erro com o caminho completo do servidor de e-mails e a string de conexão do banco de dados, e ainda
+      assim permite ao usuário criar uma nova senha.
+    </li>
+    <li>
+      <strong>Cenário B:</strong> Quando a API de envio de e-mails está indisponível, o sistema exibe uma mensagem
+      genérica "Serviço temporariamente indisponível, tente novamente mais tarde", reverte qualquer alteração no banco
+      de dados e bloqueia a criação da nova senha.
+    </li>
+  </ul>
+</section>
 
 <div class="tip-box">
   <h4>Orientações</h4>
   <ul>
-    <li>Leia o enunciado com atenção antes de começar.</li>
-    <li>Consulte o material da aula em caso de dúvidas.</li>
+    <li>Revise o conteúdo da aula antes de começar: Tríade CIA, vulnerabilidades comuns e princípio Fail-Secure.</li>
+    <li>Pense como um atacante: em cada Caso de Abuso, descreva o pior cenário possível e como o sistema deveria se comportar de forma segura.</li>
+    <li>Na Questão 1, lembre-se de que a Confidencialidade envolve a proteção dos dados em trânsito e o acesso restrito.</li>
+    <li>Na Questão 2, o sistema deve validar se o token usado é do usuário dono da conta referenciada pelo id da URL.</li>
+    <li>Na Questão 3, a Disponibilidade envolve a resistência a ataques de negação de serviço e a recuperação íntegra.</li>
     <li>Entregue a atividade no prazo estipulado pelo professor.</li>
   </ul>
 </div>
