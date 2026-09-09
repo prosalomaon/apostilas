@@ -34,6 +34,19 @@ tags:
 }</code></pre>
   </div>
 
+  <p>Ao definir trilhas (colunas e linhas), os filhos diretos passam a ocupar as
+    células da grade, como nesta grade de 2 colunas:</p>
+
+  <div class="grid-demo">
+    <div class="grid-demo-caption">display: grid — grid-template-columns: 1fr 1fr</div>
+    <div class="grid-demo-box" style="grid-template-columns: 1fr 1fr;">
+      <div class="grid-demo-item">Item</div>
+      <div class="grid-demo-item">Item</div>
+      <div class="grid-demo-item">Item</div>
+      <div class="grid-demo-item">Item</div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>2. Anatomia de uma Grade (Grid Terminology)</h3>
@@ -75,6 +88,35 @@ tags:
 }</code></pre>
   </div>
 
+  <p>Visualizando uma grade 3×3, cada <strong>linha de grade</strong> é numerada
+    automaticamente, e entre duas linhas consecutivas forma-se uma
+    <strong>trilha</strong> (coluna ou linha). A interseção entre uma trilha
+    vertical e uma horizontal gera uma <strong>célula</strong>, e um conjunto
+    contíguo de células forma uma <strong>área</strong>:</p>
+
+  <div class="grid-demo">
+    <div class="grid-demo-caption">Anatômia da grade — linhas numeradas de 1 a 4 (eixos x e y)</div>
+    <div class="gd-anatomy-box" style="grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; padding: 1.4rem;">
+      <span class="gd-anatomy-line v" style="left:0%;">1</span>
+      <span class="gd-anatomy-line v" style="left:33%;">2</span>
+      <span class="gd-anatomy-line v" style="left:66%;">3</span>
+      <span class="gd-anatomy-line v" style="left:100%;">4</span>
+      <span class="gd-anatomy-line h" style="top:0%;">1</span>
+      <span class="gd-anatomy-line h" style="top:33%;">2</span>
+      <span class="gd-anatomy-line h" style="top:66%;">3</span>
+      <span class="gd-anatomy-line h" style="top:100%;">4</span>
+      <div class="gd-anatomy-cell">Célula</div>
+      <div class="gd-anatomy-cell">Célula</div>
+      <div class="gd-anatomy-cell">Célula</div>
+      <div class="gd-anatomy-cell">Célula</div>
+      <div class="gd-anatomy-cell">Célula</div>
+      <div class="gd-anatomy-cell">Célula</div>
+      <div class="gd-anatomy-cell">Célula</div>
+      <div class="gd-anatomy-cell">Célula</div>
+      <div class="gd-anatomy-cell">Célula</div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>3. Unidades e Funções Especiais do Grid</h3>
@@ -98,6 +140,26 @@ tags:
     </li>
   </ul>
 
+  <p>Na primeira linha, três colunas de larguras idênticas; na segunda, uma coluna
+    fixa e as demais proporcionais (o espaço restante é dividido em 3 partes):</p>
+
+  <div class="grid-demo gd-cols-3eq">
+    <div class="grid-demo-caption">grid-template-columns: 1fr 1fr 1fr</div>
+    <div class="grid-demo-box">
+      <div class="grid-demo-item">1fr</div>
+      <div class="grid-demo-item">1fr</div>
+      <div class="grid-demo-item">1fr</div>
+    </div>
+  </div>
+  <div class="grid-demo gd-cols-fixed">
+    <div class="grid-demo-caption">grid-template-columns: 300px 1fr 2fr</div>
+    <div class="grid-demo-box">
+      <div class="grid-demo-item">300px</div>
+      <div class="grid-demo-item">1fr</div>
+      <div class="grid-demo-item">2fr</div>
+    </div>
+  </div>
+
   <h4>A Função repeat()</h4>
   <p>
     Para evitar declarações repetitivas de trilhas, utiliza-se a função
@@ -113,6 +175,30 @@ tags:
       gera o padrão <code class="one-line-code">2fr 1fr 2fr 1fr 2fr 1fr</code>.
     </li>
   </ul>
+
+  <p>A função <code class="one-line-code">repeat()</code> evita escrever cada trilha
+    manualmente. A primeira mostra as 12 colunas de uma grade clássica; a segunda
+    repete o padrão <code class="one-line-code">2fr 1fr</code> três vezes:</p>
+
+  <div class="grid-demo gd-cols-12">
+    <div class="grid-demo-caption">grid-template-columns: repeat(12, 1fr)</div>
+    <div class="grid-demo-box">
+      <div class="grid-demo-item">1</div><div class="grid-demo-item">2</div>
+      <div class="grid-demo-item">3</div><div class="grid-demo-item">4</div>
+      <div class="grid-demo-item">5</div><div class="grid-demo-item">6</div>
+      <div class="grid-demo-item">7</div><div class="grid-demo-item">8</div>
+      <div class="grid-demo-item">9</div><div class="grid-demo-item">10</div>
+      <div class="grid-demo-item">11</div><div class="grid-demo-item">12</div>
+    </div>
+  </div>
+  <div class="grid-demo gd-cols-pattern">
+    <div class="grid-demo-caption">grid-template-columns: repeat(3, 2fr 1fr)</div>
+    <div class="grid-demo-box">
+      <div class="grid-demo-item">2fr</div><div class="grid-demo-item">1fr</div>
+      <div class="grid-demo-item">2fr</div><div class="grid-demo-item">1fr</div>
+      <div class="grid-demo-item">2fr</div><div class="grid-demo-item">1fr</div>
+    </div>
+  </div>
 
   <h4>A Função minmax() e as Palavras-Chave auto-fill / auto-fit</h4>
   <p>
@@ -143,6 +229,21 @@ tags:
 }</code></pre>
   </div>
 
+  <p>Com <code class="one-line-code">auto-fit</code> e
+    <code class="one-line-code">minmax()</code>, o navegador cria tantas colunas
+    quanto couberem no contêiner e depois estica as existentes para preencher o
+    espaço (responsivo sem <code class="one-line-code">media queries</code>):</p>
+
+  <div class="grid-demo gd-cols-autofit">
+    <div class="grid-demo-caption">grid-template-columns: repeat(auto-fit, minmax(120px, 1fr))</div>
+    <div class="grid-demo-box">
+      <div class="grid-demo-item">1</div>
+      <div class="grid-demo-item">2</div>
+      <div class="grid-demo-item">3</div>
+      <div class="grid-demo-item">4</div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>4. Grid Explícito vs. Grid Implícito</h3>
@@ -167,6 +268,47 @@ tags:
     alocação densa, fazendo com que itens menores preencham lacunas vazias
     deixadas por itens maiores que não couberam anteriormente na grade.
   </p>
+
+  <p>Quando há mais itens que células declaradas, o navegador cria
+    <strong>trilhas implícitas</strong> automaticamente. As duas primeiras linhas
+    são explícitas (mais altas), enquanto as geradas por conta própria são menores:</p>
+
+  <div class="grid-demo">
+    <div class="grid-demo-caption">2 colunas × 2 linhas explícitas (4rem) + trilhas implícitas (grid-auto-rows: 2rem)</div>
+    <div class="grid-demo-box" style="grid-template-columns: repeat(2, 1fr); grid-template-rows: 4rem 4rem; grid-auto-rows: 2rem;">
+      <div class="grid-demo-item">1</div>
+      <div class="grid-demo-item">2</div>
+      <div class="grid-demo-item">3</div>
+      <div class="grid-demo-item">4</div>
+      <div class="grid-demo-item">5</div>
+      <div class="grid-demo-item">6</div>
+    </div>
+  </div>
+
+  <p>Para o <code class="one-line-code">dense</code>, os itens A e B são grandes
+    (2 colunas) e C e D são pequenos. Na grade padrão (esparsa) sobram buracos nas
+    linhas 1 e 2; com fluxo denso, C e D preenchem essas lacunas:</p>
+
+  <div class="flex-demo-grid">
+    <div class="grid-demo">
+      <div class="grid-demo-caption">grid-auto-flow: row (esparsa)</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="grid-demo-item" style="grid-column: span 2;">A</div>
+        <div class="grid-demo-item" style="grid-column: span 2;">B</div>
+        <div class="grid-demo-item">C</div>
+        <div class="grid-demo-item">D</div>
+      </div>
+    </div>
+    <div class="grid-demo gd-dense">
+      <div class="grid-demo-caption">grid-auto-flow: dense</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="grid-demo-item" style="grid-column: span 2;">A</div>
+        <div class="grid-demo-item" style="grid-column: span 2;">B</div>
+        <div class="grid-demo-item">C</div>
+        <div class="grid-demo-item">D</div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section class="section-box">
@@ -186,11 +328,24 @@ tags:
   grid-row-end: 4;   /* Vai da linha 2 até a linha 4 (ocupa 2 linhas) */
 }
 
-/* Sintaxe resumida (shorthand com barra) */
-.item-destaque-shorthand {
-  grid-column: 1 / 3;
-  grid-row: 2 / span 2; /* "span 2" instrui a estender por 2 trilhas */
-}</code></pre>
+    /* Sintaxe resumida (shorthand com barra) */
+    .item-destaque-shorthand {
+      grid-column: 1 / 3;
+      grid-row: 2 / span 2; /* "span 2" instrui a estender por 2 trilhas */
+    }</code></pre>
+  </div>
+
+  <p>Na grade abaixo, o item 1 se estende por 2 colunas, o item 3 (destaque) cobre
+    2 colunas e 2 linhas, e o item 4 ocupa 2 linhas na coluna 3:</p>
+
+  <div class="grid-demo">
+    <div class="grid-demo-caption">3 colunas × 3 linhas — posicionamento por números de linha</div>
+    <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 3.5rem);">
+      <div class="grid-demo-item gd-item-col-1-3">1</div>
+      <div class="grid-demo-item">2</div>
+      <div class="grid-demo-item gd-item-col-1-3 gd-item-row-2-4 dark-text">3</div>
+      <div class="grid-demo-item gd-item-row-2-4">4</div>
+    </div>
   </div>
 
   <hr />
@@ -237,6 +392,27 @@ main   { grid-area: main; }
 aside  { grid-area: sidebar; }
 footer { grid-area: footer; }</code></pre>
   </div>
+
+  <div class="flex-demo-grid">
+    <div class="grid-demo">
+      <div class="grid-demo-caption">Layout completo: mapa textual → grade visual</div>
+      <div class="grid-demo-box gd-areas">
+        <div class="grid-demo-item gd-header">header</div>
+        <div class="grid-demo-item gd-main">main</div>
+        <div class="grid-demo-item gd-sidebar">sidebar</div>
+        <div class="grid-demo-item gd-footer">footer</div>
+      </div>
+    </div>
+    <div class="grid-demo">
+      <div class="grid-demo-caption">Célula vazia com ponto (.)</div>
+      <div class="grid-demo-box" style="grid-template-columns: 2fr 1fr; grid-template-rows: auto auto auto; grid-template-areas: &quot;header  header&quot; &quot;main    .&quot; &quot;footer  footer&quot;;">
+        <div class="grid-demo-item gd-header">header</div>
+        <div class="grid-demo-item gd-main">main</div>
+        <div class="grid-demo-item gd-footer">footer</div>
+      </div>
+    </div>
+  </div>
+
   <p>
     <strong>Regra de Ouro:</strong> Cada área nomeada deve obrigatoriamente formar
     um retângulo contínuo. Não é permitido criar formas em "L", "U" ou áreas
@@ -247,24 +423,56 @@ footer { grid-area: footer; }</code></pre>
   <hr />
 
   <h3>4. Comparativo Técnico: CSS Grid vs. Flexbox vs. Floats</h3>
-  <div class="code-container">
-    <pre><code class="language-css">/*
-╔═══════════════════╦════════════════════════╦══════════════════════╦══════════════════════╗
-║ Critério          ║ CSS Grid (2D)          ║ Flexbox (1D)         ║ Floats (Legado)      ║
-╠═══════════════════╬════════════════════════╬══════════════════════╬══════════════════════╣
-║ Dimensionalidade  ║ Bidimensional (2D)     ║ Unidirecional (1D)   ║ Sem dimensão nativa  ║
-║ Filosofia         ║ Layout-In              ║ Content-Out          ║ Document Flow        ║
-║ Alinhamento       ║ Perfeito entre trilhas ║ Independente         ║ Irregular            ║
-║ Gutter            ║ Nativo via gap         ║ Nativo via gap       ║ Manual (margens)     ║
-║ Caso de Uso       ║ Páginas, dashboards    ║ Componentes de UI    ║ Texto ao redor de    ║
-║                   ║ e galerias             ║ e menus              ║ mídias               ║
-╚═══════════════════╩════════════════════════╩══════════════════════╩══════════════════════╝
-
-- Grid (2D): Controla linhas e colunas simultaneamente em uma única grade.
-- Flexbox (1D): Controla o fluxo ao longo de um único eixo por vez.
-- Floats: O fluxo de texto contorna o elemento sem dimensão nativa.
-*/</code></pre>
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Critério</th>
+          <th>CSS Grid (2D)</th>
+          <th>Flexbox (1D)</th>
+          <th>Floats (Legado)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Dimensionalidade</td>
+          <td>Bidimensional (2D)</td>
+          <td>Unidirecional (1D)</td>
+          <td>Sem dimensão nativa</td>
+        </tr>
+        <tr>
+          <td>Filosofia</td>
+          <td>Layout-In</td>
+          <td>Content-Out</td>
+          <td>Document Flow</td>
+        </tr>
+        <tr>
+          <td>Alinhamento</td>
+          <td>Perfeito entre trilhas</td>
+          <td>Independente</td>
+          <td>Irregular</td>
+        </tr>
+        <tr>
+          <td>Gutter</td>
+          <td>Nativo via gap</td>
+          <td>Nativo via gap</td>
+          <td>Manual (margens)</td>
+        </tr>
+        <tr>
+          <td>Caso de Uso</td>
+          <td>Páginas, dashboards e galerias</td>
+          <td>Componentes de UI e menus</td>
+          <td>Texto ao redor de mídias</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+
+  <ul>
+    <li><strong>Grid (2D):</strong> Controla linhas e colunas simultaneamente em uma única grade.</li>
+    <li><strong>Flexbox (1D):</strong> Controla o fluxo ao longo de um único eixo por vez.</li>
+    <li><strong>Floats:</strong> O fluxo de texto contorna o elemento sem dimensão nativa.</li>
+  </ul>
 
   <hr />
 
@@ -313,6 +521,105 @@ footer { grid-area: footer; }</code></pre>
       alinhamento vertical de um item específico.
     </li>
   </ul>
+
+  <p>No eixo horizontal, <code class="one-line-code">justify-content</code> move as
+    trilhas quando sobram espaços, <code class="one-line-code">justify-items</code>
+    alinha o conteúdo dentro de cada célula e
+    <code class="one-line-code">justify-self</code> sobrescreve um item:</p>
+
+  <div class="flex-demo-grid">
+    <div class="grid-demo gd-justify-start">
+      <div class="grid-demo-caption">justify-content: start</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 60px);">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+    <div class="grid-demo gd-justify-center">
+      <div class="grid-demo-caption">justify-content: center</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 60px);">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+    <div class="grid-demo gd-justify-end">
+      <div class="grid-demo-caption">justify-content: end</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 60px);">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-demo-grid">
+    <div class="grid-demo gd-justify-items-center">
+      <div class="grid-demo-caption">justify-items: center</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+    <div class="grid-demo gd-justify-items-end">
+      <div class="grid-demo-caption">justify-items: end</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+    <div class="grid-demo">
+      <div class="grid-demo-caption">justify-self: center (item 2)</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item gd-item-justify-self-center">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+  </div>
+
+  <p>No eixo vertical, <code class="one-line-code">align-items</code> alinha o
+    conteúdo de todas as células e <code class="one-line-code">align-self</code>
+    sobrescreve um item individual (com linhas mais altas para evidenciar):</p>
+
+  <div class="flex-demo-grid">
+    <div class="grid-demo gd-align-items-start">
+      <div class="grid-demo-caption">align-items: start</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 5rem;">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+    <div class="grid-demo gd-align-items-center">
+      <div class="grid-demo-caption">align-items: center</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 5rem;">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+    <div class="grid-demo gd-align-items-end">
+      <div class="grid-demo-caption">align-items: end</div>
+      <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 5rem;">
+        <div class="grid-demo-item">1</div>
+        <div class="grid-demo-item">2</div>
+        <div class="grid-demo-item">3</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-demo">
+    <div class="grid-demo-caption">align-self: center (item 1) e align-self: end (item 3)</div>
+    <div class="grid-demo-box" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 5rem;">
+      <div class="grid-demo-item gd-item-align-self-center">1</div>
+      <div class="grid-demo-item">2</div>
+      <div class="grid-demo-item gd-item-align-self-end">3</div>
+    </div>
+  </div>
 </section>
 
 <section class="section-box">

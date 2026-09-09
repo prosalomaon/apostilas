@@ -13,8 +13,7 @@ tags:
     populares da web, utilizando <strong>Flexbox</strong> e <strong>Grid</strong> para estruturar blocos de
     conteúdo. O objetivo é dominar a organização espacial dos elementos, sem se preocupar com o conteúdo real.
   </p>
-  <p>Escolha <strong>pelo menos 3 layouts</strong> da lista abaixo para implementar. Cada layout deve ser
-    responsivo e funcionar bem em dispositivos móveis e desktop.
+  <p>Cada layout deve ser responsivo e funcionar bem em dispositivos móveis e desktop.
   </p>
 </section>
 
@@ -23,10 +22,10 @@ tags:
 
   <h3>2.1 Menu + Conteúdo + Footer</h3>
 
-  <div class="layout-preview">
-    <div class="lp-block lp-nav">MENU DE NAVEGAÇÃO</div>
-    <div class="lp-block lp-content">CONTEÚDO PRINCIPAL</div>
-    <div class="lp-block lp-footer">RODAPÉ</div>
+  <div class="layout-preview" style="height: 32rem;">
+    <div class="lp-block lp-nav" style="flex: 0;">MENU DE NAVEGAÇÃO</div>
+    <div class="lp-block lp-content" style="height: auto; flex: 1;">CONTEÚDO PRINCIPAL</div>
+    <div class="lp-block lp-footer" style="flex: 0;">RODAPÉ</div>
   </div>
 
   <div class="code-container">
@@ -38,7 +37,8 @@ tags:
   </div>
   <p>Layout clássico com barra de navegação fixa no topo, área de conteúdo e rodapé.</p>
   <p><strong>Dica de CSS:</strong> Use <code class="one-line-code">display: flex; flex-direction: column</code> no
-    container e <code class="one-line-code">flex: 1</code> no conteúdo para ocupar o espaço restante.</p>
+    container e <code class="one-line-code">flex: 1</code> no conteúdo para ocupar todo o espaço restante entre o
+    menu e o rodapé.</p>
 
   <hr />
 
@@ -71,99 +71,46 @@ tags:
 
   <hr />
 
-  <h3>2.3 Feed de Rede Social</h3>
+  <h3>2.3 Cards</h3>
 
   <div class="layout-preview">
-    <div class="lp-row">
-      <div class="lp-block" style="flex: 0 0 12%; background: #ccc;">AVATAR</div>
-      <div class="lp-block">Nome do Usuário</div>
-    </div>
-    <div class="lp-block lp-content">Texto da Postagem</div>
-    <div class="lp-row">
-      <div class="lp-block" style="flex: 0 0 25%;">Curtir</div>
-      <div class="lp-block" style="flex: 0 0 25%;">Comentar</div>
-      <div class="lp-block" style="flex: 0 0 25%;">Compartilhar</div>
-    </div>
-  </div>
-
-  <div class="code-container">
-    <pre><code class="language-html">&lt;div class="post"&gt;
-  &lt;div class="cabecalho"&gt;Avatar + Nome&lt;/div&gt;
-  &lt;div class="conteudo"&gt;Texto da postagem&lt;/div&gt;
-  &lt;div class="acoes"&gt;Curtir | Comentar | Compartilhar&lt;/div&gt;
-&lt;/div&gt;</code></pre>
-  </div>
-  <p>Sequência de posts com perfil, conteúdo e ações, usando Flexbox para alinhar elementos.</p>
-  <p><strong>Dica de CSS:</strong> O cabeçalho usa <code class="one-line-code">display: flex; align-items:
-      center</code> com <code class="one-line-code">gap</code>. A lista de <code class="one-line-code">.acoes</code>
-    usa <code class="one-line-code">display: flex; justify-content: space-between</code>.</p>
-
-  <hr />
-
-  <h3>2.4 Stack Vertical</h3>
-
-  <div class="layout-preview">
-    <div class="lp-block" style="height: 2.5rem;">BLOCO 1</div>
-    <div class="lp-block" style="height: 2.5rem;">BLOCO 2</div>
-    <div class="lp-block" style="height: 2.5rem;">BLOCO 3</div>
-    <div class="lp-block" style="height: 2.5rem;">BLOCO 4</div>
-  </div>
-
-  <div class="code-container">
-    <pre><code class="language-html">&lt;div class="stack"&gt;
-  &lt;div class="bloco"&gt;Bloco 1&lt;/div&gt;
-  &lt;div class="bloco"&gt;Bloco 2&lt;/div&gt;
-  &lt;div class="bloco"&gt;Bloco 3&lt;/div&gt;
-&lt;/div&gt;</code></pre>
-  </div>
-  <p>Empilhamento vertical de blocos, ideal para páginas de conteúdo longo.</p>
-  <p><strong>Dica de CSS:</strong> Use <code class="one-line-code">display: grid; gap: 1rem</code> ou
-    <code class="one-line-code">display: flex; flex-direction: column</code> para empilhar os blocos.</p>
-
-  <hr />
-
-  <h3>2.5 Cards de Produto</h3>
-
-  <div class="layout-preview">
-    <div class="lp-grid cols-3">
-      <div>
-        <div class="lp-block" style="height: 3.5rem;">IMAGEM</div>
-        <div class="lp-block" style="height: 2rem;">Título + Preço</div>
-        <div class="lp-block" style="background: #d9d9d9;">Comprar</div>
+    <div style="display: flex; flex-direction: column; gap: 0; max-width: 18rem; border: 2px solid var(--border); border-radius: 8px; overflow: hidden;">
+      <div class="lp-block" style="height: 5rem; border-radius: 0; border: none; border-bottom: 2px solid var(--border);">IMAGEM</div>
+      <div style="padding: 0.6rem 0.75rem; display: flex; flex-direction: column; gap: 0.4rem;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #222;">Título do Card</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: #555; line-height: 1.3;">Descrição genérica com texto de exemplo que representa o conteúdo do card.</div>
       </div>
-      <div>
-        <div class="lp-block" style="height: 3.5rem;">IMAGEM</div>
-        <div class="lp-block" style="height: 2rem;">Título + Preço</div>
-        <div class="lp-block" style="background: #d9d9d9;">Comprar</div>
-      </div>
-      <div>
-        <div class="lp-block" style="height: 3.5rem;">IMAGEM</div>
-        <div class="lp-block" style="height: 2rem;">Título + Preço</div>
-        <div class="lp-block" style="background: #d9d9d9;">Comprar</div>
+      <div style="padding: 0 0.75rem 0.75rem;">
+        <div class="lp-block" style="height: 1.8rem; border-radius: 4px; border: none; background: var(--border, #2d5377); color: #fff; font-size: 0.65rem;">AÇÃO</div>
       </div>
     </div>
   </div>
 
   <div class="code-container">
     <pre><code class="language-html">&lt;div class="card"&gt;
-  &lt;div class="imagem"&gt;Imagem do Produto&lt;/div&gt;
-  &lt;div class="info"&gt;Título + Preço&lt;/div&gt;
-  &lt;button&gt;Comprar&lt;/button&gt;
+  &lt;img src="..." alt="..."&gt;
+  &lt;div class="card-body"&gt;
+    &lt;h3&gt;Título do Card&lt;/h3&gt;
+    &lt;p&gt;Descrição genérica com texto de exemplo.&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="card-footer"&gt;
+    &lt;button&gt;Ação&lt;/button&gt;
+  &lt;/div&gt;
 &lt;/div&gt;</code></pre>
   </div>
-  <p>Grid de cards com imagem, informações e botão de ação.</p>
-  <p><strong>Dica de CSS:</strong> Envolva os cards no grid
-    <code class="one-line-code">display: grid; grid-template-columns: repeat(3, 1fr); gap</code> e faça cada card com
-    <code class="one-line-code">display: flex; flex-direction: column</code>.</p>
+  <p>Card genérico (como o card do Bootstrap) com imagem, conteúdo e botão de ação.</p>
+  <p><strong>Dica de CSS:</strong> Use <code class="one-line-code">display: flex; flex-direction: column</code> no
+    card, com <code class="one-line-code">border-radius</code> e
+    <code class="one-line-code">overflow: hidden</code> para manter os cantos arredondados.</p>
 
   <hr />
 
-  <h3>2.6 Layout de Duas Colunas</h3>
+  <h3>2.4 Layout de Duas Colunas</h3>
 
   <div class="layout-preview">
-    <div class="lp-row">
-      <div class="lp-block lp-sidebar">BARRA LATERAL (SIDEBAR)</div>
-      <div class="lp-block lp-content">CONTEÚDO PRINCIPAL</div>
+    <div class="lp-row" style="min-height: 10rem;">
+      <div class="lp-block lp-sidebar" style="flex: 0 0 25%; height: auto;">BARRA LATERAL</div>
+      <div class="lp-block lp-content" style="height: auto; flex: 1;">CONTEÚDO PRINCIPAL</div>
     </div>
   </div>
 
@@ -173,84 +120,108 @@ tags:
   &lt;main&gt;Conteúdo Principal&lt;/main&gt;
 &lt;/div&gt;</code></pre>
   </div>
-  <p>Layout com sidebar e conteúdo principal, usando Grid para distribuição.</p>
+  <p>Layout com sidebar e conteúdo principal, usando Grid ou Flexbox para distribuição.</p>
   <p><strong>Dica de CSS:</strong> Use
     <code class="one-line-code">display: grid; grid-template-columns: 1fr 3fr</code> e alterne para
     <code class="one-line-code">grid-template-columns: 1fr</code> no mobile, empilhando os conteúdos.</p>
 
   <hr />
 
-  <h3>2.7 Hero + Feature Grid</h3>
+  <h3>2.5 Hero + Feature Grid</h3>
 
-  <div class="layout-preview">
-    <div class="lp-block lp-hero">HERO / CHAMADA PRINCIPAL</div>
+  <div class="layout-preview" style="height: 24rem;">
+    <div class="lp-block lp-hero" style="height: 14rem; background: #d9d9d9; font-size: 0.8rem;">HERO / CHAMADA PRINCIPAL</div>
     <div class="lp-grid cols-3">
-      <div class="lp-block" style="height: 2.5rem;">FEATURE 1</div>
-      <div class="lp-block" style="height: 2.5rem;">FEATURE 2</div>
-      <div class="lp-block" style="height: 2.5rem;">FEATURE 3</div>
+      <div style="display: flex; flex-direction: column; gap: 0;">
+        <div class="lp-block" style="height: 4rem; border-radius: 6px 6px 0 0;">FEATURE 1</div>
+        <div class="lp-block" style="height: 3rem; border-radius: 0 0 6px 6px; border-top: none; font-size: 0.6rem; color: #555;">Descrição da feature com um pouco mais de texto para ocupar espaço.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0;">
+        <div class="lp-block" style="height: 4rem; border-radius: 6px 6px 0 0;">FEATURE 2</div>
+        <div class="lp-block" style="height: 3rem; border-radius: 0 0 6px 6px; border-top: none; font-size: 0.6rem; color: #555;">Descrição da feature com um pouco mais de texto para ocupar espaço.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0;">
+        <div class="lp-block" style="height: 4rem; border-radius: 6px 6px 0 0;">FEATURE 3</div>
+        <div class="lp-block" style="height: 3rem; border-radius: 0 0 6px 6px; border-top: none; font-size: 0.6rem; color: #555;">Descrição da feature com um pouco mais de texto para ocupar espaço.</div>
+      </div>
     </div>
   </div>
 
   <div class="code-container">
     <pre><code class="language-html">&lt;section class="hero"&gt;Chamada Principal&lt;/section&gt;
 &lt;div class="features"&gt;
-  &lt;div class="feature"&gt;Feature 1&lt;/div&gt;
-  &lt;div class="feature"&gt;Feature 2&lt;/div&gt;
-  &lt;div class="feature"&gt;Feature 3&lt;/div&gt;
+  &lt;div class="feature"&gt;
+    &lt;h3&gt;Feature 1&lt;/h3&gt;
+    &lt;p&gt;Descrição da feature&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="feature"&gt;
+    &lt;h3&gt;Feature 2&lt;/h3&gt;
+    &lt;p&gt;Descrição da feature&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="feature"&gt;
+    &lt;h3&gt;Feature 3&lt;/h3&gt;
+    &lt;p&gt;Descrição da feature&lt;/p&gt;
+  &lt;/div&gt;
 &lt;/div&gt;</code></pre>
   </div>
-  <p>Hero grande seguido de grid de features, comum em landing pages.</p>
+  <p>Hero grande seguido de grid de features com ícone/título e descrição, comum em landing pages.</p>
   <p><strong>Dica de CSS:</strong> O hero usa <code class="one-line-code">display: flex; align-items: center;
       justify-content: center</code> e as features usam <code class="one-line-code">display: grid;
-      grid-template-columns: repeat(3, 1fr)</code>.</p>
+      grid-template-columns: repeat(3, 1fr); gap: 1rem</code>.</p>
 
   <hr />
 
-  <h3>2.8 Timeline</h3>
-
-  <div class="layout-preview">
-    <div class="lp-grid cols-2" style="grid-template-columns: repeat(2, 1fr); align-items: center;">
-      <div class="lp-block" style="height: 1.5rem; grid-column: 1;">EVENTO 1</div>
-      <div class="lp-block" style="height: 1.5rem; grid-column: 2; background: #e6e6e6;">EVENTO 2</div>
-      <div class="lp-block" style="height: 1.5rem; grid-column: 1;">EVENTO 3</div>
-      <div class="lp-block" style="height: 1.5rem; grid-column: 2; background: #e6e6e6;">EVENTO 4</div>
-    </div>
-  </div>
-
-  <div class="code-container">
-    <pre><code class="language-html">&lt;div class="timeline"&gt;
-  &lt;div class="evento"&gt;Evento 1&lt;/div&gt;
-  &lt;div class="evento"&gt;Evento 2&lt;/div&gt;
-  &lt;div class="evento"&gt;Evento 3&lt;/div&gt;
-&lt;/div&gt;</code></pre>
-  </div>
-  <p>Linha do tempo com eventos empilhados alternadamente à esquerda e direita.</p>
-  <p><strong>Dica de CSS:</strong> Use um grid de 2 colunas e alterne a posição de cada evento com
-    <code class="one-line-code">grid-column</code> (coluna 1 e 2). No mobile, centralize tudo em uma única coluna.</p>
-
-  <hr />
-
-  <h3>2.9 Pricing Table</h3>
+  <h3>2.6 Pricing Table</h3>
 
   <div class="layout-preview">
     <div class="lp-grid cols-3">
-      <div class="lp-block" style="height: 4rem;">Plano Básico</div>
-      <div class="lp-block lp-destaque" style="height: 4rem;">Plano Pro</div>
-      <div class="lp-block" style="height: 4rem;">Enterprise</div>
+      <div style="display: flex; flex-direction: column; gap: 0;">
+        <div class="lp-block" style="height: 1.8rem; border-radius: 6px 6px 0 0; font-size: 0.75rem; text-align: center; justify-content: center;">Plano Básico</div>
+        <div class="lp-block" style="height: 1.8rem; border-radius: 0; border-top: none; font-size: 0.85rem; font-weight: 800; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">R$ 29/mês</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">5 projetos</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">10 GB de armazenamento</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">Suporte por e-mail</div>
+        <div class="lp-block" style="height: 1.8rem; border-radius: 0 0 6px 6px; border-top: none; background: #d9d9d9; font-size: 0.65rem; text-align: center; justify-content: center;">COMEÇAR</div>
+      </div>
+      <div class="lp-block lp-destaque" style="display: flex; flex-direction: column; gap: 0; border: 3px solid var(--border, #2d5377);">
+        <div class="lp-block" style="height: 1.8rem; border-radius: 6px 6px 0 0; font-size: 0.75rem; background: var(--border, #2d5377); color: #fff; text-align: center; justify-content: center;">Plano Pro</div>
+        <div class="lp-block" style="height: 1.8rem; border-radius: 0; border-top: none; font-size: 0.85rem; font-weight: 800; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">R$ 79/mês</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">25 projetos</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">50 GB de armazenamento</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">Suporte prioritário</div>
+        <div class="lp-block" style="height: 1.8rem; border-radius: 0 0 6px 6px; border-top: none; background: var(--border, #2d5377); color: #fff; font-size: 0.65rem; text-align: center; justify-content: center;">COMEÇAR</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0;">
+        <div class="lp-block" style="height: 1.8rem; border-radius: 6px 6px 0 0; font-size: 0.75rem; text-align: center; justify-content: center;">Enterprise</div>
+        <div class="lp-block" style="height: 1.8rem; border-radius: 0; border-top: none; font-size: 0.85rem; font-weight: 800; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">R$ 199/mês</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">Projetos ilimitados</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">200 GB de armazenamento</div>
+        <div class="lp-block" style="height: 0.8rem; border-radius: 0; border-top: none; background: #e6e6e6; font-size: 0.55rem; text-align: left; padding-left: 0.6rem; justify-content: flex-start;">Suporte 24/7</div>
+        <div class="lp-block" style="height: 1.8rem; border-radius: 0 0 6px 6px; border-top: none; background: #d9d9d9; font-size: 0.65rem; text-align: center; justify-content: center;">CONTATO</div>
+      </div>
     </div>
   </div>
 
   <div class="code-container">
     <pre><code class="language-html">&lt;div class="pricing"&gt;
-  &lt;div class="plano"&gt;Plano Básico&lt;/div&gt;
-  &lt;div class="plano destaque"&gt;Plano Pro&lt;/div&gt;
-  &lt;div class="plano"&gt;Plano Enterprise&lt;/div&gt;
+  &lt;div class="plano"&gt;
+    &lt;h3&gt;Plano Básico&lt;/h3&gt;
+    &lt;p class="preco"&gt;R$ 29/mês&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;5 projetos&lt;/li&gt;
+      &lt;li&gt;10 GB de armazenamento&lt;/li&gt;
+      &lt;li&gt;Suporte por e-mail&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;button&gt;Começar&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="plano destaque"&gt;...&lt;/div&gt;
+  &lt;div class="plano"&gt;...&lt;/div&gt;
 &lt;/div&gt;</code></pre>
   </div>
-  <p>Tabela de preços com 3 planos, onde um se destaca visualmente.</p>
+  <p>Tabela de preços com 3 planos, onde o plano do meio se destaca visualmente com borda, cor e escala maiores.</p>
   <p><strong>Dica de CSS:</strong> Use <code class="one-line-code">display: grid; grid-template-columns: repeat(3,
-      1fr)</code> e aplique a classe <code class="one-line-code">.destaque</code> para destacar o plano do meio
-    (cor de fundo, borda ou escala maior).</p>
+      1fr); gap: 1rem</code> e aplique a classe <code class="one-line-code">.destaque</code> para destacar o plano
+    do meio (borda mais grossa, cor de fundo diferenciada).</p>
 </section>
 
 <section class="section-box">
@@ -278,13 +249,10 @@ tags:
   ├── index.html          (página principal com links para cada layout)
   ├── layout-01.html      (Menu + Conteúdo + Footer)
   ├── layout-02.html      (Galeria de Imagens)
-  ├── layout-03.html      (Feed de Rede Social)
-  ├── layout-04.html      (Stack Vertical)
-  ├── layout-05.html      (Cards de Produto)
-  ├── layout-06.html      (Layout de Duas Colunas)
-  ├── layout-07.html      (Hero + Feature Grid)
-  ├── layout-08.html      (Timeline)
-  ├── layout-09.html      (Pricing Table)
+  ├── layout-03.html      (Cards de Produto)
+  ├── layout-04.html      (Layout de Duas Colunas)
+  ├── layout-05.html      (Hero + Feature Grid)
+  ├── layout-06.html      (Pricing Table)
   ├── css/
   │    └── style.css      (estilos, variáveis e media queries)
   └── imagens/            (imagens placeholder se necessário)</code></pre>

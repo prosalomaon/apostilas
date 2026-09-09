@@ -611,6 +611,54 @@ tags:
 </section>
 
 <section class="section-box">
+  <h2>3. Comparativo</h2>
+  <h3>Flexbox vs. Floats vs. CSS Grid</h3>
+  <p>
+    Tabela comparativa entre os três modelos de layout do CSS, destacando as
+    diferenças fundamentais em dimensionalidade, limpeza de fluxo e capacidades
+    de alinhamento.
+  </p>
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Critério</th>
+          <th>Floats (Histórico)</th>
+          <th>Flexbox (1D Moderno)</th>
+          <th>CSS Grid (2D Moderno)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Dimensão</td>
+          <td>Unidirecional simples</td>
+          <td>Unidirecional (1D)</td>
+          <td>Bidimensional (2D)</td>
+        </tr>
+        <tr>
+          <td>Direção</td>
+          <td>Orientado ao texto</td>
+          <td>Content-out</td>
+          <td>Layout-in</td>
+        </tr>
+        <tr>
+          <td>Mesma Altura</td>
+          <td>Exige truques</td>
+          <td>Nativo (stretch)</td>
+          <td>Nativo (faixas)</td>
+        </tr>
+        <tr>
+          <td>Limpeza de Fluxo</td>
+          <td>Exige clearfix</td>
+          <td>Não exige</td>
+          <td>Não exige</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section-box">
   <h2>Exemplo de Código</h2>
 
   <h3>1. Nível Básico: Menu de Navegação com margin-left: auto</h3>
@@ -841,98 +889,6 @@ tags:
   &lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
-  </div>
-</section>
-
-<section class="section-box">
-  <h2>Representações Gráficas</h2>
-
-  <h3>1. Estrutura de Eixos e Alinhamento</h3>
-  <p>
-    Diagrama mostrando a relação entre o Flex Container, os dois eixos e as
-    propriedades de alinhamento que atuam em cada um deles.
-  </p>
-  <div class="code-container">
-    <pre><div class="mermaid">graph TD
-    subgraph Container_Flex["Flex Container: display flex"]
-        direction LR
-        subgraph Eixo_Principal["Main Axis: justify-content"]
-            A["Item 1"] --- B["Item 2"] --- C["Item 3"]
-        end
-    end
-
-    subgraph Eixo_Cruzado["Cross Axis: align-items / align-self"]
-        D["Topo: flex-start"]
-        E["Centro: center"]
-        F["Base: flex-end"]
-    end
-
-    style Container_Flex fill:#e1f5fe,stroke:#01579b
-    style Eixo_Principal fill:#fff3e0,stroke:#e65100
-    style Eixo_Cruzado fill:#e8f5e9,stroke:#2e7d32</div></pre>
-  </div>
-
-  <hr />
-
-  <h3>2. Valores de justify-content</h3>
-  <p>
-    Comparação visual dos seis valores principais de
-    <code class="one-line-code">justify-content</code> e como cada um distribui os
-    itens ao longo do eixo principal.
-  </p>
-  <div class="code-container">
-    <pre><div class="mermaid">graph LR
-    subgraph flex_start["flex-start (padrão)"]
-        FS1["1"] --- FS2["2"] --- FS3["3"]
-    end
-
-    subgraph flex_end["flex-end"]
-        FE1["1"] --- FE2["2"] --- FE3["3"]
-    end
-
-    subgraph center["center"]
-        C1["1"] --- C2["2"] --- C3["3"]
-    end
-
-    subgraph space_between["space-between"]
-        SB1["1"] --- SB2["2"] --- SB3["3"]
-    end
-
-    subgraph space_around["space-around"]
-        SA1["1"] --- SA2["2"] --- SA3["3"]
-    end
-
-    subgraph space_evenly["space-evenly"]
-        SE1["1"] --- SE2["2"] --- SE3["3"]
-    end
-
-    style flex_start fill:#e1f5fe,stroke:#01579b
-    style flex_end fill:#fff3e0,stroke:#e65100
-    style center fill:#e8f5e9,stroke:#2e7d32
-    style space_between fill:#f3e5f5,stroke:#7b1fa2
-    style space_around fill:#fce4ec,stroke:#c62828
-    style space_evenly fill:#fffde7,stroke:#f57f17</div></pre>
-  </div>
-
-  <hr />
-
-  <h3>3. Comparativo: Flexbox vs. Floats vs. CSS Grid</h3>
-  <p>
-    Tabela comparativa entre os três modelos de layout do CSS, destacando as
-    diferenças fundamentais em dimensionalidade, limpeza de fluxo e capacidades
-    de alinhamento.
-  </p>
-  <div class="code-container">
-    <pre><code class="language-css">/*
-╔═══════════════════╦══════════════════════╦══════════════════════╦══════════════════════╗
-║ Critério          ║ Floats (Histórico)   ║ Flexbox (1D Moderno) ║ CSS Grid (2D Moderno)║
-╠═══════════════════╬══════════════════════╬══════════════════════╬══════════════════════╣
-║ Dimensão          ║ Unidirecional simples║ Unidirecional (1D)   ║ Bidimensional (2D)   ║
-║ Direção           ║ Orientado ao texto   ║ Content-out          ║ Layout-in            ║
-║ Mesma Altura      ║ Exige truques        ║ Nativo (stretch)     ║ Nativo (faixas)      ║
-║ Limpeza de Fluxo  ║ Exige clearfix       ║ Não exige            ║ Não exige            ║
-╚═══════════════════╩══════════════════════╩══════════════════════╩══════════════════════╝
-*/</code></pre>
   </div>
 </section>
 
