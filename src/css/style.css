@@ -342,6 +342,106 @@ pre {
   font-size: 0.9rem;
 }
 
+/* Layout preview (wireframe) */
+.layout-preview {
+  border: 2px dashed #999;
+  background: #fafafa;
+  padding: 0.5rem;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.layout-preview .lp-row {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.layout-preview .lp-block {
+  border: 2px solid var(--border);
+  background: var(--accent, #f0f0f0);
+  padding: 0.5rem;
+  text-align: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-preview .lp-fill {
+  height: 100%;
+  min-height: 2rem;
+}
+
+.layout-preview .lp-nav {
+  height: 2.5rem;
+  background: #d9d9d9;
+}
+
+.layout-preview .lp-content {
+  height: 5rem;
+}
+
+.layout-preview .lp-footer {
+  height: 2.5rem;
+}
+
+.layout-preview .lp-hero {
+  height: 4rem;
+  background: #d9d9d9;
+}
+
+.layout-preview .lp-sidebar {
+  height: 5rem;
+  background: #e6e6e6;
+  flex: 0 0 30%;
+}
+
+.layout-preview .lp-tall {
+  height: 7rem;
+}
+
+.layout-preview .lp-grid {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.layout-preview .lp-grid.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.layout-preview .lp-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.layout-preview .lp-grid.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.layout-preview .lp-destaque {
+  border-color: var(--color-warning, #ffc107);
+  background: #fff3cd;
+}
+
+.layout-preview .lp-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  text-align: center;
+  padding: 0.2rem;
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .layout-preview .lp-sidebar {
+    flex-basis: 100%;
+  }
+}
+
 .tip-box {
   background: #000;
   color: #fff;

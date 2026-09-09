@@ -1,7 +1,7 @@
 ---
-title: "Entrega do Projeto II: Landing Page Responsiva"
+title: "Projeto Final: Layouts Populares com Flexbox e Grid"
 aula_numero: "18"
-description: "Especificações e requisitos para a entrega do Projeto II: uma Landing Page responsiva utilizando Flexbox e Grid."
+description: "Projeto final do bimestre: criação de layouts populares de sites utilizando Flexbox e Grid, com estrutura em blocos sem conteúdo real."
 tags:
   - aula
   - bimestre-02
@@ -9,67 +9,308 @@ tags:
 
 <section class="section-box">
   <h2>1. Descrição do Projeto</h2>
-  <p>Você foi contratado para criar a <strong>Landing Page</strong> de um produto, serviço ou evento à sua escolha. O
-    objetivo deste projeto é aplicar os conceitos de <strong>layout com Flexbox e Grid</strong>, responsividade
-    mobile-first e o modelo de caixas (Box-Model) aprendidos no 2º Bimestre.
+  <p>Este é o <strong>projeto final do 2º Bimestre</strong>. Você irá praticar a criação dos layouts mais
+    populares da web, utilizando <strong>Flexbox</strong> e <strong>Grid</strong> para estruturar blocos de
+    conteúdo. O objetivo é dominar a organização espacial dos elementos, sem se preocupar com o conteúdo real.
   </p>
-  <p>A página deve convencer o visitante a realizar uma ação (como assinar uma newsletter, comprar um produto ou se
-    inscrever em um evento), apresentando o conteúdo de forma clara e organizada em qualquer dispositivo.
+  <p>Escolha <strong>pelo menos 3 layouts</strong> da lista abaixo para implementar. Cada layout deve ser
+    responsivo e funcionar bem em dispositivos móveis e desktop.
   </p>
 </section>
 
 <section class="section-box">
-  <h2>2. Requisitos Técnicos (O que será avaliado)</h2>
+  <h2>2. Layouts Disponíveis</h2>
+
+  <h3>2.1 Menu + Conteúdo + Footer</h3>
+
+  <div class="layout-preview">
+    <div class="lp-block lp-nav">MENU DE NAVEGAÇÃO</div>
+    <div class="lp-block lp-content">CONTEÚDO PRINCIPAL</div>
+    <div class="lp-block lp-footer">RODAPÉ</div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;header&gt;Menu de Navegação&lt;/header&gt;
+&lt;main&gt;
+  &lt;section&gt;Conteúdo Principal&lt;/section&gt;
+&lt;/main&gt;
+&lt;footer&gt;Rodapé&lt;/footer&gt;</code></pre>
+  </div>
+  <p>Layout clássico com barra de navegação fixa no topo, área de conteúdo e rodapé.</p>
+  <p><strong>Dica de CSS:</strong> Use <code class="one-line-code">display: flex; flex-direction: column</code> no
+    container e <code class="one-line-code">flex: 1</code> no conteúdo para ocupar o espaço restante.</p>
+
+  <hr />
+
+  <h3>2.2 Galeria de Imagens</h3>
+
+  <div class="layout-preview">
+    <div class="lp-grid cols-3">
+      <div class="lp-block lp-tall">IMG 1</div>
+      <div class="lp-block lp-tall">IMG 2</div>
+      <div class="lp-block lp-tall">IMG 3</div>
+      <div class="lp-block lp-tall">IMG 4</div>
+      <div class="lp-block lp-tall">IMG 5</div>
+      <div class="lp-block lp-tall">IMG 6</div>
+    </div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;div class="galeria"&gt;
+  &lt;div class="item"&gt;Imagem 1&lt;/div&gt;
+  &lt;div class="item"&gt;Imagem 2&lt;/div&gt;
+  &lt;div class="item"&gt;Imagem 3&lt;/div&gt;
+  &lt;div class="item"&gt;Imagem 4&lt;/div&gt;
+  &lt;div class="item"&gt;Imagem 5&lt;/div&gt;
+  &lt;div class="item"&gt;Imagem 6&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <p>Grid de imagens com 3 colunas no desktop e 2 no mobile.</p>
+  <p><strong>Dica de CSS:</strong> Use <code class="one-line-code">display: grid; grid-template-columns: repeat(3,
+      1fr)</code> e reduza para 2 colunas na media query mobile.</p>
+
+  <hr />
+
+  <h3>2.3 Feed de Rede Social</h3>
+
+  <div class="layout-preview">
+    <div class="lp-row">
+      <div class="lp-block" style="flex: 0 0 12%; background: #ccc;">AVATAR</div>
+      <div class="lp-block">Nome do Usuário</div>
+    </div>
+    <div class="lp-block lp-content">Texto da Postagem</div>
+    <div class="lp-row">
+      <div class="lp-block" style="flex: 0 0 25%;">Curtir</div>
+      <div class="lp-block" style="flex: 0 0 25%;">Comentar</div>
+      <div class="lp-block" style="flex: 0 0 25%;">Compartilhar</div>
+    </div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;div class="post"&gt;
+  &lt;div class="cabecalho"&gt;Avatar + Nome&lt;/div&gt;
+  &lt;div class="conteudo"&gt;Texto da postagem&lt;/div&gt;
+  &lt;div class="acoes"&gt;Curtir | Comentar | Compartilhar&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <p>Sequência de posts com perfil, conteúdo e ações, usando Flexbox para alinhar elementos.</p>
+  <p><strong>Dica de CSS:</strong> O cabeçalho usa <code class="one-line-code">display: flex; align-items:
+      center</code> com <code class="one-line-code">gap</code>. A lista de <code class="one-line-code">.acoes</code>
+    usa <code class="one-line-code">display: flex; justify-content: space-between</code>.</p>
+
+  <hr />
+
+  <h3>2.4 Stack Vertical</h3>
+
+  <div class="layout-preview">
+    <div class="lp-block" style="height: 2.5rem;">BLOCO 1</div>
+    <div class="lp-block" style="height: 2.5rem;">BLOCO 2</div>
+    <div class="lp-block" style="height: 2.5rem;">BLOCO 3</div>
+    <div class="lp-block" style="height: 2.5rem;">BLOCO 4</div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;div class="stack"&gt;
+  &lt;div class="bloco"&gt;Bloco 1&lt;/div&gt;
+  &lt;div class="bloco"&gt;Bloco 2&lt;/div&gt;
+  &lt;div class="bloco"&gt;Bloco 3&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <p>Empilhamento vertical de blocos, ideal para páginas de conteúdo longo.</p>
+  <p><strong>Dica de CSS:</strong> Use <code class="one-line-code">display: grid; gap: 1rem</code> ou
+    <code class="one-line-code">display: flex; flex-direction: column</code> para empilhar os blocos.</p>
+
+  <hr />
+
+  <h3>2.5 Cards de Produto</h3>
+
+  <div class="layout-preview">
+    <div class="lp-grid cols-3">
+      <div>
+        <div class="lp-block" style="height: 3.5rem;">IMAGEM</div>
+        <div class="lp-block" style="height: 2rem;">Título + Preço</div>
+        <div class="lp-block" style="background: #d9d9d9;">Comprar</div>
+      </div>
+      <div>
+        <div class="lp-block" style="height: 3.5rem;">IMAGEM</div>
+        <div class="lp-block" style="height: 2rem;">Título + Preço</div>
+        <div class="lp-block" style="background: #d9d9d9;">Comprar</div>
+      </div>
+      <div>
+        <div class="lp-block" style="height: 3.5rem;">IMAGEM</div>
+        <div class="lp-block" style="height: 2rem;">Título + Preço</div>
+        <div class="lp-block" style="background: #d9d9d9;">Comprar</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;div class="card"&gt;
+  &lt;div class="imagem"&gt;Imagem do Produto&lt;/div&gt;
+  &lt;div class="info"&gt;Título + Preço&lt;/div&gt;
+  &lt;button&gt;Comprar&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <p>Grid de cards com imagem, informações e botão de ação.</p>
+  <p><strong>Dica de CSS:</strong> Envolva os cards no grid
+    <code class="one-line-code">display: grid; grid-template-columns: repeat(3, 1fr); gap</code> e faça cada card com
+    <code class="one-line-code">display: flex; flex-direction: column</code>.</p>
+
+  <hr />
+
+  <h3>2.6 Layout de Duas Colunas</h3>
+
+  <div class="layout-preview">
+    <div class="lp-row">
+      <div class="lp-block lp-sidebar">BARRA LATERAL (SIDEBAR)</div>
+      <div class="lp-block lp-content">CONTEÚDO PRINCIPAL</div>
+    </div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;div class="layout-duas-colunas"&gt;
+  &lt;aside&gt;Barra Lateral&lt;/aside&gt;
+  &lt;main&gt;Conteúdo Principal&lt;/main&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <p>Layout com sidebar e conteúdo principal, usando Grid para distribuição.</p>
+  <p><strong>Dica de CSS:</strong> Use
+    <code class="one-line-code">display: grid; grid-template-columns: 1fr 3fr</code> e alterne para
+    <code class="one-line-code">grid-template-columns: 1fr</code> no mobile, empilhando os conteúdos.</p>
+
+  <hr />
+
+  <h3>2.7 Hero + Feature Grid</h3>
+
+  <div class="layout-preview">
+    <div class="lp-block lp-hero">HERO / CHAMADA PRINCIPAL</div>
+    <div class="lp-grid cols-3">
+      <div class="lp-block" style="height: 2.5rem;">FEATURE 1</div>
+      <div class="lp-block" style="height: 2.5rem;">FEATURE 2</div>
+      <div class="lp-block" style="height: 2.5rem;">FEATURE 3</div>
+    </div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;section class="hero"&gt;Chamada Principal&lt;/section&gt;
+&lt;div class="features"&gt;
+  &lt;div class="feature"&gt;Feature 1&lt;/div&gt;
+  &lt;div class="feature"&gt;Feature 2&lt;/div&gt;
+  &lt;div class="feature"&gt;Feature 3&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <p>Hero grande seguido de grid de features, comum em landing pages.</p>
+  <p><strong>Dica de CSS:</strong> O hero usa <code class="one-line-code">display: flex; align-items: center;
+      justify-content: center</code> e as features usam <code class="one-line-code">display: grid;
+      grid-template-columns: repeat(3, 1fr)</code>.</p>
+
+  <hr />
+
+  <h3>2.8 Timeline</h3>
+
+  <div class="layout-preview">
+    <div class="lp-grid cols-2" style="grid-template-columns: repeat(2, 1fr); align-items: center;">
+      <div class="lp-block" style="height: 1.5rem; grid-column: 1;">EVENTO 1</div>
+      <div class="lp-block" style="height: 1.5rem; grid-column: 2; background: #e6e6e6;">EVENTO 2</div>
+      <div class="lp-block" style="height: 1.5rem; grid-column: 1;">EVENTO 3</div>
+      <div class="lp-block" style="height: 1.5rem; grid-column: 2; background: #e6e6e6;">EVENTO 4</div>
+    </div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;div class="timeline"&gt;
+  &lt;div class="evento"&gt;Evento 1&lt;/div&gt;
+  &lt;div class="evento"&gt;Evento 2&lt;/div&gt;
+  &lt;div class="evento"&gt;Evento 3&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <p>Linha do tempo com eventos empilhados alternadamente à esquerda e direita.</p>
+  <p><strong>Dica de CSS:</strong> Use um grid de 2 colunas e alterne a posição de cada evento com
+    <code class="one-line-code">grid-column</code> (coluna 1 e 2). No mobile, centralize tudo em uma única coluna.</p>
+
+  <hr />
+
+  <h3>2.9 Pricing Table</h3>
+
+  <div class="layout-preview">
+    <div class="lp-grid cols-3">
+      <div class="lp-block" style="height: 4rem;">Plano Básico</div>
+      <div class="lp-block lp-destaque" style="height: 4rem;">Plano Pro</div>
+      <div class="lp-block" style="height: 4rem;">Enterprise</div>
+    </div>
+  </div>
+
+  <div class="code-container">
+    <pre><code class="language-html">&lt;div class="pricing"&gt;
+  &lt;div class="plano"&gt;Plano Básico&lt;/div&gt;
+  &lt;div class="plano destaque"&gt;Plano Pro&lt;/div&gt;
+  &lt;div class="plano"&gt;Plano Enterprise&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+  <p>Tabela de preços com 3 planos, onde um se destaca visualmente.</p>
+  <p><strong>Dica de CSS:</strong> Use <code class="one-line-code">display: grid; grid-template-columns: repeat(3,
+      1fr)</code> e aplique a classe <code class="one-line-code">.destaque</code> para destacar o plano do meio
+    (cor de fundo, borda ou escala maior).</p>
+</section>
+
+<section class="section-box">
+  <h2>3. Requisitos Técnicos</h2>
   <ul>
-    <li><strong>Flexbox:</strong> Uso de <code class="one-line-code">display: flex</code> para barras de navegação,
-      alinhamento de hero e distribuição de itens.</li>
+    <li><strong>Flexbox:</strong> Uso de <code class="one-line-code">display: flex</code> para alinhamento e
+      distribuição de itens dentro dos blocos.</li>
     <li><strong>Grid:</strong> Uso de <code class="one-line-code">display: grid</code> com <code
-        class="one-line-code">grid-template-columns</code> para seções como benefícios e depoimentos.</li>
+        class="one-line-code">grid-template-columns</code> para layouts de múltiplas colunas.</li>
     <li><strong>Responsividade:</strong> Estratégia <em>mobile-first</em> com <code
-        class="one-line-code">@media</code> (ao menos um breakpoint) adaptando o layout para desktop.</li>
-    <li><strong>Box-Model:</strong> Controle consciente de <code class="one-line-code">margin</code>, <code
-        class="one-line-code">padding</code>, <code class="one-line-code">border</code> e <code
-        class="one-line-code">box-sizing</code>.</li>
+        class="one-line-code">@media</code> adaptando o layout para desktop.</li>
+    <li><strong>Box-Model:</strong> Controle de <code class="one-line-code">margin</code>, <code
+        class="one-line-code">padding</code> e <code class="one-line-code">box-sizing</code>.</li>
     <li><strong>Custom Properties:</strong> Paleta de cores e espaçamentos definidos como <code
         class="one-line-code">--variaveis</code>.</li>
-    <li><strong>Formulário Estilizado:</strong> Pelo menos um formulário de captura (ex: e-mail) com campos estilizados,
-      estados de foco e hover.</li>
-    <li><strong>Efeitos Visuais:</strong> Transições, sombras (<code class="one-line-code">box-shadow</code>) e/ou
-      filtros em imagens.</li>
+    <li><strong>Blocos Sem Conteúdo:</strong> Use apenas texto genérico (ex: "Bloco 1", "Imagem 1") para
+      representar os elementos.</li>
   </ul>
 </section>
 
 <section class="section-box">
-  <h2>3. Estrutura de Arquivos Sugerida</h2>
+  <h2>4. Estrutura de Arquivos Sugerida</h2>
   <div class="code-container">
-    <pre><code class="one-line-code">/projeto-ii
-  ├── index.html          (estrutura semântica da Landing Page)
+    <pre><code class="one-line-code">/projeto-final
+  ├── index.html          (página principal com links para cada layout)
+  ├── layout-01.html      (Menu + Conteúdo + Footer)
+  ├── layout-02.html      (Galeria de Imagens)
+  ├── layout-03.html      (Feed de Rede Social)
+  ├── layout-04.html      (Stack Vertical)
+  ├── layout-05.html      (Cards de Produto)
+  ├── layout-06.html      (Layout de Duas Colunas)
+  ├── layout-07.html      (Hero + Feature Grid)
+  ├── layout-08.html      (Timeline)
+  ├── layout-09.html      (Pricing Table)
   ├── css/
   │    └── style.css      (estilos, variáveis e media queries)
-  └── imagens/            (assets otimizados)</code></pre>
+  └── imagens/            (imagens placeholder se necessário)</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>4. O Desafio Prático</h2>
-  <p>Sua Landing Page deve conter:</p>
+  <h2>5. Orientações de Implementação</h2>
   <ol>
-    <li>Um <strong>hero</strong> com chamada principal e botão de ação (CTA).</li>
-    <li>Uma seção de <strong>benefícios</strong> organizada com Grid (3 colunas no desktop, 1 coluna no mobile).</li>
-    <li>Uma seção de <strong>depoimentos ou planos</strong> alinhada com Flexbox.</li>
-    <li>Um <strong>rodapé</strong> com links e informações de contato.</li>
-    <li>Nenhuma <strong>barra de rolagem horizontal</strong> em qualquer largura de tela.</li>
+    <li>Crie um <strong>arquivo HTML</strong> para cada layout escolhido.</li>
+    <li>Use <strong>blocos genéricos</strong> (divs com texto simples) para representar os elementos.</li>
+    <li>Implemente a <strong>responsividade</strong> com media queries.</li>
+    <li>Use <strong>variáveis CSS</strong> para cores e espaçamentos.</li>
+    <li>Teste em diferentes larguras: 360px (mobile), 768px (tablet) e 1280px (desktop).</li>
   </ol>
 </section>
 
 <section class="section-box">
-  <h2>5. Desafios Bônus <span class="badge badge-warning"
+  <h2>6. Desafios Bônus <span class="badge badge-warning"
       style="background-color: var(--color-warning); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-left: 10px;">Opcional</span>
   </h2>
   <ul>
-    <li><strong>Menu Responsivo:</strong> Converter a navegação em um menu hambúrguer no mobile (pode usar um checkbox
-      ou JavaScript simples).</li>
-    <li><strong>Animações:</strong> Adicionar animações de entrada com <code class="one-line-code">@keyframes</code>.</li>
+    <li><strong>Menu Hambúrguer:</strong> Implemente um menu responsivo que se expande no mobile.</li>
+    <li><strong>Animações:</strong> Adicione transições suaves nos elementos ao passar o mouse.</li>
+    <li><strong>Hover Effects:</strong> Crie efeitos visuais nos cards e botões.</li>
+    <li><strong>Dark Mode:</strong> Implemente um toggle para alternar entre modo claro e escuro.</li>
   </ul>
 </section>
 
@@ -79,7 +320,7 @@ tags:
     <li><strong>Teste Real:</strong> Valide o layout nas larguras de 360px (mobile), 768px (tablet) e 1280px (desktop).
     </li>
     <li><strong>Consistência:</strong> Use somente as variáveis definidas para cores e espaçamentos.</li>
-    <li><strong>Performance:</strong> Otimize as imagens e evite estilos repetidos.</li>
+    <li><strong>Performance:</strong> Evite estilos repetidos e mantenha o CSS organizado.</li>
     <li><strong>Prazo:</strong> A entrega ocorre na aula 20, com correção e feedback.</li>
   </ul>
 </div>
@@ -87,6 +328,7 @@ tags:
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Requisitos</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Menu + Conteúdo + Footer</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Galeria de Imagens</a></li>
   </ul>
 </section>
