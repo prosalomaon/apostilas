@@ -1,5 +1,5 @@
 ---
-title: "Grid Layout"
+title: "Grid Layout — Grades Bidimensionais e Estruturação Completa de Páginas"
 aula_numero: "15"
 description: "Criação de grades bidimensionais complexas para estruturação de páginas inteiras."
 tags:
@@ -8,42 +8,700 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 15 em desenvolvimento...</p>
+  <h2>Teoria & Conceitos Fundamentais</h2>
+  <p>
+    O CSS Grid Layout é o sistema de layout bidimensional mais poderoso e robusto
+    nativamente suportado pelos navegadores modernos. Diferente de métodos legados
+    (como floats) ou de sistemas unidimensionais (como o Flexbox), o CSS Grid
+    permite dividir uma página web em colunas e linhas simultaneamente,
+    posicionando elementos em células ou áreas retangulares com controle absoluto
+    de dimensões e alinhamento.
+  </p>
+
+  <h3>1. O que é o CSS Grid Layout?</h3>
+  <p>
+    O CSS Grid Layout transforma um elemento HTML em um
+    <strong>Grid Container</strong> (contêiner de grade) e seus filhos diretos em
+    <strong>Grid Items</strong> (itens de grade). Ele permite criar estruturas
+    complexas de páginas web sem a necessidade de alterar a semântica do HTML ou
+    criar "divs de envolvimento" (wrappers) artificiais para simular linhas e
+    colunas.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-css">/* Ativação do módulo Grid no container */
+.container {
+  display: grid; /* O elemento comporta-se como bloco e define um contexto de grade */
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Anatomia de uma Grade (Grid Terminology)</h3>
+  <p>
+    Para dominar a construção de layouts com CSS Grid, é necessário compreender
+    quatro termos técnicos fundamentais:
+  </p>
+  <ul>
+    <li>
+      <strong>Grid Line (Linha de Grade):</strong> São as linhas divisórias
+      verticais e horizontais que compõem a estrutura do grid. Elas são numeradas
+      automaticamente pelo navegador a partir do número 1 no canto superior
+      esquerdo do contêiner.
+    </li>
+    <li>
+      <strong>Grid Track (Trilha de Grade):</strong> É o espaço contínuo
+      compreendido entre duas linhas de grade adjacentes. Uma trilha vertical é
+      uma coluna e uma trilha horizontal é uma linha.
+    </li>
+    <li>
+      <strong>Grid Cell (Célula de Grade):</strong> É a menor unidade individual
+      da grade, formada pela interseção de uma trilha horizontal com uma trilha
+      vertical.
+    </li>
+    <li>
+      <strong>Grid Area (Área de Grade):</strong> É qualquer região retangular
+      composta por uma ou mais células de grade contíguas, delimitada por duas
+      linhas verticais e duas linhas horizontais.
+    </li>
+  </ul>
+
+  <div class="code-container">
+    <pre><code class="language-css">/* Exemplo visual: 2 colunas de 1fr e 2 linhas de auto */
+.grid-exemplo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 10px;
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Unidades e Funções Especiais do Grid</h3>
+
+  <h4>A Unidade de Fração (fr)</h4>
+  <p>
+    O CSS Grid introduziu a unidade de medida
+    <code class="one-line-code">fr</code> (fraction unit), que representa uma fração
+    do espaço livre disponível dentro do contêiner de grade após o desconto de
+    espaçamentos e dimensões fixas.
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">grid-template-columns: 1fr 1fr 1fr</code>; cria
+      três colunas de larguras exatamente iguais.
+    </li>
+    <li>
+      <code class="one-line-code">grid-template-columns: 300px 1fr 2fr</code>;
+      cria uma primeira coluna fixa de 300px e divide o espaço restante em 3
+      partes: 1 parte para a segunda coluna e 2 partes para a terceira.
+    </li>
+  </ul>
+
+  <h4>A Função repeat()</h4>
+  <p>
+    Para evitar declarações repetitivas de trilhas, utiliza-se a função
+    <code class="one-line-code">repeat(quantidade, padrão)</code>:
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">grid-template-columns: repeat(12, 1fr)</code>;
+      cria uma grade clássica de 12 colunas de tamanho idêntico.
+    </li>
+    <li>
+      <code class="one-line-code">grid-template-columns: repeat(3, 2fr 1fr)</code>;
+      gera o padrão <code class="one-line-code">2fr 1fr 2fr 1fr 2fr 1fr</code>.
+    </li>
+  </ul>
+
+  <h4>A Função minmax() e as Palavras-Chave auto-fill / auto-fit</h4>
+  <p>
+    A função <code class="one-line-code">minmax(mínimo, máximo)</code> limita o
+    tamanho de uma trilha entre um valor mínimo e um valor máximo. Combinada com
+    as palavras-chave <code class="one-line-code">auto-fill</code> ou
+    <code class="one-line-code">auto-fit</code>, permite criar layouts totalmente
+    responsivos sem a necessidade de media queries.
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">auto-fill</code>:</strong> Preenche o
+      contêiner com o maior número possível de colunas do tamanho mínimo
+      especificado, mesmo que algumas colunas fiquem vazias.
+    </li>
+    <li>
+      <strong><code class="one-line-code">auto-fit</code>:</strong> Expande e
+      estica as colunas existentes para preencher todo o espaço horizontal do
+      contêiner, eliminando colunas vazias.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-css">/* Cria colunas automáticas de no mínimo 200px que se expandem para preencher a tela */
+.grid-responsivo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5em; /* Espaçamento de canaleta entre as células */
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>4. Grid Explícito vs. Grid Implícito</h3>
+  <ul>
+    <li>
+      <strong>Grid Explícito:</strong> Formado quando declaramos explicitamente as
+      colunas e linhas utilizando as propriedades
+      <code class="one-line-code">grid-template-columns</code> e
+      <code class="one-line-code">grid-template-rows</code>.
+    </li>
+    <li>
+      <strong>Grid Implícito:</strong> Criado automaticamente pelo navegador
+      quando existem mais itens na página do que células declaradas no grid
+      explícito. O tamanho padrão das trilhas criadas automaticamente é
+      <code class="one-line-code">auto</code>, mas pode ser controlado com
+      <code class="one-line-code">grid-auto-rows</code> e
+      <code class="one-line-code">grid-auto-columns</code>.
+    </li>
+  </ul>
+  <p>
+    <code class="one-line-code">grid-auto-flow: dense</code>: Ativa o algoritmo de
+    alocação densa, fazendo com que itens menores preencham lacunas vazias
+    deixadas por itens maiores que não couberam anteriormente na grade.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Formas de Mapeamento e Posicionamento</h2>
+  <p>Existem três sintaxes principais para posicionar elementos em uma grade CSS:</p>
+
+  <h3>1. Por Números de Linhas de Grade</h3>
+  <p>
+    Os itens são posicionados indicando as linhas de início e término no eixo
+    vertical e horizontal:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-css">.item-destaque {
+  grid-column-start: 1;
+  grid-column-end: 3; /* Vai da linha 1 até a linha 3 (ocupa 2 colunas) */
+  grid-row-start: 2;
+  grid-row-end: 4;   /* Vai da linha 2 até a linha 4 (ocupa 2 linhas) */
+}
+
+/* Sintaxe resumida (shorthand com barra) */
+.item-destaque-shorthand {
+  grid-column: 1 / 3;
+  grid-row: 2 / span 2; /* "span 2" instrui a estender por 2 trilhas */
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Por Linhas Nomeadas</h3>
+  <p>
+    Podemos nomear as linhas entre colchetes ao definir o template e usá-las para
+    indicar os limites dos elementos:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-css">.container {
+  display: grid;
+  grid-template-columns: [inicio-main] 2fr [fim-main inicio-side] 1fr [fim-side];
+}
+
+.main-content {
+  grid-column: inicio-main / fim-main;
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Por Áreas Nomeadas (grid-template-areas)</h3>
+  <p>
+    Esta sintaxe intuitiva permite desenhar o mapa visual da aplicação diretamente
+    no CSS através de representações textuais ("ASCII art"). Cada célula deve ser
+    associada a um nome de área retangular.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-css">.container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "header  header"
+    "main    sidebar"
+    "footer  footer";
+  gap: 1.5em;
+}
+
+/* Associando os itens às suas respectivas áreas */
+header { grid-area: header; }
+main   { grid-area: main; }
+aside  { grid-area: sidebar; }
+footer { grid-area: footer; }</code></pre>
+  </div>
+  <p>
+    <strong>Regra de Ouro:</strong> Cada área nomeada deve obrigatoriamente formar
+    um retângulo contínuo. Não é permitido criar formas em "L", "U" ou áreas
+    desconectadas. Para deixar uma célula vazia na grade, utiliza-se um ponto
+    <code class="one-line-code">.</code>.
+  </p>
+
+  <hr />
+
+  <h3>4. Comparativo Técnico: CSS Grid vs. Flexbox vs. Floats</h3>
+  <div class="code-container">
+    <pre><code class="language-css">/*
+╔═══════════════════╦════════════════════════╦══════════════════════╦══════════════════════╗
+║ Critério          ║ CSS Grid (2D)          ║ Flexbox (1D)         ║ Floats (Legado)      ║
+╠═══════════════════╬════════════════════════╬══════════════════════╬══════════════════════╣
+║ Dimensionalidade  ║ Bidimensional (2D)     ║ Unidirecional (1D)   ║ Sem dimensão nativa  ║
+║ Filosofia         ║ Layout-In              ║ Content-Out          ║ Document Flow        ║
+║ Alinhamento       ║ Perfeito entre trilhas ║ Independente         ║ Irregular            ║
+║ Gutter            ║ Nativo via gap         ║ Nativo via gap       ║ Manual (margens)     ║
+║ Caso de Uso       ║ Páginas, dashboards    ║ Componentes de UI    ║ Texto ao redor de    ║
+║                   ║ e galerias             ║ e menus              ║ mídias               ║
+╚═══════════════════╩════════════════════════╩══════════════════════╩══════════════════════╝
+
+- Grid (2D): Controla linhas e colunas simultaneamente em uma única grade.
+- Flexbox (1D): Controla o fluxo ao longo de um único eixo por vez.
+- Floats: O fluxo de texto contorna o elemento sem dimensão nativa.
+*/</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>5. Alinhamento no CSS Grid</h3>
+  <p>
+    O CSS Grid reaproveita as propriedades de alinhamento do Box Alignment Module:
+  </p>
+  <h4>Eixo Horizontal (Inline Axis)</h4>
+  <ul>
+    <li>
+      <code class="one-line-code">justify-content</code> (no container): Alinha as
+      trilhas do grid horizontalmente dentro do contêiner
+      (<code class="one-line-code">start</code>,
+      <code class="one-line-code">end</code>,
+      <code class="one-line-code">center</code>,
+      <code class="one-line-code">stretch</code>,
+      <code class="one-line-code">space-between</code>,
+      <code class="one-line-code">space-around</code>,
+      <code class="one-line-code">space-evenly</code>).
+    </li>
+    <li>
+      <code class="one-line-code">justify-items</code> (no container): Alinha os
+      conteúdos de todas as células dentro de suas respectivas áreas horizontais
+      (<code class="one-line-code">start</code>,
+      <code class="one-line-code">end</code>,
+      <code class="one-line-code">center</code>,
+      <code class="one-line-code">stretch</code>).
+    </li>
+    <li>
+      <code class="one-line-code">justify-self</code> (no item): Sobrescreve o
+      alinhamento horizontal para um item individual.
+    </li>
+  </ul>
+  <h4>Eixo Vertical (Block Axis)</h4>
+  <ul>
+    <li>
+      <code class="one-line-code">align-content</code> (no container): Alinha as
+      trilhas do grid verticalmente dentro do contêiner.
+    </li>
+    <li>
+      <code class="one-line-code">align-items</code> (no container): Alinha o
+      conteúdo de todas as células verticalmente em suas áreas.
+    </li>
+    <li>
+      <code class="one-line-code">align-self</code> (no item): Sobrescreve o
+      alinhamento vertical de um item específico.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>1. Nível Básico: Estruturação de Página Completa com grid-template-areas</h3>
+  <p>
+    Neste exemplo, aplicamos o CSS Grid para posicionar as regiões estruturais de
+    um portal web de forma declarativa e limpa.
+  </p>
   <div class="code-container">
-    <pre><code class="language-css">// Em breve...</code></pre>
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Portal Web com CSS Grid&lt;/title&gt;
+  &lt;style&gt;
+    :root { box-sizing: border-box; }
+    *, ::before, ::after { box-sizing: inherit; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #3709b9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .site-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: auto auto auto auto;
+      grid-template-areas:
+        "cabecalho cabecalho"
+        "navegacao  navegacao"
+        "principal  sidebar-top"
+        "principal  sidebar-bottom";
+      gap: 1.5em;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    header {
+      grid-area: cabecalho;
+      background-color: #2D5377;
+      color: white;
+      padding: 1.5em;
+      border-radius: 8px;
+    }
+    nav {
+      grid-area: navegacao;
+      background-color: #5f4b44;
+      color: white;
+      padding: 1em;
+      border-radius: 20px;
+    }
+    main {
+      grid-area: principal;
+      background-color: white;
+      padding: 1.5em;
+      border-radius: 8px;
+    }
+    .side1 {
+      grid-area: sidebar-top;
+      background-color: white;
+      padding: 1.5em;
+      border-radius: 8px;
+    }
+    .side2 {
+      grid-area: sidebar-bottom;
+      background-color: white;
+      padding: 1.5em;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .site-container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "cabecalho"
+          "navegacao"
+          "principal"
+          "sidebar-top"
+          "sidebar-bottom";
+      }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="site-container"&gt;
+    &lt;header&gt;&lt;h1&gt;MusicDot Portal&lt;/h1&gt;&lt;/header&gt;
+    &lt;nav&gt;&lt;span&gt;Home | Cursos | Planos | Contato&lt;/span&gt;&lt;/nav&gt;
+    &lt;main&gt;
+      &lt;h2&gt;Aprenda Música Online&lt;/h2&gt;
+      &lt;p&gt;Aprenda teclado, violão, baixo e bateria no
+      seu próprio ritmo.&lt;/p&gt;
+    &lt;/main&gt;
+    &lt;aside class="side1"&gt;&lt;h3&gt;Área do Aluno&lt;/h3&gt;&lt;/aside&gt;
+    &lt;aside class="side2"&gt;&lt;h3&gt;Promoção Anual&lt;/h3&gt;&lt;/aside&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Nível Intermediário: Galeria Responsiva Sem Media Queries (auto-fit + dense)</h3>
+  <p>
+    Criação de um portfólio de imagens onde os elementos se organizam
+    automaticamente dependendo da resolução do dispositivo, com preenchimento
+    automático de lacunas (<code class="one-line-code">dense</code>).
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Galeria Inteligente&lt;/title&gt;
+  &lt;style&gt;
+    :root { box-sizing: border-box; }
+    *, ::before, ::after { box-sizing: inherit; }
+
+    body {
+      font-family: sans-serif;
+      background-color: #222;
+      color: white;
+      padding: 20px;
+    }
+
+    .galeria-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-auto-rows: 200px;
+      grid-auto-flow: dense;
+      gap: 1em;
+    }
+
+    .foto-card {
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .foto-card figure {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    .foto-card img {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .foto-card.destaque {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="galeria-grid"&gt;
+    &lt;div class="foto-card"&gt;&lt;figure&gt;
+      &lt;img src="https://via.placeholder.com/400x400/2D5377/fff"
+           alt="Foto 1"&gt;&lt;/figure&gt;&lt;/div&gt;
+    &lt;div class="foto-card destaque"&gt;&lt;figure&gt;
+      &lt;img src="https://via.placeholder.com/800x800/e93d50/fff"
+           alt="Destaque"&gt;&lt;/figure&gt;&lt;/div&gt;
+    &lt;div class="foto-card"&gt;&lt;figure&gt;
+      &lt;img src="https://via.placeholder.com/400x400/28a745/fff"
+           alt="Foto 3"&gt;&lt;/figure&gt;&lt;/div&gt;
+    &lt;div class="foto-card"&gt;&lt;figure&gt;
+      &lt;img src="https://via.placeholder.com/400x400/ffc107/fff"
+           alt="Foto 4"&gt;&lt;/figure&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Nível Avançado: Fallback Progressivo para Navegadores Antigos (@supports)</h3>
+  <p>
+    Utilização de Feature Queries (<code class="one-line-code">@supports</code>)
+    para garantir que navegadores antigos recebam um layout funcional em
+    inline-block ou flexbox sem quebrar o CSS Grid aplicado a navegadores
+    modernos.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-css">/* Layout padrão de fallback para navegadores antigos */
+.card-item {
+  display: inline-block;
+  width: 300px;
+  margin: 10px;
+}
+
+/* Feature Query: Aplica o Grid apenas se o navegador suportar nativamente */
+@supports (display: grid) {
+  .container-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5em;
+  }
+
+  /* Anula o comportamento do fallback no Grid */
+  .card-item {
+    display: block;
+    width: auto;
+    margin: 0;
+  }
+}</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
-  <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+  <h2>Representações Gráficas</h2>
+
+  <h3>1. Anatomia de uma Grade (Grid Terminology)</h3>
+  <p>
+    Diagrama ilustrando os quatro termos técnicos fundamentais do CSS Grid:
+    linhas, trilhas, células e áreas.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    subgraph Grade["Grid Container"]
+        direction LR
+        subgraph Linha_1["Trilha Horizontal (Row)"]
+            direction LR
+            C11["Célula 1,1"] --- C12["Célula 1,2"] --- C13["Célula 1,3"]
+        end
+        subgraph Linha_2["Trilha Horizontal (Row)"]
+            direction LR
+            C21["Célula 2,1"] --- C22["Célula 2,2 - Área Expandida"] --- C23["Célula 2,3"]
+        end
+    end
+
+    GLine["Grid Line (Linha de Grade)<br/>Numeradas a partir de 1"]
+    GCell["Grid Cell (Célula)<br/>Interseção de trilha H e V"]
+    GArea["Grid Area (Área)<br/>Retângulo de células contíguas"]
+    GTrack["Grid Track (Trilha)<br/>Espaço entre linhas adjacentes"]
+
+    style Grade fill:#e1f5fe,stroke:#01579b
+    style Linha_1 fill:#e1f5fe,stroke:#01579b
+    style Linha_2 fill:#e1f5fe,stroke:#01579b</div></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Comparação Visual entre Flexbox (1D) e CSS Grid (2D)</h3>
+  <p>
+    Diferença fundamental: enquanto o Flexbox organiza itens apenas ao longo de um
+    eixo (1D), o CSS Grid define um sistema rígido de linhas e colunas (2D).
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    subgraph Flexbox_Unidirecional["Flexbox: 1D - Alinhamento por Linha Isolada"]
+        direction LR
+        A1["Item 1 - Curto"] --- A2["Item 2 - Texto Longo"] --- A3["Item 3"]
+        B1["Item 4 - Quebra de linha não alinha com a coluna do Item 1"]
+    end
+
+    subgraph CSS_Grid_Bidimensional["CSS Grid: 2D - Alinhamento Rígido em Linhas e Colunas"]
+        direction TB
+        subgraph Linha_1["Trilha 1"]
+            direction LR
+            C1["Célula 1,1"] --- C2["Célula 1,2"] --- C3["Célula 1,3"]
+        end
+        subgraph Linha_2["Trilha 2"]
+            direction LR
+            D1["Célula 2,1 - Alinhada à 1,1"] --- D2["Célula 2,2 - Alinhada à 1,2"] --- D3["Célula 2,3 - Alinhada à 1,3"]
+        end
+    end
+
+    style Flexbox_Unidirecional fill:#fff3e0,stroke:#e65100
+    style CSS_Grid_Bidimensional fill:#e1f5fe,stroke:#01579b</div></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Fluxo do Posicionamento por Áreas Nomeadas</h3>
+  <p>
+    Fluxograma demonstrando como o navegador interpreta o mapa
+    <code class="one-line-code">grid-template-areas</code> e associa os itens às
+    suas áreas.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    Start([Definir grid-template-areas com mapa textual]) --> CheckRet{As áreas formam<br/>retângulos contínuos?}
+
+    CheckRet -- Não --> Error["Erro: Layout inválido<br/>(formas em L, U ou desconectadas)"]
+    CheckRet -- Sim --> Assoc[Associar itens via grid-area]
+    Assoc --> Mapa[Gerar mapa visual da página]
+    Mapa --> Render[Renderizar itens nas células]
+
+    Error --> Fix[Corrigir o mapa textual]
+
+    style Start fill:#f5f5f5,stroke:#333
+    style CheckRet fill:#fff2cc,stroke:#d6b656
+    style Error fill:#f8cecc,stroke:#b85450
+    style Render fill:#e2f0d9,stroke:#385723</div></pre>
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas, Lembretes e Acessibilidade</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Impacto do <code class="one-line-code">grid-auto-flow: dense</code>
+      na Acessibilidade:</strong> A ordenação visual gerada pelo algoritmo denso
+      pode alterar drasticamente a posição dos elementos na tela em relação ao
+      seu código HTML original. Dispositivos de leitura de tela (screen readers)
+      e a navegação por teclado (tecla Tab) seguem a ordem do código-fonte, e não
+      a ordem visual renderizada, o que pode gerar confusão para usuários com
+      deficiência visual.
+    </li>
+    <li>
+      <strong>Imagens no Grid (<code class="one-line-code">object-fit: cover</code>):</strong>
+      Como o CSS Grid força os elementos a esticarem para preencher as áreas
+      atribuídas, imagens podem sofrer distorção visual. Combine
+      <code class="one-line-code">flex: 1</code> no container da imagem com
+      <code class="one-line-code">object-fit: cover</code> para garantir cortes
+      elegantes sem deformação proporcional.
+    </li>
+    <li>
+      <strong>Integração Perfeita (Grid + Flexbox):</strong> Não veja o Flexbox e o
+      CSS Grid como concorrentes. O padrão profissional de mercado utiliza Grid
+      para a arquitetura macro da página (layout geral, colunas e rodapés) e
+      Flexbox para os componentes micro internos (alinhamento de botões, ícones
+      e itens de listas).
+    </li>
+    <li>
+      <strong>Regra de Ouro das Áreas:</strong> Cada área nomeada em
+      <code class="one-line-code">grid-template-areas</code> deve formar um
+      retângulo contínuo. Use o ponto <code class="one-line-code">.</code> para
+      deixar células vazias.
+    </li>
+    <li>
+      <strong>Prefira minmax() com auto-fit:</strong> Para grids responsivos sem
+      media queries, combine
+      <code class="one-line-code">repeat(auto-fit, minmax(valor, 1fr))</code>.
+      Use <code class="one-line-code">auto-fill</code> apenas quando quiser manter
+      trilhas vazias visíveis.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Estrutura Completa de Páginas:</strong> Use
+      <code class="one-line-code">grid-template-areas</code> para desenhar o
+      "mapa" da página (header, nav, main, aside, footer) de forma declarativa e
+      legível, facilitando a manutenção.
+    </li>
+    <li>
+      <strong>Galerias e Dashboards:</strong> A combinação de
+      <code class="one-line-code">repeat(auto-fit, minmax(...))</code> com
+      <code class="one-line-code">grid-auto-flow: dense</code> e
+      <code class="one-line-code">grid-column/row: span</code> cria galerias
+      responsivas com itens em destaque.
+    </li>
+    <li>
+      <strong>Grades de 12 Colunas:</strong> Replique o sistema de 12 colunas
+      clássico dos frameworks com
+      <code class="one-line-code">grid-template-columns: repeat(12, 1fr)</code> e
+      posicione os itens usando
+      <code class="one-line-code">grid-column: span X</code>.
+    </li>
+    <li>
+      <strong>Fallback Progressivo:</strong> Ao usar Grid em projetos com público
+      de navegadores antigos, envolva as regras do Grid dentro de
+      <code class="one-line-code">@supports (display: grid)</code> e forneça um
+      fallback com flexbox ou inline-block.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>GRANT, Keith J. CSS in Depth. Shelter Island: Manning Publications, 2018.</li>
+    <li>HAVERBEKE, Marijn. Eloquent JavaScript. 3ª ed., 2018.</li>
+    <li>CAELUM. Desenvolvimento Web com HTML, CSS e JavaScript. São Paulo: Caelum, 2020.</li>
+    <li>CENTRO PAULA SOUZA. Plano de Curso nº 1062 - Técnico em Desenvolvimento de Sistemas. Eixo Tecnológico de Informação e Comunicação, 2026.</li>
   </ul>
 </section>
 

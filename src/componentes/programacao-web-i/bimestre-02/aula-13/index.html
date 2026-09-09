@@ -1,5 +1,5 @@
 ---
-title: "O Box-Model"
+title: "O Box-Model (Modelo de Caixa) e Dimensionamento de Elementos"
 aula_numero: "13"
 description: "Domínio de bordas, margens, preenchimento (padding) e o dimensionamento de elementos."
 tags:
@@ -9,41 +9,642 @@ tags:
 
 <section class="section-box">
   <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 13 em desenvolvimento...</p>
+  <p>
+    No desenvolvimento web, o navegador trata cada elemento HTML como uma caixa
+    retangular. Compreender como essas caixam calculam seu tamanho e como suas
+    bordas, espaçamentos internos e margens interagem é indispensável para
+    evitar quebras visuais e criar interfaces previsíveis.
+  </p>
+
+  <h3>1. As Quatro Camadas do Box-Model</h3>
+  <p>
+    De acordo com as especificações do W3C, o Box-Model de qualquer elemento é
+    composto por quatro camadas concêntricas dispostas de dentro para fora:
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">Content</code> (Conteúdo):</strong> A área central
+      onde o texto, imagem ou elemento filho é efetivamente renderizado. Sua
+      dimensão original é definida pelas propriedades
+      <code class="one-line-code">width</code> (largura) e
+      <code class="one-line-code">height</code> (altura).
+    </li>
+    <li>
+      <strong><code class="one-line-code">Padding</code> (Preenchimento Interno):</strong> O
+      espaço transparente entre o conteúdo e a borda do elemento. O padding
+      herda o plano de fundo (background) definido para o elemento.
+    </li>
+    <li>
+      <strong><code class="one-line-code">Border</code> (Borda):</strong> A linha física que
+      envolve o preenchimento interno e o conteúdo. Possui configurações de
+      largura (<code class="one-line-code">border-width</code>), estilo
+      (<code class="one-line-code">border-style</code>) e cor
+      (<code class="one-line-code">border-color</code>).
+    </li>
+    <li>
+      <strong><code class="one-line-code">Margin</code> (Margem Externa):</strong> O
+      espaçamento transparente localizado fora da borda, responsável por afastar
+      o elemento de seus vizinhos no fluxo do documento.
+    </li>
+  </ul>
+
+  <div class="code-container">
+    <pre><code class="language-css">/* Exemplo visual das quatro camadas */
+.caixa-modelo {
+  /* Margin: espaçamento externo */
+  margin: 20px;
+
+  /* Border: borda física */
+  border: 2px solid #333;
+
+  /* Padding: preenchimento interno */
+  padding: 15px;
+
+  /* Content: área do conteúdo (width/height) */
+  width: 200px;
+  height: 100px;
+  background-color: #e1f5fe;
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Alternância de Dimensionamento: content-box vs. border-box</h3>
+  <p>
+    A propriedade
+    <code class="one-line-code">box-sizing</code> altera a forma como o navegador
+    calcula a largura e a altura finais de um elemento na tela.
+  </p>
+
+  <h4>O Modelo Padrão: content-box</h4>
+  <p>
+    Por padrão, o CSS utiliza
+    <code class="one-line-code">box-sizing: content-box</code>. Nesse modelo, ao
+    definir <code class="one-line-code">width</code> e
+    <code class="one-line-code">height</code>, você está definindo apenas o tamanho da
+    caixa de conteúdo. Qualquer valor adicionado a padding ou border é somado
+    por fora.
+  </p>
+  <p>
+    <strong>Fórmula:</strong> Largura Total Renderizada =
+    <code class="one-line-code">width</code> +
+    <code class="one-line-code">padding-left</code> +
+    <code class="one-line-code">padding-right</code> +
+    <code class="one-line-code">border-left-width</code> +
+    <code class="one-line-code">border-right-width</code>
+  </p>
+  <p>
+    <strong>Exemplo de quebra de layout:</strong> Se você tentar colocar duas
+    colunas lado a lado (uma com <code class="one-line-code">width: 70%</code> e
+    outra com <code class="one-line-code">width: 30%</code>) e adicionar
+    <code class="one-line-code">padding: 1.5em</code> na barra lateral, a soma
+    ultrapassará 100% (100% + 3em), forçando a coluna a quebrar para a linha de
+    baixo.
+  </p>
+
+  <h4>O Modelo Profissional: border-box</h4>
+  <p>
+    Com <code class="one-line-code">box-sizing: border-box</code>, a largura
+    (<code class="one-line-code">width</code>) e a altura
+    (<code class="one-line-code">height</code>) especificadas representam o tamanho
+    total visível da caixa. Quando você adiciona padding ou border, o navegador
+    comprime o espaço do conteúdo interno em vez de inflar o elemento para fora.
+  </p>
+
+  <h4>O Reset Universal Robusto</h4>
+  <p>
+    Para garantir um comportamento dimensional previsível em toda a aplicação,
+    adicione a seguinte regra no início da folha de estilos:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-css">/* Define border-box no elemento raiz e força a herança para todos os elementos */
+:root {
+  box-sizing: border-box;
+}
+
+*, ::before, ::after {
+  box-sizing: inherit;
+}</code></pre>
+  </div>
+  <p>
+    Essa abordagem baseada em herança no <code class="one-line-code">:root</code>
+    garante estabilidade global e permite integrar componentes de terceiros mais
+    facilmente quando necessário.
+  </p>
+
+  <hr />
+
+  <h3>3. A Regra do Relógio (Shorthand TRouBLe)</h3>
+  <p>
+    As propriedades <code class="one-line-code">padding</code> e
+    <code class="one-line-code">margin</code> aceitam abreviações (shorthands) que
+    seguem o sentido horário. O mnemônico TRouBLe ajuda a memorizar a sequência
+    de lados:
+  </p>
+  <p><strong>Top → Right → Bottom → Left</strong></p>
+  <ul>
+    <li>
+      <strong>1 Valor</strong> (<code class="one-line-code">padding: 10px</code>):
+      Aplica 10px a todos os quatro lados.
+    </li>
+    <li>
+      <strong>2 Valores</strong> (<code class="one-line-code">padding: 10px 20px</code>):
+      10px para Top/Bottom (vertical) e 20px para Right/Left (horizontal).
+    </li>
+    <li>
+      <strong>3 Valores</strong> (<code class="one-line-code">padding: 10px 20px 15px</code>):
+      Top = 10px, Right/Left = 20px, Bottom = 15px.
+    </li>
+    <li>
+      <strong>4 Valores</strong> (<code class="one-line-code">padding: 10px 20px 15px 5px</code>):
+      Top = 10px, Right = 20px, Bottom = 15px, Left = 5px.
+    </li>
+  </ul>
+
+  <hr />
+
+  <h3>4. Comportamentos Avançados de Margens e Transbordo</h3>
+
+  <h4>Centralização Horizontal (margin: 0 auto)</h4>
+  <p>
+    Ao definir uma largura em um elemento de bloco
+    (<code class="one-line-code">width</code> ou
+    <code class="one-line-code">max-width</code>), o valor
+    <code class="one-line-code">auto</code> nas margens laterais divide o espaço
+    restante da tela em partes iguais à esquerda e à direita, centralizando o
+    bloco.
+  </p>
+
+  <h4>Colapso de Margens (Margin Collapsing)</h4>
+  <p>
+    Quando duas margens verticais superiores e/ou inferiores se encontram no
+    fluxo normal, elas não se somam; elas colapsam e formam uma única margem
+    equivalente ao maior valor entre elas. Margens horizontais nunca colapsam.
+  </p>
+
+  <h4>Margens Negativas</h4>
+  <p>
+    Valores negativos em <code class="one-line-code">margin-top</code> ou
+    <code class="one-line-code">margin-left</code> puxam o elemento no sentido
+    oposto (para cima ou para a esquerda). Valores negativos em
+    <code class="one-line-code">margin-bottom</code> ou
+    <code class="one-line-code">margin-right</code> atraem os elementos vizinhos
+    sucessivos.
+  </p>
+
+  <h4>Controle de Transbordo (overflow)</h4>
+  <p>
+    Quando o conteúdo excede as dimensões fixadas no contêiner, a propriedade
+    <code class="one-line-code">overflow</code> aceita os valores:
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">visible</code> (padrão): O conteúdo transborda
+      para fora da caixa sem cortá-lo.
+    </li>
+    <li>
+      <code class="one-line-code">hidden</code>: O conteúdo excedente é cortado e
+      fica invisível.
+    </li>
+    <li>
+      <code class="one-line-code">scroll</code>: Adiciona barras de rolagem
+      permanentes.
+    </li>
+    <li>
+      <code class="one-line-code">auto</code>: Adiciona barras de rolagem apenas
+      quando necessário.
+    </li>
+  </ul>
+
+  <h4>Limites de Dimensão (min/max)</h4>
+  <p>
+    <code class="one-line-code">min-width</code>,
+    <code class="one-line-code">max-width</code>,
+    <code class="one-line-code">min-height</code> e
+    <code class="one-line-code">max-height</code> permitem que a caixa cresça ou
+    encolha dinamicamente dentro de limites seguros.
+  </p>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>1. Nível Básico: Reset Universal do Box-Model e Colunas sem Quebra</h3>
+  <p>
+    Demonstração de como aplicar o
+    <code class="one-line-code">border-box</code> de forma universal e criar um
+    layout de duas colunas que não quebra a linha mesmo com o uso de
+    preenchimento interno e bordas.
+  </p>
   <div class="code-container">
-    <pre><code class="language-css">// Em breve...</code></pre>
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Layout de Colunas e Box-Model&lt;/title&gt;
+  &lt;style&gt;
+    /* 1. Reset universal de Box-Model baseado em herança */
+    :root {
+      box-sizing: border-box;
+    }
+    *, ::before, ::after {
+      box-sizing: inherit;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Contêiner limitado e centralizado */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 15px;
+      border: 1px solid #ccc;
+    }
+
+    /* Colunas flutuantes utilizando porcentagens exatas */
+    .coluna-principal {
+      float: left;
+      width: 70%;
+      padding: 20px;
+      border: 2px solid #2d5377;
+      background-color: #e1edf2;
+    }
+
+    .coluna-lateral {
+      float: left;
+      width: 30%;
+      padding: 20px;
+      border: 2px solid #e93d50;
+      background-color: #f8f9fa;
+    }
+
+    /* Limpeza de fluxo (clearfix) */
+    .clearfix::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container clearfix"&gt;
+    &lt;main class="coluna-principal"&gt;
+      &lt;h2&gt;Conteúdo Principal&lt;/h2&gt;
+      &lt;p&gt;Com box-sizing: border-box, o padding de 20px e a
+      borda de 2px não aumentam a largura da coluna além
+      dos 70% estipulados.&lt;/p&gt;
+    &lt;/main&gt;
+    &lt;aside class="coluna-lateral"&gt;
+      &lt;h3&gt;Barra Lateral&lt;/h3&gt;
+      &lt;p&gt;Soma exatamente 30% e encaixa perfeitamente ao lado.&lt;/p&gt;
+    &lt;/aside&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Nível Intermediário: Mnemônico TRouBLe e Variações de Shorthands</h3>
+  <p>
+    Demonstração das diferentes formas de aplicar a sintaxe resumida para
+    <code class="one-line-code">padding</code> e
+    <code class="one-line-code">margin</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Exemplo de Shorthands TRouBLe&lt;/title&gt;
+  &lt;style&gt;
+    .card {
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+
+    /* 4 Valores: Top Right Bottom Left (Sentido Horário) */
+    .card-4-valores {
+      padding: 10px 20px 30px 40px;
+      border-left: 5px solid #2d5377;
+    }
+
+    /* 3 Valores: Top | Right&amp;Left | Bottom */
+    .card-3-valores {
+      padding: 15px 30px 5px;
+      border-left: 5px solid #e93d50;
+    }
+
+    /* 2 Valores: Top&amp;Bottom | Right&amp;Left */
+    .card-2-valores {
+      padding: 10px 25px;
+      border-left: 5px solid #28a745;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="card card-4-valores"&gt;
+    &lt;h3&gt;Card 4 Valores&lt;/h3&gt;
+    &lt;p&gt;Padding assimétrico: Top(10px), Right(20px),
+    Bottom(30px), Left(40px).&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="card card-3-valores"&gt;
+    &lt;h3&gt;Card 3 Valores&lt;/h3&gt;
+    &lt;p&gt;Padding com laterais unificadas: Top(15px),
+    Laterais(30px), Bottom(5px).&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="card card-2-valores"&gt;
+    &lt;h3&gt;Card 2 Valores&lt;/h3&gt;
+    &lt;p&gt;Padding simétrico: Vertical(10px), Horizontal(25px).&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Nível Intermediário: Colapso de Margens e Margens Negativas</h3>
+  <p>
+    Demonstração visual de como o colapso de margens reduz o espaço vertical e
+    como margens negativas expandem elementos para fora de seus contêineres.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Colapso e Margens Negativas&lt;/title&gt;
+  &lt;style&gt;
+    .painel {
+      width: 400px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+
+    /* Ocorre Colapso de Margem aqui */
+    .titulo-bloco {
+      margin-bottom: 30px;
+      background-color: #eee;
+    }
+
+    .texto-bloco {
+      margin-top: 20px;
+      background-color: #e1edf2;
+    }
+
+    /* Margem negativa puxando o elemento para fora */
+    .destaque-expandido {
+      margin-left: -20px;
+      margin-right: -20px;
+      background-color: #e93d50;
+      color: #ffffff;
+      padding: 10px 20px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="painel"&gt;
+    &lt;h2 class="titulo-bloco"&gt;Título com Margin-Bottom: 30px&lt;/h2&gt;
+    &lt;p class="texto-bloco"&gt;Parágrafo com Margin-Top: 20px.
+    O espaço real entre eles é de 30px devido ao colapso
+    de margens.&lt;/p&gt;
+
+    &lt;div class="destaque-expandido"&gt;
+      Este bloco utiliza margens negativas laterais (-20px)
+      para sangrar de ponta a ponta na caixa do pai.
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>4. Nível Avançado: Controle de Overflow e Responsividade de Imagens</h3>
+  <p>
+    Aplicação de regras de limite de tamanho
+    (<code class="one-line-code">max-width</code>) para evitar que imagens estourem
+    o Box-Model e uso de <code class="one-line-code">overflow</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Overflow e Imagens Responsivas&lt;/title&gt;
+  &lt;style&gt;
+    .caixa-scroll {
+      width: 300px;
+      height: 120px;
+      border: 2px solid #333;
+      padding: 10px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .card-foto {
+      width: 300px;
+      padding: 15px;
+      border: 1px solid #aaa;
+      background-color: #fff;
+    }
+
+    /* Garante que a imagem se ajuste ao Box-Model pai */
+    .card-foto img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h3&gt;Caixa com Rolagem Automática (overflow-y: auto)&lt;/h3&gt;
+  &lt;div class="caixa-scroll"&gt;
+    &lt;p&gt;Este texto é muito longo para a altura definida
+    de 120px. O navegador adicionará automaticamente uma
+    barra de rolagem vertical sem quebrar a estrutura da
+    página.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;h3&gt;Imagem Adaptada ao Box-Model (max-width: 100%)&lt;/h3&gt;
+  &lt;div class="card-foto"&gt;
+    &lt;img src="https://via.placeholder.com/600x300"
+         alt="Imagem que se adapta ao pai"&gt;
+    &lt;p&gt;Embora a imagem original tenha 600px de largura,
+    o max-width: 100% força seu dimensionamento a
+    respeitar o limite do card de 300px.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
-  <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+  <h2>Representações Gráficas</h2>
+
+  <h3>1. Anatomia do Box-Model em CSS</h3>
+  <p>
+    Este diagrama mostra a estrutura concêntrica das quatro camadas do Box-Model,
+    de fora para dentro.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    subgraph Box_Model["Estrutura do Elemento"]
+        M["Margin: Espaçamento Externo Transparente"] --> B["Border: Borda Física do Elemento"]
+        B --> P["Padding: Preenchimento Interno"]
+        P --> C["Content: Conteúdo Real - Texto/Imagem"]
+    end
+
+    style C fill:#e1f5fe,stroke:#01579b
+    style P fill:#fff3e0,stroke:#e65100
+    style B fill:#e8f5e9,stroke:#2e7d32
+    style M fill:#f8d7da,stroke:#f5c6cb</div></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Comparativo de Dimensionamento (content-box vs border-box)</h3>
+  <p>
+    Este diagrama ilustra a diferença prática entre os dois modelos de
+    dimensionamento, destacando como o <code class="one-line-code">border-box</code>
+    mantém a largura total prevista.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph LR
+    subgraph Content_Box["box-sizing: content-box"]
+        A1["width: 300px"] --> B1["padding: 20px"]
+        B1 --> C1["border: 2px"]
+        C1 --> D1["Largura Total na Tela: 322px"]
+    end
+
+    subgraph Border_Box["box-sizing: border-box"]
+        A2["width: 300px"] --> B2["Padding e Borda incluídos internamente"]
+        B2 --> C2["Conteúdo Comprimido"]
+        C2 --> D2["Largura Total na Tela: 300px"]
+    end
+
+    style D1 fill:#f8d7da,stroke:#f5c6cb
+    style D2 fill:#d4edda,stroke:#c3e6cb</div></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Fluxo do Cálculo de Largura com box-sizing</h3>
+  <p>
+    Fluxograma demonstrando como o navegador calcula a largura final de um
+    elemento de acordo com o modo de dimensionamento ativo.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    Start([Elemento com width definido]) --> Check{Qual box-sizing?}
+
+    Check -- "content-box (padrão)" --> CB1[Calcula width apenas para o conteúdo]
+    CB1 --> CB2[Adiciona padding-left e padding-right por fora]
+    CB2 --> CB3[Adiciona border-left e border-right por fora]
+    CB3 --> CB4[Largura Final = width + padding + border]
+
+    Check -- "border-box (profissional)" --> BB1[Calcula width como tamanho total visível]
+    BB1 --> BB2[Comprime padding e border internamente]
+    BB2 --> BB3[Conteúdo recebe menos espaço]
+    BB3 --> BB4[Largura Final = width especificado]
+
+    style Start fill:#f5f5f5,stroke:#333
+    style CB4 fill:#f8d7da,stroke:#f5c6cb
+    style BB4 fill:#d4edda,stroke:#c3e6cb</div></pre>
   </div>
 </section>
 
 <div class="tip-box">
   <h4>Dicas & Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Cuidado com a regra de 3 valores no TRouBLe:</strong> Quando
+      declarar três valores (ex:
+      <code class="one-line-code">margin: 10px 20px 5px</code>), lembre-se que o
+      primeiro valor é o topo (10px), o segundo se aplica a ambas as laterais
+      (direita e esquerda = 20px) e o terceiro é a base (5px).
+    </li>
+    <li>
+      <strong>Imagens fora da caixa:</strong> Imagens e vetores não possuem
+      limites nativos no fluxo. Atribua a regra utilitária
+      <code class="one-line-code">max-width: 100%</code> em seletores globais para
+      impedir que imagens grandes extrapolem a borda do pai.
+    </li>
+    <li>
+      <strong>Comportamento de elementos Inline:</strong> Elementos de fluxo
+      textual padrão (<code class="one-line-code">display: inline</code>, como
+      <code class="one-line-code">&lt;a&gt;</code> e
+      <code class="one-line-code">&lt;span&gt;</code>) ignoram as propriedades
+      <code class="one-line-code">width</code> e
+      <code class="one-line-code">height</code>. Seu padding vertical não afasta
+      as linhas adjacentes do texto. Se precisar alterar dimensões e
+      espaçamentos em elementos de texto, converta-os para
+      <code class="one-line-code">display: inline-block</code>.
+    </li>
+    <li>
+      <strong>Sempre use border-box:</strong> O reset universal com
+      <code class="one-line-code">box-sizing: border-box</code> no
+      <code class="one-line-code">:root</code> é uma prática profissional
+      consolidada que evita quebras de layout surpresa.
+    </li>
+    <li>
+      <strong>Margens negativas com cautela:</strong> Embora úteis para efeitos
+      visuais (como "sangrar" um elemento), margens negativas podem causar
+      sobreposição indesejada. Use com moderação.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Construção de Componentes Isolados (BEM):</strong> Ao criar cartões,
+      botões e painéis usando metodologias como BEM, defina o padding e o border
+      dentro da classe do componente, garantindo que ele possa ser inserido em
+      qualquer grade de layout sem alterar sua largura final.
+    </li>
+    <li>
+      <strong>Design Responsivo sem Números Mágicos:</strong> Evite ajustar
+      margens ou larguras com números arbitrários para "forçar" elementos a
+      caberem. Use <code class="one-line-code">box-sizing: border-box</code>
+      associado a unidades relativas (%, rem, vw) para que os componentes se
+      redimensionem suavemente em qualquer resolução.
+    </li>
+    <li>
+      <strong>Resolução de Conflitos de Layout:</strong> Quando duas colunas
+      "quebram" a linha, verifique primeiro se o box-sizing está correto antes de
+      ajustar porcentagens. O <code class="one-line-code">border-box</code> resolve
+      a maioria dos problemas de soma de larguras.
+    </li>
+    <li>
+      <strong>Centralização de Blocos:</strong> Para centralizar um bloco
+      horizontalmente, combine <code class="one-line-code">width</code> (ou
+      <code class="one-line-code">max-width</code>) com
+      <code class="one-line-code">margin: 0 auto</code>. Funciona apenas em
+      elementos de bloco.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>CENTRO PAULA SOUZA. Plano de Curso nº 1062 - Técnico em Desenvolvimento de Sistemas (2026). São Paulo, 2026.</li>
+    <li>GRANT, Keith J. CSS in Depth. Shelter Island: Manning Publications, 2018.</li>
+    <li>CAELUM. Desenvolvimento Web com HTML, CSS e JavaScript. São Paulo: Caelum, 2020.</li>
+    <li>NIXON, Robin. Learning PHP, MySQL, JavaScript, CSS & HTML5. 3. ed. Sebastopol: O'Reilly Media, 2014.</li>
   </ul>
 </section>
 

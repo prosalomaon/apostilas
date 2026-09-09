@@ -6,18 +6,6 @@ aula_numero: "27"
 sigla_componente: "BDII"
 description: "Questionário de fixação sobre Incompatibilidade de Impedância Semântica, regras de transposição ORM e a diferença entre ORM e driver de abstração."
 perguntas:
-  - texto: "O que é a Incompatibilidade de Impedância Semântica (Object-Relational Impedance Mismatch)?"
-    resposta_correta: "a"
-    alternativas:
-      - letra: "a"
-        texto: "A incompatibilidade conceitual e estrutural entre o paradigma orientado a objetos e o modelo relacional de banco de dados."
-      - letra: "b"
-        texto: "Um erro de sintaxe que ocorre ao conectar PHP ao MySQL."
-      - letra: "c"
-        texto: "A falta de suporte do PHP a consultas SQL complexas."
-      - letra: "d"
-        texto: "Uma limitação do MySQL que impede a criação de chaves estrangeiras."
-
   - texto: "Qual das seguintes alternativas descreve corretamente a Incompatibilidade de Impedância Semântica?"
     resposta_correta: "c"
     alternativas:
@@ -150,18 +138,6 @@ perguntas:
       - letra: "d"
         texto: "SELECT MAX(id)"
 
-  - texto: "O que a cláusula RETURNING faz no PostgreSQL que o MySQL não oferece nativamente?"
-    resposta_correta: "a"
-    alternativas:
-      - letra: "a"
-        texto: "Retorna o ID gerado diretamente na mesma execução INSERT, evitando uma segunda chamada ao banco."
-      - letra: "b"
-        texto: "Permite criar tabelas com AUTO_INCREMENT."
-      - letra: "c"
-        texto: "Habilita o suporte a chaves estrangeiras."
-      - letra: "d"
-        texto: "Executa um rollback automático em caso de erro."
-
   - texto: "Qual é a principal razão de se usar placeholders (parâmetros nomeados como :nome, :email) em vez de interpolação direta de variáveis nas queries?"
     resposta_correta: "b"
     alternativas:
@@ -209,15 +185,3 @@ perguntas:
         texto: "@MappedSuperclass na superclasse."
       - letra: "d"
         texto: "@Table(name = \"single_table\") em uma tabela separada."
-
-  - texto: "No Drizzle ORM (TypeScript), como a herança por Tabela Única é implementada?"
-    resposta_correta: "c"
-    alternativas:
-      - letra: "a"
-        texto: "Utilizando classes TypeScript com herança nativa."
-      - letra: "b"
-        texto: "Com uma tabela para cada subclasse e JOINs automáticos."
-      - letra: "c"
-        texto: "Com uma única tabela que contém uma coluna discriminadora e colunas NULL para atributos de subclasses não aplicáveis."
-      - letra: "d"
-        texto: "Drizzle não suporta herança — é necessário usar triggers."

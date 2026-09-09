@@ -1,5 +1,5 @@
 ---
-title: "Flexbox Layout"
+title: "Flexbox Layout — Eixos Flexíveis e Alinhamento Moderno"
 aula_numero: "14"
 description: "Posicionamento e alinhamento de elementos em eixos flexíveis para interfaces modernas."
 tags:
@@ -8,42 +8,705 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 14 em desenvolvimento...</p>
+  <h2>Teoria & Conceitos Fundamentais</h2>
+  <p>
+    O Flexbox (formalmente <em>Flexible Box Layout</em>) é um modelo de layout
+    unidirecional criado para organizar, alinhar e distribuir o espaço entre
+    elementos em um contêiner, mesmo quando suas dimensões são desconhecidas ou
+    dinâmicas. Ele simplificou a resolução de problemas históricos do CSS, como a
+    criação de colunas de mesma altura e a centralização vertical de elementos.
+  </p>
+
+  <h3>1. O Flex Container e os Flex Items</h3>
+  <p>
+    O modelo Flexbox baseia-se na relação pai-filho entre dois conceitos centrais:
+  </p>
+  <ul>
+    <li>
+      <strong>Flex Container (Pai):</strong> É o elemento no qual aplicamos a
+      propriedade <code class="one-line-code">display: flex</code> ou
+      <code class="one-line-code">display: inline-flex</code>. Ele assume o controle
+      sobre o posicionamento e o dimensionamento dos elementos contidos nele.
+    </li>
+    <li>
+      <strong>Flex Items (Filhos):</strong> São todos os elementos filhos diretos
+      do Flex Container. Eles se ajustam automaticamente ao longo dos eixos
+      definidos pelo contêiner.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-css">/* Ativa o modo Flexbox no container */
+.container {
+  display: flex; /* Os filhos diretos tornam-se Flex Items */
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. A Arquitetura dos Dois Eixos</h3>
+  <p>
+    Ao contrário do fluxo normal de blocos (vertical) e elementos inline
+    (horizontal), a disposição dos elementos no Flexbox é governada por dois eixos
+    perpendiculares:
+  </p>
+  <ul>
+    <li>
+      <strong>Main Axis (Eixo Principal):</strong> É o eixo primário ao longo do
+      qual os flex items são dispostos sequencialmente. Ele vai do ponto
+      <code class="one-line-code">main-start</code> ao
+      <code class="one-line-code">main-end</code>. Por padrão, sua orientação é
+      horizontal (da esquerda para a direita).
+    </li>
+    <li>
+      <strong>Cross Axis (Eixo Cruzado):</strong> É o eixo perpendicular ao eixo
+      principal. Ele vai do ponto
+      <code class="one-line-code">cross-start</code> ao
+      <code class="one-line-code">cross-end</code>. Por padrão, sua orientação é
+      vertical (de cima para baixo).
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Propriedades do Flex Container (O Elemento Pai)</h2>
+  <p>
+    As propriedades aplicadas ao contêiner determinam a direção dos eixos, a
+    quebra de linha e o alinhamento geral dos itens.
+  </p>
+
+  <h3>1. flex-direction (Direção do Eixo Principal)</h3>
+  <p>
+    Define a orientação do eixo principal e a direção em que os itens são
+    empilhados:
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">row</code> (padrão): Organiza os itens
+      horizontalmente da esquerda para a direita.
+    </li>
+    <li>
+      <code class="one-line-code">row-reverse</code>: Organiza os itens
+      horizontalmente da direita para a esquerda.
+    </li>
+    <li>
+      <code class="one-line-code">column</code>: Rotaciona o eixo principal para a
+      vertical, organizando os itens de cima para baixo.
+    </li>
+    <li>
+      <code class="one-line-code">column-reverse</code>: Organiza os itens
+      verticalmente de baixo para cima.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-css">.container {
+  display: flex;
+  flex-direction: column; /* Transforma o eixo principal em vertical */
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. flex-wrap (Quebra de Linha)</h3>
+  <p>
+    Por padrão, o Flexbox tenta acomodar todos os itens em uma única linha
+    (<code class="one-line-code">nowrap</code>), encolhendo-os se necessário. A
+    propriedade <code class="one-line-code">flex-wrap</code> controla o transbordo:
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">nowrap</code> (padrão): Todos os itens
+      permanecem em uma única linha.
+    </li>
+    <li>
+      <code class="one-line-code">wrap</code>: Permite que os itens quebrem para
+      uma nova linha quando o espaço horizontal for insuficiente.
+    </li>
+    <li>
+      <code class="one-line-code">wrap-reverse</code>: Quebra os itens para uma
+      nova linha na direção oposta (de baixo para cima).
+    </li>
+  </ul>
+  <p>
+    <strong>Dica Shorthand (<code class="one-line-code">flex-flow</code>):</strong>
+    Você pode combinar <code class="one-line-code">flex-direction</code> e
+    <code class="one-line-code">flex-wrap</code> em uma única propriedade:
+    <code class="one-line-code">flex-flow: row wrap;</code>.
+  </p>
+
+  <hr />
+
+  <h3>3. justify-content (Alinhamento no Eixo Principal)</h3>
+  <p>
+    Controla como os itens são distribuídos e alinhados ao longo do eixo
+    principal (Main Axis):
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">flex-start</code> (padrão): Agrupa os itens no
+      início do eixo principal.
+    </li>
+    <li>
+      <code class="one-line-code">flex-end</code>: Agrupa os itens no final do eixo
+      principal.
+    </li>
+    <li>
+      <code class="one-line-code">center</code>: Centraliza os itens no meio do eixo
+      principal.
+    </li>
+    <li>
+      <code class="one-line-code">space-between</code>: O primeiro item cola no
+      início, o último no final, e o espaço restante é distribuído igualmente
+      entre os itens intermediários.
+    </li>
+    <li>
+      <code class="one-line-code">space-around</code>: Distribui o espaço restante
+      de forma igual ao redor de cada item (as margens extremas são a metade do
+      espaço interno).
+    </li>
+    <li>
+      <code class="one-line-code">space-evenly</code>: Distribui o espaço de forma
+      perfeitamente uniforme entre os itens e as bordas.
+    </li>
+  </ul>
+
+  <hr />
+
+  <h3>4. align-items (Alinhamento no Eixo Cruzado)</h3>
+  <p>
+    Controla o alinhamento dos itens ao longo do eixo cruzado (Cross Axis) em uma
+    única linha:
+  </p>
+  <ul>
+    <li>
+      <code class="one-line-code">stretch</code> (padrão): Estica os itens para
+      preencher toda a altura/largura do contêiner.
+    </li>
+    <li>
+      <code class="one-line-code">flex-start</code>: Alinha os itens no topo
+      (início do eixo cruzado).
+    </li>
+    <li>
+      <code class="one-line-code">flex-end</code>: Alinha os itens na base (final
+      do eixo cruzado).
+    </li>
+    <li>
+      <code class="one-line-code">center</code>: Centraliza os itens verticalmente
+      no meio do contêiner.
+    </li>
+    <li>
+      <code class="one-line-code">baseline</code>: Alinha os itens com base na
+      linha de base da primeira linha de texto de cada um deles.
+    </li>
+  </ul>
+
+  <hr />
+
+  <h3>5. align-content (Distribuição de Linhas Múltiplas)</h3>
+  <p>
+    Aplica-se apenas quando o <code class="one-line-code">flex-wrap: wrap</code>
+    está ativado e existem múltiplas linhas de itens no contêiner. Define o
+    espaçamento entre as próprias linhas ao longo do eixo cruzado
+    (<code class="one-line-code">flex-start</code>,
+    <code class="one-line-code">flex-end</code>,
+    <code class="one-line-code">center</code>,
+    <code class="one-line-code">space-between</code>,
+    <code class="one-line-code">space-around</code>,
+    <code class="one-line-code">stretch</code>).
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Propriedades dos Flex Items (Os Elementos Filhos)</h2>
+  <p>
+    As propriedades aplicadas aos itens individuais controlam suas taxas de
+    crescimento, encolhimento, tamanho base e ordenação.
+  </p>
+
+  <h3>1. A Trindade Dimensional: flex-grow, flex-shrink e flex-basis</h3>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">flex-grow</code>:</strong> Um número
+      inteiro ou decimal que atua como fator de expansão. Define quanto o item
+      pode crescer para absorver o espaço livre restante no contêiner. O valor
+      <code class="one-line-code">0</code> impede o crescimento.
+    </li>
+    <li>
+      <strong><code class="one-line-code">flex-shrink</code>:</strong> Fator de
+      encolhimento. Define quanto o item deve reduzir caso o espaço no contêiner
+      seja menor do que a soma do tamanho dos itens.
+    </li>
+    <li>
+      <strong><code class="one-line-code">flex-basis</code>:</strong> Define o
+      tamanho inicial do item (em px, %, em ou auto) antes que o espaço restante
+      seja distribuído via flex-grow ou flex-shrink.
+    </li>
+  </ul>
+  <p>
+    <strong>Shorthand Recomendado (<code class="one-line-code">flex</code>):</strong>
+    É altamente recomendado utilizar a propriedade resumida
+    <code class="one-line-code">flex</code> em vez de declarar as três propriedades
+    separadamente:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-css">.item {
+  /* flex: &lt;flex-grow&gt; &lt;flex-shrink&gt; &lt;flex-basis&gt; */
+  flex: 1 1 0%; /* Atalho comum equivalente a flex: 1 */
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. align-self (Alinhamento Individual)</h3>
+  <p>
+    Permite sobrescrever a regra de
+    <code class="one-line-code">align-items</code> definida no contêiner pai para um
+    item específico no eixo cruzado. Aceita os valores:
+    <code class="one-line-code">auto</code>,
+    <code class="one-line-code">flex-start</code>,
+    <code class="one-line-code">flex-end</code>,
+    <code class="one-line-code">center</code>,
+    <code class="one-line-code">baseline</code>,
+    <code class="one-line-code">stretch</code>.
+  </p>
+
+  <hr />
+
+  <h3>3. order (Reordenação Visual)</h3>
+  <p>
+    Por padrão, os itens são renderizados na ordem em que aparecem no código HTML.
+    A propriedade <code class="one-line-code">order</code> aceita um número inteiro
+    (positivo ou negativo) para alterar a sequência visual sem modificar o DOM.
+  </p>
+  <ul>
+    <li>
+      O valor padrão de todos os itens é <code class="one-line-code">0</code>. Um
+      item com <code class="one-line-code">order: -1</code> vai para o início, e
+      com <code class="one-line-code">order: 1</code> vai para o final.
+    </li>
+  </ul>
+
+  <hr />
+
+  <h3>4. O Poder de margin: auto no Flexbox</h3>
+  <p>
+    No Flexbox, ao aplicar <code class="one-line-code">margin: auto</code> (ou
+    <code class="one-line-code">margin-left: auto</code>,
+    <code class="one-line-code">margin-top: auto</code>) em um flex item, a margem
+    absorve todo o espaço vago disponível no eixo especificado. Esse recurso
+    permite descolar facilmente itens individuais dentro de uma barra de
+    navegação.
+  </p>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>1. Nível Básico: Menu de Navegação com margin-left: auto</h3>
+  <p>
+    Demonstração de um menu de navegação onde os primeiros links ficam alinhados à
+    esquerda e o último item (ex: "Sobre" ou "Login") é empurrado automaticamente
+    para a extrema direita usando
+    <code class="one-line-code">margin-left: auto</code>.
+  </p>
   <div class="code-container">
-    <pre><code class="language-css">// Em breve...</code></pre>
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Menu Flexbox Profissional&lt;/title&gt;
+  &lt;style&gt;
+    :root { box-sizing: border-box; }
+    *, ::before, ::after { box-sizing: inherit; }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    /* Contêiner principal da navegação */
+    .site-nav {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0 1em;
+      background-color: #2D5377;
+    }
+
+    .site-nav a {
+      display: block;
+      padding: 1em 1.2em;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .site-nav a:hover {
+      background-color: #1a344f;
+    }
+
+    /* O truque do margin-left: auto empurra este item para a direita */
+    .nav-direita {
+      margin-left: auto;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;nav&gt;
+    &lt;ul class="site-nav"&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Cursos&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Preços&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Suporte&lt;/a&gt;&lt;/li&gt;
+      &lt;li class="nav-direita"&gt;&lt;a href="#"&gt;Sobre Nós&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Nível Intermediário: Layout de Colunas Proporcionais e Mesma Altura</h3>
+  <p>
+    Criação de um layout de duas colunas (área principal e barra lateral) que
+    mantêm exatamente a mesma altura independentemente do volume de texto interno.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Colunas Proporcionais&lt;/title&gt;
+  &lt;style&gt;
+    :root { box-sizing: border-box; }
+    *, ::before, ::after { box-sizing: inherit; }
+
+    .container {
+      display: flex;
+      max-width: 960px;
+      margin: 20px auto;
+      gap: 20px; /* Espaçamento moderno entre flex items */
+    }
+
+    /* Coluna principal ocupa 2/3 da proporção */
+    .main-content {
+      flex: 2;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    /* Barra lateral ocupa 1/3 da proporção */
+    .sidebar {
+      flex: 1;
+      background-color: #e1edf2;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #bce0ee;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    &lt;main class="main-content"&gt;
+      &lt;h2&gt;Conteúdo Principal&lt;/h2&gt;
+      &lt;p&gt;Este bloco se ajusta proporcionalmente e define
+      a altura total do contêiner.&lt;/p&gt;
+    &lt;/main&gt;
+    &lt;aside class="sidebar"&gt;
+      &lt;h3&gt;Barra Lateral&lt;/h3&gt;
+      &lt;p&gt;Mesmo com menos texto, esta coluna estica para
+      acompanhar a altura do pai.&lt;/p&gt;
+    &lt;/aside&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Nível Avançado: Centralização Perfeita (O "Santo Graal")</h3>
+  <p>
+    Demonstração de centralização absoluta (horizontal e vertical) de um cartão de
+    destaque usando <code class="one-line-code">justify-content</code> e
+    <code class="one-line-code">align-items</code> combinados.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Centralização Absoluta com Flexbox&lt;/title&gt;
+  &lt;style&gt;
+    .hero-banner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+      background-color: #2a3042;
+    }
+
+    .card-promocional {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: #e93d50;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;section class="hero-banner"&gt;
+    &lt;div class="card-promocional"&gt;
+      &lt;h2&gt;Plano Anual MusicDot&lt;/h2&gt;
+      &lt;p&gt;Acesso ilimitado a todos os cursos de música.&lt;/p&gt;
+      &lt;a href="#" class="cta-button"&gt;Matricule-se Agora&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>4. Nível Profissional: Reordenação Visual Dinâmica com order</h3>
+  <p>
+    Demonstração de como alterar a sequência de exibição dos blocos em telas
+    diferentes sem alterar o HTML original.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Reordenação de Elementos&lt;/title&gt;
+  &lt;style&gt;
+    .painel-flex {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+
+    .box {
+      padding: 15px;
+      color: white;
+      border-radius: 6px;
+    }
+    .box-1 { background-color: #333; }
+    .box-2 { background-color: #e93d50; }
+    .box-3 { background-color: #28a745; }
+
+    /* Em telas maiores, alteramos a ordem visual */
+    @media (min-width: 600px) {
+      .painel-flex {
+        flex-direction: row;
+      }
+      .box-1 { order: 3; } /* Vai para o final */
+      .box-2 { order: 1; } /* Fica em primeiro */
+      .box-3 { order: 2; } /* Fica no meio */
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="painel-flex"&gt;
+    &lt;div class="box box-1"&gt;1. Primeiro no HTML&lt;/div&gt;
+    &lt;div class="box box-2"&gt;2. Segundo no HTML (Vira 1º no Desktop)&lt;/div&gt;
+    &lt;div class="box box-3"&gt;3. Terceiro no HTML&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
-  <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+  <h2>Representações Gráficas</h2>
+
+  <h3>1. Estrutura de Eixos e Alinhamento</h3>
+  <p>
+    Diagrama mostrando a relação entre o Flex Container, os dois eixos e as
+    propriedades de alinhamento que atuam em cada um deles.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    subgraph Container_Flex["Flex Container: display flex"]
+        direction LR
+        subgraph Eixo_Principal["Main Axis: justify-content"]
+            A["Item 1"] --- B["Item 2"] --- C["Item 3"]
+        end
+    end
+
+    subgraph Eixo_Cruzado["Cross Axis: align-items / align-self"]
+        D["Topo: flex-start"]
+        E["Centro: center"]
+        F["Base: flex-end"]
+    end
+
+    style Container_Flex fill:#e1f5fe,stroke:#01579b
+    style Eixo_Principal fill:#fff3e0,stroke:#e65100
+    style Eixo_Cruzado fill:#e8f5e9,stroke:#2e7d32</div></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Valores de justify-content</h3>
+  <p>
+    Comparação visual dos seis valores principais de
+    <code class="one-line-code">justify-content</code> e como cada um distribui os
+    itens ao longo do eixo principal.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph LR
+    subgraph flex_start["flex-start (padrão)"]
+        FS1["1"] --- FS2["2"] --- FS3["3"]
+    end
+
+    subgraph flex_end["flex-end"]
+        FE1["1"] --- FE2["2"] --- FE3["3"]
+    end
+
+    subgraph center["center"]
+        C1["1"] --- C2["2"] --- C3["3"]
+    end
+
+    subgraph space_between["space-between"]
+        SB1["1"] --- SB2["2"] --- SB3["3"]
+    end
+
+    subgraph space_around["space-around"]
+        SA1["1"] --- SA2["2"] --- SA3["3"]
+    end
+
+    subgraph space_evenly["space-evenly"]
+        SE1["1"] --- SE2["2"] --- SE3["3"]
+    end
+
+    style flex_start fill:#e1f5fe,stroke:#01579b
+    style flex_end fill:#fff3e0,stroke:#e65100
+    style center fill:#e8f5e9,stroke:#2e7d32
+    style space_between fill:#f3e5f5,stroke:#7b1fa2
+    style space_around fill:#fce4ec,stroke:#c62828
+    style space_evenly fill:#fffde7,stroke:#f57f17</div></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Comparativo: Flexbox vs. Floats vs. CSS Grid</h3>
+  <p>
+    Tabela comparativa entre os três modelos de layout do CSS, destacando as
+    diferenças fundamentais em dimensionalidade, limpeza de fluxo e capacidades
+    de alinhamento.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-css">/*
+╔═══════════════════╦══════════════════════╦══════════════════════╦══════════════════════╗
+║ Critério          ║ Floats (Histórico)   ║ Flexbox (1D Moderno) ║ CSS Grid (2D Moderno)║
+╠═══════════════════╬══════════════════════╬══════════════════════╬══════════════════════╣
+║ Dimensão          ║ Unidirecional simples║ Unidirecional (1D)   ║ Bidimensional (2D)   ║
+║ Direção           ║ Orientado ao texto   ║ Content-out          ║ Layout-in            ║
+║ Mesma Altura      ║ Exige truques        ║ Nativo (stretch)     ║ Nativo (faixas)      ║
+║ Limpeza de Fluxo  ║ Exige clearfix       ║ Não exige            ║ Não exige            ║
+╚═══════════════════╩══════════════════════╩══════════════════════╩══════════════════════╝
+*/</code></pre>
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas, Lembretes e Cuidados com Acessibilidade</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Acessibilidade na Reordenação (<code class="one-line-code">order</code>):</strong>
+      Alterar a ordem visual com <code class="one-line-code">order</code> não altera
+      a ordem do código no documento. Leitores de tela para pessoas com
+      deficiência visual e a navegação por teclado (Tab) continuarão seguindo a
+      sequência física do código HTML. Evite criar discrepâncias extremas entre a
+      ordem visual e a ordem estrutural.
+    </li>
+    <li>
+      <strong>Atenção ao <code class="one-line-code">flex: 1</code> vs
+      <code class="one-line-code">flex: 1 1 auto</code>:</strong> O atalho
+      <code class="one-line-code">flex: 1</code> define
+      <code class="one-line-code">flex-grow: 1</code>,
+      <code class="one-line-code">flex-shrink: 1</code> e
+      <code class="one-line-code">flex-basis: 0%</code>. Definir
+      <code class="one-line-code">flex-basis: 0%</code> faz com que o cálculo de
+      largura considere apenas o fator de crescimento.
+    </li>
+    <li>
+      <strong>Imagens e Entradas como Flex Items:</strong> Tags do tipo
+      <code class="one-line-code">&lt;img&gt;</code> ou
+      <code class="one-line-code">&lt;input&gt;</code> dentro de um Flex Container
+      podem se comportar de maneira inesperada em navegadores antigos. Garanta
+      que elas possuam regras explícitas de dimensionamento ou envolva-as em
+      contêineres <code class="one-line-code">&lt;div&gt;</code>.
+    </li>
+    <li>
+      <strong>gap em vez de margens:</strong> A propriedade
+      <code class="one-line-code">gap</code> (suportada em navegadores modernos)
+      é mais limpa e previsível do que adicionar margens laterais nos flex items,
+      pois não afeta o dimensionamento dos itens.
+    </li>
+    <li>
+      <strong>Flexbox para componentes, Grid para páginas:</strong> Use Flexbox
+      para layouts de componentes (cards, barras de navegação, formulários) e
+      CSS Grid para a estrutura geral da página (layout de colunas, grid de
+      produtos).
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Barras de Navegação:</strong> Use <code class="one-line-code">display: flex</code>
+      no <code class="one-line-code">&lt;nav&gt;</code> ou <code class="one-line-code">&lt;ul&gt;</code>
+      com <code class="one-line-code">justify-content: space-between</code> para
+      distribuir os links uniformemente, e
+      <code class="one-line-code">margin-left: auto</code> no último item para
+      empurrá-lo para a direita.
+    </li>
+    <li>
+      <strong>Cartões de Produto:</strong> Combine
+      <code class="one-line-code">display: flex</code> com
+      <code class="one-line-code">flex-wrap: wrap</code> e
+      <code class="one-line-code">gap: 1rem</code> para criar grids de produtos
+      responsivos que quebram linha automaticamente.
+    </li>
+    <li>
+      <strong>Formulários Alinhados:</strong> Use Flexbox para alinhar rótulos e
+      campos de entrada em linha, garantindo que todos os campos de texto tenham
+      a mesma largura com <code class="one-line-code">flex: 1</code>.
+    </li>
+    <li>
+      <strong>Layout de Página Básico:</strong> Para layouts simples de duas ou
+      três colunas, Flexbox com
+      <code class="one-line-code">flex: 1</code> e
+      <code class="one-line-code">flex: 2</code> cria proporções sem necessidade
+      de porcentagens manuais.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>GRANT, Keith J. CSS in Depth. Manning Publications, 2018.</li>
+    <li>CAELUM. Desenvolvimento Web com HTML, CSS e JavaScript. São Paulo: Caelum, 2020.</li>
+    <li>CENTRO PAULA SOUZA. Plano de Curso nº 1062 - Técnico em Desenvolvimento de Sistemas (2026). São Paulo, 2026.</li>
   </ul>
 </section>
 

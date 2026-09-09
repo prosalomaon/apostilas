@@ -62,6 +62,17 @@ perguntas:
         texto: "JDBCError"
       - letra: "d"
         texto: "ConnectionException"
+  - texto: "Em Java (JDBC), por que o código que acessa o banco é obrigado a tratar ou declarar a SQLException?"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "Porque o driver JDBC interrompe a JVM ao encontrar qualquer erro."
+      - letra: "b"
+        texto: "Porque as conexões são fechadas automaticamente apenas com tratamento explícito."
+      - letra: "c"
+        texto: "Porque o Java não permite capturar exceções com try...catch."
+      - letra: "d"
+        texto: "Porque SQLException é uma checked exception, e o compilador exige o tratamento ou a declaração throws."
   - texto: "No Java, o que é um SQLWarning?"
     resposta_correta: "c"
     alternativas:
@@ -139,7 +150,7 @@ perguntas:
         texto: "São mensagens de sucesso exibidas após cada comando."
       - letra: "d"
         texto: "São logs gravados apenas no modo de depuração."
-  - texto: "No PHP PDO, qual método retorna a mensagem completa de erro de umaPDOException?"
+  - texto: "No PHP PDO, qual método retorna a mensagem completa de erro de uma PDOException?"
     resposta_correta: "a"
     alternativas:
       - letra: "a"
