@@ -41,6 +41,19 @@ tags:
 }</code></pre>
   </div>
 
+  <p>Visualmente, o contêiner se comporta assim: os filhos diretos deixam de se
+    empilhar verticalmente e passam a ser distribuídos lado a lado como <strong>Flex
+    Items</strong>:</p>
+
+  <div class="flex-demo">
+    <div class="flex-demo-caption">display: flex — os filhos diretos viram Flex Items</div>
+    <div class="flex-demo-box">
+      <div class="flex-demo-item">Item A</div>
+      <div class="flex-demo-item">Item B</div>
+      <div class="flex-demo-item">Item C</div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>2. A Arquitetura dos Dois Eixos</h3>
@@ -65,6 +78,18 @@ tags:
       vertical (de cima para baixo).
     </li>
   </ul>
+
+  <p>Com <code class="one-line-code">flex-direction: row</code> (padrão), o eixo
+    principal é horizontal e o eixo cruzado é vertical:</p>
+
+  <div class="flex-demo">
+    <div class="flex-demo-caption">Main Axis (horizontal) × Cross Axis (vertical)</div>
+    <div class="flex-demo-box">
+      <div class="flex-demo-item">1</div>
+      <div class="flex-demo-item">2</div>
+      <div class="flex-demo-item">3</div>
+    </div>
+  </div>
 </section>
 
 <section class="section-box">
@@ -104,6 +129,43 @@ tags:
 }</code></pre>
   </div>
 
+  <p>Veja como cada valor reorganiza os itens:</p>
+
+  <div class="flex-demo-grid">
+    <div class="flex-demo dr-row">
+      <div class="flex-demo-caption">flex-direction: row</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo dr-row-reverse">
+      <div class="flex-demo-caption">flex-direction: row-reverse</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo dr-column">
+      <div class="flex-demo-caption">flex-direction: column</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo dr-column-reverse">
+      <div class="flex-demo-caption">flex-direction: column-reverse</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>2. flex-wrap (Quebra de Linha)</h3>
@@ -132,6 +194,44 @@ tags:
     <code class="one-line-code">flex-wrap</code> em uma única propriedade:
     <code class="one-line-code">flex-flow: row wrap;</code>.
   </p>
+
+  <p>Compare o comportamento dos mesmos itens com <code class="one-line-code">nowrap</code>
+    (encolhendo para caber) e <code class="one-line-code">wrap</code> (quebrando para a
+    linha de baixo):</p>
+
+  <div class="flex-demo-grid">
+    <div class="flex-demo fw-nowrap">
+      <div class="flex-demo-caption">flex-wrap: nowrap — tudo em uma linha</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+        <div class="flex-demo-item">4</div>
+      </div>
+    </div>
+    <div class="flex-demo fw-wrap">
+      <div class="flex-demo-caption">flex-wrap: wrap — quebra quando falta espaço</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+        <div class="flex-demo-item">4</div>
+        <div class="flex-demo-item">5</div>
+        <div class="flex-demo-item">6</div>
+      </div>
+    </div>
+    <div class="flex-demo fw-wrap-reverse">
+      <div class="flex-demo-caption">flex-wrap: wrap-reverse — quebra de baixo para cima</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+        <div class="flex-demo-item">4</div>
+        <div class="flex-demo-item">5</div>
+        <div class="flex-demo-item">6</div>
+      </div>
+    </div>
+  </div>
 
   <hr />
 
@@ -169,6 +269,60 @@ tags:
     </li>
   </ul>
 
+  <p>Visualmente, cada valor distribui os itens ao longo do eixo principal de uma
+    forma diferente:</p>
+
+  <div class="flex-demo-grid">
+    <div class="flex-demo jc-flex-start">
+      <div class="flex-demo-caption">justify-content: flex-start</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo jc-center">
+      <div class="flex-demo-caption">justify-content: center</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo jc-flex-end">
+      <div class="flex-demo-caption">justify-content: flex-end</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo jc-space-between">
+      <div class="flex-demo-caption">justify-content: space-between</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo jc-space-around">
+      <div class="flex-demo-caption">justify-content: space-around</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo jc-space-evenly">
+      <div class="flex-demo-caption">justify-content: space-evenly</div>
+      <div class="flex-demo-box">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>4. align-items (Alinhamento no Eixo Cruzado)</h3>
@@ -199,6 +353,52 @@ tags:
     </li>
   </ul>
 
+  <p>Observando os itens (com alturas diferentes) dentro de um contêiner mais alto,
+    percebe-se claramente o efeito de cada valor no eixo cruzado:</p>
+
+  <div class="flex-demo-grid">
+    <div class="flex-demo ai-stretch">
+      <div class="flex-demo-caption">align-items: stretch (padrão)</div>
+      <div class="flex-demo-box" style="min-height: 7rem;">
+        <div class="flex-demo-item">1</div>
+        <div class="flex-demo-item">2</div>
+        <div class="flex-demo-item">3</div>
+      </div>
+    </div>
+    <div class="flex-demo ai-flex-start">
+      <div class="flex-demo-caption">align-items: flex-start</div>
+      <div class="flex-demo-box" style="min-height: 7rem;">
+        <div class="flex-demo-item h-tall">1</div>
+        <div class="flex-demo-item h-short">2</div>
+        <div class="flex-demo-item h-med">3</div>
+      </div>
+    </div>
+    <div class="flex-demo ai-center">
+      <div class="flex-demo-caption">align-items: center</div>
+      <div class="flex-demo-box" style="min-height: 7rem;">
+        <div class="flex-demo-item h-tall">1</div>
+        <div class="flex-demo-item h-short">2</div>
+        <div class="flex-demo-item h-med">3</div>
+      </div>
+    </div>
+    <div class="flex-demo ai-flex-end">
+      <div class="flex-demo-caption">align-items: flex-end</div>
+      <div class="flex-demo-box" style="min-height: 7rem;">
+        <div class="flex-demo-item h-tall">1</div>
+        <div class="flex-demo-item h-short">2</div>
+        <div class="flex-demo-item h-med">3</div>
+      </div>
+    </div>
+    <div class="flex-demo ai-baseline">
+      <div class="flex-demo-caption">align-items: baseline</div>
+      <div class="flex-demo-box" style="min-height: 7rem; align-items: baseline;">
+        <div class="flex-demo-item h-tall dark-text">1</div>
+        <div class="flex-demo-item h-short">2</div>
+        <div class="flex-demo-item h-med dark-text">3</div>
+      </div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>5. align-content (Distribuição de Linhas Múltiplas)</h3>
@@ -213,6 +413,57 @@ tags:
     <code class="one-line-code">space-around</code>,
     <code class="one-line-code">stretch</code>).
   </p>
+
+  <p>Com múltiplas linhas de itens (graças ao <code class="one-line-code">flex-wrap: wrap</code>),
+    o valor escolhido distribui as <strong>linhas</strong> verticalmente dentro do contêiner
+    alto:</p>
+
+  <div class="flex-demo-grid">
+    <div class="flex-demo ac-flex-start">
+      <div class="flex-demo-caption">align-content: flex-start</div>
+      <div class="flex-demo-box ac-tall">
+        <div class="flex-demo-item" style="flex-basis: 40%;">1</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">2</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">3</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">4</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">5</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">6</div>
+      </div>
+    </div>
+    <div class="flex-demo ac-center">
+      <div class="flex-demo-caption">align-content: center</div>
+      <div class="flex-demo-box ac-tall">
+        <div class="flex-demo-item" style="flex-basis: 40%;">1</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">2</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">3</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">4</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">5</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">6</div>
+      </div>
+    </div>
+    <div class="flex-demo ac-space-between">
+      <div class="flex-demo-caption">align-content: space-between</div>
+      <div class="flex-demo-box ac-tall">
+        <div class="flex-demo-item" style="flex-basis: 40%;">1</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">2</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">3</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">4</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">5</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">6</div>
+      </div>
+    </div>
+    <div class="flex-demo ac-flex-end">
+      <div class="flex-demo-caption">align-content: flex-end</div>
+      <div class="flex-demo-box ac-tall">
+        <div class="flex-demo-item" style="flex-basis: 40%;">1</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">2</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">3</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">4</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">5</div>
+        <div class="flex-demo-item" style="flex-basis: 40%;">6</div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section class="section-box">
@@ -254,6 +505,28 @@ tags:
 }</code></pre>
   </div>
 
+  <p>Na prática, o <code class="one-line-code">flex-grow</code> distribui o espaço
+    livre proporcionalmente. Aqui o item 2 recebe o dobro do espaço dos itens 1 e 3,
+    enquanto o item 4 não cresce (mantém sua largura base):</p>
+
+  <div class="flex-demo fg">
+    <div class="flex-demo-caption">flex-grow: 1 (1 e 3) · flex-grow: 2 (2) · sem grow (4)</div>
+    <div class="flex-demo-box">
+      <div class="flex-demo-item">1</div>
+      <div class="flex-demo-item item-grow-2">2</div>
+      <div class="flex-demo-item">3</div>
+      <div class="flex-demo-item item-no-grow">4</div>
+    </div>
+  </div>
+  <div class="flex-demo fg">
+    <div class="flex-demo-caption">Todos com flex-grow: 1 — espaço dividido igualmente</div>
+    <div class="flex-demo-box">
+      <div class="flex-demo-item">1</div>
+      <div class="flex-demo-item">2</div>
+      <div class="flex-demo-item">3</div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>2. align-self (Alinhamento Individual)</h3>
@@ -268,6 +541,19 @@ tags:
     <code class="one-line-code">baseline</code>,
     <code class="one-line-code">stretch</code>.
   </p>
+
+  <p>O contêiner alinha todos os itens no topo (<code class="one-line-code">flex-start</code>),
+    mas os itens que usam <code class="one-line-code">align-self</code> se destacam:</p>
+
+  <div class="flex-demo as">
+    <div class="flex-demo-caption">align-self: center (2) · align-self: flex-end (4)</div>
+    <div class="flex-demo-box" style="min-height: 7rem;">
+      <div class="flex-demo-item h-tall">1</div>
+      <div class="flex-demo-item h-tall item-self-center">2</div>
+      <div class="flex-demo-item h-tall">3</div>
+      <div class="flex-demo-item h-tall item-self-end">4</div>
+    </div>
+  </div>
 
   <hr />
 
@@ -285,6 +571,19 @@ tags:
     </li>
   </ul>
 
+  <p>O código HTML mantém a ordem 1, 2, 3, 4, mas o valor de
+    <code class="one-line-code">order</code> muda a ordem exibida:</p>
+
+  <div class="flex-demo">
+    <div class="flex-demo-caption">order: -1 (item 3) · order: 1 (item 2) — HTML: 1, 2, 3, 4</div>
+    <div class="flex-demo-box">
+      <div class="flex-demo-item">1</div>
+      <div class="flex-demo-item item-order-1">2</div>
+      <div class="flex-demo-item item-order--1">3</div>
+      <div class="flex-demo-item">4</div>
+    </div>
+  </div>
+
   <hr />
 
   <h3>4. O Poder de margin: auto no Flexbox</h3>
@@ -296,6 +595,19 @@ tags:
     permite descolar facilmente itens individuais dentro de uma barra de
     navegação.
   </p>
+
+  <p>Um exemplo clássico: os três primeiros itens ficam à esquerda e o último é
+    empurrado para a direita graças a <code class="one-line-code">margin-left: auto</code>:</p>
+
+  <div class="flex-demo navdemo">
+    <div class="flex-demo-caption">Navbar — item 4 com margin-left: auto</div>
+    <div class="flex-demo-box">
+      <div class="flex-demo-item">Início</div>
+      <div class="flex-demo-item">Cursos</div>
+      <div class="flex-demo-item">Sobre</div>
+      <div class="flex-demo-item item-margin-auto">Login</div>
+    </div>
+  </div>
 </section>
 
 <section class="section-box">

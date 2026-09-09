@@ -442,6 +442,227 @@ pre {
   }
 }
 
+/* Box-Model diagram (DevTools style) */
+.box-model-demo {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+.box-model-demo .bm-margin {
+  background: #f7b26a;
+  border: 1px dashed #333;
+  padding: 1.1rem;
+  width: 80%;
+}
+
+.box-model-demo .bm-border {
+  position: relative;
+  background: #000;
+  border: 14px solid #000;
+}
+
+.box-model-demo .bm-border-label {
+  position: absolute;
+  top: -1.1em;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0 0.4rem;
+  white-space: nowrap;
+}
+
+.box-model-demo .bm-padding {
+  background: #e1d5e9;
+  border: 1px dashed #333;
+  padding: 1.1rem;
+}
+
+.box-model-demo .bm-content {
+  height: 55px;
+  background: #8bc0e8;
+  border: 1px dashed #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #1a2a3a;
+  text-align: center;
+}
+
+.box-model-demo .bm-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #222;
+  text-align: center;
+  margin-bottom: 0.3rem;
+}
+
+/* Flexbox demos */
+.flex-demo {
+  margin: 0.75rem 0 1.5rem;
+}
+
+.flex-demo-caption {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.4rem;
+}
+
+.flex-demo-box {
+  display: flex;
+  border: 2px dashed #2d5377;
+  background: #f2f7fb;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  min-height: 4.5rem;
+  flex-wrap: nowrap;
+}
+
+.flex-demo-item {
+  background: #4a82b8;
+  color: #fff;
+  padding: 0.5rem 0.8rem;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-radius: 3px;
+  min-width: 2.4rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-demo-item:nth-child(2) {
+  background: #e07a5f;
+}
+
+.flex-demo-item:nth-child(3) {
+  background: #81b29a;
+}
+
+.flex-demo-item:nth-child(4) {
+  background: #f2cc8f;
+  color: #333;
+}
+
+.flex-demo-item:nth-child(5) {
+  background: #9b5de5;
+}
+
+.flex-demo-item:nth-child(6) {
+  background: #e07a5f;
+  color: #fff;
+}
+
+.flex-demo-item.dark-text {
+  color: #222;
+}
+
+/* Grid wrapper to place several demos side by side */
+.flex-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+/* flex-direction */
+.flex-demo.dr-row .flex-demo-box { flex-direction: row; }
+.flex-demo.dr-row-reverse .flex-demo-box { flex-direction: row-reverse; }
+.flex-demo.dr-column .flex-demo-box { flex-direction: column; }
+.flex-demo.dr-column-reverse .flex-demo-box { flex-direction: column-reverse; }
+
+/* flex-wrap */
+.flex-demo.fw-nowrap .flex-demo-box { flex-wrap: nowrap; }
+.flex-demo.fw-wrap .flex-demo-box { flex-wrap: wrap; flex-basis: 0; }
+.flex-demo.fw-wrap .flex-demo-item { flex-basis: 3rem; }
+.flex-demo.fw-wrap-reverse .flex-demo-box { flex-wrap: wrap-reverse; }
+.flex-demo.fw-wrap-reverse .flex-demo-item { flex-basis: 3rem; }
+
+/* justify-content */
+.flex-demo.jc-flex-start .flex-demo-box { justify-content: flex-start; }
+.flex-demo.jc-flex-end .flex-demo-box { justify-content: flex-end; }
+.flex-demo.jc-center .flex-demo-box { justify-content: center; }
+.flex-demo.jc-space-between .flex-demo-box { justify-content: space-between; }
+.flex-demo.jc-space-around .flex-demo-box { justify-content: space-around; }
+.flex-demo.jc-space-evenly .flex-demo-box { justify-content: space-evenly; }
+
+/* align-items */
+.flex-demo.ai-stretch .flex-demo-box { align-items: stretch; }
+.flex-demo.ai-stretch .flex-demo-item { height: auto; }
+.flex-demo.ai-flex-start .flex-demo-box { align-items: flex-start; }
+.flex-demo.ai-flex-start .flex-demo-item { height: auto; }
+.flex-demo.ai-center .flex-demo-box { align-items: center; }
+.flex-demo.ai-center .flex-demo-item { height: auto; }
+.flex-demo.ai-flex-end .flex-demo-box { align-items: flex-end; }
+.flex-demo.ai-flex-end .flex-demo-item { height: auto; }
+.flex-demo.ai-baseline .flex-demo-box { align-items: baseline; }
+.flex-demo.ai-baseline .flex-demo-item { height: auto; }
+
+.flex-demo .h-tall { min-height: 4.5rem; }
+.flex-demo .h-med { min-height: 3rem; }
+.flex-demo .h-short { min-height: 1.6rem; padding: 0.2rem 0.4rem; }
+
+/* align-content */
+.flex-demo.ac-flex-start .flex-demo-box { align-content: flex-start; flex-wrap: wrap; }
+.flex-demo.ac-center .flex-demo-box { align-content: center; flex-wrap: wrap; }
+.flex-demo.ac-flex-end .flex-demo-box { align-content: flex-end; flex-wrap: wrap; }
+.flex-demo.ac-space-between .flex-demo-box { align-content: space-between; flex-wrap: wrap; }
+.flex-demo.ac-box .flex-demo-box { flex-wrap: wrap; }
+.flex-demo.ac-box .flex-demo-item { flex-basis: 35%; }
+
+/* flex-grow / flex-basis */
+.flex-demo.fg .flex-demo-item { flex-grow: 1; flex-basis: 0; }
+.flex-demo.fg .item-grow-2 { flex-grow: 2; }
+.flex-demo.fg .item-grow-3 { flex-grow: 3; }
+.flex-demo.fg .item-no-grow { flex-grow: 0; flex-basis: 4rem; }
+
+/* huge container for align-content */
+.flex-demo-box.ac-tall {
+  min-height: 9rem;
+}
+
+/* order */
+.flex-demo.fgorder .flex-demo-item { flex-basis: 0; }
+.flex-demo .item-order-1 { order: 1; }
+.flex-demo .item-order-2 { order: 2; }
+.flex-demo .item-order-3 { order: 3; }
+.flex-demo .item-order--1 { order: -1; }
+
+/* align-self */
+.flex-demo.as .flex-demo-box { align-items: flex-start; }
+.flex-demo.as .flex-demo-item { height: auto; }
+.flex-demo .item-self-center { align-self: center; }
+.flex-demo .item-self-end { align-self: flex-end; }
+
+/* margin auto nav example */
+.flex-demo.navdemo .flex-demo-box {
+  justify-content: flex-start;
+  align-items: center;
+}
+.flex-demo.navdemo .flex-demo-item { border-radius: 0; padding: 0.4rem 0.9rem; flex-grow: 0; }
+.flex-demo .item-margin-auto { margin-left: auto; }
+
+@media (max-width: 600px) {
+  .flex-demo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tip-box {
   background: #000;
   color: #fff;
