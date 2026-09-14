@@ -8,49 +8,551 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 24 em desenvolvimento...</p>
+  <h2>1. Introdução &amp; Objetivos da Aula</h2>
+
+  <p>
+    Nesta aula, iniciamos o estudo da <strong>Inteligência Artificial (IA)</strong> no contexto da formação técnica e
+    acadêmica. O objetivo não é encarar a IA apenas como uma coleção de softwares de produtividade, mas sim como um
+    <strong>fenômeno sociotecnológico, conceitual e histórico</strong> complexo.
+  </p>
+
+  <p>Ao final desta aula, o estudante será capaz de:</p>
+  <ul>
+    <li>
+      Compreender a definição formal de IA sob diferentes perspectivas filosóficas e computacionais.
+    </li>
+    <li>
+      Traçar o percurso histórico do campo, identificando suas três ondas tecnológicas e os chamados
+      <strong>"Invernos da IA"</strong>.
+    </li>
+    <li>
+      Distinguir com precisão a <strong>IA Tradicional (Estreita)</strong> da <strong>IA Generativa (IAGen)</strong>.
+    </li>
+    <li>
+      Desenvolver um <strong>pensamento crítico e ético</strong> em relação aos impactos da automação algorítmica,
+      privacidade, viés de dados, alucinações e a centralidade da mediação humana.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>2. O que é Inteligência Artificial? (Conceitos e Definições)</h2>
+
+  <p>
+    A Inteligência Artificial é um ramo da ciência da computação voltado ao desenvolvimento de sistemas capazes de
+    realizar tarefas que, normalmente, exigiriam a cognição humana. Ela reúne lógica matemática, estatística,
+    probabilidade, neurobiologia computacional e algoritmos para mimetizar capacidades cognitivas.
+  </p>
+
+  <ul>
+    <li>
+      <strong>Definição de John McCarthy (1955/1956):</strong> um dos fundadores do campo, McCarthy definiu a IA como a
+      <em>"ciência e engenharia de produzir sistemas inteligentes"</em>. São sistemas que se alimentam de dados,
+      aprendem com eles e ajustam seu comportamento a cada nova entrada de informação.
+    </li>
+    <li>
+      <strong>Definição Operacional:</strong> a IA não se reduz a replicar o cérebro humano em sua totalidade, mas a
+      produzir resultados úteis por meio de heurísticas e aproximações algorítmicas. Como afirmam Norvig e Russell,
+      <em>"um avião voa sem ter que imitar exatamente um pássaro"</em>: o avião realiza a função de voar operando de
+      maneira completamente diferente.
+    </li>
+  </ul>
+
+  <h3>O Framework de 4 Quadrantes (Russell &amp; Norvig, 2004)</h3>
+
+  <p>
+    Para organizar as diversas conceituações históricas da área, Stuart Russell e Peter Norvig compilaram as definições
+    de IA em uma matriz dividida em dois eixos: <strong>mecanismos internos (pensar)</strong> versus
+    <strong>comportamento externo (agir)</strong>, e <strong>similaridade com humanos</strong> versus
+    <strong>ideal de racionalidade</strong>:
+  </p>
+
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Foco em Padrões Humanos</th>
+          <th>Foco em Racionalidade Ideal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Processos de Pensamento</th>
+          <td>
+            <strong>1. Pensar como seres humanos:</strong> automação de atividades associadas ao pensamento humano
+            (tomada de decisões, resolução de problemas e aprendizado por especialistas).
+          </td>
+          <td>
+            <strong>2. Pensar racionalmente:</strong> o estudo das faculdades mentais por meio do uso de modelos
+            computacionais e regras da lógica formal.
+          </td>
+        </tr>
+        <tr>
+          <th>Processos de Comportamento</th>
+          <td>
+            <strong>3. Atuar como seres humanos:</strong> a arte de criar máquinas que executam funções que exigiriam
+            inteligência se fossem feitas por pessoas (passar no Teste de Turing).
+          </td>
+          <td>
+            <strong>4. Atuar racionalmente:</strong> o estudo e projeto de <strong>agentes inteligentes</strong> —
+            artefatos projetados para selecionar a melhor ação capaz de maximizar uma medida de desempenho com base nas
+            percepções e conhecimentos acumulados.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>3. Histórico e as Grandes Viradas Tecnológicas</h2>
+
+  <p>
+    O progresso da Inteligência Artificial não ocorreu de forma linear ou contínua. Trata-se de uma trajetória
+    oscilante, marcada por surtos de otimismo e financiamento, intercalados por períodos de frustração e estagnação
+    acadêmica, conhecidos como os <strong>"Invernos da IA"</strong>.
+  </p>
+
+  <div class="mermaid">
+    timeline
+        title Linha do Tempo da História da IA
+        section 1950 – 1956 — Gênese
+            1950: Alan Turing — "As máquinas podem pensar?"
+            1956: Conferência de Dartmouth — Gênese da IA e Paradigma Simbólico
+        section 1974 – 2000 — Invernos e 2ª Onda
+            1974-1980: 1º Inverno da IA — Fracasso do raciocínio puramente determinístico
+            Anos 1980: 2ª Onda — Sistemas Especialistas e Backpropagation
+            1987-1994: 2º Inverno da IA — Substituição das máquinas LISP por PCs Apple/IBM
+            Anos 1990/2000: IA Estreita e Marcos — Deep Blue vence Kasparov (1997) | Watson no Jeopardy (2011)
+        section 2010 – Presente — 3ª Onda
+            Anos 2010: 3ª Onda — Big Data + GPUs + Cloud = Machine Learning e Deep Learning
+            2017-Presente: Transformer, LLMs e IA Generativa — ChatGPT, Gemini, DALL-E
+  </div>
+
+  <h3>A Gênese Formal (1950 – 1956)</h3>
+  <ul>
+    <li>
+      <strong>Alan Turing (1950):</strong> publicou o célebre artigo formulando a pergunta <em>"As máquinas podem
+      pensar?"</em> e propondo o <strong>Teste de Turing</strong> como critério operacional de inteligência.
+    </li>
+    <li>
+      <strong>A Conferência de Dartmouth (1956):</strong> projeto de pesquisa de verão no <em>Dartmouth College</em>
+      organizado por <strong>John McCarthy</strong>, <strong>Marvin Minsky</strong>,
+      <strong>Nathaniel Rochester</strong> e <strong>Claude Shannon</strong>, onde o termo <em>Inteligência
+      Artificial</em> foi cunhado e o campo foi oficialmente fundado.
+    </li>
+  </ul>
+
+  <h3>As Três Ondas da IA</h3>
+
+  <h4>1. Primeira Onda (1950–1970) — IA Simbólica / GOFAI (Good Old-Fashioned AI)</h4>
+  <p>
+    Baseada em lógica formal, manipulação de símbolos e solucionadores gerais de problemas. Acreditava-se que o
+    pensamento inteligente podia ser reduzido a um conjunto determinístico de regras.
+  </p>
+  <ul>
+    <li>
+      <em>O Primeiro Inverno da IA (1974–1980):</em> provocado pela subestimação da complexidade do mundo real,
+      incapacidade de gerir a incerteza e corte drástico de financiamentos governamentais diante de promessas não
+      cumpridas.
+    </li>
+  </ul>
+
+  <h4>2. Segunda Onda (1980–2000) — Sistemas Especialistas e Conexionismo Inicial</h4>
+  <ul>
+    <li>
+      <strong>Sistemas Especialistas (SEs):</strong> softwares programados para simular a tomada de decisão de
+      especialistas humanos em domínios restritos e bem definidos (como os sistemas <em>DENDRAL</em> e
+      <em>MYCIN</em>).
+    </li>
+    <li>
+      <strong>Redescoberta Conexionista:</strong> reorganização das Redes Neurais Artificiais (RNAs) impulsionada pelo
+      desenvolvimento do algoritmo de retropropagação (<em>backpropagation</em>) nos anos 1980.
+    </li>
+    <li>
+      <em>O Segundo Inverno da IA (1987–1994):</em> a fragilidade e rigidez dos Sistemas Especialistas aliadas ao
+      barateamento dos computadores pessoais da Apple e da IBM tornaram as caras e dedicadas "máquinas LISP" obsoletas,
+      cortando novamente os investimentos na área.
+    </li>
+    <li>
+      <strong>Marcos de Desempenho:</strong> amadurecimento da IA Estreita focada em problemas específicos. Em
+      <strong>1997</strong>, o supercomputador <strong>Deep Blue</strong> da IBM derrotou o campeão mundial de xadrez
+      Garry Kasparov. Paralelamente, assistentes e chatbots evoluíram de experimentos como <em>ELIZA</em> (1966),
+      <em>ALICE</em> (1995) e <em>SmarterChild</em> (2001) até a consolidação dos assistentes de voz modernos
+      (<em>Siri</em>, <em>Alexa</em>, <em>Google Assistant</em>).
+    </li>
+  </ul>
+
+  <h4>3. Terceira Onda (2010–Presente) — Machine Learning, Deep Learning e Big Data</h4>
+  <p>
+    O ressurgimento avassalador da IA foi viabilizado por quatro fatores simultâneos:
+  </p>
+  <ol>
+    <li>
+      Proliferação massiva de dados digitais não estruturados (<strong>Big Data</strong>) decorrente da popularização de
+      smartphones, navegadores e mídias sociais.
+    </li>
+    <li>
+      Ampliação do poder computacional e barateamento de Unidades de Processamento Gráfico (<strong>GPUs</strong>).
+    </li>
+    <li>
+      Consolidação da <strong>Computação em Nuvem (Cloud Computing)</strong> para armazenamento e processamento
+      distribuído.
+    </li>
+    <li>
+      Aperfeiçoamento dos algoritmos de <strong>Aprendizado de Máquina (Machine Learning)</strong> e
+      <strong>Aprendizado Profundo (Deep Learning)</strong>.
+    </li>
+  </ol>
+  <ul>
+    <li>
+      <strong>A Revolução das Redes Transformers (2017):</strong> a introdução da arquitetura neural <em>Transformer</em>
+      por Vaswani et al. (2017) permitiu processar sequências de dados e capturar relações contextuais em grande escala,
+      dando origem a modelos pré-treinados de linguagem como <em>BERT</em> e a série <em>GPT</em> (OpenAI).
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>4. Distinção Essencial: IA Tradicional vs. IA Generativa (IAGen)</h2>
+
+  <p>
+    É fundamental não reduzir todo o ecossistema da inteligência artificial à sua manifestação recente mais visível. A
+    taxonomia da IA abrange múltiplas abordagens (simbólica, conexionista, estatística, evolutiva) e aplicações
+    diversas.
+  </p>
+
+  <div class="mermaid">
+    flowchart LR
+    IA["Ecossistema de Tecnologias de IA"]
+    TRAD["IA TRADICIONAL / ESTREITA (Narrow AI)"]
+    GEN["IA GENERATIVA (IAGen)"]
+    IA --> TRAD
+    IA --> GEN
+    TRAD --> T1["Foco: classificação, previsão, busca e reconhecimento de padrões em dados existentes"]
+    TRAD --> T2["Saída: categorias, rótulos, notas, pontuações e decisões operacionais"]
+    TRAD --> T3["Ex.: filtros de spam, recomendadores, visão computacional, RPA, Deep Blue"]
+    GEN --> G1["Foco: criação autônoma de novos conteúdos originais"]
+    GEN --> G2["Saída: texto, imagem, código, áudio e vídeo"]
+    GEN --> G3["Ex.: ChatGPT, Gemini, Copilot, DALL-E, Midjourney"]
+  </div>
+
+  <h3>4.1. IA Tradicional (Estreita ou Fraca — Narrow AI)</h3>
+  <p>
+    Refere-se a sistemas projetados e treinados para executar <strong>uma tarefa específica ou um escopo limitado</strong>.
+  </p>
+  <ul>
+    <li>
+      <strong>Funcionamento:</strong> analisa dados estruturados ou não estruturados, aplicando aprendizado estatístico
+      ou regras para identificar padrões, classificar informações ou fazer previsões.
+    </li>
+    <li>
+      <strong>Limitação:</strong> não possui flexibilidade para atuar fora do domínio de seu treinamento. A chamada
+      <strong>IA Geral (AGI)</strong> — um sistema hipotético capaz de igualar a inteligência humana universal —
+      permanece estritamente no campo teórico.
+    </li>
+    <li>
+      <strong>Exemplos:</strong> algoritmos de recomendação do e-commerce e streaming, pontuação de risco de crédito,
+      filtros de spam, reconhecimento facial, diagnósticos médicos assistidos e Automação de Processos Robóticos (RPA).
+    </li>
+  </ul>
+
+  <h3>4.2. IA Generativa (IAGen)</h3>
+  <p>
+    É uma subclasse avançada treinada a partir de imensos volumes de dados (<em>corpora</em>) para
+    <strong>produzir conteúdos novos e inéditos</strong>.
+  </p>
+  <ul>
+    <li>
+      <strong>Funcionamento:</strong> em vez de apenas classificar ou selecionar respostas pré-programadas, os modelos
+      generativos analisam estatisticamente a distribuição de palavras, pixels ou sons para identificar padrões e gerar
+      sequências coerentes, palavra por palavra ou elemento por elemento.
+    </li>
+    <li>
+      <strong>Interface Conversacional:</strong> é operada por comandos em linguagem natural, conhecidos como
+      <strong>prompts</strong>.
+    </li>
+    <li>
+      <strong>Formatos Gerados:</strong> produz textos técnicos ou literários, ilustrações e fotos digitais, faixas de
+      áudio, vídeos e código de software.
+    </li>
+    <li>
+      <strong>Exemplos:</strong> chatbots avançados de texto (<em>ChatGPT</em>, <em>Google Gemini</em>,
+      <em>Microsoft Copilot</em>) e geradores de imagem (<em>DALL-E</em>, <em>Midjourney</em>).
+    </li>
+  </ul>
+
+  <h3>Quadro Comparativo Direto</h3>
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Critério de Comparação</th>
+          <th>IA Tradicional (Estreita / Fraca)</th>
+          <th>IA Generativa (IAGen)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Propósito Primário</th>
+          <td>Classificar, filtrar, organizar dados e prever resultados hipotéticos.</td>
+          <td>Criar novos materiais e conteúdos originais em linguagem natural ou simbólica.</td>
+        </tr>
+        <tr>
+          <th>Formato da Saída (Output)</th>
+          <td>Um rótulo, uma probabilidade, uma ordem de classificação ou uma ação.</td>
+          <td>Um texto completo, uma imagem sintética, um áudio, vídeo ou script de código.</td>
+        </tr>
+        <tr>
+          <th>Engrenagem Subjacente</th>
+          <td>Algoritmos de aprendizado supervisionado/não supervisionado, SVMs, CNNs.</td>
+          <td>Redes neurais profundas baseadas em <em>Transformers</em> e <em>GANs</em>.</td>
+        </tr>
+        <tr>
+          <th>Modo de Interação</th>
+          <td>Consultas a bancos de dados, acionamento de sensores, telas estruturadas.</td>
+          <td>Interfaces de chat onde o usuário fornece instruções em linguagem cotidiana (<em>prompts</em>).</td>
+        </tr>
+        <tr>
+          <th>Risco Principal</th>
+          <td>Rigidez operacional ao lidar com ambiguidades e exceções fora do escopo.</td>
+          <td>
+            Ocorrência de <strong>alucinações</strong> (invenção de dados com aparência de verdade) e plágio.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>5. Trabalhando o Pensamento Crítico: Dilemas Éticos e Sociais</h2>
+
+  <p>
+    A inteligência artificial é uma <strong>tecnologia de propósito geral</strong>. Ela não é neutra: carrega
+    implicitamente as escolhas, pressupostos, visões de mundo e limitações de seus criadores e dos dados utilizados
+    para treiná-la.
+  </p>
+
+  <div class="mermaid">
+    flowchart TB
+    D["DESAFIOS ÉTICOS E CRÍTICOS DA IA"]
+    D --> E1["EFEITO CAIXA PRETA"]
+    D --> E2["VIÉS ALGORÍTMICO"]
+    D --> E3["ALUCINAÇÕES E AUTORIA"]
+    E1 --> E1a["Falta de transparência e dificuldade de explicabilidade das decisões"]
+    E2 --> E2a["Reprodução e amplificação de preconceitos históricos e sociais"]
+    E3 --> E3a["Geração de dados falsos e violação de integridade acadêmica e profissional"]
+  </div>
+
+  <h3>5.1. O "Efeito Caixa Preta" (Black Box) e a Falta de Transparência</h3>
+  <p>
+    Muitos sistemas baseados em <em>Deep Learning</em> operam através de arquiteturas neurais de alta complexidade cujos
+    caminhos internos de tomada de decisão não são facilmente explicáveis ou transparentes. Essa falta de
+    <strong>explicabilidade</strong> gera insegurança jurídica e compromete a auditoria de processos decisórios
+    críticos.
+  </p>
+
+  <h3>5.2. Vieses Algorítmicos e Discriminação Social</h3>
+  <p>
+    Se um modelo de aprendizado de máquina for treinado com dados históricos desbalanceados, incompletos ou
+    preconceituosos, ele irá perpetuar e sistematizar essas desigualdades.
+  </p>
+  <ul>
+    <li>
+      <em>Exemplo real de viés:</em> estudos mostram que sistemas de reconhecimento facial apresentam margens de erro
+      consideravelmente maiores ao analisar mulheres e pessoas negras, devido ao viés de amostragem nos conjuntos de
+      dados de treinamento.
+    </li>
+  </ul>
+
+  <h3>5.3. Alucinações, Incoerência e Confiabilidade</h3>
+  <p>
+    As ferramentas de IA generativa operam por meio de associação estatística e probabilidades de palavras, e não por
+    compreensão de significado real. Com isso, ocorre o fenômeno da <strong>alucinação</strong>: o sistema cria
+    afirmações totalmente falsas, citações bibliográficas inexistentes ou cálculos equivocados, mas apresentados com um
+    tom persuasivo de certeza.
+  </p>
+
+  <h3>5.4. Autoria, Plágio e Propriedade Intelectual</h3>
+  <p>
+    A facilidade de gerar textos e trabalhos completos desafia os conceitos tradicionais de autoria, integridade
+    acadêmica e direitos autorais. O uso de IAGen sem a devida declaração ou sem revisão crítica reduz as oportunidades
+    de aprendizagem e atrofia a autonomia de pensamento do estudante e do profissional.
+  </p>
+
+  <h3>5.5. O Problema do Alinhamento de Valores (Russell &amp; Wiener)</h3>
+  <p>
+    Conforme enfatizado por Stuart Russell e pelo cibernetista Norbert Wiener, um dos maiores perigos da IA não é a
+    malícia da máquina, mas o <strong>desalinhamento de metas</strong> (o chamado <em>Problema do Rei Midas</em>). Se
+    fornecemos a uma máquina superinteligente um objetivo rígido sem especificar todas as restrições éticas humanas, ela
+    perseguirá essa meta ao pé da letra, podendo gerar consequências desastrosas não intencionais para a sociedade.
+  </p>
+
+  <h3>5.6. A Insubstituível Mediação Humana (Human-in-the-Loop)</h3>
+  <p>
+    A tecnologia atua como subsídio e amplificadora do intelecto humano, mas jamais como substituta do julgamento
+    crítico, da sensibilidade ética e da responsabilidade. Quanto maior a autonomia de um algoritmo, maior se torna a
+    responsabilidade ética dos profissionais e desenvolvedores que o operam.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>6. Síntese e Diretrizes de Aplicação Prática</h2>
+
+  <p>
+    Para atuar de maneira responsável diante das tecnologias inteligentes no ambiente corporativo e educacional, adote
+    estas regras:
+  </p>
+  <ol>
+    <li>
+      <strong>Nunca copie e cole cegamente:</strong> exerça sempre a curadoria crítica de qualquer conteúdo ou tabela
+      gerada por sistemas de IA.
+    </li>
+    <li>
+      <strong>Atribuição Transparente:</strong> declare abertamente o uso de ferramentas generativas sempre que elas
+      servirem como ponto de partida para suas análises ou relatórios.
+    </li>
+    <li>
+      <strong>Proteção de Dados e Privacidade:</strong> jamais insira dados confidenciais de empresas, dados fiscais
+      sensíveis ou informações pessoais em plataformas abertas de IA.
+    </li>
+    <li>
+      <strong>Pratique a Engenharia de Prompts:</strong> formule instruções claras, especificando contexto, papel do
+      sistema, limites e formato esperado para extrair resultados mais precisos.
+    </li>
+  </ol>
+
+  <h3>Exemplo de Código: IA Estreita em JavaScript</h3>
+  <p>
+    Para visualizar a fronteira entre a IA tradicional e a IA generativa, observe como um classificador de
+    <strong>IA Estreita</strong> é objeto de regras de decisão explícitas — diferentemente de um modelo generativo, que
+    <em>aprende</em> padrões da massa de dados:
+  </p>
   <div class="code-container">
-    <pre><code class="language-plaintext">// Em breve...</code></pre>
+    <pre><code class="language-javascript">// Simulação didática de um classificador de "IA Estreita"
+// Tarefa: detectar se uma mensagem é SPAM ou HAM (válida)
+function classificarSpam(score) {
+    if (score >= 0.9) {
+        return "SPAM (Certeza alta)";
+    } else if (score > 0.5) {
+        return "SPAM (Certeza média)";
+    } else {
+        return "HAM";
+    }
+}
+
+// Saída: um único rótulo, como na definição de IA Estreita
+console.log(classificarSpam(0.95)); // SPAM (Certeza alta)
+console.log(classificarSpam(0.75)); // SPAM (Certeza média)
+console.log(classificarSpam(0.10)); // HAM</code></pre>
+  </div>
+
+  <h3>Fluxo de um Sistema de IA Generativa</h3>
+  <div class="mermaid">
+    flowchart LR
+    A["Usuário formula um prompt"] --> B["API do modelo generativo"]
+    B --> C["Modelo gera conteúdo novo por probabilidade"]
+    C --> D["Resposta em linguagem natural"]
+    D --> E["Mediação humana: curadoria e revisão crítica"]
   </div>
 </section>
 
 <section class="section-box">
   <h2>Representação Gráfica</h2>
+  <p>
+    Linha do tempo consolidada com os marcos históricos mais importantes da Inteligência Artificial e as três ondas
+    tecnológicas:
+  </p>
   <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    timeline
+        title Linha do Tempo Consolidada da IA
+        section 1950 – 1956 — Gênese
+            TURING 1950: "As máquinas podem pensar?"
+            DARTMOUTH 1956: Gênese formal do termo IA
+        section 1974 – 2000 — Invernos, 2ª Onda e Marcos
+            1974-1980: 1º Inverno da IA
+            Anos 1980: 2ª Onda — Sistemas Especialistas e Backpropagation
+            1987-1994: 2º Inverno da IA
+            Anos 1990/2000: Marcos da IA Estreita — Deep Blue 1997 e Watson 2011
+        section 2010 – Presente — 3ª Onda
+            Anos 2010: Big Data + GPUs + Cloud + Deep Learning
+            2017-Presente: Transformers, LLMs e IA Generativa
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas &amp; Lembretes</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>IA não é um software que "pensa":</strong> ela mimetiza funções cognitivas por estatística e aproximação.
+    </li>
+    <li>
+      <strong>Nem toda IA gera conteúdo:</strong> a maioria dos sistemas em produção é <em>IA Estreita</em> (classificar,
+      prever, filtrar).
+    </li>
+    <li>
+      <strong>Todo modelo carrega viés de seus dados:</strong> dados desbalanceados geram decisões discriminatórias.
+    </li>
+    <li>
+      <strong>Desconfie de respostas com tom de certeza:</strong> modelos generativos podem produzir alucinações.
+    </li>
+    <li>
+      <strong>Você é o responsável final:</strong> a mediação humana (<em>human-in-the-loop</em>) é insubstituível.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>No trabalho:</strong> use IAGen como ponto de partida para rascunhos e brainstorming, mas revise cada
+      dado, cálculo e citação antes de publicar.
+    </li>
+    <li>
+      <strong>Na segurança:</strong> nunca cole dados confidenciais de clientes ou da empresa em plataformas abertas.
+    </li>
+    <li>
+      <strong>Na integridade acadêmica:</strong> declare o uso de ferramentas generativas e preserve a autoria e o
+      esforço de aprendizado.
+    </li>
+    <li>
+      <strong>Na ética:</strong> questione quem construiu o modelo, com quais dados foi treinado e que preconceitos ele
+      pode reforçar antes de adotá-lo.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      RUSSELL, Stuart; NORVIG, Peter. <em>Inteligência Artificial: Uma Abordagem Moderna</em>. 3. ed. Rio de Janeiro:
+      Pearson, 2004.
+    </li>
+    <li>
+      McCARTHY, John; MINSKY, Marvin L.; ROCHESTER, Nathaniel; SHANNON, Claude E. <em>A Proposal for the Dartmouth
+      Summer Research Project on Artificial Intelligence</em>. 1955.
+    </li>
+    <li>
+      TURING, Alan M. <em>Computing Machinery and Intelligence</em>. Mind, v. 59, n. 236, p. 433-460, 1950.
+    </li>
+    <li>
+      VASWANI, Ashish et al. <em>Attention Is All You Need</em>. NeurIPS, 2017.
+    </li>
+    <li>
+      WIENER, Norbert. <em>Some Moral and Technical Consequences of Automation</em>. Science, v. 131, p. 1355-1358,
+      1960.
+    </li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Conceitos Fundamentais de IA</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
   </ul>
 </section>
