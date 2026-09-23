@@ -8,6 +8,13 @@
   --spacing: 1.5rem;
 }
 
+body.dark-theme {
+  --bg: #0f1116;
+  --fg: #f4f4f5;
+  --border: #8f98a5;
+  --accent: #1f2937;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -110,12 +117,36 @@ hr {
   font-family: inherit;
   transition: all 0.2s ease;
   user-select: none;
-  margin-bottom: 0.5rem;
 }
 
 .logo-toggle:hover {
   background: var(--fg);
   color: var(--bg);
+}
+
+.theme-toggle {
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  padding: 0.5rem 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+}
+
+.theme-toggle:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .dropdown {
