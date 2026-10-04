@@ -1,18 +1,256 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Gerenciamento de Estado: Implementação de Cookies para preferências e histórico"
+title: "Exercício 01 - Cookies: preferências de tema, idioma e histórico de navegação"
 exercicio_numero: "01"
 aula_numero: "31"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 31."
+description: "Atividade prática para consolidar o gerenciamento de estado com cookies no PHP 8: gravar, ler, validar e revogar preferências de tema e idioma, além de um histórico de navegação serializado em JSON."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado(a) para desenvolver o painel de preferências de uma loja virtual. Como o protocolo HTTP não
+    mantém memória entre requisições, toda a persistência do lado do cliente deverá ser feita com
+    <strong>cookies</strong>, usando a função <code class="one-line-code">setcookie()</code> e a superglobal
+    <code class="one-line-code">$_COOKIE</code>.
+  </p>
+  <p>
+    Execute e valide cada etapa no seu ambiente com PHP 8 antes de prosseguir para a próxima.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li>
+      <strong>Ambiente:</strong> garanta PHP 8+ instalado e, no XAMPP/WampServer, valide a versão com
+      <code class="one-line-code">php -v</code>. Se usar o servidor embutido, suba a pasta com
+      <code class="one-line-code">php -S localhost:8080</code>.
+    </li>
+    <li>
+      <strong>Organização:</strong> crie uma pasta <code class="one-line-code">cookies-aula31</code> com os arquivos
+      <code class="one-line-code">preferencias.php</code>, <code class="one-line-code">historico.php</code> e
+      <code class="one-line-code">limpar.php</code>.
+    </li>
+    <li>
+      <strong>Ferramenta de inspeção:</strong> abra o DevTools do navegador (<code class="one-line-code">F12</code>) na
+      aba <strong>Application &rarr; Storage &rarr; Cookies</strong>. Você inspecionar, editar e remover os cookies por lá
+      durante toda a atividade.
+    </li>
+    <li>
+      <strong>Validação:</strong> a cada bloco, atualize a página e confirme que o cookie aparece no DevTools com o
+      <code class="one-line-code">path</code> e a data de expiração corretos.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Estrutura de Arquivos Proposta</h2>
+  <ul>
+    <li>
+      <code class="one-line-code">preferencias.php</code> — grava e lê os cookies de tema e idioma (Exemplo 1 da aula).
+    </li>
+    <li><code class="one-line-code">historico.php</code> — registra e exibe os últimos cursos acessados (Exemplo 2).</li>
+    <li><code class="one-line-code">limpar.php</code> — revoga todos os cookies gravados (Exemplo 3 da aula).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Gravando e Lendo a Preferência de Tema</h3>
+  <ol>
+    <li>
+      Crie <code class="one-line-code">preferencias.php</code> com um formulário que envie
+      <code class="one-line-code">tema</code> (<code class="one-line-code">claro</code> ou
+      <code class="one-line-code">escuro</code>) e um botão para salvar:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' &amp;&amp; isset($_POST['tema'])) {
+    setcookie('preferencia_tema', $_POST['tema'], [
+        'expires'  =&gt; time() + (86400 * 30), // 30 dias
+        'path'     =&gt; '/',
+        'secure'   =&gt; false,
+        'httponly' =&gt; true,
+        'samesite' =&gt; 'Lax'
+    ]);
+
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+$temaAtual = $_COOKIE['preferencia_tema'] ?? 'claro';
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;h1&gt;Preferências&lt;/h1&gt;
+&lt;p&gt;Tema atual: &lt;?= htmlspecialchars($temaAtual, ENT_QUOTES, 'UTF-8') ?&gt;&lt;/p&gt;
+&lt;form method="POST"&gt;
+    &lt;select name="tema"&gt;
+        &lt;option value="claro"&gt;Claro&lt;/option&gt;
+        &lt;option value="escuro"&gt;Escuro&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button type="submit"&gt;Salvar&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+      </div>
+    </li>
+    <li>
+      Teste o código e responda: por que o valor selecionado só aparece na página <strong>depois</strong> do clique em
+      Salvar, e não imediatamente? Qual função do PHP resolve esse atraso?
+    </li>
+    <li>
+      No DevTools, edite manualmente o valor do cookie para <code class="one-line-code">qualquer-coisa</code> e recarregue
+      a página. O que a aplicação faz com esse valor? Por que isso é um problema de segurança?
+    </li>
+  </ol>
+
+  <h3>Bloco 2: Validação com Lista Branca e Proteção contra XSS</h3>
+  <ol>
+    <li>
+      Adicione a validação por lista branca antes de gravar o cookie, aceitando apenas
+      <code class="one-line-code">claro</code> e <code class="one-line-code">escuro</code>:
+      <div class="code-container">
+        <pre><code class="language-php">$temasValidos = ['claro', 'escuro'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' &amp;&amp; isset($_POST['tema'])) {
+    if (in_array($_POST['tema'], $temasValidos, true)) {
+        setcookie('preferencia_tema', $_POST['tema'], [
+            'expires'  =&gt; time() + (86400 * 30),
+            'path'     =&gt; '/',
+            'httponly' =&gt; true,
+            'samesite' =&gt; 'Lax'
+        ]);
+    }
+
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}</code></pre>
+      </div>
+    </li>
+    <li>
+      Reproduza um XSS: no DevTools, altere o cookie para
+      <code class="one-line-code">&lt;script&gt;alert('XSS')&lt;/script&gt;</code>. Explique por que a flag
+      <code class="one-line-code">httponly</code> <strong>não</strong> protege a sua página nesse cenário e qual função
+      de escape resolve o problema na saída.
+    </li>
+    <li>
+      Adicione um segundo cookie de <strong>idioma</strong> (<code class="one-line-code">pt-BR</code>,
+      <code class="one-line-code">en-US</code> ou <code class="one-line-code">es-ES</code>) com validade de 1 ano
+      (<code class="one-line-code">time() + 60*60*24*365</code>) e exiba-o na tela.
+    </li>
+  </ol>
+
+  <h3>Bloco 3: Histórico de Navegação em JSON</h3>
+  <ol>
+    <li>
+      Crie <code class="one-line-code">historico.php</code> que registre os últimos 5 cursos acessados:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+$cursosDisponiveis = ['PHP 8 Avançado', 'Laravel Framework', 'CSS Grid e Flexbox', 'JavaScript ES6'];
+
+$historico = json_decode($_COOKIE['historico_cursos'] ?? '[]', true) ?: [];
+$cursoAtual = $_GET['curso'] ?? null;
+
+if ($cursoAtual !== null &amp;&amp; in_array($cursoAtual, $cursosDisponiveis, true)) {
+    $historico = array_values(array_unique(array_merge([$cursoAtual], $historico)));
+    $historico = array_slice($historico, 0, 5);
+
+    setcookie('historico_cursos', json_encode($historico), [
+        'expires'  =&gt; time() + (86400 * 7),
+        'path'     =&gt; '/',
+        'httponly' =&gt; true,
+        'samesite' =&gt; 'Lax'
+    ]);
+}
+?&gt;</code></pre>
+      </div>
+    </li>
+    <li>
+      Navegue por todos os cursos e observe o cookie no DevTools. Ele é um texto único — explique como o
+      <code class="one-line-code">json_encode()</code> conseguiu "colocar um array dentro de uma string".
+    </li>
+    <li>
+      O que acontece se você gravar o histórico com <code class="one-line-code">array_slice($historico, 0, 100)</code> e
+      preencher 100 cursos longos? Relacione a resposta com o limite de 4&nbsp;KB do cookie.
+    </li>
+    <li>
+      Troque o <code class="one-line-code">json_decode($x, true)</code> por
+      <code class="one-line-code">json_decode($x)</code> (sem o segundo parâmetro) e explique a diferença no tipo de
+      retorno com <code class="one-line-code">gettype()</code>.
+    </li>
+  </ol>
+
+  <h3>Bloco 4: Revogando Cookies</h3>
+  <ol>
+    <li>
+      Crie <code class="one-line-code">limpar.php</code> para remover todos os cookies da aplicação:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+$cookiesParaRevogar = ['preferencia_tema', 'idioma', 'historico_cursos'];
+
+foreach ($cookiesParaRevogar as $nome) {
+    setcookie($nome, '', [
+        'expires' =&gt; time() - 3600, // Data no passado = revogação
+        'path'    =&gt; '/'            // Precisa ser IGUAL ao da criação
+    ]);
+}
+
+header('Location: index.php');
+exit;</code></pre>
+      </div>
+    </li>
+    <li>
+      Incline o exercício: apague o parâmetro <code class="one-line-code">'path'</code> da revogação. O cookie continua
+      sendo removido? Explique por que o navegador não reconheceu o cookie como o mesmo.
+    </li>
+    <li>
+      Liste os cookies que NÃO devem ser revogados por esta tela (por exemplo,
+      <code class="one-line-code">PHPSESSID</code>) e justifique com base no que você aprendeu na aula.
+    </li>
+  </ol>
+
+  <h3>Bloco 5: Refletindo sobre a Prática</h3>
+  <ol>
+    <li>
+      Explique, com suas palavras, a diferença entre um cookie <strong>de sessão</strong> e um cookie
+      <strong>persistente</strong>, citando o papel do parâmetro <code class="one-line-code">expires</code>.
+    </li>
+    <li>
+      Complete a frase: "Um cookie nunca deve armazenar a senha do usuário porque...".
+    </li>
+    <li>
+      Qual seria a alternativa correta para guardar o histórico de navegação em um site real com milhares de produtos? Justifique
+      sua resposta com os limites de 4&nbsp;KB e de quantidade de cookies por domínio.
+    </li>
+    <li>
+      Qual a relação entre o uso de cookies para rastreamento e a Lei Geral de Proteção de Dados (LGPD)?
+    </li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Nada de saída antes dos cabeçalhos:</strong> todo o bloco de
+      <code class="one-line-code">setcookie()</code> e <code class="one-line-code">header()</code> deve ficar no topo do
+      script, antes de qualquer <code class="one-line-code">?&gt;</code> seguido de HTML — inclusive sem espaços em
+      branco antes do <code class="one-line-code">&lt;?php</code>.
+    </li>
+    <li>
+      <strong>Sempre redirecione:</strong> use <code class="one-line-code">header('Location: ' . $_SERVER['PHP_SELF']); exit;</code>
+      após gravar o cookie, para aplicar a mudança e evitar o reenvio do formulário.
+    </li>
+    <li>
+      <strong>Valide antes de gravar:</strong> use lista branca com
+      <code class="one-line-code">in_array()</code> e escape a saída com
+      <code class="one-line-code">htmlspecialchars()</code>.
+    </li>
+    <li>
+      <strong>LGPD:</strong> todo sistema que registra preferências ou histórico deve oferecer uma forma clara de revogá-las.
+    </li>
   </ul>
 </div>

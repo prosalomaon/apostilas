@@ -1,49 +1,523 @@
 ---
-title: "Gerenciamento de Estado: Implementação de Cookies para preferências e histórico"
+title: "Gerenciamento de Estado: Implementação de Cookies para Preferências e Histórico"
 aula_numero: "31"
-description: "Gerenciamento de Estado: Implementação de Cookies para preferências e histórico."
+description: "O protocolo HTTP é stateless. Aprenda a usar cookies no PHP 8 com setcookie() e a superglobal $_COOKIE para persistir preferências de tema e histórico de navegação, aplicando as flags de segurança httponly, secure e samesite."
 tags:
   - aula
   - bimestre-04
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 31 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    O gerenciamento de estado é um dos pilares da programação Web. Por natureza, o protocolo <strong>HTTP</strong> é
+    <em>stateless</em> (sem estado), o que significa que o servidor trata cada requisição de forma isolada, sem uma memória
+    nativa que reconheça se duas requisições consecutivas vieram do mesmo usuário.
+  </p>
+  <p>
+    Nesta aula, estudaremos como os <strong>Cookies</strong> atuam para resolver a ausência de estado do HTTP, permitindo
+    armazenar preferências do usuário (como tema escuro/claro e idioma) e dados de histórico de navegação diretamente no
+    navegador do cliente.
+  </p>
+
+  <h3>1.1. O Protocolo HTTP e a Necessidade do Estado</h3>
+  <p>
+    Como o servidor Web não guarda memória entre as navegações de páginas, dependemos de mecanismos de persistência
+    externos para lembrar quem é o usuário e o que ele escolheu. Existem duas famílias de soluções:
+  </p>
+  <ul>
+    <li>
+      <strong>Persistência no servidor:</strong> a aplicação grava os dados em disco ou banco de dados e mantém um
+      identificador de referência no cliente. É o caso das <strong>sessões</strong>
+      (<code class="one-line-code">$_SESSION</code>), que serão estudadas em profundidade na próxima aula.
+    </li>
+    <li>
+      <strong>Persistência no cliente:</strong> o próprio navegador guarda os dados e os reenvia a cada requisição. É
+      exatamente o caso dos <strong>cookies</strong>, objeto central do nosso estudo nesta aula.
+    </li>
+  </ul>
+  <p>
+    Os cookies são pequenos arquivos de texto (ou coleções de dados chave/valor) armazenados pelo navegador a pedido do
+    servidor Web. Sempre que o navegador solicita uma nova página para aquele mesmo domínio, ele inclui automaticamente os
+    cookies armazenados nos <strong>cabeçalhos HTTP da requisição</strong>, no formato
+    <code class="one-line-code">Cookie: nome=valor</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-http">GET /preferencias.php HTTP/1.1
+Host: www.meusite.com.br
+Cookie: preferencia_tema=escuro; idioma=pt-BR; historico_cursos=%5B%22Laravel%22%5D</code></pre>
+  </div>
+
+  <h3>1.2. Anatomia e Parâmetros de um Cookie</h3>
+  <p>
+    No PHP, a função nativa <code class="one-line-code">setcookie()</code> envia o cabeçalho HTTP
+    <code class="one-line-code">Set-Cookie</code> ao navegador. Para garantir que um cookie funcione corretamente e com
+    segurança, devemos conhecer seus parâmetros principais:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Parâmetro</th>
+        <th>Descrição</th>
+        <th>Exemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>name</strong></td>
+        <td>Nome identificador do cookie.</td>
+        <td><code class="one-line-code">'user_theme'</code></td>
+      </tr>
+      <tr>
+        <td><strong>value</strong></td>
+        <td>Conteúdo gravado no cookie (até 4&nbsp;KB de texto).</td>
+        <td><code class="one-line-code">'dark'</code></td>
+      </tr>
+      <tr>
+        <td><strong>expires</strong></td>
+        <td>
+          Data/timestamp de expiração. Se for <code class="one-line-code">0</code>, expira ao fechar o navegador.
+        </td>
+        <td><code class="one-line-code">time() + (86400 * 30)</code></td>
+      </tr>
+      <tr>
+        <td><strong>path</strong></td>
+        <td>Caminho do servidor onde o cookie estará disponível (geralmente <code class="one-line-code">'/'</code>).</td>
+        <td><code class="one-line-code">'/'</code></td>
+      </tr>
+      <tr>
+        <td><strong>domain</strong></td>
+        <td>Domínio ou subdomínio autorizado a ler o cookie.</td>
+        <td><code class="one-line-code">'.meusite.com.br'</code></td>
+      </tr>
+      <tr>
+        <td><strong>secure</strong></td>
+        <td>
+          Se <code class="one-line-code">true</code>, o cookie só é transmitido sob conexões criptografadas
+          <strong>HTTPS</strong>.
+        </td>
+        <td><code class="one-line-code">true</code></td>
+      </tr>
+      <tr>
+        <td><strong>httponly</strong></td>
+        <td>
+          Se <code class="one-line-code">true</code>, o cookie fica <strong>inacessível para scripts client-side
+          (JavaScript)</strong>, mitigando ataques de <strong>XSS</strong> (<em>Cross-Site Scripting</em>).
+        </td>
+        <td><code class="one-line-code">true</code></td>
+      </tr>
+      <tr>
+        <td><strong>samesite</strong></td>
+        <td>
+          Controla o envio cruzado de cookies para prevenir <strong>CSRF</strong>
+          (<code class="one-line-code">'Lax'</code>, <code class="one-line-code">'Strict'</code>,
+          <code class="one-line-code">'None'</code>).
+        </td>
+        <td><code class="one-line-code">'Lax'</code></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+// Sintaxe moderna (PHP 7.3+): array de opções, muito mais legível
+setcookie('user_theme', 'dark', [
+    'expires'  =&gt; time() + (86400 * 30), // 30 dias
+    'path'     =&gt; '/',
+    'domain'   =&gt; '.meusite.com.br',
+    'secure'   =&gt; true,   // Exige HTTPS
+    'httponly' =&gt; true,   // Bloqueia a leitura via JavaScript
+    'samesite' =&gt; 'Lax'   // Mitiga CSRF
+]);</code></pre>
+  </div>
+
+  <h3>1.3. Ciclo de Vida: Cookies de Sessão vs. Cookies Persistentes</h3>
+  <p>
+    A distinção entre os dois tipos de cookie é definida exclusivamente pelo parâmetro de expiração:
+  </p>
+  <ul>
+    <li>
+      <strong>Cookie de Sessão:</strong> criado sem uma data de expiração explícita (ou com o valor
+      <code class="one-line-code">0</code>). Ele reside apenas na memória RAM do navegador e é destruído assim que o usuário
+      fecha o navegador.
+    </li>
+    <li>
+      <strong>Cookie Persistente:</strong> criado com um timestamp futuro definido no parâmetro
+      <code class="one-line-code">expires</code> (ex.: <code class="one-line-code">time() + 60*60*24*30</code> para 30
+      dias). Ele é gravado no disco rígido do cliente e sobrevive ao fechamento e reabertura do navegador.
+    </li>
+  </ul>
+
+  <h3>1.4. Lendo Cookies: a Superglobal <code class="one-line-code">$_COOKIE</code></h3>
+  <p>
+    Quando o navegador reenvia os cookies na requisição, o PHP os disponibiliza automaticamente na superglobal
+    <code class="one-line-code">$_COOKIE</code>, um array associativo cujo índice é o nome do cookie e cujo valor é o
+    conteúdo armazenado:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+// Leitura direta (pode gerar aviso se o cookie não existir)
+$tema = $_COOKIE['preferencia_tema'];
+
+// Leitura segura com operador de coalescência (evita o aviso de "Undefined index")
+$tema = $_COOKIE['preferencia_tema'] ?? 'claro';
+
+// Verificando a existência antes de usar
+if (isset($_COOKIE['usuario_logado'])) {
+    echo "Bem-vindo de volta!";
+}
+
+// Listando todos os cookies recebidos nesta requisição
+foreach ($_COOKIE as $nome =&gt; $valor) {
+    echo $nome . ' = ' . $valor;
+}</code></pre>
+  </div>
+
+  <h3>1.5. Segurança e Boas Práticas com Cookies</h3>
+  <p>
+    Como os cookies ficam armazenados no computador do cliente, eles podem ser visualizados ou modificados pelo usuário a
+    qualquer momento pelas ferramentas do navegador. Por isso, <strong>nunca armazene informações confidenciais</strong>
+    (senhas, dados bancários ou regras de permissão) em cookies "limpos".
+  </p>
+  <ol>
+    <li>
+      <strong>Atraso de leitura na primeira carga:</strong> quando você executa
+      <code class="one-line-code">setcookie()</code> no PHP, o valor <strong>não</strong> fica disponível imediatamente no
+      array <code class="one-line-code">$_COOKIE</code> no mesmo script. O cookie só estará acessível na
+      <strong>requisição seguinte</strong>, após o navegador recebê-lo e enviá-lo de volta. Por isso, finalizamos os
+      exemplos com um <code class="one-line-code">header('Location: ...')</code> seguido de
+      <code class="one-line-code">exit;</code>: assim forçamos um novo GET e a página já é montada com o cookie aplicado.
+    </li>
+    <li>
+      <strong>Exclusão de cookies:</strong> para deletar um cookie existente, você deve chamá-lo novamente via
+      <code class="one-line-code">setcookie()</code> definindo uma <strong>data de expiração no passado</strong> (ex.:
+      <code class="one-line-code">time() - 3600</code>). O <code class="one-line-code">path</code> precisa ser
+      <strong>idêntico</strong> ao usado na criação, ou o navegador não reconhecerá o cookie como o mesmo.
+    </li>
+    <li>
+      <strong>Proteção contra XSS e CSRF:</strong> ative as flags <code class="one-line-code">'httponly' =&gt; true</code> e
+      <code class="one-line-code">'samesite' =&gt; 'Lax'</code> ou <code class="one-line-code">'Strict'</code> em todos os
+      cookies que não precisem ser lidos por JavaScript.
+    </li>
+  </ol>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>Exemplos de Código</h2>
+  <p>
+    A seguir, três implementações completas usando a <strong>sintaxe moderna de opções do PHP 8</strong>. Todos os scripts
+    seguem a mesma ordem obrigatória: <strong>processar o POST</strong> &rarr; <strong>gravar o cookie</strong> &rarr;
+    <strong>redirecionar</strong> &rarr; <strong>ler o cookie</strong> &rarr; <strong>renderizar o HTML</strong>.
+  </p>
+
+  <h3>Exemplo 1: Gerenciador de Preferências de Tema (Claro / Escuro)</h3>
+  <p>
+    Este script verifica a preferência enviada pelo formulário, grava o cookie persistente por 30 dias e ajusta
+    dinamicamente as classes do HTML.
+  </p>
   <div class="code-container">
-    <pre><code class="language-php">// Em breve...</code></pre>
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+// ==========================================
+// 1. PROCESSAMENTO DO FORMULÁRIO
+// ==========================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' &amp;&amp; isset($_POST['tema'])) {
+    // Lista branca (allowlist): só aceitamos os valores previstos
+    $temasValidos = ['claro', 'escuro'];
+
+    if (in_array($_POST['tema'], $temasValidos, true)) {
+        setcookie('preferencia_tema', $_POST['tema'], [
+            'expires'  =&gt; time() + (86400 * 30), // Válido por 30 dias
+            'path'     =&gt; '/',
+            'secure'   =&gt; false, // Mudar para true em ambiente com HTTPS
+            'httponly' =&gt; true,  // Proteção contra XSS
+            'samesite' =&gt; 'Lax'  // Mitigação contra CSRF
+        ]);
+
+        // Redireciona (PRG Pattern) para recarregar a página já com o cookie aplicado
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+}
+
+// ==========================================
+// 2. LEITURA DA PREFERÊNCIA GRAVADA
+// ==========================================
+$temaAtual = $_COOKIE['preferencia_tema'] ?? 'claro';
+
+// Escape obrigatório: o valor veio do navegador e pode ter sido adulterado
+$temaAtualSanitizado = htmlspecialchars($temaAtual, ENT_QUOTES, 'UTF-8');
+?&gt;
+&lt;!DOCTYPE html>
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Preferências de Interface&lt;/title&gt;
+&lt;/head&gt;
+&lt;body class="tema-<?= $temaAtualSanitizado ?&gt;"&gt;
+
+    &lt;h1&gt;Painel de Preferências&lt;/h1&gt;
+
+    &lt;form method="POST" action=""&gt;
+        &lt;label for="tema"&gt;Escolha o tema da interface:&lt;/label&gt;
+        &lt;select name="tema" id="tema"&gt;
+            &lt;option value="claro" &lt;?= $temaAtual === 'claro' ? 'selected' : '' ?&gt;&gt;Claro&lt;/option&gt;
+            &lt;option value="escuro" &lt;?= $temaAtual === 'escuro' ? 'selected' : '' ?&gt;&gt;Escuro&lt;/option&gt;
+        &lt;/select&gt;
+        &lt;button type="submit"&gt;Salvar Preferência&lt;/button&gt;
+    &lt;/form&gt;
+
+    &lt;div class="painel"&gt;
+        &lt;h2&gt;Configurar Preferência de Interface&lt;/h2&gt;
+        &lt;p&gt;O tema atual selecionado é: &lt;strong&gt;&lt;?= $temaAtualSanitizado ?&gt;&lt;/strong&gt;&lt;/p&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Por que o redirecionamento é obrigatório aqui?</h4>
+    <ul>
+      <li>
+        <strong>Evita o reenvio do formulário</strong> (padrão <em>Post/Redirect/Get</em>): se o usuário recarregar a
+        página com F5, o navegador não repetirá o POST.
+      </li>
+      <li>
+        <strong>Solve o atraso de leitura:</strong> como o cookie só volta na requisição seguinte, o
+        <code class="one-line-code">Location</code> garante que a página exibida já leia
+        <code class="one-line-code">$_COOKIE['preferencia_tema']</code> com o valor novo.
+      </li>
+      <li>
+        <strong>Se cair no PHP-FPM como página inicial, tudo funciona:</strong> o PHP não tem ligação com o Apache na
+        porta 80; ele apenas escuta a porta 9000. O roteamento é feito inteiramente pela configuração do servidor Web.
+      </li>
+    </ul>
+  </div>
+
+  <h3>Exemplo 2: Histórico de Cursos Recentemente Visitados</h3>
+  <p>
+    Abaixo criamos um sistema que registra os últimos cursos navegados pelo usuário, serializando um array em formato
+    <strong>JSON</strong> dentro do cookie e mantendo no máximo 5 registros.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+// Catálogo de cursos permitidos (evita injeção de qualquer texto na URL)
+$cursosDisponiveis = [
+    'PHP 8 Avançado',
+    'Laravel Framework',
+    'CSS Grid e Flexbox',
+    'JavaScript ES6',
+    'MySQL do Zero'
+];
+
+// ==========================================
+// 1. HISTÓRICO: LER, ATUALIZAR E GRAVAR
+// ==========================================
+$historico = json_decode($_COOKIE['historico_cursos'] ?? '[]', true) ?: [];
+
+// O parâmetro 'curso' só é aceito se existir no catálogo
+$cursoAtual = $_GET['curso'] ?? null;
+
+if ($cursoAtual !== null &amp;&amp; in_array($cursoAtual, $cursosDisponiveis, true)) {
+    // Remove duplicatas mantendo a ordem e reposiciona o curso acessado no topo
+    $historico = array_values(array_unique(array_merge([$cursoAtual], $historico)));
+
+    // Limita o histórico aos 5 itens mais recentes
+    $historico = array_slice($historico, 0, 5);
+
+    setcookie('historico_cursos', json_encode($historico), [
+        'expires'  =&gt; time() + (86400 * 7), // 7 dias
+        'path'     =&gt; '/',
+        'httponly' =&gt; true,
+        'samesite' =&gt; 'Lax'
+    ]);
+}
+?&gt;
+&lt;!DOCTYPE html>
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Cursos&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;?php if ($cursoAtual !== null &amp;&amp; in_array($cursoAtual, $cursosDisponiveis, true)): ?&gt;
+        &lt;h1&gt;Você está visualizando o Curso: &lt;?= htmlspecialchars($cursoAtual, ENT_QUOTES, 'UTF-8') ?&gt;&lt;/h1&gt;
+    &lt;?php else: ?&gt;
+        &lt;h1&gt;Escolha um curso para começar&lt;/h1&gt;
+    &lt;?php endif; ?&gt;
+
+    &lt;h3&gt;Navegar para outros cursos:&lt;/h3&gt;
+    &lt;ul&gt;
+        &lt;?php foreach ($cursosDisponiveis as $curso): ?&gt;
+            &lt;li&gt;
+                &lt;a href="?curso=&lt;?= urlencode($curso) ?&gt;"&gt;
+                    &lt;?= htmlspecialchars($curso, ENT_QUOTES, 'UTF-8') ?&gt;
+                &lt;/a&gt;
+            &lt;/li&gt;
+        &lt;?php endforeach; ?&gt;
+    &lt;/ul&gt;
+
+    &lt;hr&gt;
+
+    &lt;h3&gt;Seu Histórico de Navegação Recente (Últimos 5):&lt;/h3&gt;
+    &lt;?php if (empty($historico)): ?&gt;
+        &lt;p&gt;&lt;em&gt;Nenhum curso acessado ainda. Navegue pela lista acima para popular seu histórico.&lt;/em&gt;&lt;/p&gt;
+    &lt;?php else: ?&gt;
+        &lt;ol&gt;
+            &lt;?php foreach ($historico as $item): ?&gt;
+                &lt;li&gt;&lt;?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?&gt;&lt;/li&gt;
+            &lt;?php endforeach; ?&gt;
+        &lt;/ol&gt;
+    &lt;?php endif; ?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Destruindo e Limpando Cookies de Preferência</h3>
+  <p>
+    Demonstração de como redefinir as preferências do usuário removendo os cookies ativos por meio de uma data de
+    expiração no passado.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' &amp;&amp; isset($_POST['limpar'])) {
+    // O 'path' precisa ser IDÊNTICO ao usado na criação do cookie
+    setcookie('preferencia_tema', '', [
+        'expires'  =&gt; time() - 3600,
+        'path'     =&gt; '/'
+    ]);
+
+    setcookie('historico_cursos', '', [
+        'expires'  =&gt; time() - 3600,
+        'path'     =&gt; '/'
+    ]);
+
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+?&gt;</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>Representações Gráficas (Diagramas Conceituais)</h2>
+
+  <h3>3.1. Troca de Cabeçalhos HTTP para Definição e Leitura de Cookies</h3>
+  <p>
+    Este diagrama detalha a ida e volta dos cabeçalhos HTTP entre navegador e servidor durante a definição e a leitura de
+    um cookie, passo a passo.
+  </p>
+  <div class="mermaid">
+    sequenceDiagram
+    participant Navegador as Navegador (Cliente)
+    participant Servidor as Servidor PHP
+
+    Navegador->>Servidor: 1. Requisição GET /index.php
+    Note over Servidor: Executa setcookie('theme', 'dark', time()+86400, '/')
+    Servidor-->>Navegador: 2. Resposta HTTP 200 OK + Header Set-Cookie: theme=dark, Path=/
+    Note over Navegador: Armazena o cookie "theme=dark" no disco/memória
+
+    Navegador->>Servidor: 3. Nova Requisição GET /preferencias.php + Header Cookie: theme=dark
+    Note over Servidor: Lê $_COOKIE['theme'] (retorna 'dark')
+    Servidor-->>Navegador: 4. Resposta com o layout customizado no tema escuro
+  </div>
+
+  <h3>3.2. Fluxo de Decisão: Onde Armazenar os Dados?</h3>
+  <p>
+    Diagrama de apoio para a decisão de arquitetura: antes de gravar qualquer informação, é preciso avaliar a
+    sensibilidade do dado e a necessidade de persistência após o fechamento do navegador.
+  </p>
   <div class="mermaid">
     graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    A[Qual dado você precisa armazenar?] --> B{Confidencial ou Crítico?}
+    B -->|Sim: Senha, Permissões, Saldo| C[Sessão no Servidor - $_SESSION]
+    B -->|Não: Tema, Idioma, Histórico| D{Precisa durar após fechar o navegador?}
+    D -->|Sim: Lembrar por 30 dias| E[Cookie Persistente - setcookie]
+    D -->|Não: Apenas na visita atual| F[Cookie de Sessão ou LocalStorage]
+
+    style C fill:#f8d7da,stroke:#f5c6cb
+    style E fill:#d4edda,stroke:#c3e6cb
+    style F fill:#e1f5fe,stroke:#01579b
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas, Lembretes e Segurança (LGPD)</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Headers already sent:</strong> a função <code class="one-line-code">setcookie()</code> modifica os cabeçalhos
+      HTTP e deve ser chamada <strong>antes de qualquer saída HTML</strong>, espaço em branco ou instrução
+      <code class="one-line-code">echo</code>. Caso contrário, o PHP emitirá o aviso
+      <code class="one-line-code">Cannot modify header information - headers already sent</code>.
+    </li>
+    <li>
+      <strong>Proteção contra XSS na saída:</strong> ao recuperar dados de
+      <code class="one-line-code">$_COOKIE</code> para renderizá-los na página, aplique sempre
+      <code class="one-line-code">htmlspecialchars()</code> para neutralizar códigos JavaScript maliciosos que o usuário
+      possa ter injetado manualmente no navegador.
+    </li>
+    <li>
+      <strong>Lei Geral de Proteção de Dados (LGPD):</strong> o uso de cookies para rastreamento de comportamento e
+      histórico exige transparência. Apresente ao usuário uma política de privacidade e obtenha consentimento ativo para
+      cookies não essenciais.
+    </li>
+    <li>
+      <strong>Limites do navegador:</strong> cada domínio pode armazenar uma média de 20 a 50 cookies, e a soma do tamanho
+      de todos eles não pode ultrapassar 4&nbsp;KB (4096 bytes). Para volumes maiores de dados no cliente, utilize
+      <code class="one-line-code">localStorage</code> do JavaScript ou salve as informações em banco de dados vinculadas à
+      <strong>sessão</strong> do usuário (<code class="one-line-code">$_SESSION</code>).
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Tema claro/escuro:</strong> grave a preferência com <code class="one-line-code">setcookie()</code> por 30
+      dias, aplique <code class="one-line-code">httponly =&gt; true</code> e <code class="one-line-code">samesite =&gt;
+      'Lax'</code>, e renderize o valor com <code class="one-line-code">htmlspecialchars()</code> no atributo
+      <code class="one-line-code">class</code> do <code class="one-line-code">body</code>.
+    </li>
+    <li>
+      <strong>Histórico de navegação:</strong> serialize um array com <code class="one-line-code">json_encode()</code>,
+      deserialize com <code class="one-line-code">json_decode($valor, true)</code> e sempre limite o tamanho com
+      <code class="one-line-code">array_slice()</code> para respeitar o limite de 4&nbsp;KB do cookie.
+    </li>
+    <li>
+      <strong>Idioma e moeda preferidas:</strong> use cookies persistentes de longa duração
+      (<code class="one-line-code">time() + 60*60*24*365</code>) para lembrar escolhas de longo prazo do usuário.
+    </li>
+    <li>
+      <strong>Botão "limpar preferências":</strong> revogue os cookies gravando-os novamente com
+      <code class="one-line-code">expires =&gt; time() - 3600</code> e o mesmo <code class="one-line-code">path</code>,
+      requisito essencial para atender ao direito de descarte previsto na LGPD.
+    </li>
+    <li>
+      <strong>Cookie de sessão <code class="one-line-code">PHPSESSID</code>:</strong> quando você chamar
+      <code class="one-line-code">session_start()</code>, o PHP cria automaticamente um cookie desse tipo. Ele é o
+      elo de ligação entre o navegador e os dados da sessão guardados no servidor — assunto da aula 32.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      CENTRO PAULA SOUZA. <em>Plano de Curso nº 1062 - Técnico em Desenvolvimento de Sistemas</em>. Eixo Tecnológico de
+      Informação e Comunicação, 2026.
+    </li>
+    <li>CENTRO PAULA SOUZA. <em>Plano de Curso nº 370 - Técnico em Desenvolvimento de Sistemas (MTEC/AMS)</em>.</li>
+    <li>SOMMERFELD, Roni. <em>Unlock PHP 8: From Basic to Advanced</em>. BPB Publications.</li>
+    <li>MCLAUGHLIN, Brett. <em>PHP &amp; MySQL: The Missing Manual</em>. O'Reilly Media.</li>
+    <li>NIXON, Robin. <em>Learning PHP, MySQL, JavaScript, CSS &amp; HTML5</em>. 3ª ed. O'Reilly Media.</li>
   </ul>
 </section>
 
