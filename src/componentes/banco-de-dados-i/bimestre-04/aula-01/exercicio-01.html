@@ -1,22 +1,345 @@
 ---
 layout: exercicio
-title: "Introdução aos Bancos de Dados: Evolução histórica e papel nas organizações."
+title: "Escolha técnica de tipos na prática (MySQL x PostgreSQL)"
 exercicio_numero: "01"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 01."
+aula_numero: "31"
+subject: "banco-de-dados-i"
+description: "Atividade prática para aplicar a escolha técnica de tipos de dados: comparar o comportamento de domínios, inteiros, DECIMAL versus FLOAT, CHAR/VARCHAR/TEXT, tipos temporais com fuso e restrições CHECK em MySQL e PostgreSQL."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    A <strong>Padaria do Sabor</strong>, cliente da sua equipe, precisa de uma base de dados nova e a documentação de
+    padronização de tipos. Você vai <strong>implementar o mesmo modelo físico nos dois SGBDs</strong> e entregar um
+    parecer técnico comparando o comportamento de cada tipo.
+  </p>
+  <p>
+    O grande diferencial desta atividade é justamente a <strong>portabilidade</strong>: você vai executar o mesmo script
+    nos dois servidores e comparar os resultados, identificando onde os dois SGBDs divergem.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li>
+      <strong>Ambiente:</strong> garanta os dois servidores disponíveis — MySQL 8.0+ e PostgreSQL 12+ (XAMPP, WampServer ou
+      Docker). Use clientes como MySQL Workbench, pgAdmin ou o terminal.
+    </li>
+    <li>
+      <strong>Bancos:</strong> crie <code class="one-line-code">padaria_mysql</code> e
+      <code class="one-line-code">padaria_postgres</code> com a mesma estrutura.
+    </li>
+    <li>
+      <strong>Comparação:</strong> mantenha as duas janelas (ou terminais) lado a lado. Cada bloco abaixo exige rodar o
+      mesmo comando nos dois servidores e anotar a diferença.
+    </li>
+    <li>
+      <strong>Validação:</strong> ao final, use
+      <code class="one-line-code">information_schema.columns</code> nos dois SGBDs para conferir que os tipos declarados
+      foram realmente materializados.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Estrutura de Arquivos Proposta</h2>
+  <ul>
+    <li><code class="one-line-code">01_ddl_basico.sql</code> — chaves primárias, texto e valores monetários.</li>
+    <li><code class="one-line-code">02_auditoria.sql</code> — tipos temporais e rastreamento automático.</li>
+    <li><code class="one-line-code">03_dominios.sql</code> — CHECK versus tabela de domínio.</li>
+    <li><code class="one-line-code">04_colisoes.sql</code> — colisões silenciosas que os SGBDs aceitam.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Inteiros e a Questão do UNSIGNED</h3>
+  <ol>
+    <li>
+      Crie as tabelas de categoria com chave primária auto-incrementável em ambos os SGBDs:
+      <div class="code-container">
+        <pre><code class="language-sql">-- MySQL
+CREATE TABLE categoria (
+    id_categoria INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome         VARCHAR(50) NOT NULL
+);
+
+-- PostgreSQL (IDENTITY é o padrão ANSI moderno)
+CREATE TABLE categoria (
+    id_categoria INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome         VARCHAR(50) NOT NULL
+);</code></pre>
+      </div>
+    </li>
+    <li>
+      Tente executar <code class="one-line-code">INT UNSIGNED AUTO_INCREMENT</code> no PostgreSQL e
+      <code class="one-line-code">INT GENERATED ALWAYS AS IDENTITY</code> no MySQL. Cole aqui as mensagens de erro
+      completas:
+      <div class="code-container">
+        <pre><code class="language-plaintext">PostgreSQL:
+
+MySQL:</code></pre>
+      </div>
+    </li>
+    <li>
+      Tente inserir <code class="one-line-code">-1</code> na coluna
+      <code class="one-line-code">id_categoria</code> do MySQL. Funciona? E se você inserir
+      <code class="one-line-code">-1</code> numa coluna <code class="one-line-code">SMALLINT</code> comum? Explique a
+      diferença de domínio entre as duas colunas.
+    </li>
+    <li>
+      Escreva a alternativa idiomática ao <code class="one-line-code">UNSIGNED</code> no PostgreSQL, com restrição
+      <code class="one-line-code">CHECK</code>:
+      <div class="code-container">
+        <pre><code class="language-sql">-- Sua resposta:</code></pre>
+      </div>
+    </li>
+    <li>
+      Investigue o preço de pagar do <code class="one-line-code">UNSIGNED</code>: pesquise se existe restrição de índice
+      para colunas <code class="one-line-code">UNSIGNED</code> no MySQL e explique por que isso importa para uma chave
+      primária.
+    </li>
+  </ol>
+
+  <h3>Bloco 2: Precisão Decimal versus Ponto Flutuante</h3>
+  <ol>
+    <li>
+      Crie uma tabela de produtos com <strong>três</strong> colunas de preço:
+      <div class="code-container">
+        <pre><code class="language-sql">-- MySQL
+CREATE TABLE precos (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    preco_exato DECIMAL(10,2),
+    preco_aprox FLOAT,
+    preco_double DOUBLE
+);
+
+-- PostgreSQL
+CREATE TABLE precos (
+    id          INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    preco_exato NUMERIC(10,2),
+    preco_aprox REAL,
+    preco_double DOUBLE PRECISION
+);</code></pre>
+      </div>
+    </li>
+    <li>
+      Insira <code class="one-line-code">19.90</code>, <code class="one-line-code">0.10</code> e
+      <code class="one-line-code">9.99</code> e some cada coluna separadamente:
+      <div class="code-container">
+        <pre><code class="language-sql">SELECT SUM(preco_exato)  AS soma_exata,
+       SUM(preco_aprox)  AS soma_aproximada_float,
+       SUM(preco_double) AS soma_aproximada_double
+  FROM precos;</code></pre>
+      </div>
+      Preencha os resultados:
+      <div class="code-container">
+        <pre><code class="language-plaintext">MySQL:
+  soma_exata          =
+  soma_aproximada_float=
+  soma_aproximada_double=
+
+PostgreSQL:
+  soma_exata          =
+  soma_aproximada_float=
+  soma_aproximada_double=</code></pre>
+      </div>
+    </li>
+    <li>
+      Tente inserir <code class="one-line-code">99999999.99</code> em <code class="one-line-code">DECIMAL(10,2)</code> e
+      depois em <code class="one-line-code">DECIMAL(9,2)</code>. Anote os erros. Quantos dígitos inteiros cada
+      definição aceita?
+    </li>
+    <li>
+      Verifique no PostgreSQL se <code class="one-line-code">MONEY</code> existe e o que acontece ao dividir um valor
+      <code class="one-line-code">MONEY</code> por 3. Compare com o resultado de um <code class="one-line-code">NUMERIC(10,2)</code>.
+    </li>
+    <li>
+      Um cliente sugere guardar o <strong>percentual de desconto</strong> em <code class="one-line-code">DECIMAL(5,2)</code>
+      para "garantir exatidão". Você concorda? Justifique considerando que o percentual é multiplicado pelo valor do
+      pedido antes da divisão final.
+    </li>
+  </ol>
+
+  <h3>Bloco 3: CHAR, VARCHAR e TEXT — o Teste do Espaço em Branco</h3>
+  <ol>
+    <li>
+      Crie a tabela de produtos com os três tipos de texto e insira um valor propositalmente preenchido de espaços:
+      <div class="code-container">
+        <pre><code class="language-sql">-- MySQL
+CREATE TABLE produto (
+    codigo_barras CHAR(13)     NOT NULL,
+    nome          VARCHAR(100) NOT NULL,
+    descricao     TEXT
+);
+
+-- PostgreSQL
+CREATE TABLE produto (
+    codigo_barras CHAR(13)     NOT NULL,
+    nome          VARCHAR(100) NOT NULL,
+    descricao     TEXT
+);
+
+INSERT INTO produto VALUES ('7891234567890', 'Pão   ', 'Teste de espaços');</code></pre>
+      </div>
+    </li>
+    <li>
+      Descubra o comprimento real do valor armazenado em <code class="one-line-code">codigo_barras</code> nos dois SGBDs
+      (<code class="one-line-code">LENGTH()</code>) e conclua: o <code class="one-line-code">CHAR</code> do MySQL remove
+      os espaços na leitura? E o do PostgreSQL?
+    </li>
+    <li>
+      Teste a comparação <code class="one-line-code">WHERE nome = 'Pão'</code> (com e sem espaços) nos dois SGBDs.
+      Depois teste <code class="one-line-code">WHERE codigo_barras = '7891234567890   '</code> (com espaços à direita).
+      Documente as diferenças.
+    </li>
+    <li>
+      Consulte os limites reais de <code class="one-line-code">TEXT</code> em ambos:
+      <div class="code-container">
+        <pre><code class="language-sql">-- MySQL: descubra as divisões existentes
+SELECT column_name, data_type, character_maximum_length
+  FROM information_schema.columns
+ WHERE table_name = 'produto';
+
+-- PostgreSQL: descubra o limite do TEXT
+SELECT typname, typlen FROM pg_type WHERE typname = 'text';</code></pre>
+      </div>
+      Anote: MySQL = ________ | PostgreSQL = ________
+    </li>
+    <li>
+      Descubra se o <code class="one-line-code">TEXT</code> do PostgreSQL tem penalidade de desempenho frente ao
+      <code class="one-line-code">VARCHAR</code> na prática. O que a documentação oficial diz? O que muda no MySQL com
+      <code class="one-line-code">MEDIUMTEXT</code> e <code class="one-line-code">LONGTEXT</code>?
+    </li>
+  </ol>
+
+  <h3>Bloco 4: Tipos Temporais e Fusos Horários</h3>
+  <ol>
+    <li>
+      Crie a tabela de auditoria nos dois SGBDs:
+      <div class="code-container">
+        <pre><code class="language-sql">-- MySQL
+CREATE TABLE auditoria (
+    id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    dado            VARCHAR(50) NOT NULL,
+    data_criacao    TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data_modificacao TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                   ON UPDATE CURRENT_TIMESTAMP
+) ENGINE = InnoDB;
+
+-- PostgreSQL (sem ON UPDATE: será rejeitado)
+CREATE TABLE auditoria (
+    id              INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    dado            VARCHAR(50) NOT NULL,
+    data_criacao    TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+      </div>
+    </li>
+    <li>
+      Tente inserir em <code class="one-line-code">TIMESTAMP</code> do MySQL a data
+      <code class="one-line-code">'2050-01-01 00:00:00'</code>. O que acontece? Qual é a data máxima aceita? Compare com
+      <code class="one-line-code">DATETIME</code> e com <code class="one-line-code">TIMESTAMPTZ</code> do PostgreSQL.
+    </li>
+    <li>
+      Configure sua sessão para <code class="one-line-code">-03:00</code> (São Paulo) e insira
+      <code class="one-line-code">NOW()</code> nos dois SGBDs. Em seguida, altere a sessão para
+      <code class="one-line-code">UTC</code> e consulte o mesmo registro. O valor muda? Por quê?
+    </li>
+    <li>
+      Inspecione o tipo da coluna <code class="one-line-code">data_criacao</code> no PostgreSQL: ela é
+      <code class="one-line-code">timestamp</code> ou <code class="one-line-code">timestamptz</code>? Inspecione também a
+      coluna criada por <code class="one-line-code">TIMESTAMP</code> no MySQL. O que a
+      <code class="one-line-code">information_schema</code> devolve?
+    </li>
+    <li>
+      Escreva a consulta de <strong>aritmética temporal</strong> nos dois SGBDs para obter: momento atual, vencimento em 15
+      dias e dias entre 2026-01-01 e 2026-12-31. No PostgreSQL use <code class="one-line-code">INTERVAL</code>; no MySQL
+      use <code class="one-line-code">DATE_ADD</code> e <code class="one-line-code">DATEDIFF</code>.
+    </li>
+  </ol>
+
+  <h3>Bloco 5: CHECK ou Tabela de Domínio?</h3>
+  <ol>
+    <li>
+      Crie a tabela com restrição <code class="one-line-code">CHECK</code> (idêntica nos dois SGBDs):
+      <div class="code-container">
+        <pre><code class="language-sql">CREATE TABLE vendedores (
+    codigo_vendedor SMALLINT      NOT NULL,
+    nome_vendedor   VARCHAR(80)   NOT NULL,
+    salario_fixo    DECIMAL(10,2),
+    faixa_comissao  CHAR(1),
+    data_admissao   DATE          NOT NULL,
+    CONSTRAINT PK_vendedores PRIMARY KEY (codigo_vendedor),
+    CONSTRAINT CH_faixa CHECK (faixa_comissao IN ('A', 'B', 'C'))
+);</code></pre>
+      </div>
+    </li>
+    <li>
+      Tente inserir <code class="one-line-code">faixa_comissao = 'D'</code>. Registre a mensagem de erro dos dois SGBDs.
+    </li>
+    <li>
+      Modele agora a alternativa com <strong>tabela de domínio</strong> para a faixa de comissão e escreva o
+      <code class="one-line-code">INSERT</code> que adiciona uma nova faixa <code class="one-line-code">'D'</code> sem
+      alterar o DDL de <code class="one-line-code">vendedores</code>:
+      <div class="code-container">
+        <pre><code class="language-sql">-- Sua resposta:</code></pre>
+      </div>
+    </li>
+    <li>
+      Introduza uma <strong>colisão silenciosa</strong>: crie uma coluna <code class="one-line-code">qtd INT</code> e outra
+      <code class="one-line-code">qtd_txt VARCHAR(10)</code> e execute
+      <code class="one-line-code">WHERE qtd = qtd_txt</code>. O SGBD aceita? Compare as duas colunas com o
+      <code class="one-line-code">STRING_AGG</code> no PostgreSQL e o
+      <code class="one-line-code">GROUP_CONCAT</code> no MySQL. O que isso demonstra sobre a regra de mesmo domínio?
+    </li>
+    <li>
+      Modele a lista de <strong>cidades</strong> (que muda com frequência). Você usaria CHECK ou tabela de domínio?
+      Justifique usando o critério de estabilidade da lista.
+    </li>
+  </ol>
+
+  <h3>Bloco 6: Refletindo sobre a Prática</h3>
+  <ol>
+    <li>
+      Das 6 decisões de tipo tomadas nesta atividade, qual delas mais impactaria o desempenho se você tivesse escolhido
+      <code class="one-line-code">INT</code> onde caberia <code class="one-line-code">SMALLINT</code>? Justifique
+      considerando o tamanho dos índices secundários.
+    </li>
+    <li>
+      Sua equipe precisa migrar do MySQL para o PostgreSQL no futuro. Liste os 3 recursos desta aula que exigem reescrita
+      de DDL e proponha a camada de abstração que resolveria isso.
+    </li>
+    <li>
+      Explique por que <code class="one-line-code">ENUM</code> no MySQL é mais rápido que
+      <code class="one-line-code">VARCHAR</code> + <code class="one-line-code">CHECK</code>, e por que isso ainda assim
+      costuma ser uma má escolha de projeto.
+    </li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Documento comparativo:</strong> a entrega é o <em>parecer técnico</em> com as tabelas preenchidas dos Blocos
+      1, 2, 3 e 4, incluindo as mensagens de erro literais de cada SGBD.
+    </li>
+    <li>
+      <strong>Não teste no escuro:</strong> toda diferença afirmada no parecer deve vir de um comando executado nos dois
+      servidores, com o resultado colado.
+    </li>
+    <li>
+      <strong>Dinheiro é DECIMAL:</strong> qualquer coluna cujos valores serão somados ou subtraídos precisa de
+      <code class="one-line-code">DECIMAL</code>/<code class="one-line-code">NUMERIC</code>.
+    </li>
+    <li>
+      <strong>Fuso é decisão de arquitetura:</strong> se a aplicação atende clientes em fusos diferentes, grave o instante
+      em UTC e converta apenas na apresentação.
+    </li>
+    <li>
+      <strong>Próxima aula:</strong> Aula 32 — Indexação e Estruturas Físicas, onde o tamanho do tipo escolhido aqui
+      aparece diretamente no tamanho e na velocidade dos índices.
+    </li>
   </ul>
 </div>
-
-
-
-
-

@@ -1,22 +1,188 @@
 ---
-layout: exercicio
-title: "Introdução aos Bancos de Dados: Evolução histórica e papel nas organizações."
+layout: questionario
+title: "Questionário de Fixação — Tipos de Dados e Domínios"
 exercicio_numero: "02"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 01."
+aula_numero: "31"
+sigla_componente: "BDI"
+description: "Questionário de fixação sobre inteiros e UNSIGNED, precisão decimal contra ponto flutuante, CHAR, VARCHAR e TEXT, collation, tipos temporais com fuso e restrições de domínio em MySQL e PostgreSQL."
+perguntas:
+  - texto: "Em uma coluna declarada como INT UNSIGNED no MySQL, a tentativa de inserir o valor -1 resulta em:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "erro de estouro de faixa, porque o domínio declarado não abrange valores negativos"
+      - letra: "b"
+        texto: "armazenamento do valor, já que o bit de sinal é reinterpretado como parte do inteiro positivo"
+      - letra: "c"
+        texto: "conversão automática para o maior valor positivo representável, com aviso no log do servidor"
+      - letra: "d"
+        texto: "truncamento silencioso para 0, o mesmo comportamento observado ao inserir valor em coluna NOT NULL"
+
+  - texto: "Um relatório de estoque é gerado somando a coluna quantidade em doze milhões de registros. Um desenvolvedor sugere DOUBLE por ser mais rápido. A resistência mais bem fundamentada é:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "DOUBLE reserva menos bytes que INTEGER e, por isso, tornaria a soma mais lenta"
+      - letra: "b"
+        texto: "DOUBLE não aceita valores inteiros e converteria a coluna para ponto flutuante"
+      - letra: "c"
+        texto: "milhões de somas de DOUBLE acumulam erro de arredondamento, divergindo do estoque real"
+      - letra: "d"
+        texto: "DOUBLE mede 16 bytes e, por isso, impede a criação de índices sobre a coluna"
+
+  - texto: "Ao consultar information_schema.columns, uma coluna aparece como text com character_maximum_length igual a 1073741823. Essa observação permite concluir que:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "é uma coluna VARCHAR declarada com o tamanho máximo aceito pelo MySQL"
+      - letra: "b"
+        texto: "é uma coluna TEXT do MySQL, cujo limite aproximado é de 1 GB por valor"
+      - letra: "c"
+        texto: "é uma coluna CHAR do PostgreSQL, preenchida com espaços até o limite do tipo"
+      - letra: "d"
+        texto: "é uma coluna TEXT do PostgreSQL, cujo limite aproximado é de 1 GB por valor"
+
+  - texto: "Uma auditoria precisa registrar automaticamente a última alteração de cada registro. No MySQL, a declaração que atende a esse requisito é:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+      - letra: "b"
+        texto: "TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE SET CURRENT_TIMESTAMP"
+      - letra: "c"
+        texto: "TIMESTAMP GENERATED ALWAYS AS (CURRENT_TIMESTAMP) STORED"
+      - letra: "d"
+        texto: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON DELETE CURRENT_TIMESTAMP"
+
+  - texto: "Sobre a restrição UNSIGNED, presente no MySQL e ausente no PostgreSQL, é correto afirmar que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "o PostgreSQL aceita a cláusula, mas somente quando a coluna é declarada como PRIMARY KEY"
+      - letra: "b"
+        texto: "no PostgreSQL o mesmo domínio é obtido com NUMERIC(p,0) acompanhado de CHECK (coluna >= 0)"
+      - letra: "c"
+        texto: "o PostgreSQL rejeita a cláusula e obriga o uso de SERIAL para obter valores positivos"
+      - letra: "d"
+        texto: "o UNSIGNED dobra a capacidade do inteiro incluindo o bit originalmente reservado ao sinal"
+
+  - texto: "Considerando a coluna nome declarada como CHAR(10) e gravada com o valor Ana, a consulta SELECT CHAR_LENGTH(nome) retorna, respectivamente no MySQL e no PostgreSQL:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "10 e 10, porque os dois SGBDs completam a string com espaços até o tamanho declarado"
+      - letra: "b"
+        texto: "10 e 3, porque apenas o MySQL remove os espaços de preenchimento na leitura"
+      - letra: "c"
+        texto: "3 e 10, porque o MySQL descarta o preenchimento na leitura e o PostgreSQL o mantém"
+      - letra: "d"
+        texto: "3 e 3, porque os espaços finais são descartados em qualquer tipo de caracter"
+
+  - texto: "Uma aplicação registra o instante da compra e precisa comparar eventos ocorridos em fusos distintos. No PostgreSQL, o tipo adequado é:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "TIMESTAMP WITHOUT TIME ZONE, já que o PostgreSQL normaliza todo instante para UTC"
+      - letra: "b"
+        texto: "DATE, que internamente preserva hora, minuto e segundo junto com o dia"
+      - letra: "c"
+        texto: "VARCHAR no formato ISO 8601, que carrega o deslocamento sem depender do tipo do SGBD"
+      - letra: "d"
+        texto: "TIMESTAMP WITH TIME ZONE, que guarda o instante em UTC e o exibe no fuso da sessão"
+
+  - texto: "Uma restrição CHECK deve ser preferida em relação a uma tabela de domínio quando:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "a lista mudar com frequência, evitando assim a necessidade de executar DDL"
+      - letra: "b"
+        texto: "a lista for pequena, estável e com baixa probabilidade de alteração ao longo da vida do esquema"
+      - letra: "c"
+        texto: "for necessário armazenar metadados descritivos sobre cada valor permitido"
+      - letra: "d"
+        texto: "a coluna puder receber NULL, situação em que a tabela de domínio passa a ser obrigatória"
+
+  - texto: "No MySQL, para a tabela CREATE TABLE t (a INT, b VARCHAR(10)), a consulta SELECT * FROM t WHERE a = b:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "é executada por coerção de tipos, convertendo a string em número e podendo gerar falso positivo"
+      - letra: "b"
+        texto: "é rejeitada por erro de sintaxe, já que INT e VARCHAR não formam uma combinação válida"
+      - letra: "c"
+        texto: "é executada somente se uma restrição CHECK declarar as duas colunas como mesmo domínio"
+      - letra: "d"
+        texto: "é executada convertendo o INT para texto, com a comparação regida pela collation da tabela"
+
+  - texto: "Sobre a evolução de tipos de domínio em MySQL e PostgreSQL, é correto afirmar que:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "colunas ENUM aceitam novos valores por meio de INSERT, dispensando qualquer alteração de DDL"
+      - letra: "b"
+        texto: "colunas TEXT podem ser convertidas em VARCHAR por um INSERT comum, sem perda nos dois SGBDs"
+      - letra: "c"
+        texto: "colunas ENUM exigem DDL para incluir novos valores, o que torna a tabela de domínio mais flexível"
+      - letra: "d"
+        texto: "nenhum dos SGBDs permite alterar a definição de uma coluna existente sem recriar a tabela"
+
+  - texto: "A respeito da portabilidade de DDL entre MySQL e PostgreSQL, é INCORRETO afirmar que:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "o padrão ANSI cobre os tipos INT e VARCHAR"
+      - letra: "b"
+        texto: "recursos como AUTO_INCREMENT e UNSIGNED são proprietários do MySQL"
+      - letra: "c"
+        texto: "a cláusula ON UPDATE é uma extensão proprietária do MySQL"
+      - letra: "d"
+        texto: "a cláusula TIMESTAMP WITH TIME ZONE é proprietária do MySQL"
+
+  - texto: "Uma tabela do PostgreSQL define nome como VARCHAR(100) e descricao como TEXT. Sobre essa escolha, é correto afirmar que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "o TEXT é mais lento que o VARCHAR e deve ser evitado em colunas consultadas com frequência"
+      - letra: "b"
+        texto: "TEXT e VARCHAR têm desempenho equivalente, e ambos usam TOAST quando o valor excede o limite"
+      - letra: "c"
+        texto: "o VARCHAR reserva os n caracteres declarados, enquanto o TEXT ocupa apenas o tamanho informado"
+      - letra: "d"
+        texto: "o TEXT só pode ser usado sem índice, pois qualquer índice exigiria a conversão para VARCHAR"
+
+  - texto: "Uma tabela usa collation utf8mb4_general_ci e uma chave única sobre o nome do cliente. O efeito colateral dessa escolha é:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "nomes idênticos passam a ser gravados em duplicidade, pois a collation sempre distingue maiúsculas"
+      - letra: "b"
+        texto: "nomes sem acento são normalizados para a forma acentuada antes da comparação, gerando falsos positivos"
+      - letra: "c"
+        texto: "nomes como Joao e João colidem como iguais na unicidade, pois general_ci não distingue os acentos"
+      - letra: "d"
+        texto: "nomes acentuados são recusados pela coluna, já que a collation não trabalha com caracteres compostos"
+
+  - texto: "Um projeto usa INT na coluna id_pedido, cujo valor nunca ultrapassa 500 mil. Em vez de SMALLINT, a consequência mais relevante de manter INT é:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "a coluna INT deixa de ser aceita como PRIMARY KEY por exceder o intervalo do SMALLINT"
+      - letra: "b"
+        texto: "a coluna INT não consegue armazenar valores superiores a 32767 em nenhum dos SGBDs"
+      - letra: "c"
+        texto: "o AUTO_INCREMENT deixa de funcionar com INT quando a tabela também possui coluna SMALLINT"
+      - letra: "d"
+        texto: "cada índice secundário e cada junção carrega 4 bytes por linha em vez de 2, aumentando o volume"
+
+  - texto: "Um sistema precisa gravar valores monetários com a mesma semântica em MySQL e PostgreSQL. A estratégia mais adequada é:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "DECIMAL no MySQL e NUMERIC no PostgreSQL, por serem tipos exatos e equivalentes entre si"
+      - letra: "b"
+        texto: "FLOAT nos dois SGBDs, por ser o tipo que oferece a maior velocidade de leitura"
+      - letra: "c"
+        texto: "MONEY no PostgreSQL e VARCHAR no MySQL, por preservarem o valor já formatado"
+      - letra: "d"
+        texto: "DOUBLE PRECISION nos dois SGBDs, por apresentar maior precisão que a base decimal"
 ---
-
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
-
-
-
-
-

@@ -2,27 +2,743 @@
 title: "Tipos de Dados e Domínios: Escolha técnica de tipos no SGBD (MySQL/Postgres)."
 aula_numero: "31"
 subject: "banco-de-dados-i"
-description: "Conteúdo da aula 31 do bimestre 4: Tipos de Dados e Domínios: Escolha técnica de tipos no SGBD (MySQL/Postgres).."
+description: "Domínios e atomicidade, tipos numéricos exatos e aproximados, CHAR/VARCHAR/TEXT, tipos temporais com fuso horário e tipos especiais: escolha técnica de tipos comparando MySQL e PostgreSQL."
 tags:
-- aula
-- bimestre-04
+  - aula
+  - bimestre-04
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 01 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    Definir a estrutura de uma tabela é fácil. O que separa um banco de dados artesanal de um banco de dados
+    <strong>bem projetado</strong> é a qualidade das decisões tomadas na definição dos tipos de dados. Um
+    <code class="one-line-code">VARCHAR(255)</code> usado para todo lugar parece inofensivo — até que o relatório de
+    vendas de dezembro deixe de caber na memória do servidor.
+  </p>
+  <p>
+    Nesta aula, vamos fechar o ciclo entre o <strong>modelo lógico</strong> (onde a 3FN define atributos atômicos e bem
+    relacionados) e o <strong>modelo físico</strong> (onde cada SGBD materializa esses atributos em tipos concretos com
+    custo de armazenamento, velocidade e semântica próprios).
+  </p>
+
+  <h3>1. Domínios e Atomicidade</h3>
+  <p>
+    Na teoria relacional de <strong>Edgar F. Codd</strong>, uma relação é um conjunto de tuplas (linhas) onde cada
+    atributo (coluna) representa um papel desempenhado por um <strong>domínio</strong>.
+  </p>
+  <p>
+    O <strong>domínio</strong> é o conjunto de todos os valores atômicos e admissíveis que uma determinada coluna pode
+    conter. Por exemplo, o domínio da coluna <code class="one-line-code">idade_empregado</code> pode ser restrito ao
+    intervalo numérico de 16 a 70, enquanto o domínio de <code class="one-line-code">telefone</code> pode ser um
+    conjunto numérico com máscara de 10 dígitos.
+  </p>
+  <p>
+    O requisito de <strong>atomicidade</strong> (base da <strong>1FN</strong>) exige que todos os valores inseridos em
+    uma coluna sejam indivisíveis em termos de componentes. Não é admissível gravar
+    <code class="one-line-code">(11) 98765-4321</code> em uma coluna de telefone <em>se</em> você pretende filtrar por DDD
+    depois: o valor é uma estrutura disfarçada de átomo.
+  </p>
+
+  <div class="tip-box">
+    <h4>Comparação entre Domínios</h4>
+    <p>
+      Do ponto de vista conceitual, operações de comparação (<code class="one-line-code">WHERE coluna_A = coluna_B</code>)
+      ou junções entre tabelas só são semanticamente válidas se ambas as colunas pertencerem ao <strong>mesmo domínio</strong>
+      de dados. Comparar um <code class="one-line-code">VARCHAR</code> com um <code class="one-line-code">INT</code> não é
+      um erro de sintaxe — é um erro de modelo que o SGBD aceita silenciosamente.
+    </p>
+  </div>
+
+  <p>
+    Na prática, o domínio é especificado por meio de <strong>tipos primitivos</strong> (inteiros, ponto flutuante,
+    caracteres, datas e horas), complementados por <strong>restrições de integridade</strong>, listas enumeradas ou regras de
+    validação. É aqui que entra a decisão técnica: o tipo escolhido define o espaço ocupado em disco, o consumo de memória
+    RAM para os índices e a precisão dos cálculos.
+  </p>
+
+  <h3>2. Tipos Numéricos: Inteiros, Decimais e Ponto Flutuante</h3>
+
+  <h4>2.1. Inteiros e Auto-incremento</h4>
+  <p>Os tipos inteiros almacenam valores numéricos exatos, sem casas decimais:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo SQL</th>
+        <th>Espaço em Disco</th>
+        <th>Faixa (com sinal)</th>
+        <th>Faixa UNSIGNED</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TINYINT</strong></td>
+        <td>1 byte (8 bits)</td>
+        <td>-128 a +127</td>
+        <td>0 a 255</td>
+      </tr>
+      <tr>
+        <td><strong>SMALLINT</strong></td>
+        <td>2 bytes (16 bits)</td>
+        <td>-32.768 a +32.767</td>
+        <td>0 a 65.535</td>
+      </tr>
+      <tr>
+        <td><strong>INT / INTEGER</strong></td>
+        <td>4 bytes (32 bits)</td>
+        <td>-2.147.483.648 a +2.147.483.647</td>
+        <td>0 a 4.294.967.295</td>
+      </tr>
+      <tr>
+        <td><strong>BIGINT</strong></td>
+        <td>8 bytes (64 bits)</td>
+        <td>± 9,22 × 10¹⁸</td>
+        <td>0 a ≈ 1,84 × 10¹⁹</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    O <strong>MySQL</strong> suporta a especificação <code class="one-line-code">UNSIGNED</code>, que descarta o bit reservado
+    ao sinal e dobra a capacidade positiva do inteiro. O <strong>PostgreSQL</strong> <strong>não possui</strong> o modificador
+    <code class="one-line-code">UNSIGNED</code> nativo: a mesma faixa é obtida declarando o tipo
+    <code class="one-line-code">NUMERIC(p, 0) CHECK (coluna >= 0)</code>.
+  </p>
+  <p>
+    Para chaves primárias numéricas sequenciais, o MySQL utiliza a propriedade
+    <code class="one-line-code">AUTO_INCREMENT</code>. O PostgreSQL oferece a pseudo-família
+    <strong>SERIAL</strong> (<code class="one-line-code">SMALLSERIAL</code> = 2 bytes,
+    <code class="one-line-code">SERIAL</code> = 4 bytes, <code class="one-line-code">BIGSERIAL</code> = 8 bytes), que cria um
+    objeto <code class="one-line-code">SEQUENCE</code> independente no plano de fundo e atribui
+    <code class="one-line-code">nextval()</code> como valor padrão. Em versões modernas, o padrão ANSI
+    <code class="one-line-code">GENERATED ALWAYS AS IDENTITY</code> é o mais recomendado.
+  </p>
+
+  <h4>2.2. Numéricos Exatos (DECIMAL) vs. Aproximados (FLOAT)</h4>
+  <p>
+    Ao lidar com valores financeiros ou métricas de alta precisão, a escolha entre numéricos exatos e aproximados é
+    crítica.
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">DECIMAL(p, s)</code> / <code class="one-line-code">NUMERIC(p, s)</code>:</strong>
+      permitem armazenar dados exatos, sem perdas causadas por arredondamento em base binária. Define-se a
+      <strong>precisão</strong> (<code class="one-line-code">p</code>) como o total de dígitos e a
+      <strong>escala</strong> (<code class="one-line-code">s</code>) como o número de dígitos à direita da vírgula.
+      <code class="one-line-code">DECIMAL(9, 2)</code> armazena até 7 dígitos inteiros e 2 decimais (máximo
+      <code class="one-line-code">9.999.999,99</code>).
+    </li>
+    <li>
+      <strong><code class="one-line-code">FLOAT</code> / <code class="one-line-code">REAL</code> /
+      <code class="one-line-code">DOUBLE</code>:</strong> armazenam dados com ponto flutuante em representação binária
+      <em>aproximada</em>. Ocupam menos espaço (4 a 8 bytes), mas nem sempre mantêm a precisão exata para números de
+      múltiplos dígitos, devendo ser evitados em cálculos financeiros.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Literais exatos: o resultado é 0.3 (sem erro de arredondamento)
+-- Vale nos dois SGBDs, pois 0.1 e 0.2 são interpretados como DECIMAL/NUMERIC
+SELECT 0.1 + 0.2 AS resultado_exato;
+
+-- Mesma soma forçada para ponto flutuante binário
+-- PostgreSQL: retorna 0.30000000000000004
+SELECT CAST(0.1 AS DOUBLE PRECISION) + CAST(0.2 AS DOUBLE PRECISION);
+
+-- MySQL: o valor interno também é 0.30000000000000004,
+-- mas a formatação padrão do MySQL o exibe como 0.3
+SELECT CAST(0.1 AS DOUBLE) + CAST(0.2 AS DOUBLE);</code></pre>
+  </div>
+  <p>
+    O erro não é do SGBD, mas da representação: <code class="one-line-code">0,1</code> não tem representação exata em base
+    binária, assim como <code class="one-line-code">1/3</code> não é finito em base 10. Como valores monetários exigem
+    que a soma de dez notas de R$ 0,10 resulte exatamente em R$ 1,00, a representação binária é inaceitável.
+  </p>
+
+  <h3>3. Tipos de Caracteres e Texto</h3>
+  <h4>3.1. CHAR(n) vs. VARCHAR(n) vs. TEXT</h4>
+  <p>O armazenamento de strings é dividido entre tamanho fixo e tamanho variável:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Comportamento de Armazenamento</th>
+        <th>MySQL</th>
+        <th>PostgreSQL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>CHAR(n)</strong></td>
+        <td>Tamanho fixo. Preenche com espaços em branco à direita até completar n caracteres.</td>
+        <td>Máximo de 255 caracteres. Os espaços de preenchimento são removidos na leitura.</td>
+        <td>Máximo fixo. O preenchimento com espaços ocorre na gravação <em>e</em> na exibição, consumindo mais disco se
+          subutilizado.</td>
+      </tr>
+      <tr>
+        <td><strong>VARCHAR(n)</strong></td>
+        <td>Tamanho variável. Armazena apenas a quantidade real informada, mais os bytes de tamanho.</td>
+        <td>Até 65.535 bytes por linha. Preserva espaços finais.</td>
+        <td>Tamanho limite n. O desempenho do VARCHAR é idêntico ao do TEXT.</td>
+      </tr>
+      <tr>
+        <td><strong>TEXT</strong></td>
+        <td>Tamanho variável para grandes blocos de texto.</td>
+        <td>Divisões: TINYTEXT, TEXT (64 KB), MEDIUMTEXT (16 MB) e LONGTEXT (4 GB).</td>
+        <td>Tipo TEXT ilimitado (até 1 GB por campo). Dados longos são movidos automaticamente para a estrutura TOAST, sem
+          perda de desempenho.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="tip-box">
+    <h4>CHAR é uma armadilha de custo constante</h4>
+    <p>
+      Como o <code class="one-line-code">CHAR(50)</code> reserva 50 posições de caracteres
+      <strong>independentemente</strong> do conteúdo, gravar <code class="one-line-code">'A'</code> em uma coluna desses
+      consome o mesmo espaço que gravar <code class="one-line-code">'ADMINISTRADOR'</code>. Use-o apenas quando o
+      comprimento for de fato invariável (CPF, código ISO, código de barras) e o argumento de alinhamento justificá-lo.
+    </p>
+  </div>
+
+  <h4>3.2. Strings Binárias e Codificação de Caracteres</h4>
+  <ul>
+    <li>
+      <strong>Strings não-binárias</strong> (<code class="one-line-code">CHAR</code>,
+      <code class="one-line-code">VARCHAR</code>, <code class="one-line-code">TEXT</code>): associadas a um conjunto de
+      caracteres (<em>Character Set</em>) e a uma ordenação (<em>Collation</em>). A collation define a sensibilidade a
+      maiúsculas/minúsculas — no MySQL, os sufixos <code class="one-line-code">_ci</code> (<em>case-insensitive</em>) e
+      <code class="one-line-code">_cs</code> (<em>case-sensitive</em>).
+    </li>
+    <li>
+      <strong>Strings binárias</strong> (<code class="one-line-code">BINARY</code>,
+      <code class="one-line-code">VARBINARY</code>, <code class="one-line-code">BLOB</code> /
+      <code class="one-line-code">BYTEA</code>): armazenam sequências de bytes brutos (imagens, arquivos compactados, dados
+      criptografados) <strong>sem qualquer interpretação</strong> de conjunto de caracteres ou collation.
+    </li>
+  </ul>
+  <p>
+    Essa distinção tem consequência prática de segurança: uma busca binária <code class="one-line-code">LIKE</code> é
+    sensível a <em>case</em> e ignora acentuação; uma busca não-binária sob a collation <code class="one-line-code">_ci</code>
+    pode considerar <code class="one-line-code">'joao'</code> e <code class="one-line-code">'JOÃO'</code> como o mesmo
+    registro — o que afeta diretamente contagens e índices únicos.
+  </p>
+
+  <h3>4. Tipos Temporais: Datas, Horas e Fusos Horários</h3>
+  <p>O manuseio de dados temporais é onde MySQL e PostgreSQL divergem de forma mais evidente.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Semântica</th>
+        <th>Observações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>DATE</strong></td>
+        <td>Apenas dia, mês e ano (<code class="one-line-code">YYYY-MM-DD</code>).</td>
+        <td>MySQL: intervalo de 1000-01-01 a 9999-12-31.</td>
+      </tr>
+      <tr>
+        <td><strong>TIME</strong></td>
+        <td>Apenas hora (<code class="one-line-code">hh:mm:ss</code>).</td>
+        <td>MySQL: representa <em>tempo decorrido</em>, aceitando valores negativos e superiores a 24 horas (de
+          -838:59:59 a 838:59:59).</td>
+      </tr>
+      <tr>
+        <td><strong>DATETIME</strong></td>
+        <td>Data e hora combinadas, sem nenhuma conversão de fuso.</td>
+        <td>MySQL: válido de 1000 a 9999, sem conversão automática.</td>
+      </tr>
+      <tr>
+        <td><strong>TIMESTAMP</strong></td>
+        <td>Instante no tempo, normalizado.</td>
+        <td>
+          MySQL: convertido para UTC na gravação e reconvertido para o fuso da sessão na leitura. Limitado ao sistema Unix
+          (1970 a 2038). Suporta <code class="one-line-code">DEFAULT CURRENT_TIMESTAMP</code> e
+          <code class="one-line-code">ON UPDATE CURRENT_TIMESTAMP</code>.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>TIMESTAMPTZ</strong></td>
+        <td>Instante com fuso, armazenado em UTC.</td>
+        <td>
+          PostgreSQL: converte o valor inserido para UTC e o armazena internamente em UTC; na consulta, exibe o valor
+          ajustado ao fuso do servidor/sessão. É o tipo recomendado para aplicações globais.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="mermaid">
+    sequenceDiagram
+    participant App as Aplicação PHP
+    participant MySQL as MySQL TIMESTAMP
+    Note over MySQL: Sessão conectada com time_zone = -03:00
+
+    App->>MySQL: INSERT valor = '2026-03-15 10:00:00'
+    Note over MySQL: Lê 10:00 como hora de São Paulo e grava 13:00:00 em UTC
+    App->>MySQL: SET time_zone = '+00:00'
+    App->>MySQL: SELECT valor
+    MySQL-->>App: 13:00:00 (agora em UTC)
+    App->>MySQL: SET time_zone = '-03:00'
+    App->>MySQL: SELECT valor
+    MySQL-->>App: 10:00:00 (reconvertido pelo próprio MySQL)
+    Note over App,MySQL: A conversão de fuso acontece no SGBD, não na aplicação
+  </div>
+  <div class="tip-box">
+    <h4>O limite de 2038 no TIMESTAMP do MySQL</h4>
+    <p>
+      O <code class="one-line-code">TIMESTAMP</code> do MySQL é limitado ao valor máximo Signed 32-bit
+      (<code class="one-line-code">2038-01-19 03:14:07</code>). Sistemas com previsão de eventos além dessa data (contratos
+      de longo prazo, planos de assinatura vitalícios) devem usar
+      <code class="one-line-code">DATETIME</code> ou, no PostgreSQL, <code class="one-line-code">TIMESTAMPTZ</code>, que não
+      sofre dessa limitação.
+    </p>
+  </div>
+
+  <h3>5. Tipos Especiais e Customizados</h3>
+  <h4>5.1. Valores Booleanos</h4>
+  <ul>
+    <li>
+      <strong>MySQL:</strong> não possui um tipo booleano nativo distinto. O comando
+      <code class="one-line-code">BOOLEAN</code> é um <em>alias</em> para
+      <code class="one-line-code">TINYINT(1)</code>, onde 0 é falso e 1 (ou qualquer valor não-zero) é verdadeiro.
+    </li>
+    <li>
+      <strong>PostgreSQL:</strong> possui o tipo <code class="one-line-code">BOOLEAN</code> nativo do padrão ANSI,
+      aceitando <code class="one-line-code">'true'</code>/<code class="one-line-code">'false'</code>,
+      <code class="one-line-code">'yes'</code>/<code class="one-line-code">'no'</code>,
+      <code class="one-line-code">'1'</code>/<code class="one-line-code">'0'</code> ou
+      <code class="one-line-code">TRUE</code>/<code class="one-line-code">FALSE</code>.
+    </li>
+  </ul>
+
+  <h4>5.2. Coleções, JSON e Estruturas Complexas</h4>
+  <ul>
+    <li>
+      <strong>MySQL:</strong> oferece os tipos enumerados <code class="one-line-code">ENUM</code> e
+      <code class="one-line-code">SET</code>, além do suporte nativo a colunas
+      <code class="one-line-code">JSON</code> (a partir da versão 5.7).
+    </li>
+    <li>
+      <strong>PostgreSQL:</strong> oferece suporte avançado a <strong>Arrays</strong> (qualquer tipo pode ter uma dimensão
+      de array, no formato <code class="one-line-code">tipo[]</code>), documentos
+      <code class="one-line-code">JSON</code> / <code class="one-line-code">JSONB</code> (JSON binário indexável via
+      <code class="one-line-code">GIN</code> / <code class="one-line-code">GiST</code>), <code class="one-line-code">XML</code>,
+      chave-valor (<code class="one-line-code">hstore</code>) e tipos compostos via
+      <code class="one-line-code">CREATE TYPE</code>.
+    </li>
+  </ul>
+
+  <h3>6. Restrições de Domínio e Validação Física</h3>
+  <p>
+    As restrições de domínio garantem que apenas dados válidos, segundo as regras de negócio, entrem na tabela. Elas são a
+    <strong>tradução física do domínio</strong> que estudamos na seção 1.
+  </p>
+  <ul>
+    <li>
+      <strong>Nulo (<code class="one-line-code">NULL</code> / <code class="one-line-code">NOT NULL</code>):</strong>
+      <code class="one-line-code">NOT NULL</code> exige a presença obrigatória de valor. Chaves primárias são
+      implicitamente <code class="one-line-code">NOT NULL</code> nos dois SGBDs.
+    </li>
+    <li>
+      <strong>Restrição <code class="one-line-code">CHECK</code>:</strong> adiciona uma expressão de validação
+      diretamente sobre a coluna ou sobre a tabela inteira.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Garantia de que o domínio da comissão seja apenas A, B ou C
+CREATE TABLE vendedores_faixa (
+    codigo_vendedor   SMALLINT      NOT NULL,
+    nome_vendedor     VARCHAR(80),
+    salario_fixo      DECIMAL(10,2),
+    faixa_comissao    CHAR(1),
+    data_admissao     DATE          NOT NULL,
+    CONSTRAINT PK_vendedores PRIMARY KEY (codigo_vendedor),
+    CONSTRAINT CH_faixa_comissao CHECK (faixa_comissao IN ('A', 'B', 'C')),
+    CONSTRAINT CH_salario CHECK (salario_fixo &gt;= 0)
+);</code></pre>
+  </div>
+  <h4>Tabela de Domínio vs. Restrição CHECK</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Cenário</th>
+        <th>Abordagem indicada</th>
+        <th>Justificativa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lista estável e pequena (estados brasileiros, sexo biológico, tipo de pessoa)</td>
+        <td>Restrição <code class="one-line-code">CHECK</code></td>
+        <td>Não exige estrutura adicional; a regra é verificada no próprio motor.</td>
+      </tr>
+      <tr>
+        <td>Lista volátil ou extensa (cidades, categorias de produtos, cargos)</td>
+        <td>Tabela de domínio separada + chave estrangeira</td>
+        <td>Atualizar a lista não exige alterar o esquema DDL das tabelas consumidoras.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>7. Matriz de Decisão Técnica</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Requisito de Negócio</th>
+        <th>MySQL</th>
+        <th>PostgreSQL</th>
+        <th>Justificativa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Identificador único (PK)</td>
+        <td><code class="one-line-code">INT UNSIGNED AUTO_INCREMENT</code></td>
+        <td><code class="one-line-code">INT GENERATED ALWAYS AS IDENTITY</code></td>
+        <td>Sequências nativas e controle preciso de ciclo de vida</td>
+      </tr>
+      <tr>
+        <td>Texto de tamanho fixo</td>
+        <td><code class="one-line-code">CHAR(n)</code></td>
+        <td><code class="one-line-code">CHAR(n)</code></td>
+        <td>Ideal para hashes, códigos ISO e máscaras fixas</td>
+      </tr>
+      <tr>
+        <td>Texto de tamanho variável</td>
+        <td><code class="one-line-code">VARCHAR(n)</code></td>
+        <td><code class="one-line-code">VARCHAR(n)</code> ou <code class="one-line-code">TEXT</code></td>
+        <td>No PostgreSQL o TEXT não tem penalidade de velocidade frente ao VARCHAR</td>
+      </tr>
+      <tr>
+        <td>Valores monetários</td>
+        <td><code class="one-line-code">DECIMAL(15,2)</code></td>
+        <td><code class="one-line-code">NUMERIC(15,2)</code> ou <code class="one-line-code">MONEY</code></td>
+        <td>Evita erros de arredondamento do ponto flutuante binário</td>
+      </tr>
+      <tr>
+        <td>Data e hora com fuso</td>
+        <td><code class="one-line-code">TIMESTAMP</code> (ou <code class="one-line-code">DATETIME</code> se não houver fuso)</td>
+        <td><code class="one-line-code">TIMESTAMPTZ</code></td>
+        <td>Apenas <code class="one-line-code">TIMESTAMP</code>/<code class="one-line-code">TIMESTAMPTZ</code> gravam em UTC e reconvertem pela sessão; o <code class="one-line-code">DATETIME</code> guarda o texto literal</td>
+      </tr>
+      <tr>
+        <td>Documentos dinâmicos</td>
+        <td><code class="one-line-code">JSON</code></td>
+        <td><code class="one-line-code">JSONB</code></td>
+        <td>Permite indexação GIN para buscas dentro das chaves internas</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 01 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+  <p>
+    Vamos materializar as decisões de tipo em DDL equivalente nos dois SGBDs. Todos os blocos devem ser executados no
+    ambiente da aula e comparados com <code class="one-line-code">information_schema.columns</code> para inspecionar
+    tamanho real e domínios declarados.
+  </p>
+
+  <h3>Exemplo 1: Chave Primária Auto-incrementável</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- ============ MySQL ============
+CREATE TABLE categoria_mysql (
+    id_categoria INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome         VARCHAR(50) NOT NULL,
+    CONSTRAINT UQ_categoria_nome UNIQUE (nome)
+);
+
+-- ============ PostgreSQL ============
+CREATE TABLE categoria_postgres (
+    id_categoria INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome         VARCHAR(50) NOT NULL,
+    CONSTRAINT UQ_categoria_nome UNIQUE (nome)
+);</code></pre>
+  </div>
+  <p>
+    Diferença estrutural importante: no MySQL, <code class="one-line-code">AUTO_INCREMENT</code> é um atributo da coluna e
+    fica registrado em metadados internos da tabela. No PostgreSQL, tanto <code class="one-line-code">IDENTITY</code> quanto
+    <code class="one-line-code">SERIAL</code> criam uma <em>sequence</em> que pode ser inspecionada em
+    <code class="one-line-code">pg_sequences</code>, mas a <code class="one-line-code">IDENTITY</code> fica acoplada à coluna
+    enquanto a <code class="one-line-code">SERIAL</code> cria um objeto independente, ligado apenas por
+    <code class="one-line-code">OWNED BY</code>.
+  </p>
+
+  <h3>Exemplo 2: Valores Monetários e o Erro do Ponto Flutuante</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- ============ MySQL ============
+CREATE TABLE precos_mysql (
+    id_produto   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    valor_unitario DECIMAL(10,2) NOT NULL,
+    taxa_percentual  FLOAT         NULL   -- Métrica aproximada: aceitável
+);
+
+-- ============ PostgreSQL ============
+CREATE TABLE precos_postgres (
+    id_produto     INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    valor_unitario NUMERIC(10,2)  NOT NULL,
+    taxa_percentual REAL          NULL   -- Equivalente ao FLOAT do MySQL
+);
+
+-- Demonstração do erro de arredondamento binário
+-- PostgreSQL
+SELECT CAST(0.1 AS DOUBLE PRECISION) + CAST(0.2 AS DOUBLE PRECISION) AS soma_aproximada; -- 0.30000000000000004
+SELECT CAST(0.1 AS DECIMAL(4,2))    + CAST(0.2 AS DECIMAL(4,2))    AS soma_exata;      -- 0.30
+
+-- MySQL
+SELECT CAST(0.1 AS DOUBLE) + CAST(0.2 AS DOUBLE) AS soma_aproximada;  -- 0.30000000000000004
+SELECT CAST(0.1 AS DECIMAL(4,2)) + CAST(0.2 AS DECIMAL(4,2)) AS soma_exata; -- 0.30</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Texto Fixo, Variável e Longo</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- ============ MySQL ============
+CREATE TABLE produto_mysql (
+    codigo_barras CHAR(13)     NOT NULL,  -- Tamanho fixo exato (EAN-13)
+    nome          VARCHAR(100) NOT NULL,  -- Tamanho variável
+    descricao     TEXT         NULL       -- Até 64 KB
+);
+
+-- ============ PostgreSQL ============
+CREATE TABLE produto_postgres (
+    codigo_barras CHAR(13)     NOT NULL,  -- Atenção: no Postgres o espaço é preservado
+    nome          VARCHAR(100) NOT NULL,
+    descricao     TEXT         NULL       -- Até 1 GB, via TOAST
+);
+
+-- Verificando o domínio efetivo (funciona nos dois SGBDs)
+SELECT column_name, data_type, character_maximum_length
+  FROM information_schema.columns
+ WHERE table_name IN ('produto_mysql', 'produto_postgres')
+ ORDER BY table_name, ordinal_position;</code></pre>
+  </div>
+
+  <h3>Exemplo 4: Auditoria Temporal no MySQL</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">CREATE TABLE auditoria_mysql (
+    id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    dado            VARCHAR(50)    NOT NULL,
+    data_criacao    TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data_modificacao TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                    ON UPDATE CURRENT_TIMESTAMP
+) ENGINE = InnoDB;
+
+-- Rastreamento automático: o SGBD preenche os dois campos
+INSERT INTO auditoria_mysql (dado) VALUES ('Pedido #1042 criado');
+SELECT id, dado, data_criacao, data_modificacao FROM auditoria_mysql;</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4><code class="one-line-code">ON UPDATE CURRENT_TIMESTAMP</code> é exclusivo do MySQL</h4>
+    <p>
+      A cláusula <code class="one-line-code">ON UPDATE CURRENT_TIMESTAMP</code> é uma extensão do MySQL e será rejeitada
+      pelo PostgreSQL. No PostgreSQL, a mesma lógica é implementada com uma <em>trigger</em> sobre a tabela ou, mais
+      elegantemente, mantida apenas pelo aplicativo em tempo de execução.
+    </p>
+  </div>
+
+  <h3>Exemplo 5: Aritmética Temporal no PostgreSQL</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- O tipo INTERVAL evita o aninhamento de funções como DATE_ADD / DATE_SUB
+SELECT
+    NOW()                                        AS momento_atual,
+    NOW() + INTERVAL '15 days'                   AS vencimento,
+    '2026-12-31'::date - '2026-01-01'::date      AS dias_no_ano,
+    TIMESTAMPTZ '2026-03-15 10:00:00-03'         AS instante_com_fuso;
+
+-- No MySQL, o mesmo resultado exige funções específicas do dialeto:
+SELECT
+    NOW()                                  AS momento_atual,
+    DATE_ADD(NOW(), INTERVAL 15 DAY)       AS vencimento,
+    DATEDIFF('2026-12-31', '2026-01-01')   AS dias_no_ano;</code></pre>
+  </div>
+
+  <h3>Exemplo 6: Tipos Compostos no PostgreSQL</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Exclusivo do PostgreSQL: tipo composto definido pelo usuário
+CREATE TYPE endereco_completo AS (
+    rua    VARCHAR(100),
+    cidade VARCHAR(50),
+    cep    CHAR(8)
+);
+
+CREATE TABLE cliente_custom (
+    id                 INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome               VARCHAR(100)  NOT NULL,
+    endereco_comercial endereco_completo,
+    tags               TEXT[]         -- Array nativo do PostgreSQL
+);
+
+-- Acesso ao campo composto
+SELECT nome, (endereco_comercial).cidade AS cidade FROM cliente_custom;</code></pre>
+  </div>
+  <p>
+    No MySQL, não existe tipo composto. A aproximação mais próxima seria uma coluna
+    <code class="one-line-code">JSON</code> com validação por <code class="one-line-code">CHECK</code>, ou a extração para
+    uma tabela <em>endereco</em> relacionada por chave estrangeira — o que, na prática, descarrega para a modelagem
+    relacional justamente aquilo que o tipo composto resolveu.
+  </p>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica (Diagramas Conceituais)</h2>
 
+  <h3>Fluxo de Decisão para Escolha de Tipo Numérico</h3>
+  <p>
+    Sequência de decisão recomendada para qualquer coluna numérica de um novo projeto. Segui-la evita tanto o
+    <em>under-sizing</em> (overflow silencioso) quanto o <em>over-sizing</em> (índices gigantes que não cabem em cache).
+  </p>
+  <div class="mermaid">
+    graph TD
+    A["Coluna numérica"] --> B{"Valor admite<br/>casas decimais?"}
+    B -->|Não| C{"Precisa de<br/>sinal negativo?"}
+    B -->|Sim| D{"É valor<br/>financeiro?"}
+    C -->|Não| E["UNSIGNED no MySQL<br/>ou NUMERIC + CHECK no Postgres"]
+    C -->|Sim| F{"Cabe em 2 bytes?"}
+    F -->|Sim| G["SMALLINT"]
+    F -->|Não| H{"Cabe em 4 bytes?"}
+    H -->|Sim| I["INT / INTEGER"]
+    H -->|Não| J["BIGINT"]
+    D -->|Sim| K["DECIMAL / NUMERIC<br/>exato"]
+    D -->|Não| L["FLOAT / REAL / DOUBLE<br/>aproximado"]
 
+    style K fill:#d4edda,stroke:#c3e6cb
+    style L fill:#fff3e0,stroke:#e65100
+    style E fill:#e1f5fe,stroke:#01579b
+  </div>
 
+  <h3>Fluxo de Decisão para Data e Hora com Fuso</h3>
+  <div class="mermaid">
+    graph TD
+    A["Coluna temporal"] --> B{"É um instante<br/>único no tempo?"}
+    B -->|Não: só o dia| C["DATE nos dois SGBDs"]
+    B -->|Sim| D{"O instante depende<br/>do local do cliente?"}
+    D -->|Não: dado local<br/>sem fuso| E["Postgres: TIMESTAMP<br/>MySQL: DATETIME"]
+    D -->|Sim: evento global| F{"Suporta datas<br/>após 2038?"}
+    F -->|Não necessário| G["MySQL: TIMESTAMP<br/>converte para UTC"]
+    F -->|Sim| H["Postgres: TIMESTAMPTZ<br/>recomendado"]
 
+    style H fill:#d4edda,stroke:#c3e6cb
+    style G fill:#fff3e0,stroke:#e65100
+  </div>
 
+  <h3>Modelo Físico das Tabelas de Produto e Auditoria (MySQL)</h3>
+  <div class="mermaid">
+    erDiagram
+    CATEGORIA {
+        int_unsigned id_categoria PK
+        varchar_50 nome
+    }
+    PRODUTO {
+        int_unsigned id_produto PK
+        char_13 codigo_barras
+        varchar_100 nome
+        int_unsigned id_categoria FK
+        decimal_10_2 valor_unitario
+        timestamp data_criacao "DEFAULT CURRENT_TIMESTAMP"
+    }
+    AUDITORIA {
+        int_unsigned id_auditoria PK
+        int_unsigned id_produto FK
+        varchar_50 dado
+        timestamp data_criacao "DEFAULT CURRENT_TIMESTAMP"
+        timestamp data_modificacao "ON UPDATE CURRENT_TIMESTAMP"
+    }
+    CATEGORIA ||--o{ PRODUTO : "classifica"
+    PRODUTO ||--o{ AUDITORIA : "registra"
+  </div>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>Dinheiro nunca vira float:</strong> valores monetários exigem
+      <code class="one-line-code">DECIMAL</code>/<code class="one-line-code">NUMERIC</code>. Ponto flutuante serve para
+      métricas tolerantes a erro (percentuais, médias, trigonometria), nunca para valores que serão somados.
+    </li>
+    <li>
+      <strong>A largura da coluna é uma promessa:</strong> declarar <code class="one-line-code">VARCHAR(50)</code> para um
+      campo que em breve será substituído por <code class="one-line-code">VARCHAR(255)</code> é uma migração de dados disfarçada
+      de detalhe.
+    </li>
+    <li>
+      <strong>Portabilidade não é portabilidade de dialeto:</strong> o padrão ANSI cobre <code class="one-line-code">INT</code>
+      e <code class="one-line-code">VARCHAR</code>. Recursos como <code class="one-line-code">AUTO_INCREMENT</code>,
+      <code class="one-line-code">UNSIGNED</code>, <code class="one-line-code">ENUM</code> e
+      <code class="one-line-code">ON UPDATE</code> são proprietários do MySQL e exigem camada de abstração se o projeto
+      pretende migrar.
+    </li>
+    <li>
+      <strong>UNSIGNED no PostgreSQL:</strong> não existe o modificador. A alternativa idiomática é
+      <code class="one-line-code">NUMERIC(p, 0) CHECK (coluna &gt;= 0)</code>, que preserva o domínio sem poluir o DDL com
+      dialeto.
+    </li>
+    <li>
+      <strong>Índices são feitos de tipos:</strong> uma chave primária <code class="one-line-code">BIGINT</code> ocupa 8
+      bytes por entrada em cada índice secundário que a referencia — o tipo errado se propaga para toda a base.
+    </li>
+    <li>
+      <strong>Próxima aula:</strong> Aula 32 — Indexação e Estruturas Físicas (B-Tree, Hash, GiST e GIN), para entender
+      como o tipo escolhido impacta o tamanho e a velocidade dos índices nos dois SGBDs.
+    </li>
+  </ul>
+</div>
 
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li>
+      <strong>Projeto de e-commerce:</strong> <code class="one-line-code">INT UNSIGNED AUTO_INCREMENT</code> para o
+      <code class="one-line-code">id_produto</code>, <code class="one-line-code">CHAR(13)</code> para o código de barras EAN,
+      <code class="one-line-code">VARCHAR(120)</code> para o nome e <code class="one-line-code">DECIMAL(12,2)</code> para o
+      preço — sem exceção de <code class="one-line-code">FLOAT</code>.
+    </li>
+    <li>
+      <strong>Sistema de auditoria:</strong> use <code class="one-line-code">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</code> no
+      MySQL para preenchimento automático, ou um <em>trigger</em> no PostgreSQL. Para eventos com prazo superior a 2038,
+      migre para <code class="one-line-code">DATETIME</code> ou <code class="one-line-code">TIMESTAMPTZ</code>.
+    </li>
+    <li>
+      <strong>Aplicação multi-timezone (SaaS):</strong> adote <code class="one-line-code">TIMESTAMPTZ</code> no PostgreSQL e
+      converta apenas na camada de apresentação. Armazenar a hora já convertida destrói a informação original.
+    </li>
+    <li>
+      <strong>Listas de valores:</strong> <code class="one-line-code">ENUM</code> do MySQL é rápido, porém altera o DDL
+      para cada novo item. Em esquemas que precisam evoluir sem janela de manutenção, prefira tabela de domínio com FK.
+    </li>
+    <li>
+      <strong>Dados semiestruturados:</strong> <code class="one-line-code">JSONB</code> com índice GIN resolve consultas por
+      chave interna com desempenho aceitável. Em MySQL, avalie a alternativa de colunas geradas
+      (<em>generated columns</em>) indexáveis.
+    </li>
+    <li>
+      <strong>Auditoria de bases legadas:</strong> rode
+      <code class="one-line-code">SELECT table_name, column_name, data_type FROM information_schema.columns</code> e procure
+      por <code class="one-line-code">FLOAT</code> em colunas monetárias, <code class="one-line-code">VARCHAR(255)</code> em
+      toda parte e <code class="one-line-code">CHAR</code> superdimensionado.
+    </li>
+  </ul>
+</section>
 
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. <em>Database System Concepts</em>. 7. ed. New York:
+      McGraw-Hill, 2020.</li>
+    <li>HEUSER, Carlos Alberto. <em>Projeto de Banco de Dados</em>. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>MACHADO, Felipe Nery Rodrigues. <em>Projeto e implementação de banco de dados</em>. 3. ed. São Paulo: Érica,
+      2014.</li>
+    <li>POSTGRESQL GLOBAL DEVELOPMENT GROUP. <em>PostgreSQL Documentation</em>. Capítulos 8 (Data Types) e 5 (Data
+      Definition).</li>
+    <li>ORACLE CORPORATION. <em>MySQL 8.0 Reference Manual</em>. Capítulos 11 (Data Types) e 13 (Data Definition
+      Language).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Escolha técnica de tipos na prática (MySQL x PostgreSQL)</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
+</section>
