@@ -1,0 +1,227 @@
+{
+  "conteudo": "apostila",
+  "titulo": "Programação e Algoritmos",
+  "descricao": "Desenvolva o raciocínio lógico e aprenda a construir soluções eficientes através de algoritmos, estruturas de dados e programação orientada a objetos em Java.",
+  "secoes": [
+    {
+      "nome": "Fundamentos, Arquitetura e Lógica Visual",
+      "aulas": [
+        {
+          "titulo": "O Computador: Histórico, Arquitetura Básica e Von Neumann",
+          "descricao": "Conheça a história e a arquitetura fundamental dos computadores.",
+          "blocos": []
+        },
+        {
+          "titulo": "Introdução aos Algoritmos: Lógica e Sequência",
+          "descricao": "Entenda o conceito de algoritmo e como aplicar lógica no dia a dia.",
+          "blocos": []
+        },
+        {
+          "titulo": "Fluxogramas I: Representação Gráfica e Simbologia",
+          "descricao": "Aprenda a representar processos visualmente usando fluxogramas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Fluxogramas II: Tomada de Decisões e Caminhos Lógicos",
+          "descricao": "Explore decisões e desvios de fluxo em representações gráficas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Dados e Variáveis: Identificadores e Tipos Primitivos",
+          "descricao": "Conceitos de variáveis, tipos de dados e regras de nomeação.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrada e Saída Padrão: Comandos Leia e Escreva",
+          "descricao": "Interação com o usuário através de comandos de E/S.",
+          "blocos": []
+        },
+        {
+          "titulo": "Expressões Aritméticas e Operadores",
+          "descricao": "Utilização de operadores matemáticos e precedência em algoritmos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto 1: Automação de Tarefas com Fluxogramas",
+          "descricao": "Desenvolvimento prático de fluxogramas para tarefas reais.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção do Projeto 1 e Análise de Lógica",
+          "descricao": "Análise crítica e correção de erros comuns de lógica visual.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão de Fundamentos: Hardware e Software",
+          "descricao": "Consolidação dos conceitos de arquitetura e lógica inicial.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Estruturas de Controle (Pseudocódigo + Java)",
+      "aulas": [
+        {
+          "titulo": "Operadores Relacionais e Lógicos",
+          "descricao": "Comparações e conectivos lógicos para tomada de decisão.",
+          "blocos": []
+        },
+        {
+          "titulo": "Estruturas de Condição Simples e Composta (Java)",
+          "descricao": "Implementação de condicionais if-else em Java.",
+          "blocos": []
+        },
+        {
+          "titulo": "Decisões Complexas e Seleção Múltipla",
+          "descricao": "Ninhos de SE e a estrutura switch-case em Java.",
+          "blocos": []
+        },
+        {
+          "titulo": "Estruturas de Repetição I: While",
+          "descricao": "Laços de repetição com teste no início.",
+          "blocos": []
+        },
+        {
+          "titulo": "Estruturas de Repetição II: For",
+          "descricao": "Laços de repetição controlados por contadores.",
+          "blocos": []
+        },
+        {
+          "titulo": "Técnicas de Laços: Contadores e Acumuladores",
+          "descricao": "Resolução de problemas de somatórios e médias com laços.",
+          "blocos": []
+        },
+        {
+          "titulo": "Prática de Laboratório: Algoritmos Clássicos",
+          "descricao": "Exercícios práticos de algoritmos famosos em Java.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto do Bimestre: Jokenpô em Java",
+          "descricao": "Criação de um jogo interativo utilizando o Java como linguagem.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção do Projeto 2 e Debugging",
+          "descricao": "Técnicas de depuração e melhoria de código.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão de Estruturas de Controle",
+          "descricao": "Revisão geral de condicionais e repetições.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Estruturas Compostas e Modularização em Java",
+      "aulas": [
+        {
+          "titulo": "Vetores (Arrays Unidimensionais)",
+          "descricao": "Armazenamento de conjuntos de dados homogêneos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Operações com Vetores: Preenchimento, Busca e Extremos",
+          "descricao": "Técnicas para preencher, buscar e localizar extremos em vetores Java.",
+          "blocos": []
+        },
+        {
+          "titulo": "Cadeias de Caracteres (Strings)",
+          "descricao": "Manipulação de textos e funções nativas de Strings em Java.",
+          "blocos": []
+        },
+        {
+          "titulo": "Matrizes: Variáveis Multidimensionais",
+          "descricao": "Trabalhando com tabelas e grades de dados: declaração, acesso, processamento com laços aninhados e aplicações práticas em Java.",
+          "blocos": []
+        },
+        {
+          "titulo": "Introdução à Modularização: Funções e Procedimentos",
+          "descricao": "Divisão do código-fonte em unidades menores, independentes e reutilizáveis: conceitos de caixa preta, procedimentos, funções, passagem de parâmetros e escopo de variáveis em Java.",
+          "blocos": []
+        },
+        {
+          "titulo": "Comunicação entre Módulos: Parâmetros e Retorno",
+          "descricao": "Passagem de dados entre funções.",
+          "blocos": []
+        },
+        {
+          "titulo": "Escopo de Variáveis e Recursividade",
+          "descricao": "Diferença entre local/global e funções recursivas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto 3: Sistema de Gerenciamento de Estoque",
+          "descricao": "Projeto integrador: aplicação prática de vetores, matrizes, strings e modularização em Java.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção do Projeto 3 e Reutilização",
+          "descricao": "Análise de código e princípios de DRY.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão de Modularização e Estruturas Compostas",
+          "descricao": "Revisão de vetores, matrizes e funções.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Versionamento, Qualidade e Projeto Final",
+      "aulas": [
+        {
+          "titulo": "Introdução ao Controle de Versão: Git",
+          "descricao": "Conceitos básicos de versionamento de código.",
+          "blocos": []
+        },
+        {
+          "titulo": "Git Básico: Init, Add e Commit",
+          "descricao": "Fluxo básico de trabalho com Git local.",
+          "blocos": []
+        },
+        {
+          "titulo": "Git Avançado: Log, Diff, Reset e Branches",
+          "descricao": "Gestão de histórico e ramificações.",
+          "blocos": []
+        },
+        {
+          "titulo": "Trabalho Remoto: GitHub, Push e Pull",
+          "descricao": "Sincronização com repositórios remotos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Documentação e Qualidade: Markdown e Exceções",
+          "descricao": "Escrita de README e tratamento de erros.",
+          "blocos": []
+        },
+        {
+          "titulo": "Desenvolvimento Colaborativo e Conflitos",
+          "descricao": "Resolução de merge conflicts e trabalho em equipe.",
+          "blocos": []
+        },
+        {
+          "titulo": "Técnicas de Depuração e Otimização",
+          "descricao": "Refinamento de código para performance.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto Final: Aplicação Java Completa",
+          "descricao": "Finalização e entrega do projeto do curso.",
+          "blocos": []
+        },
+        {
+          "titulo": "Apresentação dos Projetos e Code Review",
+          "descricao": "Feedback e análise coletiva dos projetos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Encerramento e Orientações de Carreira",
+          "descricao": "Próximos passos e mercado de trabalho.",
+          "blocos": []
+        }
+      ]
+    }
+  ]
+}

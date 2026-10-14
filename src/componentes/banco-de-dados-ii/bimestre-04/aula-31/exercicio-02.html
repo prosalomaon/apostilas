@@ -1,18 +1,189 @@
 ---
-layout: exercicio
-title: "Exercício 02 - Introdução ao NoSQL"
+layout: questionario
+title: "Questionário - NoSQL, Teorema CAP e Persistência Poliglota"
 exercicio_numero: "02"
 aula_numero: "31"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 31."
+sigla_componente: "BDII"
+description: "Questionário de fixação sobre evolução histórica dos modelos de dados, Teorema CAP, modelo BASE, as quatro famílias NoSQL e o conceito de persistência poliglota."
+perguntas:
+  - texto: "Em um cluster distribuído onde a comunicação entre os nós se partitiona, um sistema NoSQL aceita a escrita em todos os nós isolados e converge os dados depois. Esse sistema é classificado como:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "CP, porque a consistência é obtida pela convergência posterior das réplicas"
+      - letra: "b"
+        texto: "CA, já que a disponibilidade foi preservada e a partição não foi considerada"
+      - letra: "c"
+        texto: "AP, pois durante a partição troca consistência imediata por disponibilidade"
+      - letra: "d"
+        texto: "ACID, porque a convergência posterior reproduz as propriedades de atomicidade e isolamento"
+
+  - texto: "Sobre a sigla NoSQL, é correto afirmar que:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "significa ausência de SQL, e os motores NoSQL não oferecem nenhuma linguagem de consulta"
+      - letra: "b"
+        texto: "significa Not Only SQL, mas nenhum motor NoSQL aceita a linguagem SQL"
+      - letra: "c"
+        texto: "designa os bancos que dispensam o modelo relacional e chegam a rejeitar qualquer linguagem SQL"
+      - letra: "d"
+        texto: "significa Not Only SQL, admitting que o banco relacional continua sendo adequado a muitos casos"
+
+  - texto: "A contribuição central do modelo relacional proposto por Edgar F. Codd em 1970 foi:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "a eliminação do conceito de chave primária, substituída por referências entre tabelas"
+      - letra: "b"
+        texto: "a abstração do caminho de acesso físico, permitindo declarar o que se quer sem saber onde está"
+      - letra: "c"
+        texto: "a substituição da álgebra relacional por consultas procedurais de baixo nível"
+      - letra: "d"
+        texto: "a definição de um modelo hierárquico de dados com ponteiros para registros filhos"
+
+  - texto: "Um banco de documentos como o MongoDB difere de um banco chave-valor porque:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "inspeciona o conteúdo interno do documento e permite indexar campos aninhados"
+      - letra: "b"
+        texto: "exige que o esquema de campos seja declarado por DDL antes da inserção"
+      - letra: "c"
+        texto: "não armazena pares de chave e valor, mas apenas tabelas com colunas fixas"
+      - letra: "d"
+        texto: "oferece apenas consultas por chave primária, sem projeção de campos"
+
+  - texto: "Sobre o modelo hierárquico e o modelo em rede da década de 1960, é INCORRETO afirmar que:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "o IBM IMS é o exemplo comercial mais conhecido do modelo hierárquico"
+      - letra: "b"
+        texto: "ambos organizavam dados em estruturas de proprietário e membro"
+      - letra: "c"
+        texto: "o modelo em rede foi formalizado pelo padrão CODASYL e eliminou a navegação por ponteiros"
+      - letra: "d"
+        texto: "ambos exigiam que a aplicação conhecesse o caminho físico para recuperar os dados"
+
+  - texto: "Em um sistema distribuído real, a propriedade P do Teorema CAP é tratada como:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "obrigatória, porque falhas de comunicação entre nós são inevitáveis em qualquer rede real"
+      - letra: "b"
+        texto: "opcional, e priorizada quando o objetivo é reduzir a latência das consultas"
+      - letra: "c"
+        texto: "dispensável, já que a consistência forte impede a ocorrência de partições de rede"
+      - letra: "d"
+        texto: "opcional, pois é exigida apenas por clusters com mais de dez nós"
+
+  - texto: "Um banco orientado a colunas, como o Apache Cassandra, é a escolha mais adequada quando o requisito dominante é:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "cálculo de amigos de amigos em rede social com até cinco níveis de profundidade"
+      - letra: "b"
+        texto: "transação financeira que exige integridade referencial entre cinco tabelas"
+      - letra: "c"
+        texto: "consulta de carrinho de compras pelo identificador da sessão, com expiração automática"
+      - letra: "d"
+        texto: "ingestão de telemetria e séries temporais, com gravação massiva de dados esparsos"
+
+  - texto: "No modelo BASE, o termo Soft-State significa que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "os dados podem permanecer desatualizados por tempo indeterminado, sem convergência prevista"
+      - letra: "b"
+        texto: "o estado muda por propagação automática da replicação, sem intervenção do usuário"
+      - letra: "c"
+        texto: "o usuário precisa intervir manualmente para propagar as escritas entre os nós"
+      - letra: "d"
+        texto: "o banco aceita escritas inconsistentes desde que a aplicação valide o resultado"
+
+  - texto: "A persistência poliglota, aplicada a uma arquitetura de microsserviços, significa:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "a substituição de todos os bancos relacionais por um único motor NoSQL unificado"
+      - letra: "b"
+        texto: "a adoção de polimorfismo de modelos de dados dentro de uma mesma tabela relacional"
+      - letra: "c"
+        texto: "a eliminação de transações ACID em favor de consistência eventual em todo o sistema"
+      - letra: "d"
+        texto: "o uso simultâneo de vários motores, cada serviço adotando o mais adequado ao seu dado"
+
+  - texto: "Um serviço de carrinho de compras usa Redis com TTL de sete dias. O carrinho é zerado; o TTL, porém, não é removido. O que acontece se o usuário voltar após oito dias e adicionar um item?"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "o carrinho anterior reaparece, pois o valor esvaziado continua presente na chave"
+      - letra: "b"
+        texto: "a chave não existe mais, e o INSERT cria a chave com o TTL integral de sete dias recomeçado"
+      - letra: "c"
+        texto: "o item é gravado em uma segunda chave, e as duas chaves passam a coexistir"
+      - letra: "d"
+        texto: "a aplicação lança erro, porque a chave expirada não pode ser reutilizada"
+
+  - texto: "Em um banco orientado a grafos, o termo index-free adjacency significa que:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "as arestas são armazenadas como ponteiros diretos no próprio nó, dispensando índice para percorrer conexões"
+      - letra: "b"
+        texto: "o banco dispensa índices porque as consultas são resolvidas por varredura sequencial"
+      - letra: "c"
+        texto: "os relacionamentos são inferidos em tempo de consulta por similaridade textual dos atributos"
+      - letra: "d"
+        texto: "o banco mantém um índice global único sobre todas as arestas do grafo"
+
+  - texto: "A respeito das estratégias de cache, o problema conhecido como cache stampede ocorre quando:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "a entrada de cache fica desatualizada após uma escrita no banco de origem"
+      - letra: "b"
+        texto: "o cache ocupa mais memória que o banco e provoca despejos inesperados de chaves"
+      - letra: "c"
+        texto: "muitas requisições simultâneas atingem a mesma chave expirada e todas recalculam o valor em paralelo"
+      - letra: "d"
+        texto: "a escrita no cache falha porque a conexão com o servidor de cache está saturada"
+
+  - texto: "Ao modelar o mesmo dado, relacional e documentos, a principal diferença estrutural reside no fato de que:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "no relacional a estrutura é definida antes do dado, e no documento ela acompanha cada registro"
+      - letra: "b"
+        texto: "o relacional exige DDL, enquanto o documento aceita apenas DML para qualquer alteração"
+      - letra: "c"
+        texto: "o documento não aceita índices secundários, enquanto o relacional aceita índices em todas as colunas"
+      - letra: "d"
+        texto: "o relacional não suporta atributos variáveis, e o documento suporta apenas atributos tipados"
+
+  - texto: "Um sistema de pagamentos precisa debitar a conta e creditar o vendedor na mesma operação indivisível. Esse requisito aponta para:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "um banco de documentos com consistência eventual, por reduzir a latência da operação"
+      - letra: "b"
+        texto: "um banco relacional com suporte a transações ACID e integridade referencial"
+      - letra: "c"
+        texto: "um banco de grafos, por modelar a relação entre comprador e vendedor"
+      - letra: "d"
+        texto: "qualquer motor NoSQL, desde que a aplicação implemente o rollback manualmente"
+
+  - texto: "É INCORRETO afirmar sobre a evolução histórica dos modelos de dados que:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "o modelo relacional foi proposto por Edgar F. Codd na década de 1970"
+      - letra: "b"
+        texto: "os modelos hierárquico e em rede exigiam navegação física a partir da aplicação"
+      - letra: "c"
+        texto: "o modelo orientado a objetos surgiu para atender tipos de dados complexos como SIG e CAD"
+      - letra: "d"
+        texto: "o modelo em rede organizava os dados em grafos com um único pai por registro, como o hierárquico"
+
 ---
-
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Aplique os conceitos de lógica e sintaxe aprendidos.</li>
-    <li>Verifique se o resultado atende aos requisitos propostos.</li>
-    <li>Documente seu código para facilitar o entendimento.</li>
-  </ul>
-</div>

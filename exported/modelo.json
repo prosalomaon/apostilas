@@ -1,0 +1,32 @@
+{
+  "conteudo": "apostila",
+  "titulo": "Nome da Materia/Componente",
+  "descricao": "Breve descrição do componente",
+  "secoes": [
+    {
+      "nome": "Primeiro Bimestre",
+      "aulas": [
+        {
+          "titulo": "Função afim",
+          "descricao": "Primeira aula da seção.",
+          "blocos": []
+        },
+        {
+          "titulo": "Gráfico da função afim",
+          "descricao": "",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Segundo Bimestre",
+      "aulas": [
+        {
+          "titulo": "Área do triângulo",
+          "descricao": "",
+          "blocos": []
+        }
+      ]
+    }
+  ]
+}

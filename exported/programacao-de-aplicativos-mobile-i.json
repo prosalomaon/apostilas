@@ -1,0 +1,227 @@
+{
+  "conteudo": "apostila",
+  "titulo": "Programação de Aplicativos Mobile I",
+  "descricao": "Esta disciplina introduz o desenvolvimento de aplicativos Android com Kotlin e Jetpack Compose, abordando desde a configuração do ambiente e fundamentos da linguagem até interfaces modernas, persistência de dados, sensores, consumo de APIs e boas práticas de publicação.",
+  "secoes": [
+    {
+      "nome": "Fundamentos e Ambiente de Desenvolvimento",
+      "aulas": [
+        {
+          "titulo": "Introdução ao Ecossistema Mobile",
+          "descricao": "Conteúdo da aula 01 do 1o bimestre: Introdução ao Ecossistema Mobile.",
+          "blocos": []
+        },
+        {
+          "titulo": "Configuração do Ambiente LTS",
+          "descricao": "Conteúdo da aula 02 do 1o bimestre: Configuração do Ambiente LTS.",
+          "blocos": []
+        },
+        {
+          "titulo": "Linguagem Kotlin para Android",
+          "descricao": "Conteúdo da aula 03 do 1o bimestre: Linguagem Kotlin para Android.",
+          "blocos": []
+        },
+        {
+          "titulo": "Estrutura de um Projeto Android",
+          "descricao": "Exploração técnica da hierarquia de pastas de um projeto Android, o papel fundamental do arquivo AndroidManifest.xml e a configuração do sistema de build Gradle para gerenciamento de dependências e versões.",
+          "blocos": []
+        },
+        {
+          "titulo": "Ciclo de Vida de um App",
+          "descricao": "Estudo detalhado dos estados de uma aplicação Android (Activities) e como o sistema gerencia a memória e os processos. Métodos de callback para salvar e restaurar o estado da interface.",
+          "blocos": []
+        },
+        {
+          "titulo": "Primeira Interface com Compose",
+          "descricao": "Conteúdo da aula 06 do 1o bimestre: Primeira Interface com Compose.",
+          "blocos": []
+        },
+        {
+          "titulo": "Interatividade Básica",
+          "descricao": "Conteúdo da aula 07 do 1o bimestre: Interatividade Básica.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto de Fechamento I",
+          "descricao": "Conteúdo da aula 08 do 1o bimestre: Projeto de Fechamento I.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão e Correções Coletivas",
+          "descricao": "Conteúdo da aula 09 do 1o bimestre: Revisão e Correções Coletivas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Recuperação e Ajustes de Ambiente",
+          "descricao": "Conteúdo da aula 10 do 1o bimestre: Recuperação e Ajustes de Ambiente.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Design de Interface e Experiência do Usuário (UX)",
+      "aulas": [
+        {
+          "titulo": "Componentes de Layout",
+          "descricao": "Conteúdo da aula 11 do 2o bimestre: Componentes de Layout.",
+          "blocos": []
+        },
+        {
+          "titulo": "Material Design 3",
+          "descricao": "Conteúdo da aula 12 do 2o bimestre: Material Design 3.",
+          "blocos": []
+        },
+        {
+          "titulo": "Imagens e Recursos Gráficos",
+          "descricao": "Conteúdo da aula 13 do 2o bimestre: Imagens e Recursos Gráficos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Listas Dinâmicas (Lazy Layouts)",
+          "descricao": "Conteúdo da aula 14 do 2o bimestre: Listas Dinâmicas (Lazy Layouts).",
+          "blocos": []
+        },
+        {
+          "titulo": "Navegação entre Telas",
+          "descricao": "Implementação de fluxos de navegação em aplicativos Android, abordando a criação de novas atividades (ou rotas), o uso de Intents para transição e a técnica de passagem de parâmetros entre telas para exibição de dados dinâmicos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Componentes de Entrada de Dados",
+          "descricao": "Conteúdo da aula 16 do 2o bimestre: Componentes de Entrada de Dados.",
+          "blocos": []
+        },
+        {
+          "titulo": "Design Responsivo",
+          "descricao": "Conteúdo da aula 17 do 2o bimestre: Design Responsivo.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto de Fechamento II",
+          "descricao": "Conteúdo da aula 18 do 2o bimestre: Projeto de Fechamento II.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão de UI/UX",
+          "descricao": "Conteúdo da aula 19 do 2o bimestre: Revisão de UI/UX.",
+          "blocos": []
+        },
+        {
+          "titulo": "Recuperação de Práticas de Interface",
+          "descricao": "Conteúdo da aula 20 do 2o bimestre: Recuperação de Práticas de Interface.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Persistência de Dados e Recursos do Dispositivo",
+      "aulas": [
+        {
+          "titulo": "Armazenamento Local com SQLite",
+          "descricao": "Conteúdo da aula 21 do 3o bimestre: Armazenamento Local com SQLite.",
+          "blocos": []
+        },
+        {
+          "titulo": "Biblioteca Room (LTS)",
+          "descricao": "Conteúdo da aula 22 do 3o bimestre: Biblioteca Room (LTS).",
+          "blocos": []
+        },
+        {
+          "titulo": "Preferências do Usuário",
+          "descricao": "Conteúdo da aula 23 do 3o bimestre: Preferências do Usuário.",
+          "blocos": []
+        },
+        {
+          "titulo": "Acesso à Câmera e Galeria",
+          "descricao": "Conteúdo da aula 24 do 3o bimestre: Acesso à Câmera e Galeria.",
+          "blocos": []
+        },
+        {
+          "titulo": "Sensores de Movimento",
+          "descricao": "Conteúdo da aula 25 do 3o bimestre: Sensores de Movimento.",
+          "blocos": []
+        },
+        {
+          "titulo": "Geolocalização e Mapas",
+          "descricao": "Conteúdo da aula 26 do 3o bimestre: Geolocalização e Mapas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Serviços em Segundo Plano",
+          "descricao": "Conteúdo da aula 27 do 3o bimestre: Serviços em Segundo Plano.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto de Fechamento III",
+          "descricao": "Conteúdo da aula 28 do 3o bimestre: Projeto de Fechamento III.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão de Banco de Dados e Sensores",
+          "descricao": "Conteúdo da aula 29 do 3o bimestre: Revisão de Banco de Dados e Sensores.",
+          "blocos": []
+        },
+        {
+          "titulo": "Recuperação de Lógica de Persistência",
+          "descricao": "Conteúdo da aula 30 do 3o bimestre: Recuperação de Lógica de Persistência.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Conectividade e Publicação",
+      "aulas": [
+        {
+          "titulo": "Fundamentos de Redes e JSON",
+          "descricao": "Conteúdo da aula 31 do 4o bimestre: Fundamentos de Redes e JSON.",
+          "blocos": []
+        },
+        {
+          "titulo": "Consumo de APIs com Retrofit",
+          "descricao": "Conteúdo da aula 32 do 4o bimestre: Consumo de APIs com Retrofit.",
+          "blocos": []
+        },
+        {
+          "titulo": "Integração de Dados Remotos",
+          "descricao": "Conteúdo da aula 33 do 4o bimestre: Integração de Dados Remotos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Segurança e Permissões Avançadas",
+          "descricao": "Conteúdo da aula 34 do 4o bimestre: Segurança e Permissões Avançadas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Notificações e Widgets",
+          "descricao": "Conteúdo da aula 35 do 4o bimestre: Notificações e Widgets.",
+          "blocos": []
+        },
+        {
+          "titulo": "Testes de Software Mobile",
+          "descricao": "Conteúdo da aula 36 do 4o bimestre: Testes de Software Mobile.",
+          "blocos": []
+        },
+        {
+          "titulo": "Depuração e Performance",
+          "descricao": "Conteúdo da aula 37 do 4o bimestre: Depuração e Performance.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto de Fechamento IV",
+          "descricao": "Conteúdo da aula 38 do 4o bimestre: Projeto de Fechamento IV.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão Geral do Ciclo de Desenvolvimento",
+          "descricao": "Conteúdo da aula 39 do 4o bimestre: Revisão Geral do Ciclo de Desenvolvimento.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correções Finais e Recuperação de Projetos",
+          "descricao": "Conteúdo da aula 40 do 4o bimestre: Correções Finais e Recuperação de Projetos.",
+          "blocos": []
+        }
+      ]
+    }
+  ]
+}

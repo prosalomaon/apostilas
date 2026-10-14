@@ -8,42 +8,704 @@ tags:
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 25 em desenvolvimento...</p>
+  <h2>Teoria & Conceitos do Document Object Model (DOM)</h2>
+  <p>
+    Quando o navegador carrega um documento HTML, ele processa o texto do arquivo
+    e cria uma representação estruturada do documento em memória. Essa
+    representação é uma API orientada a objetos chamada
+    <strong>DOM (Document Object Model)</strong>, que serve como a ponte de
+    comunicação entre o código JavaScript e a estrutura da página. É o DOM que
+    permite ao JavaScript inspecionar, alterar e reagir dinamicamente às
+    estruturas, estilos e conteúdos de uma página em tempo real.
+  </p>
+
+  <h3>1. Estrutura em Árvore (DOM Tree)</h3>
+  <p>
+    O DOM organiza os elementos em uma hierarquia de <strong>nós (nodes)</strong>
+    formando uma árvore. O elemento raiz dessa árvore é o nó
+    <code class="one-line-code">document</code>, que engloba todo o conteúdo da
+    página. A partir dele derivam elementos filhos como
+    <code class="one-line-code">&lt;html&gt;</code> e
+    <code class="one-line-code">&lt;body&gt;</code>, que por sua vez contêm seus
+    próprios nós filhos: títulos, parágrafos, botões, imagens etc.
+  </p>
+  <ul>
+    <li>
+      <strong>Nó raiz:</strong> <code class="one-line-code">document</code> —
+      representa o documento HTML inteiro.
+    </li>
+    <li>
+      <strong>Nós pais e filhos:</strong> Um elemento que contém outros
+      elementos é o <em>pai</em> (parent) dos elementos dentro dele.
+    </li>
+    <li>
+      <strong>Nós irmãos:</strong> Elementos que compartilham o mesmo nó pai são
+      <em>irmãos</em> (siblings).
+    </li>
+  </ul>
+
+  <h3>2. HTML Fonte vs. DOM em Memória</h3>
+  <p>
+    O arquivo <code class="one-line-code">.html</code> é apenas a instrução
+    textual inicial enviada ao navegador. O DOM, por sua vez, é a estrutura viva
+    mantida em memória. Quando o JavaScript altera um título ou oculta um
+    painel, ele está modificando a <strong>árvore do DOM em tempo real</strong>,
+    provocando a re-renderização visual da página sem a necessidade de
+    recarregá-la.
+  </p>
+  <ul>
+    <li>
+      <strong>HTML Fonte:</strong> texto estático, interpretado uma única vez ao
+      carregar a página.
+    </li>
+    <li>
+      <strong>DOM:</strong> objeto em memória, dinâmico, que reflete o estado
+      atual da página (inclusive mudanças feitas por scripts).
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Métodos de Seleção de Elementos HTML</h2>
+  <p>
+    Para manipular qualquer elemento na tela via JavaScript, o primeiro passo é
+    <strong>localizá-lo e selecioná-lo</strong> na árvore do DOM. Existem dois
+    grupos de métodos: os tradicionais e os modernos (baseados em seletores
+    CSS).
+  </p>
+
+  <h3>1. Métodos de Seleção Tradicionais</h3>
+  <p>
+    Estes métodos pertencem às primeiras especificações da linguagem e buscam
+    elementos por atributos específicos:
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">document.getElementById('id')</code>:</strong>
+      Retorna a referência do único elemento que possui o identificador
+      <code class="one-line-code">id</code> especificado. Se não encontrar,
+      retorna <code class="one-line-code">null</code>.
+    </li>
+    <li>
+      <strong><code class="one-line-code">document.getElementsByClassName('classe')</code>:</strong>
+      Retorna uma coleção viva de todos os elementos que contêm a classe
+      informada.
+    </li>
+    <li>
+      <strong><code class="one-line-code">document.getElementsByTagName('tag')</code>:</strong>
+      Retorna uma coleção viva de todos os elementos correspondentes à tag
+      especificada (ex.: <code class="one-line-code">'p'</code>,
+      <code class="one-line-code">'button'</code>,
+      <code class="one-line-code">'a'</code>).
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-javascript">// Exemplo de seleção tradicional
+const tituloPrincipal = document.getElementById('titulo-pagina');
+const botoesAcao = document.getElementsByClassName('btn-acao');
+const paragrafos = document.getElementsByTagName('p');</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Métodos de Seleção Modernos (Seletores CSS)</h3>
+  <p>
+    Nas especificações modernas, utiliza-se a mesma sintaxe de seletores do CSS
+    para buscar elementos:
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">document.querySelector('seletor')</code>:</strong>
+      Busca na árvore do DOM e retorna o <strong>primeiro elemento</strong> que
+      atende ao seletor CSS informado. Caso nenhum elemento coincida, retorna
+      <code class="one-line-code">null</code>.
+    </li>
+    <li>
+      <strong><code class="one-line-code">document.querySelectorAll('seletor')</code>:</strong>
+      Retorna uma <strong>NodeList</strong> (coleção de nós) contendo todos os
+      elementos que coincidem com o seletor CSS informado.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-javascript">// Seleciona o primeiro botão dentro do formulário
+const primeiroBotao = document.querySelector('form button');
+
+// Seleciona todas as linhas de uma tabela com a classe .linha-item
+const linhasTabela = document.querySelectorAll('table .linha-item');</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Diferença Crítica: NodeList Estática vs. HTMLCollection Viva</h3>
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Critério</th>
+          <th>HTMLCollection (getElementsByClassName / TagName)</th>
+          <th>NodeList (querySelectorAll)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sintaxe de Busca</td>
+          <td>Nome exato de classe ou tag.</td>
+          <td>Qualquer seletor CSS válido (<code class="one-line-code">.classe</code>, <code class="one-line-code">#id</code>, <code class="one-line-code">div &gt; p</code>).</td>
+        </tr>
+        <tr>
+          <td>Comportamento de Atualização</td>
+          <td><strong>Viva (Live):</strong> Atualiza-se automaticamente se elementos forem inseridos ou removidos do DOM durante a execução.</td>
+          <td><strong>Estática (Static):</strong> É uma fotografia congelada no instante em que o método foi chamado.</td>
+        </tr>
+        <tr>
+          <td>Métodos de Iteração</td>
+          <td>Não possui método <code class="one-line-code">.forEach()</code> nativo; exige conversão com <code class="one-line-code">Array.from()</code> ou laço <code class="one-line-code">for</code> tradicional.</td>
+          <td>Suporta iteração direta com o método <code class="one-line-code">.forEach()</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-javascript">// HTMLCollection: precisa converter para array para usar forEach
+const itensMenu = document.getElementsByClassName('menu-item');
+Array.from(itensMenu).forEach(item => console.log(item.textContent));
+
+// NodeList: suporta forEach nativamente
+const itensMenu2 = document.querySelectorAll('.menu-item');
+itensMenu2.forEach(item => console.log(item.textContent));</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>4. Manipulação de Propriedades dos Elementos</h3>
+  <p>
+    Uma vez selecionado e armazenado em uma variável, podemos modificar as
+    propriedades visuais e estruturais do elemento:
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">element.textContent</code>:</strong>
+      Lê ou altera o <strong>conteúdo de texto puro</strong> dentro do elemento.
+      É a forma mais segura contra injeção de scripts (XSS), pois qualquer
+      texto é exibido literalmente.
+    </li>
+    <li>
+      <strong><code class="one-line-code">element.innerHTML</code>:</strong>
+      Lê ou altera a <strong>estrutura HTML interna</strong> de um elemento.
+      Permite interpretar novas tags HTML passadas como string — use com
+      cuidado e nunca com conteúdo vindo do usuário.
+    </li>
+    <li>
+      <strong><code class="one-line-code">element.value</code>:</strong>
+      Utilizado para ler ou alterar o <strong>valor digitado/selecionado</strong>
+      em campos de formulários (<code class="one-line-code">&lt;input&gt;</code>,
+      <code class="one-line-code">&lt;textarea&gt;</code>,
+      <code class="one-line-code">&lt;select&gt;</code>).
+    </li>
+    <li>
+      <strong><code class="one-line-code">element.style.propriedade</code>:</strong>
+      Aplica estilos inline diretamente via JavaScript (ex.:
+      <code class="one-line-code">element.style.color = 'red'</code>).
+    </li>
+    <li>
+      <strong><code class="one-line-code">element.classList.add / remove / toggle</code>:</strong>
+      Adiciona, remove ou alterna classes CSS no elemento, mantendo a
+      estilização separada do comportamento.
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-javascript">const titulo = document.getElementById('titulo-pagina');
+
+// Alterando texto (forma segura)
+titulo.textContent = 'Novo Título da Página';
+
+// Alterando estrutura HTML (interpola tags)
+titulo.innerHTML = '&lt;span class="destaque"&gt;Novo&lt;/span&gt; Título';
+
+// Manipulando classes CSS
+titulo.classList.add('visivel');
+titulo.classList.remove('oculto');
+titulo.classList.toggle('destaque');</code></pre>
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Eventos: Comunicando com o Usuário</h2>
+  <p>
+    <strong>Eventos</strong> são notificações enviadas pelo navegador quando
+    algo acontece na página: um clique do mouse, a pressão de uma tecla, o
+    envio de um formulário, o carregamento da página etc. Para reagir a esses
+    acontecimentos, registramos <em>funções callback</em> que serão executadas
+    quando o evento ocorrer.
+  </p>
+
+  <h3>1. O Método addEventListener()</h3>
+  <p>
+    A forma moderna e recomendada de tratar eventos é o método
+    <code class="one-line-code">addEventListener(tipoEvento, callback)</code>,
+    que permite registrar múltiplos tratadores para o mesmo evento sem
+    sobrescrever os anteriores.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-javascript">const botao = document.querySelector('#btn-salvar');
+
+// Registrando um tratador de evento de clique
+botao.addEventListener('click', function (evento) {
+  console.log('Botão clicado!');
+  console.log('Elemento alvo:', evento.target);
+});</code></pre>
+  </div>
+
+  <h3>2. Tipos de Eventos Mais Utilizados</h3>
+  <div class="overflow-inline">
+    <table>
+      <thead>
+        <tr>
+          <th>Categoria</th>
+          <th>Eventos</th>
+          <th>Descrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mouse</td>
+          <td><code class="one-line-code">click</code>, <code class="one-line-code">dblclick</code>, <code class="one-line-code">mouseover</code>, <code class="one-line-code">mouseout</code></td>
+          <td>Interações diretas com o ponteiro do mouse.</td>
+        </tr>
+        <tr>
+          <td>Teclado</td>
+          <td><code class="one-line-code">keydown</code>, <code class="one-line-code">keyup</code></td>
+          <td>Pressionamento e soltura de teclas.</td>
+        </tr>
+        <tr>
+          <td>Formulários</td>
+          <td><code class="one-line-code">submit</code>, <code class="one-line-code">input</code>, <code class="one-line-code">change</code>, <code class="one-line-code">focus</code>, <code class="one-line-code">blur</code></td>
+          <td>Envio, digitação e mudança de foco em campos.</td>
+        </tr>
+        <tr>
+          <td>Documento</td>
+          <td><code class="one-line-code">load</code>, <code class="one-line-code">DOMContentLoaded</code>, <code class="one-line-code">scroll</code>, <code class="one-line-code">resize</code></td>
+          <td>Ciclo de vida da página e janela do navegador.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3. O Objeto Event</h3>
+  <p>
+    Quando um evento dispara, o navegador cria um <strong>objeto Event</strong>
+    e o passa como parâmetro para a função callback. Esse objeto contém
+    informações cruciais sobre o acontecimento:
+  </p>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">evento.target</code>:</strong> o
+      elemento original que disparou o evento.
+    </li>
+    <li>
+      <strong><code class="one-line-code">evento.currentTarget</code>:</strong> o
+      elemento ao qual o tratador está vinculado.
+    </li>
+    <li>
+      <strong><code class="one-line-code">evento.preventDefault()</code>:</strong>
+      cancela a ação padrão do navegador (ex.: envio do formulário, navegação
+      de um link).
+    </li>
+    <li>
+      <strong><code class="one-line-code">evento.stopPropagation()</code>:</strong>
+      impede a propagação do evento para elementos pai/filhos.
+    </li>
+    <li>
+      <strong><code class="one-line-code">evento.key</code>:</strong> retorna o
+      código da tecla pressionada (útil em eventos de teclado).
+    </li>
+  </ul>
+  <div class="code-container">
+    <pre><code class="language-javascript">const formulario = document.querySelector('#form-cadastro');
+
+formulario.addEventListener('submit', function (evento) {
+  // Impede o recarregamento da página padrão do &lt;form&gt;
+  evento.preventDefault();
+  console.log('Formulário enviado sem recarregar!');
+});</code></pre>
+  </div>
+
+  <h3>4. Delegação de Eventos</h3>
+  <p>
+    Em vez de registrar um tratador em cada elemento filho (o que é custoso
+    quando a lista muda dinamicamente), a <strong>delegação de eventos</strong>
+    registra um único tratador no elemento pai e verifica qual filho disparou
+    o evento através de <code class="one-line-code">evento.target</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-javascript">const lista = document.querySelector('#lista-tarefas');
+
+// Um único ouvinte atende todos os itens atuais e futuros
+lista.addEventListener('click', function (evento) {
+  if (evento.target.tagName === 'LI') {
+    evento.target.classList.toggle('concluida');
+  }
+});</code></pre>
+  </div>
 </section>
 
 <section class="section-box">
   <h2>Exemplo de Código</h2>
+
+  <h3>1. Nível Básico: Contador Interativo</h3>
+  <p>
+    Exemplo introdutório combinando seleção de elementos com o evento de clique
+    para manipular o conteúdo exibido na tela.
+  </p>
   <div class="code-container">
-    <pre><code class="language-javascript">// Em breve...</code></pre>
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Contador Interativo&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    #valor { font-size: 3rem; margin: 10px; }
+    button { font-size: 1.2rem; padding: 8px 20px; cursor: pointer; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Contador&lt;/h1&gt;
+  &lt;div id="valor"&gt;0&lt;/div&gt;
+  &lt;button id="menos"&gt;-&lt;/button&gt;
+  &lt;button id="mais"&gt;+&lt;/button&gt;
+
+  &lt;script&gt;
+    // Seleção dos elementos
+    const valorEl = document.getElementById('valor');
+    const btnMais = document.getElementById('mais');
+    const btnMenos = document.getElementById('menos');
+
+    let contador = 0;
+
+    btnMais.addEventListener('click', function () {
+      contador++;
+      valorEl.textContent = contador;
+    });
+
+    btnMenos.addEventListener('click', function () {
+      contador--;
+      valorEl.textContent = contador;
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Nível Intermediário: Validação de Formulário com preventDefault</h3>
+  <p>
+    Formulário que intercepta o envio, valida os campos e exibe mensagens de
+    erro sem recarregar a página.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Formulário Validado&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 40px auto; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+    .erro { color: #c0392b; font-size: 0.85rem; min-height: 1.2em; }
+    .sucesso { color: #27ae60; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Cadastro&lt;/h1&gt;
+  &lt;form id="form-cadastro"&gt;
+    &lt;label for="nome"&gt;Nome:&lt;/label&gt;
+    &lt;input type="text" id="nome" name="nome"&gt;
+    &lt;span class="erro" id="erro-nome"&gt;&lt;/span&gt;
+
+    &lt;label for="email"&gt;E-mail:&lt;/label&gt;
+    &lt;input type="email" id="email" name="email"&gt;
+    &lt;span class="erro" id="erro-email"&gt;&lt;/span&gt;
+
+    &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+    &lt;p id="mensagem"&gt;&lt;/p&gt;
+  &lt;/form&gt;
+
+  &lt;script&gt;
+    const form = document.getElementById('form-cadastro');
+    const mensagem = document.getElementById('mensagem');
+
+    form.addEventListener('submit', function (evento) {
+      // 1. Impede o recarregamento padrão da página
+      evento.preventDefault();
+
+      const nome = document.getElementById('nome');
+      const email = document.getElementById('email');
+      const erroNome = document.getElementById('erro-nome');
+      const erroEmail = document.getElementById('erro-email');
+
+      let valido = true;
+
+      // 2. Validação do nome
+      if (nome.value.trim() === '') {
+        erroNome.textContent = 'O nome não pode ficar vazio!';
+        valido = false;
+      } else {
+        erroNome.textContent = '';
+      }
+
+      // 3. Validação do e-mail (verificação simples)
+      if (!email.value.includes('@')) {
+        erroEmail.textContent = 'Informe um e-mail válido!';
+        valido = false;
+      } else {
+        erroEmail.textContent = '';
+      }
+
+      // 4. Feedback final
+      if (valido) {
+        mensagem.textContent = 'Cadastro enviado com sucesso!';
+        mensagem.className = 'sucesso';
+        form.reset();
+      } else {
+        mensagem.textContent = 'Corrija os erros acima.';
+        mensagem.className = 'erro';
+      }
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Nível Avançado: Lista Interativa com Teclado e Delegação de Eventos</h3>
+  <p>
+    Demonstração da captura da tecla <code class="one-line-code">Enter</code>
+    via <code class="one-line-code">keydown</code>, da adição dinâmica de
+    elementos e da delegação de eventos no elemento pai.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Lista de Tarefas&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 40px auto; }
+    #entrada-tarefa { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 10px; }
+    li { padding: 8px; margin: 4px 0; background: #f0f0f0; cursor: pointer; display: flex; justify-content: space-between; }
+    li.concluida { text-decoration: line-through; color: #888; }
+    li button { border: none; background: #c0392b; color: white; cursor: pointer; border-radius: 4px; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h2&gt;Minha Lista de Tarefas&lt;/h2&gt;
+
+  &lt;input type="text" id="entrada-tarefa" placeholder="Digite uma tarefa e pressione Enter"&gt;
+  &lt;p id="contador"&gt;0 tarefa(s)&lt;/p&gt;
+
+  &lt;ul id="lista-tarefas"&gt;
+    &lt;li&gt;Estudar Seletores DOM&lt;/li&gt;
+    &lt;li&gt;Praticar EventListeners&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const entrada = document.getElementById('entrada-tarefa');
+    const lista = document.getElementById('lista-tarefas');
+    const contador = document.getElementById('contador');
+
+    function atualizarContador() {
+      const total = lista.getElementsByTagName('li').length;
+      contador.textContent = total + ' tarefa(s)';
+    }
+
+    // 1. Adição via teclado (Enter)
+    entrada.addEventListener('keydown', function (evento) {
+      if (evento.key === 'Enter' &amp;&amp; entrada.value.trim() !== '') {
+        const novoItem = document.createElement('li');
+        novoItem.textContent = entrada.value.trim();
+        lista.appendChild(novoItem);
+        entrada.value = '';
+        atualizarContador();
+      }
+    });
+
+    // 2. Delegação de eventos: um único ouvinte no elemento pai
+    //    atende cliques em itens atuais e futuros
+    lista.addEventListener('click', function (evento) {
+      if (evento.target.tagName === 'LI') {
+        // Alterna a marcação de concluída
+        evento.target.classList.toggle('concluida');
+      } else if (evento.target.tagName === 'BUTTON') {
+        // Remove o item ao clicar no botão de exclusão
+        evento.target.parentElement.remove();
+        atualizarContador();
+      }
+    });
+
+    atualizarContador();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
-  <div class="mermaid">
-    graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+  <h2>Representações Gráficas</h2>
+
+  <h3>1. Estrutura da Árvore do DOM</h3>
+  <p>
+    Diagrama demonstrando a hierarquia de nós do DOM para um documento HTML
+    simples.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    DOC["document (Nó Raiz)"] --- HTML["&lt;html&gt;"]
+    HTML --- HEAD["&lt;head&gt;"]
+    HTML --- BODY["&lt;body&gt;"]
+    HEAD --- TITLE["&lt;title&gt;"]
+    BODY --- H1["&lt;h1&gt;"]
+    BODY --- P["&lt;p&gt;"]
+    BODY --- BOTAO["&lt;button&gt;"]
+
+    style DOC fill:#e1f5fe,stroke:#01579b
+    style HTML fill:#e1f5fe,stroke:#01579b
+    style HEAD fill:#f5f5f5,stroke:#333
+    style BODY fill:#f5f5f5,stroke:#333
+    style TITLE fill:#e2f0d9,stroke:#385723
+    style H1 fill:#e2f0d9,stroke:#385723
+    style P fill:#e2f0d9,stroke:#385723
+    style BOTAO fill:#e2f0d9,stroke:#385723</div></pre>
+  </div>
+
+  <hr />
+
+  <h3>2. Fluxo de Execução: Do clique ao DOM Atualizado</h3>
+  <p>
+    Fluxograma ilustrando o caminho percorrido desde a interação do usuário
+    até a re-renderização da página.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    A[Usuário clica no botão] --&gt; B[Navegador dispara o evento click]
+    B --&gt; C[Executa a função callback registrada<br/>via addEventListener]
+    C --&gt; D[Callback altera o DOM<br/>textContent / classList / innerHTML]
+    D --&gt; E[Navegador re-renderiza<br/>a área modificada da página]
+
+    style A fill:#fff3e0,stroke:#e65100
+    style C fill:#e1f5fe,stroke:#01579b
+    style E fill:#e2f0d9,stroke:#385723</div></pre>
+  </div>
+
+  <hr />
+
+  <h3>3. Delegação de Eventos</h3>
+  <p>
+    Comparação entre o tratamento direto em cada filho e a delegação no
+    elemento pai.
+  </p>
+  <div class="code-container">
+    <pre><div class="mermaid">graph TD
+    subgraph Direto["Tratamento Direto (1 ouvinte por item)"]
+        LI1["Item 1 + ouvinte"] --- LI2["Item 2 + ouvinte"] --- LI3["Item 3 + ouvinte"]
+    end
+    subgraph Delegado["Delegação (1 ouvinte no pai)"]
+        PAI["&lt;ul&gt; + 1 ouvinte"] --- F1["Item 1"]
+        PAI --- F2["Item 2"]
+        PAI --- F3["Item 3"]
+    end
+
+    style Direto fill:#fff3e0,stroke:#e65100
+    style Delegado fill:#e1f5fe,stroke:#01579b</div></pre>
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas, Lembretes e Boas Práticas</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Posicionamento do Script no HTML:</strong> O navegador lê o HTML
+      sequencialmente de cima para baixo. Se o script tentar selecionar um
+      elemento <code class="one-line-code">&lt;script&gt;</code> ainda não
+      lido, o retorno será <code class="one-line-code">null</code> e ocorrerá
+      erro. Por isso, coloque os scripts no final do
+      <code class="one-line-code">&lt;body&gt;</code> ou use o evento
+      <code class="one-line-code">DOMContentLoaded</code>.
+    </li>
+    <li>
+      <strong>Prefira textContent a innerHTML:</strong> Use
+      <code class="one-line-code">textContent</code> para inserir dados de
+      texto, pois <code class="one-line-code">innerHTML</code> interpreta
+      qualquer marcação e pode abrir brechas de segurança (XSS) se receber
+      conteúdo vindo do usuário.
+    </li>
+    <li>
+      <strong>Seletor Moderno é mais flexível:</strong> Prefira
+      <code class="one-line-code">querySelector</code> e
+      <code class="one-line-code">querySelectorAll</code>, pois aceitam
+      qualquer seletor CSS e retornam resultados previsíveis (estáticos),
+      facilitando o raciocínio.
+    </li>
+    <li>
+      <strong>Delegação de Eventos:</strong> Para listas dinâmicas (itens
+      adicionados em tempo de execução), registre um único ouvinte no elemento
+      pai e use <code class="one-line-code">evento.target</code> para identificar
+      o item clicado. Isso evita registrar ouvintes repetidamente.
+    </li>
+    <li>
+      <strong>Remova ouvintes quando necessário:</strong> Se registrar muitos
+      ouvintes ao longo da vida da página, utilize
+      <code class="one-line-code">removeEventListener</code> ou
+      <code class="one-line-code">{ once: true }</code> para evitar vazamentos
+      de memória.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Menus e Modais:</strong> Utilize
+      <code class="one-line-code">querySelector</code> para localizar botões de
+      abertura/fechamento e
+      <code class="one-line-code">classList.toggle</code> para alternar a
+      visibilidade de painéis.
+    </li>
+    <li>
+      <strong>Formulários Dinâmicos:</strong> Intercepte o
+      <code class="one-line-code">submit</code> com
+      <code class="one-line-code">preventDefault()</code> e realize a validação
+      dos campos antes de enviar os dados, exibindo mensagens de erro em tempo
+      real.
+    </li>
+    <li>
+      <strong>Listas e Tabelas Editáveis:</strong> Combine criação de elementos
+      (<code class="one-line-code">createElement</code> +
+      <code class="one-line-code">appendChild</code>) com delegação de eventos
+      para construir listas de tarefas, carrinhos de compra e tabelas
+      administrativas.
+    </li>
+    <li>
+      <strong>Feedback Visual:</strong> Reaja a eventos de
+      <code class="one-line-code">input</code> e
+      <code class="one-line-code">keyup</code> para mostrar contadores de
+      caracteres, indicadores de força de senha e autocomplete simples.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>HAVERBEKE, Marijn. Eloquent JavaScript. 3ª ed., 2018.</li>
+    <li>FLANAGAN, David. JavaScript: The Definitive Guide. 7ª ed., O'Reilly, 2020.</li>
+    <li>CAELUM. Desenvolvimento Web com HTML, CSS e JavaScript. São Paulo: Caelum, 2020.</li>
+    <li>MDN WEB DOCS. Introduction to the DOM. Disponível em: developer.mozilla.org.</li>
+    <li>CENTRO PAULA SOUZA. Plano de Curso nº 1062 - Técnico em Desenvolvimento de Sistemas. Eixo Tecnológico de Informação e Comunicação, 2026.</li>
   </ul>
 </section>
 
@@ -51,6 +713,6 @@ tags:
   <h2>Para Praticar</h2>
   <ul>
     <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário - Manipulação do DOM</a></li>
   </ul>
 </section>

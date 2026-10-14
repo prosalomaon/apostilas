@@ -1,18 +1,292 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Introdução ao NoSQL"
+title: "Exercício 01 - Modelando um E-commerce Poliglota entre SQL e NoSQL"
 exercicio_numero: "01"
 aula_numero: "31"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 31."
+description: "Atividade prática de modelagem poliglota: distribuir os dados de um e-commerce entre PostgreSQL, MongoDB, Redis e Neo4j, justificando cada escolha de família NoSQL e o comportamento de consistência."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    A <strong>Livraria Horizonte</strong>, cliente da sua equipe, está redesenhando sua plataforma de e-commerce. O
+    monolito relacional atual enfrenta três problemas conhecidos: lentidão no catálogo (milhões de livros com atributos
+    variáveis por editora), excesso de consultas ao banco para validar sessão de usuário e relatório de recomendação que
+    trava ao atravessar a rede social de usuários.
+  </p>
+  <p>
+    Sua tarefa é aplicar <strong>Persistência Poliglota</strong>: modelar cada tipo de dado no motor mais adequado e
+    <strong>justificar tecnicamente</strong> cada decisão. Não basta dizer “MongoDB é melhor para catálogo” — é preciso
+    explicar qual padrão de acesso motivou a escolha e qual garantia de consistência foi aceita.
+  </p>
+
+  <h3>Requisitos funcionais</h3>
+  <ol>
+    <li>Catálogo com atributos variáveis: <code class="one-line-code">isbn</code>, título, preço, editora e atributos
+      específicos por categoria (livro físico tem <code class="one-line-code">num_paginas</code> e
+      <code class="one-line-code">isbn_13</code>; e-book tem <code class="one-line-code">formato</code> e
+      <code class="one-line-code">tamanho_mb</code>).</li>
+    <li>Pedidos com transação financeira: múltiplos itens, pagamento, frete e baixa de estoque <strong>atômicos</strong>.</li>
+    <li>Sessão de usuário e carrinho com expiração automática.</li>
+    <li>“Livros recomendados para você” calculado a partir do histórico de leituras e compras.</li>
+    <li>Rede social: usuários que seguem outros usuários e livros.</li>
+  </ol>
+
+  <h3>Ambiente sugerido</h3>
+  <ul>
+    <li>PostgreSQL 12+ (ou MySQL 8) para o bloco transacional.</li>
+    <li>MongoDB 6+ ou <code class="one-line-code">docker run mongo:7</code>.</li>
+    <li>Redis 7+ para chave-valor.</li>
+    <li>Neo4j Community para grafos.</li>
+  </ul>
+  <p>
+    <strong>Não é obrigatório</strong> instalar os quatro motores: você pode entregar o projeto como DDL, comandos e
+    consultas, justificando cada escolha. Mas executar ao menos o MongoDB e o Redis deixa a atividade muito mais
+    concreta.
+  </p>
+</section>
+
+<section class="section-box">
+  <h2>Bloco 1: Classificação dos Dados por Padrão de Acesso</h2>
+  <ol>
+    <li>
+      Para cada requisito funcional da lista acima, identifique: <strong>padrão de acesso predominante</strong>, <strong>volume
+      estimado</strong> e <strong>tolerância a leitura desatualizada</strong>. Preencha a tabela:
+      <table>
+        <thead>
+          <tr>
+            <th>Requisito</th>
+            <th>Padrão de acesso</th>
+            <th>Volume estimado</th>
+            <th>Tolerância a atraso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Catálogo de produtos</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td>Pedidos e pagamento</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td>Sessão e carrinho</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td>Rede social</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td>Recomendação</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        </tbody>
+      </table>
+    </li>
+    <li>
+      Classifique cada requisito em uma das <strong>quatro famílias NoSQL</strong> ou “relacional”, e justifique em uma
+      frase usando o critério de <em>padrão de acesso</em> (não “é mais rápido”).
+    </li>
+    <li>
+      Identifique <strong>qual requisito não pode migrar para NoSQL</strong> e explique por que a consistência estrita é
+      obrigatória ali. Cite o que aconteceria se o mesmo requisito fosse implementado com consistência eventual.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Bloco 2: Modelagem Relacional (PostgreSQL) — Parte Transacional</h2>
+  <ol>
+    <li>
+      Modele <strong>somente</strong> o núcleo transacional: <code class="one-line-code">cliente</code>,
+      <code class="one-line-code">pedido</code>, <code class="one-line-code">item_pedido</code>,
+      <code class="one-line-code">pagamento</code> e <code class="one-line-code">estoque</code>.
+      <div class="code-container">
+        <pre><code class="language-sql">-- Escreva aqui o DDL completo das cinco tabelas,
+-- com chaves primárias, estrangeiras e restrições</code></pre>
+      </div>
+    </li>
+    <li>
+      Escreva a transação de baixa de pedido: <strong>deve</strong> gravar item, decrementar estoque e registrar pagamento
+      numa única transação. Explique o que aconteceria se o processo caísse entre a gravação do item e a baixa de
+      estoque, sem transação explícita.
+      <div class="code-container">
+        <pre><code class="language-sql">BEGIN;
+
+-- insere itens
+-- baixa estoque
+-- registra pagamento
+
+COMMIT; -- ou ROLLBACK em caso de erro</code></pre>
+      </div>
+    </li>
+    <li>
+      Um cliente sugere substituir a transação por “escrever no MongoDB e no Redis, que são mais rápidos”. Responda em
+      três frases por que essa proposta viola o Teorema CAP na prática.
+    </li>
+    <li>
+      Identifique na sua modelagem qual coluna exigiria o tipo <code class="one-line-code">NUMERIC</code> e não
+      <code class="one-line-code">FLOAT</code>, e explique o erro que apareceria na conciliação financeira.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Bloco 3: Modelagem em Documentos (MongoDB)</h2>
+  <ol>
+    <li>
+      Modele o catálogo em documentos, <strong>aproveitando</strong> a variação de atributos entre categorias:
+      <div class="code-container">
+        <pre><code class="language-javascript">// Coleção de produtos: um mesmo schema serve a categorias diferentes
+db.produto.insertOne({
+  _id: "ISBN9788535216960",
+  tipo: "livro_fisico",
+  titulo: "Ensaio Sobre a Cegueira",
+  preco: Decimal128("49.90"),
+  editora: "Companhia das Letras",
+  num_paginas: 304,
+  isbn_13: "9788535216960"
+});
+
+db.produto.insertOne({
+  _id: "EBOOK-5521",
+  tipo: "ebook",
+  titulo: "Ensaio Sobre a Cegueira",
+  preco: Decimal128("29.90"),
+  editora: "Companhia das Letras",
+  formato: "epub",
+  tamanho_mb: 2
+});</code></pre>
+      </div>
+    </li>
+    <li>
+      Crie os índices necessários para os padrões de acesso “busca por título” e “lista por editora, da mais nova para a
+      mais antiga”. Depois rode a consulta de <code class="one-line-code">explain</code> e anote se o índice foi usado.
+      <div class="code-container">
+        <pre><code class="language-javascript">db.produto.createIndex({ titulo: "text" });
+db.produto.createIndex({ editora: 1, publicado_em: -1 });
+db.produto.find({ editora: "Companhia das Letras" }).sort({ publicado_em: -1 }).explain("executionStats");</code></pre>
+      </div>
+    </li>
+    <li>
+      Escreva a consulta que retorna <strong>apenas</strong> os livros físicos com mais de 300 páginas usando o operador
+      de existência de campo. Depois explique por que essa consulta não seria possível em uma tabela relacional sem
+      gerar uma coluna extra.
+    </li>
+    <li>
+      Um cliente pede que a busca por título aceite erro de digitação. Proponha a solução (índice de texto com
+      <code class="one-line-code">score</code>) e discuta o custo: quantos campos indexados por documento esse recurso
+      representa em um banco que recebe 2.000 inserções por segundo?
+    </li>
+    <li>
+      Explique por que <code class="one-line-code">Decimal128</code> substitui o <code class="one-line-code">FLOAT</code>
+      no MongoDB, citando o exemplo dos dez centavos.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Bloco 4: Chave-Valor (Redis) — Sessão e Cache</h2>
+  <ol>
+    <li>
+      Modele a sessão e o carrinho em chaves, definindo o <strong>padrão de nomenclatura</strong> e a política de
+      expiração:
+      <div class="code-container">
+        <pre><code class="language-plaintext">SET sessao:&lt;token&gt; &lt;dados&gt; EX 1800
+SET carrinho:&lt;cliente_id&gt; &lt;json&gt; EX 604800
+INCR contador:visitas:&lt;data&gt;</code></pre>
+      </div>
+      Explique por que o TTL é configurado no <em>write</em> e não em um job periódico de limpeza.
+    </li>
+    <li>
+      Cachee o catálogo com <code class="one-line-code">write-behind</code> ou <code class="one-line-code">cache-aside</code>.
+      Descreva a estratégia escolhida e justifique o tratamento das <strong>falhas do cache</strong>: o que o sistema
+      faz se o Redis estiver indisponível?
+    </li>
+    <li>
+      Implemente o <strong>“cache stampede”</strong>: 200 requisições simultâneas para a mesma chave expirada. Explique
+      o que acontece sem trava e como o <code class="one-line-code">SETNX</code> resolve.
+    </li>
+    <li>
+      Um desenvolvedor pede para usar apenas o Redis e eliminar o PostgreSQL, já que o Redis também guarda dados
+      estruturados. Cite <strong>dois</strong> motivos técnicos que inviabilizam a proposta.
+    </li>
+    <li>
+      Compare o custo de memória: um carrinho com 30 itens serializado em JSON contra os mesmos 30 itens em uma estrutura
+      relacional normalizada. Qual abordagem é preferível e por quê?
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Bloco 5: Grafos (Neo4j) — Rede Social e Recomendação</h2>
+  <ol>
+    <li>
+      Modele a rede social com nós, arestas e propriedades, identificando a <strong>direção</strong> e o
+      <strong>significado</strong> de cada aresta:
+      <div class="code-container">
+        <pre><code class="language-cypher">CREATE (a:Usuario {id: 'u1', nome: 'Ana'})
+CREATE (l:Livro   {isbn: 'ISBN9788535216960', titulo: 'Ensaio Sobre a Cegueira'})
+
+CREATE (a)-[:SEGUE {desde: '2024-03-01'}]->(:Usuario {id: 'u2'})
+CREATE (a)-[:COMPROU {qtd: 1, data: '2025-06-10'}]->(l)</code></pre>
+      </div>
+    </li>
+    <li>
+      Escreva a consulta de <strong>amigos de amigos</strong> (travessia de profundidade 2) e a de
+      <strong>recomendação por livro lido por amigos</strong> (travessia que parte do livro, passa por usuário e chega
+      a outro livro). Explique o plano de execução esperado.
+    </li>
+    <li>
+      Reimplemente a consulta de amigos de amigos em SQL. Quantos <code class="one-line-code">JOIN</code> e quantas
+      linhas intermediárias ela produz para uma rede de 500 usuários com 20 conexões cada? Justifique quantitativamente
+      por que o grafo escala melhor.
+    </li>
+    <li>
+      Explique o que é <em>index-free adjacency</em> e por que ele não significa “sem índice”. Cite uma situação em que
+      o Neo4j ainda usa índice.
+    </li>
+    <li>
+      Um encadeamento viral produz um nó com 2 milhões de conexões. Escreva a consulta de recomendação com
+      <strong>limite de profundidade</strong> e discuta o risco de travessia explosiva.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>Bloco 6: Consistência Entre Motores</h2>
+  <ol>
+    <li>
+      O pedido é fechado no PostgreSQL, mas o histórico de recomendações precisa ser invalidado no Redis. Descreva a
+      sequência completa e identifique onde pode haver <strong>inconsistência</strong>.
+    </li>
+    <li>
+      Proponha uma solução <strong>outbox pattern</strong> para essa propagação, mostrando a tabela de outbox e o
+      processo que a consome. Compare com a alternativa de publicar direto na fila de mensagens, sem outbox.
+    </li>
+    <li>
+      Classifique os quatro motores da solução final segundo o Teorema CAP. Justifique a classificação de pelo menos
+      <strong>dois</strong> deles usando a trade-off real (o que o sistema faz quando há partição de rede).
+    </li>
+    <li>
+      Indique, para cada serviço, se o usuário tolerate ler um dado de alguns milissegundos atrás. Em algum caso a
+      resposta for “não”, justifique por que o motor escolhido ainda é o correto.
+    </li>
+    <li>
+      Escreva um parágrafo de até 10 linhas para o <strong>time de arquitetura</strong> justificando a TOPOLOGY poliglota
+      proposta e <strong>custo operacional</strong> que ela assume em troca do ganho de escala.
+    </li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Justificativa vale mais que entrega:</strong> cada escolha de motor deve ter uma frase explicando por que o
+      <em>padrão de acesso</em> daquele dado favorece aquela família. “É mais rápido” não é justificativa.
+    </li>
+    <li>
+      <strong>Consistência é uma escolha, não um bônus:</strong> toda vez que aceitar consistência eventual, registre
+      onde está a janela de convergência e o que o usuário vê dentro dela.
+    </li>
+    <li>
+      <strong>Poliglota tem custo:</strong> cada motor adicional significa nova expertise, novo backup e novo plano de
+      recuperação. Se o ganho de escala não for mensurável, um único banco relacional bem indexado é a melhor arquitetura.
+    </li>
+    <li>
+      <strong>Nem tudo é NoSQL:</strong> transação financeira com baixa de estoque é relacional, sempre.
+    </li>
+    <li>
+      <strong>Próxima aula:</strong> Aula 32 — laboratório de modelagem de documentos em MongoDB, com indexação
+      avançada e aggregação para relatórios analíticos.
+    </li>
   </ul>
 </div>

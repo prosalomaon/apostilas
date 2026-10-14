@@ -1,0 +1,227 @@
+{
+  "conteudo": "apostila",
+  "titulo": "Programação Web II",
+  "descricao": "Desenvolvimento de aplicações server-side com PHP 8, explorando desde a sintaxe básica até arquiteturas modernas como MVC e segurança avançada.",
+  "secoes": [
+    {
+      "nome": "Scripts Server-Side e Comunicação Back-end",
+      "aulas": [
+        {
+          "titulo": "Introdução ao PHP 8.1+ e configuração do ambiente (Apache, VS Code, Git)",
+          "descricao": "Introdução ao PHP 8.1+ e configuração do ambiente (Apache, VS Code, Git).",
+          "blocos": []
+        },
+        {
+          "titulo": "Variáveis, constantes e tipos de dados escalares (string, int, float, bool)",
+          "descricao": "Variáveis, constantes e tipos de dados escalares (string, int, float, bool).",
+          "blocos": []
+        },
+        {
+          "titulo": "Estruturas de decisão: if/else, switch e a expressão match do PHP 8",
+          "descricao": "Estruturas de decisão: if/else, switch e a expressão match do PHP 8.",
+          "blocos": []
+        },
+        {
+          "titulo": "Laços de repetição (for, while, foreach) e manipulação de arrays associativos",
+          "descricao": "Laços de repetição (for, while, foreach) e manipulação de arrays associativos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Protocolo HTTP: Verbos (GET, POST), códigos de status e QueryStrings",
+          "descricao": "Protocolo HTTP: Verbos (GET, POST), códigos de status e QueryStrings.",
+          "blocos": []
+        },
+        {
+          "titulo": "Manipulação de Formulários: Captura de dados via superglobais `$_GET` e `$_POST`",
+          "descricao": "Manipulação de Formulários: Captura de dados via superglobais `$_GET` e `$_POST`.",
+          "blocos": []
+        },
+        {
+          "titulo": "Validação e Sanitização: Uso de filter_input() e proteção contra manipulação de tipos",
+          "descricao": "Validação e Sanitização: Uso de filter_input() e proteção contra manipulação de tipos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto 1: Sistema de Validação de Dados Dinâmico (Sem persistência)",
+          "descricao": "Entrega do Projeto 1: Sistema de Validação de Dados Dinâmico (Sem persistência).",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão técnica: Fluxo de dados entre o navegador e o servidor",
+          "descricao": "Revisão técnica: Fluxo de dados entre o navegador e o servidor.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção e feedback individual do Projeto 1",
+          "descricao": "Correção e feedback individual do Projeto 1.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Programação Orientada a Objetos (OOP) e Arquitetura",
+      "aulas": [
+        {
+          "titulo": "Introdução ao Paradigma OO: Classes, Objetos e Instanciação em PHP",
+          "descricao": "Introdução ao Paradigma OO: Classes, Objetos e Instanciação em PHP.",
+          "blocos": []
+        },
+        {
+          "titulo": "Membros da Classe: Atributos, Métodos e o uso da pseudo-variável $this",
+          "descricao": "Aprenda a anatomia de uma classe em PHP, explorando atributos, métodos, visibilidade e a importância do $this.",
+          "blocos": []
+        },
+        {
+          "titulo": "Encapsulamento e Visibilidade: Modificadores public, private e protected",
+          "descricao": "Encapsulamento e Visibilidade: Modificadores public, private e protected.",
+          "blocos": []
+        },
+        {
+          "titulo": "Métodos Mágicos: Construtores (__construct) e Destrutores (__destruct)",
+          "descricao": "Métodos Mágicos: Construtores (__construct) e Destrutores (__destruct).",
+          "blocos": []
+        },
+        {
+          "titulo": "Herança e Reuso: Extensão de classes e o uso da palavra-chave parent::",
+          "descricao": "Herança e Reuso: Extensão de classes e o uso da palavra-chave parent::.",
+          "blocos": []
+        },
+        {
+          "titulo": "Abstração e Interfaces: Criando contratos para os objetos",
+          "descricao": "Abstração e Interfaces: Criando contratos para os objetos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Tratamento de Erros: Implementação de blocos try/catch e exceções customizadas",
+          "descricao": "Tratamento de Erros: Implementação de blocos try/catch e exceções customizadas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto 2: Sistema Financeiro MyPocket usando OOP",
+          "descricao": "Especificações e requisitos para a entrega do Projeto 2, o sistema financeiro MyPocket com desenvolvimento",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão técnica: Organização de classes, namespaces e padrões de nomenclatura",
+          "descricao": "Revisão técnica: Organização de classes, namespaces e padrões de nomenclatura.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção e análise da arquitetura de classes desenvolvida pelos alunos",
+          "descricao": "Correção e análise da arquitetura de classes desenvolvida pelos alunos.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Persistência de Dados e CRUD Seguro",
+      "aulas": [
+        {
+          "titulo": "Introdução ao MySQL: Linguagens DDL, DML e DQL para manipulação de dados",
+          "descricao": "Introdução ao MySQL: Linguagens DDL, DML e DQL para manipulação de dados.",
+          "blocos": []
+        },
+        {
+          "titulo": "Conexão segura com banco de dados utilizando a classe PDO (PHP Data Objects)",
+          "descricao": "Conexão segura com banco de dados utilizando a classe PDO (PHP Data Objects): conexão robusta, CRUD com prepared statements, transações e proteção contra SQL Injection.",
+          "blocos": []
+        },
+        {
+          "titulo": "Operação Create — Inserindo Registros no Banco de Dados com Segurança",
+          "descricao": "Operação Create (INSERT) com PHP 8 e PDO: prepared statements nomeados e posicionais, bindValue vs bindParam, lastInsertId, inserção em lote e cadastros relacionais transacionais.",
+          "blocos": []
+        },
+        {
+          "titulo": "Operação Read: Consultas SQL, recuperação de resultados e exibição dinâmica",
+          "descricao": "Operação Read: Consultas SQL, recuperação de resultados e exibição dinâmica.",
+          "blocos": []
+        },
+        {
+          "titulo": "Operações Update e Delete: Atualização e remoção controlada de dados",
+          "descricao": "Operações Update e Delete: Atualização e remoção controlada de dados.",
+          "blocos": []
+        },
+        {
+          "titulo": "Padrão de Projeto DAO (Data Access Object): Isolando a lógica de banco de dados",
+          "descricao": "Padrão de Projeto DAO (Data Access Object): Isolando a lógica de banco de dados.",
+          "blocos": []
+        },
+        {
+          "titulo": "Segurança em Consultas: Uso obrigatório de Prepared Statements contra SQL Injection",
+          "descricao": "Segurança em Consultas: Uso obrigatório de Prepared Statements contra SQL Injection.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto 3: Aplicação CRUD Completa com Persistência e Padrão DAO",
+          "descricao": "Entrega do Projeto 3: Aplicação CRUD Completa com Persistência e Padrão DAO.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão técnica: Integridade referencial e otimização de consultas SQL",
+          "descricao": "Revisão técnica: Integridade referencial e otimização de consultas SQL.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção de bugs de conexão e refinamento das queries do projeto",
+          "descricao": "Correção de bugs de conexão e refinamento das queries do projeto.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Gerenciamento de Estado, Segurança e MVC",
+      "aulas": [
+        {
+          "titulo": "Gerenciamento de Estado: Implementação de Cookies para Preferências e Histórico",
+          "descricao": "O protocolo HTTP é stateless. Aprenda a usar cookies no PHP 8 com setcookie() e a superglobal $_COOKIE para persistir preferências de tema e histórico de navegação, aplicando as flags de segurança httponly, secure e samesite.",
+          "blocos": []
+        },
+        {
+          "titulo": "Gerenciamento de Sessões: Autenticação de usuários e controle de 'Ãrea Restrita'",
+          "descricao": "Gerenciamento de Sessões: Autenticação de usuários e controle de 'Área Restrita'.",
+          "blocos": []
+        },
+        {
+          "titulo": "Segurança Web Avançada: Prevenção contra XSS (Cross-Site Scripting) via escape de saída",
+          "descricao": "Segurança Web Avançada: Prevenção contra XSS (Cross-Site Scripting) via escape de saída.",
+          "blocos": []
+        },
+        {
+          "titulo": "Introdução ao Padrão MVC (Model-View-Controller): Teoria e fluxo de dados",
+          "descricao": "Introdução ao Padrão MVC (Model-View-Controller): Teoria e fluxo de dados.",
+          "blocos": []
+        },
+        {
+          "titulo": "Modularização Profissional: Namespaces e Autoloading seguindo o padrão PSR-4",
+          "descricao": "Modularização Profissional: Namespaces e Autoloading seguindo o padrão PSR-4.",
+          "blocos": []
+        },
+        {
+          "titulo": "Refinamento de Interface: Uso de templates dinâmicos integrados ao back-end",
+          "descricao": "Refinamento de Interface: Uso de templates dinâmicos integrados ao back-end.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão Geral: Princípios SOLID, DRY (Don't Repeat Yourself) e segurança final",
+          "descricao": "Revisão Geral: Princípios SOLID, DRY (Don't Repeat Yourself) e segurança final.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto Final: Sistema Web Completo (CRUD + Login + Segurança + MVC)",
+          "descricao": "Entrega do Projeto Final: Sistema Web Completo (CRUD + Login + Segurança + MVC).",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão técnica geral e autoavaliação automatizada final",
+          "descricao": "Revisão técnica geral e autoavaliação automatizada final.",
+          "blocos": []
+        },
+        {
+          "titulo": "Encerramento do curso e correções finais dos projetos entregues",
+          "descricao": "Encerramento do curso e correções finais dos projetos entregues.",
+          "blocos": []
+        }
+      ]
+    }
+  ]
+}

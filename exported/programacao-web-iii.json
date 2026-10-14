@@ -1,0 +1,227 @@
+{
+  "conteudo": "apostila",
+  "titulo": "Programação Web III",
+  "descricao": "Desenvolvimento de aplicações web complexas utilizando frameworks modernos, arquitetura MVC, APIs RESTful e integração com tecnologias mobile.",
+  "secoes": [
+    {
+      "nome": "Arquitetura MVC e Fundamentos de Frameworks",
+      "aulas": [
+        {
+          "titulo": "Introdução aos Frameworks Web",
+          "descricao": "Por que usar e como funcionam o Composer e o autoloading (PSR-4).",
+          "blocos": []
+        },
+        {
+          "titulo": "O Padrão MVC (Model-View-Controller)",
+          "descricao": "Separação de responsabilidades e fluxo de dados na aplicação.",
+          "blocos": []
+        },
+        {
+          "titulo": "Roteamento e Mapeamento de URLs",
+          "descricao": "Criando rotas amigáveis e controladores.",
+          "blocos": []
+        },
+        {
+          "titulo": "Blade Engine (Templates)",
+          "descricao": "Herança de layouts, seções e exibição dinâmica de dados.",
+          "blocos": []
+        },
+        {
+          "titulo": "Introdução ao Eloquent ORM",
+          "descricao": "Mapeamento objeto-relacional e criação de Migrations (banco de dados).",
+          "blocos": []
+        },
+        {
+          "titulo": "Ciclo de Vida da Requisição",
+          "descricao": "Request/Response e manipulação de inputs no framework.",
+          "blocos": []
+        },
+        {
+          "titulo": "CRUD básico com Framework",
+          "descricao": "Uso de Scaffolding para agilizar o desenvolvimento.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto 1",
+          "descricao": "Sistema de Gerenciamento de Conteúdo (Blog ou Portfólio) usando MVC.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão técnica",
+          "descricao": "Estrutura de pastas e lógica de rotas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correções e Feedback",
+          "descricao": "Correções individuais e feedback do Projeto 1.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Persistência Avançada, Segurança e Autenticação",
+      "aulas": [
+        {
+          "titulo": "Eloquent Avançado – Relacionamentos e Persistência Complexa",
+          "descricao": "Relacionamentos (Um-para-um, Um-para-muitos, Muitos-para-muitos) e persistência complexa no Eloquent ORM.",
+          "blocos": []
+        },
+        {
+          "titulo": "Validação de Dados",
+          "descricao": "Implementando regras de negócio e mensagens de erro personalizadas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Middleware",
+          "descricao": "Filtrando requisições e protegendo rotas por níveis de acesso.",
+          "blocos": []
+        },
+        {
+          "titulo": "Autenticação e Autorização",
+          "descricao": "Configurando sistemas de Login, Registro e 'Lembrar-me'.",
+          "blocos": []
+        },
+        {
+          "titulo": "Upload de Arquivos",
+          "descricao": "Manipulação e armazenamento seguro de mídias no servidor.",
+          "blocos": []
+        },
+        {
+          "titulo": "Sessão e Mensagens Flash",
+          "descricao": "Feedback visual para o usuário (sucesso/erro).",
+          "blocos": []
+        },
+        {
+          "titulo": "Refatoração e SOLID",
+          "descricao": "Princípio da responsabilidade única em serviços e repositórios.",
+          "blocos": []
+        },
+        {
+          "titulo": "Apresentação da Atividade Prática Avaliativa: Passaporte.io",
+          "descricao": "Atividade de conclusão do bimestre: Sistema de Gestão de Eventos e Ingressos integrando Laravel e DaisyUI.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão técnica",
+          "descricao": "Segurança de dados e middleware.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correções e Feedback",
+          "descricao": "Correções individuais e feedback do Projeto 2.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Web Services, APIs e Integração Assíncrona",
+      "aulas": [
+        {
+          "titulo": "Introdução ao AJAX",
+          "descricao": "Requisições assíncronas utilizando a Fetch API do JavaScript.",
+          "blocos": []
+        },
+        {
+          "titulo": "Arquitetura REST",
+          "descricao": "Princípios, verbos HTTP (PUT, DELETE) e códigos de status.",
+          "blocos": []
+        },
+        {
+          "titulo": "Criação e Exposição de APIs",
+          "descricao": "Retornando dados em formato JSON a partir do framework.",
+          "blocos": []
+        },
+        {
+          "titulo": "Consumo de APIs Externas",
+          "descricao": "Integrando serviços públicos (Google Maps, ViaCEP, etc.).",
+          "blocos": []
+        },
+        {
+          "titulo": "Padrões de Transferência",
+          "descricao": "Comparação prática entre JSON e XML.",
+          "blocos": []
+        },
+        {
+          "titulo": "Integração Front-end",
+          "descricao": "Sincronizando o banco de dados via API para atualização dinâmica.",
+          "blocos": []
+        },
+        {
+          "titulo": "Segurança em APIs",
+          "descricao": "Implementando proteção contra ataques comuns e sanitização de saída.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto 3",
+          "descricao": "Dashboard interativo que consome e expõe dados via API JSON.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão técnica",
+          "descricao": "Lógica de requisições assíncronas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correções e Feedback",
+          "descricao": "Correções individuais e feedback do Projeto 3.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Mobile Integration, Performance e Fechamento",
+      "aulas": [
+        {
+          "titulo": "JSON Web Tokens (JWT)",
+          "descricao": "Autenticação segura para aplicações mobile e SPAs.",
+          "blocos": []
+        },
+        {
+          "titulo": "Mobile Integration",
+          "descricao": "Utilizando recursos do dispositivo (Câmera, GPS) via integração Web.",
+          "blocos": []
+        },
+        {
+          "titulo": "PWA (Progressive Web Apps)",
+          "descricao": "Transformando o sistema web em um app instalável e offline-first.",
+          "blocos": []
+        },
+        {
+          "titulo": "Otimização de Performance",
+          "descricao": "Caching de dados e introdução ao JIT do PHP 8.",
+          "blocos": []
+        },
+        {
+          "titulo": "Segurança Avançada",
+          "descricao": "Proteção contra CSRF, XSS e Rate Limiting.",
+          "blocos": []
+        },
+        {
+          "titulo": "Documentação de APIs",
+          "descricao": "Uso de ferramentas como Swagger para documentar serviços técnicos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Integração Contínua (CI)",
+          "descricao": "Automatizando builds e verificando qualidade de código.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto Final",
+          "descricao": "Aplicação Full Stack completa (MVC + API + Segurança + Mobile Ready).",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão Geral",
+          "descricao": "Autoavaliação automatizada e feedback de competências profissionais.",
+          "blocos": []
+        },
+        {
+          "titulo": "Encerramento do Curso",
+          "descricao": "Encerramento do curso e correções finais dos projetos.",
+          "blocos": []
+        }
+      ]
+    }
+  ]
+}

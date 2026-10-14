@@ -1,71 +1,628 @@
 ---
-title: "Introdução ao NoSQL"
+title: "Introdução ao NoSQL - Famílias, Teorema CAP e Persistência Poliglota"
 aula_numero: "31"
-description: "Explorando modelos de dados não estruturados, escalabilidade e o Teorema CAP."
+description: "Evolução histórica dos modelos de dados, o movimento NoSQL (Not Only SQL), o Teorema CAP, o modelo BASE, as quatro famílias de bancos NoSQL e o conceito de Persistência Poliglota em arquiteturas de microsserviços."
 tags:
 - aula
 - bimestre-04
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>O termo NoSQL (Not Only SQL) refere-se a bancos de dados que não utilizam o modelo relacional tradicional. Eles
-    surgiram para lidar com o grande volume, velocidade e variedade de dados (Big Data).</p>
+  <h2>1. Contexto Histórico e a Evolução das Arquiteturas de Dados</h2>
+  <p>
+    Para compreender o surgimento do movimento NoSQL, é necessário analisar a evolução da gestão de dados ao longo das
+    décadas. Cada modelo surged como resposta às limitações do anterior, e o NoSQL é o capítulo mais recente dessa
+    sequência.
+  </p>
+
+  <h3>1.1. Sistemas de Arquivos e Primeiros Modelos (Década de 1960)</h3>
+  <p>
+    Os SGBDs evoluíram a partir de sistemas de arquivos primitivos. O passo seguinte foi organizar esses arquivos em
+    estruturas de navegação, dando origem a dois modelos clássicos:
+  </p>
   <ul>
-    <li><strong>Flexibilidade de Esquema:</strong> Não exige uma estrutura rígida de tabelas e colunas.</li>
-    <li><strong>Escalonamento Horizontal:</strong> Projetados para rodar em clusters de servidores comuns.</li>
-    <li><strong>Teorema CAP:</strong> Um sistema distribuído só pode garantir dois dos três pilares: Consistência,
-      Disponibilidade e Tolerância a Partição.</li>
+    <li>
+      <strong>Modelo Hierárquico:</strong> dados organizados em árvores, com relacionamento <code class="one-line-code">1:N</code>
+      pelo conceito de <em>proprietário/membro</em> (<em>owner/member</em>). Exemplo comercial: IBM IMS, de 1968.
+    </li>
+    <li>
+      <strong>Modelo em Rede:</strong> dados organizados em grafos, no qual um registro pode ter vários sucessores, ao
+      contrário da hierarquia. Formalizado pelo padrão <strong>CODASYL</strong>.
+    </li>
+  </ul>
+  <p>
+    Ambos exigiam <strong>navegação sequencial ou por ponteiros físicos</strong> diretamente a partir dos programas de
+    aplicação. O programador precisava conhecer o caminho físico dos dados para recuperá-los, o que tornava qualquer
+    mudança de layout uma emergência.
+  </p>
+
+  <h3>1.2. A Revolução do Modelo Relacional (1970)</h3>
+  <p>
+    Em 1970, <strong>Edgar F. Codd</strong> propôs o modelo relacional. A contribuição central não foi apenas a tabela,
+    e sim a <strong>abstração dos caminhos de acesso físico</strong>: a aplicação deixa de saber onde o dado está no disco
+    e passa a declarar <em>o que</em> quer. O modelo introduziu:
+  </p>
+  <ul>
+    <li><strong>Relações</strong> (tabelas) como unidade de dados, com tuplas e atributos.</li>
+    <li><strong>Álgebra relacional</strong>, que dá uma base formal (e otimizável) às consultas.</li>
+    <li><strong>Integridade referencial</strong> entre tabelas, declarada pelo projetista e garantida pelo SGBD.</li>
+  </ul>
+  <p>
+    Rapidamente ele se tornou o padrão dominante para aplicações comerciais e transacionais (OLTP), e permanece até hoje
+    como a escolha correta para a maioria dos sistemas corporativos.
+  </p>
+
+  <h3>1.3. Modelo Orientado a Objetos (Década de 1980)</h3>
+  <p>
+    O modelo orientado a objetos surgiu para atender a aplicações com tipos de dados complexos — como sistemas CAD/CAM
+    e Sistemas de Informação Geográfica (SIG) —, nos quais uma estrutura tabular rígida não representava adequadamente
+    geometrias, hierarquias e operações. Houve tentativas de padronização pelo
+    <strong>ODMG</strong> (Object Data Management Group), que nunca chegaram a ser implementadas de forma convergente.
+  </p>
+
+  <h3>1.4. Os Gargalos do Modelo Relacional na Era do Big Data</h3>
+  <p>
+    Com o surgimento da Web 2.0, das redes sociais e das aplicações globais em larga escala, os bancos relacionais
+    tradicionais enfrentaram três limitações estruturais:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Limitação</th>
+        <th>Descrição técnica</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dificuldade de escalabilidade horizontal (Scale-Out)</strong></td>
+        <td>
+          Bancos relacionais dependem de forte acoplamento para manter a integridade referencial e transações ACID em
+          múltiplos nós. Expandir o sistema exige tipicamente aumentar o hardware do servidor (Scale-Up, em máquinas de grande
+          porte), e não adicionar máquinas menores ao cluster.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Rigidez de esquema (Schema-First)</strong></td>
+        <td>
+          Alterações na estrutura das tabelas, via DDL <code class="one-line-code">ALTER TABLE</code>, em bases com
+          bilhões de registros tornam-se operações custosas e potencialmente bloqueantes.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Incompatibilidade com dados não estruturados</strong></td>
+        <td>
+          Armazenar dados sem estrutura fixa ou com atributos altamente variáveis gera proliferação de valores nulos e
+          tabelas esparsas, desperdiçando espaço e exigindo colunas artificialmente genéricas.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>2. O Conceito NoSQL (Not Only SQL)</h2>
+  <p>
+    O termo NoSQL <strong>não significa “Não ao SQL”</strong>, mas sim <em>Not Only SQL</em> (Não Apenas SQL). Trata-se de
+    uma abordagem arquitetural pragmática que prega a escolha do motor de banco de dados adequado para o tipo de dado e
+    a carga de trabalho específica de cada subsistema — inclusive admitting que o SQL continue sendo a melhor resposta
+    para muitos problemas.
+  </p>
+
+  <h3>2.1. Principais Características do NoSQL</h3>
+  <ul>
+    <li>
+      <strong>Esquema flexível ou dinâmico (Schema-less / Schema-on-Read):</strong> os dados podem ser inseridos sem
+      necessidade de uma definição DDL prévia. Campos novos podem ser adicionados dinamicamente, documento a documento.
+    </li>
+    <li>
+      <strong>Escalabilidade horizontal (Scale-Out):</strong> arquitetura projetada para rodar em clusters de servidores
+      distribuídos e de baixo custo, por meio de particionamento (<em>sharding</em>) e replicação. Em vez de comprar um
+      servidor maior, adiciona-se mais servidores menores.
+    </li>
+    <li>
+      <strong>Simplicidade de API:</strong> em vez do SQL padrão ANSI, muitos SGBDs NoSQL utilizam APIs REST, JSON ou
+      interfaces procedurais de baixo nível, otimizadas para operações de leitura e escrita rápidas sobre um único
+      documento.
+    </li>
   </ul>
 </section>
 
 <section class="section-box">
-  <h2>Tipos de NoSQL</h2>
-  <div class="code-container">
-    <pre><code class="one-line-code">1. Documentos (ex: MongoDB, CouchDB)
-2. Chave-Valor (ex: Redis, DynamoDB)
-3. Colunas (ex: Cassandra, HBase)
-4. Grafos (ex: Neo4j)</code></pre>
+  <h2>3. Fundamentação Teórica: Teorema CAP e Modelo BASE</h2>
+  <p>
+    Ao contrário dos bancos de dados relacionais, que priorizam as propriedades <strong>ACID</strong> (Atomicidade,
+    Consistência, Isolamento, Durabilidade), os sistemas distribuídos NoSQL baseiam-se no <strong>Teorema CAP</strong> e
+    na filosofia <strong>BASE</strong>.
+  </p>
+
+  <h3>3.1. O Teorema CAP (Teorema de Brewer)</h3>
+  <p>
+    Em qualquer sistema de dados distribuído, é impossível garantir simultaneamente mais de duas das três propriedades
+    a seguir:
+  </p>
+  <ul>
+    <li>
+      <strong>C — Consistência (<em>Consistency</em>):</strong> todos os nós do cluster enxergam exatamente os mesmos
+      dados no mesmo instante de tempo.
+    </li>
+    <li>
+      <strong>A — Disponibilidade (<em>Availability</em>):</strong> toda requisição que não suffer falha recebe uma
+      resposta válida — mas sem garantia de que ela contenha a escrita mais recente.
+    </li>
+    <li>
+      <strong>P — Tolerância a partições (<em>Partition Tolerance</em>):</strong> o sistema continua operando mesmo se
+      houver falha de comunicação entre os nós do cluster.
+    </li>
+  </ul>
+  <div class="tip-box">
+    <h4>A escolha inevitável</h4>
+    <p>
+      Como, em redes reais, perda de pacotes e falhas de comunicação são inevitáveis, a tolerância a partições
+      (<strong>P</strong>) não é opcional. Todo sistema distribuído NoSQL deve, portanto, <strong>optar entre ser
+      CP</strong> (prioriza consistência em caso de partição, rejeitando escritas no nó isolado) <strong>ou ser
+      AP</strong> (prioriza disponibilidade, aceitando escritas que podem divergir temporariamente).
+    </p>
+  </div>
+
+  <h3>3.2. O Modelo BASE (em oposição ao ACID)</h3>
+  <ul>
+    <li>
+      <strong>Basically Available (Basicamente Disponível):</strong> a alta disponibilidade é priorizada, mesmo
+      diante de falhas parciais.
+    </li>
+    <li>
+      <strong>Soft-State (Estado Flexível):</strong> o estado dos dados pode mudar ao longo do tempo sem intervenção do
+      usuário, à medida que a replicação se propaga entre os nós.
+    </li>
+    <li>
+      <strong>Eventual Consistency (Consistência Eventual):</strong> o sistema garante que, se nenhuma nova atualização
+      for realizada, <em>eventualmente</em> todos os nós do cluster alcançarão o mesmo estado idêntico.
+    </li>
+  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>Propriedade</th>
+        <th>Garantia</th>
+        <th>Consequência prática</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Consistência forte</strong> (ACID)</td>
+        <td>Leitura sempre retorna o valor mais recente</td>
+        <td>Latência maior, conflitos evitados, escala vertical</td>
+      </tr>
+      <tr>
+        <td><strong>Consistência eventual</strong> (BASE)</td>
+        <td>Leitura pode retornar valor desatualizado, que converge depois</td>
+        <td>Latência menor, conflitos possíveis, escala horizontal</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>4. As Quatro Grandes Famílias de Bancos de Dados NoSQL</h2>
+  <p>Os bancos NoSQL são classificados segundo a forma como estruturam e armazenam internamente os dados.</p>
+  <div class="mermaid">
+    graph TD
+    NoSQL["Famílias de Bancos NoSQL"]
+    NoSQL --> KV["1. Chave-Valor"]
+    NoSQL --> DOC["2. Orientados a Documentos"]
+    NoSQL --> COL["3. Família de Colunas"]
+    NoSQL --> GRA["4. Orientados a Grafos"]
+
+    style KV fill:#fff3e0,stroke:#e65100
+    style DOC fill:#d4edda,stroke:#c3e6cb
+    style COL fill:#e1f5fe,stroke:#01579b
+    style GRA fill:#f3e5f5,stroke:#6a1b9a
+  </div>
+
+  <h3>4.1. Chave-Valor (Key-Value Stores)</h3>
+  <p>
+    <strong>Funcionamento:</strong> é a estrutura mais simples. Armazena os dados como um par chave-valor, semelhante a
+    uma tabela hash gigante. A chave é um identificador único e o valor é um bloco de dados <em>opaco</em> para o banco.
+  </p>
+  <p>
+    <strong>Vantagens:</strong> latência extremamente baixa para leitura e escrita (ordem de grandeza
+    <code class="one-line-code">O(1)</code>) e particionamento trivial, já que a chave determina o nó.
+  </p>
+  <p>
+    <strong>Casos de uso:</strong> caches de sessão Web, carrinhos de compras, configurações de preferências de usuários,
+    filas e contadores.
+  </p>
+  <p><strong>Exemplos comerciais:</strong> Redis, Amazon DynamoDB, Memcached.</p>
+
+  <h3>4.2. Orientados a Documentos (Document Databases)</h3>
+  <p>
+    <strong>Funcionamento:</strong> evolução do tipo chave-valor. O “valor” passa a ser um documento
+    estruturado ou semiestruturado, geralmente em formato JSON, BSON ou XML. Diferente do chave-valor puro, o banco
+    consegue <strong>inspecionar o conteúdo interno</strong> do documento e criar índices secundários sobre seus campos.
+  </p>
+  <p>
+    <strong>Vantagens:</strong> mapeamento natural com objetos das linguagens de programação, eliminando a
+    incompatibilidade de impedância que discutimos na aula de ORM; cada documento é lido de forma independente.
+  </p>
+  <p>
+    <strong>Casos de uso:</strong> catálogos de e-commerce (cada produto com atributos próprios), perfis de usuários,
+    sistemas de gestão de conteúdo (CMS), logs de eventos.
+  </p>
+  <p><strong>Exemplos comerciais:</strong> MongoDB, CouchDB, Couchbase.</p>
+
+  <h3>4.3. Orientados a Colunas / Família de Colunas (Column-Family)</h3>
+  <p>
+    <strong>Funcionamento:</strong> inspirados na arquitetura do Google Bigtable. Em vez de armazenar tuplas contíguas em
+    disco por linhas, como no modelo relacional tradicional, os dados são organizados e <strong>gravados fisicamente por
+    famílias de colunas</strong>. Linhas esparsas podem ter colunas distintas entre si, sem penalidade.
+  </p>
+  <p>
+    <strong>Vantagens:</strong> alta eficiência em gravações massivas de dados esparsos e em consultas analíticas de
+    agregação, sem necessidade de leitura da linha inteira para obter uma ou duas colunas.
+  </p>
+  <p>
+    <strong>Casos de uso:</strong> análise de séries temporais (<em>time-series</em>), ingestão de telemetria e IoT,
+    logs de auditoria de eventos e filas de mensagens de alta vazão.
+  </p>
+  <p><strong>Exemplos comerciais:</strong> Apache Cassandra, HBase, ScyllaDB.</p>
+
+  <h3>4.4. Orientados a Grafos (Graph Databases)</h3>
+  <p>
+    <strong>Funcionamento:</strong> baseados na teoria dos grafos. Representam o domínio por meio de <strong>nós</strong>
+    (entidades), <strong>arestas</strong> (relacionamentos explícitos) e <strong>propriedades</strong> (atributos). Os
+    relacionamentos são armazenados como <em>ponteiros de adjacência direta</em> (<em>index-free adjacency</em>), o que
+    permite navegar por conexões sem o custo exponencial de sucessivos JOINs relacionais.
+  </p>
+  <p>
+    <strong>Vantagens:</strong> desempenho constante em consultas de travessia em rede e detecção de padrões complexos,
+    como communities, caminhos mais curtos e ciclos.
+  </p>
+  <p>
+    <strong>Casos de uso:</strong> redes sociais (amigos e seguidores), motores de recomendação, análise de redes de
+    fraude bancária, rotas e logística, estoques de dependências de software.
+  </p>
+  <p><strong>Exemplos comerciais:</strong> Neo4j, Amazon Neptune, ArangoDB.</p>
+</section>
+
+<section class="section-box">
+  <h2>5. Quadro Comparativo: Relacional (SQL) vs. NoSQL</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Critério de comparação</th>
+        <th>Banco de Dados Relacional (SQL)</th>
+        <th>Banco de Dados NoSQL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Modelo de dados</strong></td>
+        <td>Tabelas bidimensionais com linhas e colunas</td>
+        <td>Documentos, pares chave-valor, colunas ou grafos</td>
+      </tr>
+      <tr>
+        <td><strong>Definição de esquema</strong></td>
+        <td>Estática e rígida (<em>Schema-first</em> via DDL)</td>
+        <td>Dinâmica e flexível (<em>Schema-less</em> / <em>Schema-on-read</em>)</td>
+      </tr>
+      <tr>
+        <td><strong>Escalabilidade</strong></td>
+        <td>Predominantemente vertical (Scale-Up)</td>
+        <td>Predominantemente horizontal (Scale-Out)</td>
+      </tr>
+      <tr>
+        <td><strong>Garantia de transação</strong></td>
+        <td>Propriedades ACID estritas</td>
+        <td>Modelo BASE / consistência eventual</td>
+      </tr>
+      <tr>
+        <td><strong>Relacionamentos e integridade</strong></td>
+        <td>Chaves primárias/estrangeiras e JOINs</td>
+        <td>Desnormalização ou navegação por ponteiros</td>
+      </tr>
+      <tr>
+        <td><strong>Linguagem padrão</strong></td>
+        <td>SQL (ANSI/ISO)</td>
+        <td>APIs e linguagens de consulta proprietárias</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section-box">
+  <h2>6. Conceito Moderno: Persistência Poliglota</h2>
+  <p>
+    Com a maturidade das arquiteturas de software distribuídas, como os microsserviços, a abordagem atual não busca
+    substituir completamente os bancos relacionais por NoSQL. Em vez disso, aplica-se o conceito de
+    <strong>Persistência Poliglota</strong>: a utilização simultânea de múltiplos motores de banco de dados em um mesmo
+    ecossistema, onde <strong>cada serviço utiliza o banco mais adequado</strong> para sua necessidade de dados.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Serviço</th>
+        <th>Motor indicado</th>
+        <th>Justificativa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Pagamentos / Financeiro</strong></td>
+        <td>Relacional (ex: PostgreSQL)</td>
+        <td>Exige ACID e consistência estrita; não há tolerância a divergência em saldo</td>
+      </tr>
+      <tr>
+        <td><strong>Catálogo de Produtos</strong></td>
+        <td>Orientado a documentos (ex: MongoDB)</td>
+        <td>Flexibilidade de atributos por categoria, sem DDL a cada novo tipo de produto</td>
+      </tr>
+      <tr>
+        <td><strong>Sessão e Autenticação</strong></td>
+        <td>Chave-valor (ex: Redis)</td>
+        <td>Latência ultrabaixa e dados em memória</td>
+      </tr>
+      <tr>
+        <td><strong>Recomendação de Amigos / Produtos</strong></td>
+        <td>Orientado a grafos (ex: Neo4j)</td>
+        <td>Navegação em rede com travessias de profundidade variável</td>
+      </tr>
+      <tr>
+        <td><strong>Telemetria e IoT</strong></td>
+        <td>Família de colunas (ex: Cassandra)</td>
+        <td>Gravação massiva de dados esparsos e consultas por janela de tempo</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="tip-box">
+    <h4>O custo da persistência poliglota</h4>
+    <p>
+      Adotar vários motores significa manter <strong>equipes, Expertise, Ferramentas de backup e versões</strong>
+      diferentes. Cada banco adicional multiplica o custo operacional e o número de pontos de falha. Por isso a
+      persistência poliglota só se justifica quando o ganho de escala ou de modelo de dados é real — usá-la por moda
+      é um erro arquitetural.
+    </p>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Diagramação Lógica</h2>
+  <h2>7. Diagramação Lógica</h2>
+
+  <h3>Fluxo de Decisão para Escolha do Modelo de Dados</h3>
   <div class="mermaid">
     graph TD
-    CAP[Teorema CAP] --> C[Consistência]
-    CAP --> A[Disponibilidade]
-    CAP --> P[Tolerância a Partição]
-    C --- A
-    A --- P
-    P --- C
+    A["Requisito de persistência"] --> B{"Os dados são<br/>relacionais e<br/>transacionais?"}
+    B -->|Sim| C["Banco Relacional<br/>PostgreSQL ou MySQL"]
+    B -->|Não| D{"O volume cresce<br/>horizontalmente?"}
+    D -->|Não| E["SQLite ou SGBD<br/>embutido"]
+    D -->|Sim| F{"Qual a natureza<br/>da consulta?"}
+    F -->|Acesso por<br/>identificador| G["Chave-Valor<br/>Redis"]
+    F -->|Objetos com<br/>atributos variáveis| H["Documentos<br/>MongoDB"]
+    F -->|Agregações e<br/>séries temporais| I["Família de Colunas<br/>Cassandra"]
+    F -->|Travessias em<br/>rede profunda| J["Grafos<br/>Neo4j"]
+
+    style C fill:#d4edda,stroke:#c3e6cb
+    style G fill:#fff3e0,stroke:#e65100
+    style H fill:#e1f5fe,stroke:#01579b
+    style I fill:#fce4ec,stroke:#880e4f
+    style J fill:#f3e5f5,stroke:#6a1b9a
+  </div>
+
+  <h3>Particionamento de um Cluster com Sharding</h3>
+  <div class="mermaid">
+    graph TD
+    R["Router / Driver de<br/>particionamento"]
+    R --> N1["Nó A<br/>familia grafo"]
+    R --> N2["Nó B<br/>família grafo"]
+    R --> N3["Nó C<br/>família grafo"]
+    R --> N4["Nó D<br/>família grafo"]
+    N1 --- REP["Réplicas"]
+    N2 --- REP
+    N3 --- REP
+    N4 --- REP
+
+    style R fill:#01579b,stroke:#01579b,color:#ffffff
+    style REP fill:#eeeeee,stroke:#9e9e9e
+  </div>
+
+  <h3>Modelo conceitual de um documento de produto</h3>
+  <div class="mermaid">
+    graph TD
+    DOC["Documento de produto<br/>coleção produtos"]
+    DOC --> A["_id: ObjectId"]
+    DOC --> B["nome: string<br/>obrigatório"]
+    DOC --> C["preco: Decimal<br/>obrigatório"]
+    DOC --> D["categorias: array<br/>variável por categoria"]
+    DOC --> E["atributos_extras: objeto<br/>só existe em alguns docs"]
+
+    style A fill:#fff3e0,stroke:#e65100
+    style E fill:#fce4ec,stroke:#880e4f
+  </div>
+</section>
+
+<section class="section-box">
+  <h2>Exemplo de Código</h2>
+  <p>
+    Compare como a mesma informação é declarada em um banco relacional e em um banco orientado a documentos. Repare que
+    não existe equivalência direta: em NoSQL, parte da estrutura deixa de estar no banco e passa a estar no documento.
+  </p>
+
+  <h3>Exemplo 1: O mesmo Produto em SQL e em MongoDB</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Relacional: esquema fixo, esquema definido antes do dado
+CREATE TABLE produto (
+    id_produto   INT PRIMARY KEY AUTO_INCREMENT,
+    nome         VARCHAR(120)   NOT NULL,
+    preco        DECIMAL(10,2)  NOT NULL,
+    cor          VARCHAR(30),
+    tamanho      VARCHAR(10),
+    tags         TEXT
+);
+
+-- Inserção de uma camiseta (cor e tamanho preenchidos)
+INSERT INTO produto (nome, preco, cor, tamanho, tags)
+VALUES ('Camiseta Malha', 79.90, 'Azul', 'M', 'promocao,verao');
+
+-- Inserção de um liquidificador (mesma tabela, colunas irrelevantes vazias)
+INSERT INTO produto (nome, preco, cor, tamanho, tags)
+VALUES ('Liquidificador', 249.50, NULL, NULL, 'eletrodomestico');</code></pre>
+  </div>
+  <div class="code-container">
+    <pre><code class="language-javascript">// Orientado a documentos: o esquema acompanha cada documento
+db.produto.insertOne({
+  nome: "Camiseta Malha",
+  preco: Decimal128("79.90"),
+  cor: "Azul",
+  tamanho: "M",
+  tags: ["promocao", "verao"]
+});
+
+db.produto.insertOne({
+  nome: "Liquidificador",
+  preco: Decimal128("249.50"),
+ tags: ["eletrodomestico"]
+});
+
+// Consulta por campo indexado
+db.produto.find({ cor: "Azul" }, { nome: 1, preco: 1, _id: 0 });
+
+// Documentos com campos que os outros não possuem
+db.produto.find({ tamanho: { $exists: true } });</code></pre>
+  </div>
+
+  <h3>Exemplo 2: Chave-Valor com Redis</h3>
+  <div class="code-container">
+    <pre><code class="language-plaintext"># Armazena o carrinho como um valor opaco sob uma chave
+SET carrinho:cliente:1042 "{\"itens\":[{\"sku\":\"CAM-001\",\"qtd\":2}]}" EX 3600
+
+# Leitura em tempo constante
+GET carrinho:cliente:1042
+
+# O banco não sabe o que existe dentro do valor: é um blob para ele
+# Em um banco de documentos, o mesmo objeto seria consultável campo a campo</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Grafos para Recomendação de Amigos</h3>
+  <div class="code-container">
+    <pre><code class="language-cypher">// Neo4j: rede social como grafo de nós e arestas
+CREATE (a:Usuario {id: 'u1', nome: 'Ana'})
+CREATE (b:Usuario {id: 'u2', nome: 'Bruno'})
+CREATE (c:Usuario {id: 'u3', nome: 'Carla'})
+
+CREATE (a)-[:SEGUE {desde: '2024-03-01'}]->(b)
+CREATE (b)-[:SEGUE {desde: '2024-05-11'}]->(c)
+CREATE (a)-[:SEGUE {desde: '2025-01-20'}]->(c);
+
+// Amigos de amigos: travessia de profundidade 2 sobre as arestas
+MATCH (a:Usuario {id: 'u1'})-[:SEGUE]->()-[:SEGUE]->(recomendado:Usuario)
+RETURN DISTINCT recomendado.nome AS sugestao;
+
+// No relacional, a mesma consulta exigiria dois JOINs e uma tabela de
+// intermediários para evitar recálculo constante</code></pre>
+  </div>
+
+  <h3>Exemplo 4: Verificando Consistência Eventual</h3>
+  <div class="code-container">
+    <pre><code class="language-plaintext"># 1. Escrita no nó mestre
+SET contador:likes:post:99 1
+
+# 2. Leitura imediata em um nó secundário pode devolver o valor antigo
+GET contador:likes:post:99     -> 0   (réplica ainda não convergiu)
+
+# 3. Após a propagação, todas as réplicas convergem
+GET contador:likes:post:99     -> 1
+
+# Em ACID, o passo 2 jamais retornaria 0: a leitura teria de ver a escrita mais recente</code></pre>
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
-  <p>NoSQL não substitui o SQL. NoSQL é uma ferramenta específica para casos de uso onde a estrutura dos dados muda
-    muito ou onde a performance de leitura/escrita em massa é crítica.</p>
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>NoSQL não é "sem SQL":</strong> muitos bancos NoSQL oferecem SQL como camada de conveniência sobre um
+      motor que não é relacional. A sigla significa <em>Not Only</em>.
+    </li>
+    <li>
+      <strong>CAP não é uma escolha de três, é de duas:</strong> como a tolerância a partições é obrigatória em
+      sistemas distribuídos, a decisão real é entre <strong>CP</strong> (consistência) e <strong>AP</strong>
+      (disponibilidade).
+    </li>
+    <li>
+      <strong>Consistência eventual exige idempotência:</strong> se o cliente repetir a mesma escrita durante a janela
+      de convergência, o resultado final pode ser aplicado duas vezes. Use chaves de idempotência.
+    </li>
+    <li>
+      <strong>Desnormalização é custo:</strong> eliminar JOINs em NoSQL significa duplicar dados. A consistência do dado
+      replicado passa a ser responsabilidade da aplicação.
+    </li>
+    <li>
+      <strong>Esquema flexível não é esquema inexistente:</strong> em produção, valide documentos na aplicação ou por
+      JSON Schema, porque o banco nãogarante isso por padrão.
+    </li>
+    <li>
+      <strong>Índices em NoSQL custam escrita:</strong> cada índice secundário é mantido a cada gravação, ao contrário do
+      relacional, onde o custo maior está na leitura. Modele os índices como parte da escrita.
+    </li>
+    <li>
+      <strong>Próxima aula:</strong> Aula 32 — estudo de caso e laboratório de modelagem de documentos em MongoDB,
+      onde aplicamos a persistência poliglota em um cenário de e-commerce.
+    </li>
+  </ul>
 </div>
 
 <section class="section-box">
-  <h2>Como aplicar na Prática</h2>
-  <p>Use bancos de documentos para armazenar perfis de usuários em redes sociais, onde cada usuário pode ter
-    informações diferentes (uns têm Instagram, outros não, outros têm 10 endereços, etc.).</p>
+  <h2>Como Aplicar na Prática</h2>
+  <ul>
+    <li>
+      <strong>Regra do transacional primeiro:</strong> qualquer dado que envolve dinheiro, estoque obrigatório ou
+      obrigação legal vai para um banco relacional, mesmo que o restante do sistema seja NoSQL.
+    </li>
+    <li>
+      <strong>Enumere o padrão de acesso antes de escolher:</strong> “vou buscar por chave” sugere chave-valor; “vou
+      filtrar por atributos variáveis” sugere documentos; “vou atravessar relações” sugere grafos.
+    </li>
+    <li>
+      <strong>Defina a janela de convergência:</strong> se o usuário não tolera ler um dado desatualizado, o modelo
+      distribuído com consistência eventual está errado, mesmo que seja mais rápido.
+    </li>
+    <li>
+      <strong>Cuidado com o efeito de cardinalidade nos grafos:</strong> arestas ilimitadas sem condição podem gerar
+      travessias explosivas; limite com consultas parametrizadas ou ancestrais.
+    </li>
+    <li>
+      <strong>Não normalize duas vezes:</strong> se você Normalizar até a terceira forma normal, cria tabelas auxiliares
+      e depois normalizar de novo em documentos aninhados, não ganhou nada. Escolha um nível e documente.
+    </li>
+    <li>
+      <strong>Documente o esquema dos documentos:</strong> mesmo em bancos schema-less, mantenha um contrato de campos
+      versionado, porque o consumidor do dado não está no mesmo processo de deploy que o produtor.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Martin Fowler: NoSQL Distilled.</li>
-    <li>MongoDB University - Basics Course.</li>
+    <li>BREWER, Eric. <em>CAP Twelve Years Later: How the CAP Theorem Has Changed the World</em>. IEEE Computer
+      Magazine, v. 45, n. 2, 2012.</li>
+    <li>GHEMAWATI, Djeprecht; O'NEIL, Patrick; Bernstein, Philip A.; Gray, Jim. <em>Database System Concepts</em>. 7. ed.
+      New York: McGraw-Hill, 2020.</li>
+    <li>CHAN, S.; STOW, Douglas. <em>Foundations of Modern Web Data Management</em>. 3. ed. New York: Prentice
+      Hall, 2022.</li>
+    <li>SADALAGE, Pramod; FOWLER, Martin. <em>NoSQL Distilled: A Brief Guide to the Non-Relational Database
+      Revolution</em>. Addison-Wesley, 2012.</li>
+    <li>CODD, E. F. <em>A Relational Model of Data for Large Shared Data Banks</em>. Communications of the ACM, v. 13,
+      n. 6, 1970.</li>
+    <li>DEAN, Jeffrey; GHEMAWATI, Djeprecht. <em>MapReduce: Simplified Data Processing on Large Clusters</em>.
+      Proceedings of OSDI, 2004.</li>
+    <li>MONTOYA, Pedro. <em>Princípios de Sistemas de Banco de Dados</em>. 3. ed. Rio de Janeiro: Elsevier, 2016.</li>
   </ul>
 </section>
 
 <section class="section-box">
   <h2>Para Praticar</h2>
   <ul>
-    <li><a href="./exercicio-01/">Exercício 01: Praticando Conteúdo</a></li>
-    <li><a href="./exercicio-02/">Exercício 02: Desafio de Fixação</a></li>
+    <li><a href="./exercicio-01/">Exercício 01: Modelando um e-commerce poliglota entre SQL e NoSQL</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário sobre NoSQL, Teorema CAP e Persistência Poliglota</a></li>
   </ul>
 </section>

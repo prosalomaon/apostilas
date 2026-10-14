@@ -1,0 +1,227 @@
+{
+  "conteudo": "apostila",
+  "titulo": "Programação Web I",
+  "descricao": "Desenvolvimento front-end para a Web (Diretrizes 2026): HTML5 semântico e acessível, estilização responsiva com CSS, dinamismo com JavaScript e publicação profissional de sites estáticos.",
+  "secoes": [
+    {
+      "nome": "Fundamentos e Estruturação HTML",
+      "aulas": [
+        {
+          "titulo": "O Ecossistema Web: HTTP, Navegadores, Servidores, URLs e DNS",
+          "descricao": "Introdução ao HTTP, funcionamento de navegadores, servidores, URLs e DNS.",
+          "blocos": []
+        },
+        {
+          "titulo": "Ambiente de Desenvolvimento: IDEs e DevTools",
+          "descricao": "Configuração de IDEs (VS Code), extensões essenciais e uso de ferramentas de desenvolvedor (DevTools).",
+          "blocos": []
+        },
+        {
+          "titulo": "Anatomia do HTML: Estrutura Básica do Documento",
+          "descricao": "Estrutura básica do documento, cabeçalho (head), corpo (body) e metadados fundamentais.",
+          "blocos": []
+        },
+        {
+          "titulo": "Semântica e Texto",
+          "descricao": "Codificação de elementos de texto e a importância da estruturação semântica para acessibilidade e SEO.",
+          "blocos": []
+        },
+        {
+          "titulo": "Incorporação de Mídias",
+          "descricao": "Técnicas para inserção de imagens, áudio e vídeo de forma otimizada.",
+          "blocos": []
+        },
+        {
+          "titulo": "Hiperlinks e Navegação",
+          "descricao": "Criação de sistemas de navegação internos e externos e o uso de âncoras.",
+          "blocos": []
+        },
+        {
+          "titulo": "Tabelas e Conteúdos Externos",
+          "descricao": "Estruturação de dados tabulares e incorporação de mapas e vídeos de terceiros.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto I: Página Sobre Semântica e Rica em Mídia",
+          "descricao": "Especificações e requisitos para a entrega do Projeto I: desenvolvimento de uma página Sobre semântica e rica em mídia.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão Técnica: Tags Estruturais e Boas Práticas",
+          "descricao": "Consolidação de tags estruturais e boas práticas de codificação.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção e Feedback: Acessibilidade do Projeto I",
+          "descricao": "Análise de acessibilidade e semântica do Projeto I.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Estilização Profissional com CSS",
+      "aulas": [
+        {
+          "titulo": "Fundamentos do CSS",
+          "descricao": "Inclusão (inline, interno, externo), seletores básicos (tipo, id, classe), unidades de medida, cascata e especificidade, tipos de display (block, inline, flex, grid) e DevTools.",
+          "blocos": []
+        },
+        {
+          "titulo": "Cascata, Herança e Variáveis em CSS",
+          "descricao": "Entendendo o algoritmo de resolução de conflitos do CSS, a propagação de estilos pela árvore do DOM e o uso de Custom Properties para organização.",
+          "blocos": []
+        },
+        {
+          "titulo": "O Box-Model (Modelo de Caixa) e Dimensionamento de Elementos",
+          "descricao": "Domínio de bordas, margens, preenchimento (padding) e o dimensionamento de elementos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Flexbox Layout — Eixos Flexíveis e Alinhamento Moderno",
+          "descricao": "Posicionamento e alinhamento de elementos em eixos flexíveis para interfaces modernas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Grid Layout — Grades Bidimensionais e Estruturação Completa de Páginas",
+          "descricao": "Criação de grades bidimensionais complexas para estruturação de páginas inteiras.",
+          "blocos": []
+        },
+        {
+          "titulo": "Responsividade e Media Queries",
+          "descricao": "Técnicas de mobile-first e adaptação de layouts para diferentes resoluções de tela.",
+          "blocos": []
+        },
+        {
+          "titulo": "Efeitos e Estilização de Formulários",
+          "descricao": "Aplicação de sombras, filtros, transições e design avançado de campos de entrada.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto Final: Layouts Populares com Flexbox e Grid",
+          "descricao": "Projeto final do bimestre: criação de layouts populares de sites utilizando Flexbox e Grid, com estrutura em blocos sem conteúdo real.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão Técnica: Seletores e Regras CSS",
+          "descricao": "Refatoração de seletores e otimização de regras CSS.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção e Feedback: Testes de Layout",
+          "descricao": "Testes de layout em diferentes dispositivos e navegadores.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Lógica e Dinamismo com JavaScript",
+      "aulas": [
+        {
+          "titulo": "Introdução ao JavaScript",
+          "descricao": "Variáveis, tipos de dados, conversões e operações básicas no console do navegador.",
+          "blocos": []
+        },
+        {
+          "titulo": "Fluxos de Controle",
+          "descricao": "Implementação de estruturas condicionais (if/else) e laços de repetição (for/while).",
+          "blocos": []
+        },
+        {
+          "titulo": "Funções e Escopo",
+          "descricao": "Declaração de funções, parâmetros, retornos e organização lógica do código.",
+          "blocos": []
+        },
+        {
+          "titulo": "Estruturas de Dados",
+          "descricao": "Manipulação de arranjos (arrays) e objetos para gestão de informações.",
+          "blocos": []
+        },
+        {
+          "titulo": "Manipulação do DOM I: Seleção e Eventos",
+          "descricao": "Seleção de elementos HTML e escuta de eventos (cliques, envios, teclas) via JavaScript.",
+          "blocos": []
+        },
+        {
+          "titulo": "Manipulação do DOM II: Estilos e Conteúdo Dinâmico",
+          "descricao": "Alteração dinâmica de estilos e conteúdos da página em tempo real.",
+          "blocos": []
+        },
+        {
+          "titulo": "Formulários e Validação",
+          "descricao": "Uso de JavaScript para validar entradas de usuários antes do processamento.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto III: Site Estático Interativo",
+          "descricao": "Especificações e requisitos para a entrega do Projeto III: um site estático com componentes interativos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão Técnica: Lógica e Depuração",
+          "descricao": "Lógica de programação e depuração de scripts simples.",
+          "blocos": []
+        },
+        {
+          "titulo": "Correção e Feedback: Eficiência e UX",
+          "descricao": "Análise da eficiência do código e experiência do usuário (UX).",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Web APIs, Práticas Modernas e Deploy",
+      "aulas": [
+        {
+          "titulo": "Assincronia e Fetch API",
+          "descricao": "Introdução ao processamento assíncrono e consumo de dados externos via JSON.",
+          "blocos": []
+        },
+        {
+          "titulo": "Web Storage API",
+          "descricao": "Persistência de dados simples no navegador do usuário utilizando localStorage.",
+          "blocos": []
+        },
+        {
+          "titulo": "Módulos e Organização",
+          "descricao": "Separação de responsabilidades e organização de arquivos JavaScript modernos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Acessibilidade Avançada (WAI-ARIA)",
+          "descricao": "Implementação de padrões para garantir que a aplicação seja legível por tecnologias assistivas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Gestão de Pacotes",
+          "descricao": "Introdução ao uso de npm ou yarn para gerenciar dependências de projetos web.",
+          "blocos": []
+        },
+        {
+          "titulo": "Ferramentas de Build (Vite)",
+          "descricao": "Otimização de projetos utilizando ferramentas modernas de build e empacotamento.",
+          "blocos": []
+        },
+        {
+          "titulo": "Publicação e Hospedagem",
+          "descricao": "Processos de deploy em plataformas como GitHub Pages, Vercel ou Firebase.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega do Projeto Final: Website Completo Publicado",
+          "descricao": "Especificações e requisitos para a entrega do Projeto Final: um website completo, responsivo, interativo e publicado na Web.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão Geral",
+          "descricao": "Consolidação de competências e autoavaliação de desempenho técnico.",
+          "blocos": []
+        },
+        {
+          "titulo": "Encerramento: Apresentação dos Projetos",
+          "descricao": "Apresentação dos projetos publicados e fechamento das menções finais.",
+          "blocos": []
+        }
+      ]
+    }
+  ]
+}

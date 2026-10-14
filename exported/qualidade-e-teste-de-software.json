@@ -1,0 +1,227 @@
+{
+  "conteudo": "apostila",
+  "titulo": "Qualidade e Teste de Software",
+  "descricao": "Esta disciplina aborda os fundamentos e práticas de qualidade de software, desde modelos de maturidade e normas ISO até técnicas avançadas de teste, automação e metodologias ágeis, preparando o aluno para garantir a excelência no ciclo de vida do software.",
+  "secoes": [
+    {
+      "nome": "Fundamentos e Modelos de Maturidade",
+      "aulas": [
+        {
+          "titulo": "Introdução, Crise do Software e Visões da Qualidade",
+          "descricao": "Conteúdo da aula 01 do bimestre 01: Introdução, Crise do Software e Visões da Qualidade.",
+          "blocos": []
+        },
+        {
+          "titulo": "V&V e Anatomia do Problema",
+          "descricao": "Conteúdo da aula 02 do bimestre 01: V&V e Anatomia do Problema.",
+          "blocos": []
+        },
+        {
+          "titulo": "Ciclo PDCA e Melhoria Contínua",
+          "descricao": "Conteúdo da aula 03 do bimestre 01: Ciclo PDCA e Melhoria Contínua.",
+          "blocos": []
+        },
+        {
+          "titulo": "Normas ISO para Processo e Produto",
+          "descricao": "Conteúdo da aula 04 do bimestre 01: Normas ISO para Processo e Produto.",
+          "blocos": []
+        },
+        {
+          "titulo": "Modelo CMMI",
+          "descricao": "Conteúdo da aula 05 do bimestre 01: Modelo CMMI.",
+          "blocos": []
+        },
+        {
+          "titulo": "Modelo MPS.BR",
+          "descricao": "Conteúdo da aula 06 do bimestre 01: Modelo MPS.BR.",
+          "blocos": []
+        },
+        {
+          "titulo": "Comparativo e Integração CMMI vs. MPS.BR",
+          "descricao": "Conteúdo da aula 07 do bimestre 01: Comparativo e Integração CMMI vs. MPS.BR.",
+          "blocos": []
+        },
+        {
+          "titulo": "Avaliação Bimestral",
+          "descricao": "Conteúdo da aula 08 do bimestre 01: Avaliação Bimestral.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão de Prova e Feedback Coletivo",
+          "descricao": "Conteúdo da aula 09 do bimestre 01: Revisão de Prova e Feedback Coletivo.",
+          "blocos": []
+        },
+        {
+          "titulo": "Atividades de Recuperação e Fechamento do Bimestre",
+          "descricao": "Conteúdo da aula 10 do bimestre 01: Atividades de Recuperação e Fechamento do Bimestre.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Estratégias e Planejamento de Testes",
+      "aulas": [
+        {
+          "titulo": "Psicologia e Estratégias de Teste",
+          "descricao": "Psicologia do teste, objetivos e estratégias de caixa preta, branca e cinzenta.",
+          "blocos": []
+        },
+        {
+          "titulo": "Níveis de Teste I",
+          "descricao": "Conteúdo da aula 02 do bimestre 02: Níveis de Teste I.",
+          "blocos": []
+        },
+        {
+          "titulo": "Níveis de Teste II",
+          "descricao": "Conteúdo da aula 03 do bimestre 02: Níveis de Teste II.",
+          "blocos": []
+        },
+        {
+          "titulo": "Planejamento de Testes",
+          "descricao": "Conteúdo da aula 04 do bimestre 02: Planejamento de Testes.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto de Casos de Teste",
+          "descricao": "Conteúdo da aula 05 do bimestre 02: Projeto de Casos de Teste.",
+          "blocos": []
+        },
+        {
+          "titulo": "Gestão de Defeitos",
+          "descricao": "Conteúdo da aula 06 do bimestre 02: Gestão de Defeitos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Análise Estática e Gerenciamento de Riscos",
+          "descricao": "Conteúdo da aula 07 do bimestre 02: Análise Estática e Gerenciamento de Riscos.",
+          "blocos": []
+        },
+        {
+          "titulo": "Avaliação Bimestral",
+          "descricao": "Conteúdo da aula 08 do bimestre 02: Avaliação Bimestral.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão de Prova e Feedback Coletivo",
+          "descricao": "Conteúdo da aula 09 do bimestre 02: Revisão de Prova e Feedback Coletivo.",
+          "blocos": []
+        },
+        {
+          "titulo": "Atividades de Recuperação e Fechamento do Bimestre",
+          "descricao": "Conteúdo da aula 10 do bimestre 02: Atividades de Recuperação e Fechamento do Bimestre.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Técnicas de Teste e Qualidade de Código",
+      "aulas": [
+        {
+          "titulo": "Qualidade de Código e Dívida Técnica",
+          "descricao": "Conceito de Clean Code, Dívida Técnica, seus quadrantes, causas, consequências e estratégias de redução.",
+          "blocos": []
+        },
+        {
+          "titulo": "Técnicas de Teste de Caixa Preta",
+          "descricao": "Esta aula apresenta as Técnicas de Teste de Caixa Preta (teste funcional), que tratam o software como um sistema fechado, focando na funcionalidade externa. Aborda Particionamento de Classes de Equivalência (ECP), Análise de Valor Limite (BVA), Tabelas de Decisão e técnicas complementares para projetar casos de teste eficazes.",
+          "blocos": []
+        },
+        {
+          "titulo": "Técnicas de Caixa Branca e Complexidade Ciclomática",
+          "descricao": "Esta aula apresenta o Teste de Caixa Branca (estrutural), a construção e interpretação do Grafo de Fluxo de Controle (CFG), o cálculo da Complexidade Ciclomática de McCabe e os critérios de cobertura de código (instruções, desvios e caminhos).",
+          "blocos": []
+        },
+        {
+          "titulo": "Testes Não Funcionais",
+          "descricao": "Esta aula aborda os aspectos de qualidade relacionados à operação, comportamento externo e limitações técnicas do sistema. Ao contrário dos testes funcionais, que validam o que o sistema faz (requisitos funcionais), os Testes Não Funcionais validam como o sistema faz (atributos de qualidade como desempenho, segurança, robustez e usabilidade).",
+          "blocos": []
+        },
+        {
+          "titulo": "Testes de Segurança",
+          "descricao": "Esta aula apresenta os fundamentos dos Testes de Segurança de software. Aborda a Tríade CIA (Confidencialidade, Integridade e Disponibilidade), vulnerabilidades comuns como SQL Injection, XSS, Buffer Overflow e Backdoors, o princípio de Falha Segura (Fail-Secure) e a elaboração de cenários de testes negativos baseados em Casos de Abuso (Misuse Cases).",
+          "blocos": []
+        },
+        {
+          "titulo": "Testes de Regressão e Fundamentos da Automação",
+          "descricao": "Conteúdo da aula 06 do bimestre 03: Testes de Regressão e Fundamentos da Automação.",
+          "blocos": []
+        },
+        {
+          "titulo": "Escrita de Scripts de Teste",
+          "descricao": "Conteúdo da aula 07 do bimestre 03: Escrita de Scripts de Teste.",
+          "blocos": []
+        },
+        {
+          "titulo": "Avaliação Bimestral",
+          "descricao": "Conteúdo da aula 08 do bimestre 03: Avaliação Bimestral.",
+          "blocos": []
+        },
+        {
+          "titulo": "Revisão de Prova e Feedback Coletivo",
+          "descricao": "Conteúdo da aula 09 do bimestre 03: Revisão de Prova e Feedback Coletivo.",
+          "blocos": []
+        },
+        {
+          "titulo": "Atividades de Recuperação e Fechamento do Bimestre",
+          "descricao": "Conteúdo da aula 10 do bimestre 03: Atividades de Recuperação e Fechamento do Bimestre.",
+          "blocos": []
+        }
+      ]
+    },
+    {
+      "nome": "Agilidade e Projeto Prático",
+      "aulas": [
+        {
+          "titulo": "TDD (Test-Driven Development)",
+          "descricao": "Conteúdo da aula 01 do bimestre 04: TDD (Test-Driven Development).",
+          "blocos": []
+        },
+        {
+          "titulo": "Refatoração e Dublês de Teste",
+          "descricao": "Conteúdo da aula 02 do bimestre 04: Refatoração e Dublês de Teste.",
+          "blocos": []
+        },
+        {
+          "titulo": "Qualidade em Contextos Ágeis",
+          "descricao": "Conteúdo da aula 03 do bimestre 04: Qualidade em Contextos Ágeis.",
+          "blocos": []
+        },
+        {
+          "titulo": "Integração Contínua (CI) e QAOps",
+          "descricao": "Conteúdo da aula 04 do bimestre 04: Integração Contínua (CI) e QAOps.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto Prático I",
+          "descricao": "Conteúdo da aula 05 do bimestre 04: Projeto Prático I.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto Prático II",
+          "descricao": "Conteúdo da aula 06 do bimestre 04: Projeto Prático II.",
+          "blocos": []
+        },
+        {
+          "titulo": "Projeto Prático III",
+          "descricao": "Conteúdo da aula 07 do bimestre 04: Projeto Prático III.",
+          "blocos": []
+        },
+        {
+          "titulo": "Entrega Final do Projeto",
+          "descricao": "Conteúdo da aula 08 do bimestre 04: Entrega Final do Projeto.",
+          "blocos": []
+        },
+        {
+          "titulo": "Apresentação, Feedback do Projeto e Revisão de Notas",
+          "descricao": "Conteúdo da aula 09 do bimestre 04: Apresentação, Feedback do Projeto e Revisão de Notas.",
+          "blocos": []
+        },
+        {
+          "titulo": "Encerramento da Disciplina e Recuperação Final",
+          "descricao": "Conteúdo da aula 10 do bimestre 04: Encerramento da Disciplina e Recuperação Final.",
+          "blocos": []
+        }
+      ]
+    }
+  ]
+}
