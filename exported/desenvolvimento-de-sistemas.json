@@ -4,220 +4,220 @@
   "descricao": "Disciplina dedicada à programação Java, cobrindo desde fundamentos básicos até aplicações Web, APIs e segurança.",
   "secoes": [
     {
-      "nome": "Fundamentos de Programação e Console",
+      "nome": "1º Bimestre - Fundamentos de Programação e Console",
       "aulas": [
         {
-          "titulo": "Ecossistema Java (JVM, JDK) e Compilação Manual",
+          "titulo": "AULA 01 - Ecossistema Java (JVM, JDK) e Compilação Manual",
           "descricao": "Apresentação do JDK, JRE e da JVM. Entendimento do conceito 'Escreva uma vez, rode em qualquer lugar' por meio da geração de bytecode via comando javac.",
           "blocos": []
         },
         {
-          "titulo": "Anatomia de uma Classe e o Método main",
+          "titulo": "AULA 02 - Anatomia de uma Classe e o Método main",
           "descricao": "Estudo da estrutura básica de um arquivo .java, convenções de nomenclatura (CamelCase) e a função do método main como ponto de partida obrigatório da aplicação.",
           "blocos": []
         },
         {
-          "titulo": "Variáveis, Tipos Primitivos e Operadores",
+          "titulo": "AULA 03 - Variáveis, Tipos Primitivos e Operadores",
           "descricao": "Declaração e inicialização de variáveis usando tipos primitivos (int, double, boolean, char) e a aplicação de operadores aritméticos para cálculos básicos.",
           "blocos": []
         },
         {
-          "titulo": "Interação com o Usuário: Classe Scanner",
+          "titulo": "AULA 04 - Interação com o Usuário: Classe Scanner",
           "descricao": "Utilização da classe java.util.Scanner para capturar entradas do teclado (nextInt, nextDouble, nextLine) e exibição de dados formatados no console.",
           "blocos": []
         },
         {
-          "titulo": "Estruturas de Seleção: if, else e switch",
+          "titulo": "AULA 05 - Estruturas de Seleção: if, else e switch",
           "descricao": "Implementação de desvios condicionais para tomada de decisão no código, incluindo seleções simples, duplas e múltiplas com o comando switch.",
           "blocos": []
         },
         {
-          "titulo": "Estruturas de Repetição: while, for e do...while",
+          "titulo": "AULA 06 - Estruturas de Repetição: while, for e do...while",
           "descricao": "Aplicação de laços de iteração para repetição de tarefas. Diferenciação entre repetição controlada por contador (for) e por condição (while).",
           "blocos": []
         },
         {
-          "titulo": "Arrays e Coleções Dinâmicas (ArrayList)",
+          "titulo": "AULA 07 - Arrays e Coleções Dinâmicas (ArrayList)",
           "descricao": "Armazenamento de multiplicidade de dados em arrays de tamanho fixo e introdução ao uso de listas dinâmicas para gerenciar conjuntos de objetos.",
           "blocos": []
         },
         {
-          "titulo": "[Entrega do Projeto 01] – Console Financeiro",
+          "titulo": "AULA 08 - [Entrega do Projeto 01] – Console Financeiro",
           "descricao": "Desenvolvimento de um algoritmo para gestão de entradas e saídas financeiras via terminal, aplicando lógica de repetição e vetores [Projeto Prático].",
           "blocos": []
         },
         {
-          "titulo": "Revisão Técnica do Bimestre I",
+          "titulo": "AULA 09 - Revisão Técnica do Bimestre I",
           "descricao": "Consolidação dos conceitos de lógica, tipos de dados e estruturas de controle.",
           "blocos": []
         },
         {
-          "titulo": "Correção e Feedback Formativo I",
+          "titulo": "AULA 10 - Correção e Feedback Formativo I",
           "descricao": "Avaliação dos projetos e esclarecimento de dúvidas sobre a sintaxe básica da linguagem.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Orientação a Objetos Profissional",
+      "nome": "2º Bimestre - Orientação a Objetos Profissional",
       "aulas": [
         {
-          "titulo": "O Mundo dos Objetos: Abstração, Classes e Atributos",
+          "titulo": "AULA 11 - O Mundo dos Objetos: Abstração, Classes e Atributos",
           "descricao": "Introdução à tecnologia de objetos. Modelagem de entidades do mundo real em classes Java com atributos que definem seu estado.",
           "blocos": []
         },
         {
-          "titulo": "Métodos: Comportamentos, Parâmetros e Retorno",
+          "titulo": "AULA 12 - Métodos: Comportamentos, Parâmetros e Retorno",
           "descricao": "Definição de tarefas que um objeto pode realizar. Uso de parâmetros para entrada de dados e a palavra-chave return para fornecer respostas ao chamador.",
           "blocos": []
         },
         {
-          "titulo": "Encapsulamento: Modificadores e Getters/Setters",
+          "titulo": "AULA 13 - Encapsulamento: Modificadores e Getters/Setters",
           "descricao": "Proteção de dados usando modificadores de acesso private e public. Implementação de métodos de leitura e escrita para controle de integridade dos atributos.",
           "blocos": []
         },
         {
-          "titulo": "Construtores e a Referência this",
+          "titulo": "AULA 14 - Construtores e a Referência this",
           "descricao": "Uso de construtores para inicializar objetos com dados obrigatórios e a palavra-chave this para diferenciar atributos de parâmetros locais.",
           "blocos": []
         },
         {
-          "titulo": "Herança: Reutilização de Código com extends",
+          "titulo": "AULA 15 - Herança: Reutilização de Código com extends",
           "descricao": "Criação de hierarquias de classes para evitar duplicação de código, permitindo que subclasses herdem comportamentos de superclasses.",
           "blocos": []
         },
         {
-          "titulo": "Polimorfismo e Sobre-escrita de Métodos (@Override)",
+          "titulo": "AULA 16 - Polimorfismo e Sobre-escrita de Métodos (@Override)",
           "descricao": "Conceito de programar voltado ao tipo geral, permitindo que objetos respondam de formas diferentes ao",
           "blocos": []
         },
         {
-          "titulo": "Classes Abstratas e Interfaces",
+          "titulo": "AULA 17 - Classes Abstratas e Interfaces",
           "descricao": "Definição de contratos de sistema. Uso de classes abstratas para bases comuns e interfaces para garantir que diferentes classes implementem métodos específicos.",
           "blocos": []
         },
         {
-          "titulo": "Módulo de Encerramento - O Grande Encaixe da Arquitetura de Software",
+          "titulo": "AULA 18 - Módulo de Encerramento - O Grande Encaixe da Arquitetura de Software",
           "descricao": "Atividade de conclusão do bimestre: Projeto JavaLog Express aplicando herança, encapsulamento e polimorfismo.",
           "blocos": []
         },
         {
-          "titulo": "Revisão Técnica do Bimestre II",
+          "titulo": "AULA 19 - Revisão Técnica do Bimestre II",
           "descricao": "Reforço sobre os pilares da OO (Encapsulamento, Herança, Polimorfismo e Abstração).",
           "blocos": []
         },
         {
-          "titulo": "Correção e Feedback Formativo II",
+          "titulo": "AULA 20 - Correção e Feedback Formativo II",
           "descricao": "Análise da estrutura de classes e relacionamentos nos simuladores entregues.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Interfaces Gráficas e Persistência",
+      "nome": "3º Bimestre - Interfaces Gráficas e Persistência",
       "aulas": [
         {
-          "titulo": "Collections Framework Avançado: Set e Map",
+          "titulo": "AULA 21 - Collections Framework Avançado: Set e Map",
           "descricao": "Manipulação de conjuntos de dados únicos (Set) e dicionários de chave-valor (Map) para buscas e organizações complexas de dados.",
           "blocos": []
         },
         {
-          "titulo": "Tratamento de Exceções: try, catch e finally",
+          "titulo": "AULA 22 - Tratamento de Exceções: try, catch e finally",
           "descricao": "Criação de aplicações robustas que tratam erros em tempo de execução, prevenindo interrupções abruptas do sistema.",
           "blocos": []
         },
         {
-          "titulo": "Introdução às Interfaces Gráficas com Swing",
+          "titulo": "AULA 23 - Introdução às Interfaces Gráficas com Swing",
           "descricao": "Fundamentos de interfaces gráficas com o Swing: ecossistema GUI, componentes básicos (JFrame, JLabel, JButton, JTextField, JPanel), gerenciadores de layout e o modelo de delegação de eventos, com diagramas da anatomia de uma janela.",
           "blocos": []
         },
         {
-          "titulo": "O Futuro Visual com JavaFX e Scene Builder",
+          "titulo": "AULA 24 - O Futuro Visual com JavaFX e Scene Builder",
           "descricao": "Introdução ao JavaFX: vantagens sobre o Swing, arquitetura MVC, estrutura de Stage/Scene/Scene Graph, criação de interfaces com Scene Builder e FXML, e a classe de controle com a anotação @FXML.",
           "blocos": []
         },
         {
-          "titulo": "Persistência de Dados I: Conectividade via JDBC",
+          "titulo": "AULA 25 - Persistência de Dados I: Conectividade via JDBC",
           "descricao": "Introdução à persistência de dados e à API JDBC (Java Database Connectivity): como conectar aplicações Java a bancos de dados relacionais com segurança, performance e boas práticas (PreparedStatement, ResultSet e padrão DAO).",
           "blocos": []
         },
         {
-          "titulo": "Persistência de Dados II: O Padrão DAO",
+          "titulo": "AULA 26 - Persistência de Dados II: O Padrão DAO",
           "descricao": "Aprofundamento nos conceitos de persistência com o padrão DAO (Data Access Object): isolamento de acesso a dados, interface genérica, ConnectionFactory, Injeção de Dependência e integração com camadas de serviço.",
           "blocos": []
         },
         {
-          "titulo": "Introdução à JPA e Hibernate (ORM)",
+          "titulo": "AULA 27 - Introdução à JPA e Hibernate (ORM)",
           "descricao": "Conceitos básicos de Mapeamento Objeto-Relacional para automatizar a persistência de objetos Java em tabelas de banco de dados.",
           "blocos": []
         },
         {
-          "titulo": "[Entrega do Projeto 03] – Dashboard de Vendas",
+          "titulo": "AULA 28 - [Entrega do Projeto 03] – Dashboard de Vendas",
           "descricao": "Aplicação JavaFX com integração a Banco de Dados, realizando operações de cadastro, consulta e relatórios visuais.",
           "blocos": []
         },
         {
-          "titulo": "Revisão Técnica do Bimestre III",
+          "titulo": "AULA 29 - Revisão Técnica do Bimestre III",
           "descricao": "Revisão de tratamento de erros, coleções e conectividade com bancos.",
           "blocos": []
         },
         {
-          "titulo": "Correção e Feedback Formativo III",
+          "titulo": "AULA 30 - Correção e Feedback Formativo III",
           "descricao": "Feedback sobre a usabilidade das interfaces gráficas e integridade da persistência.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Java Web, APIs e Segurança",
+      "nome": "4º Bimestre - Java Web, APIs e Segurança",
       "aulas": [
         {
-          "titulo": "Fundamentos Web: Protocolo HTTP e Servlets",
+          "titulo": "AULA 31 - Fundamentos Web: Protocolo HTTP e Servlets",
           "descricao": "Entendimento do mercado Java na Web, o ciclo de vida de uma requisição HTTP e o papel dos contêineres de Servlets.",
           "blocos": []
         },
         {
-          "titulo": "Padrão MVC (Model-View-Controller) na Web",
+          "titulo": "AULA 32 - Padrão MVC (Model-View-Controller) na Web",
           "descricao": "Arquitetura de sistemas distribuídos separando a lógica de negócio, a visualização e o controle de fluxo da aplicação.",
           "blocos": []
         },
         {
-          "titulo": "Troca de Dados: Manipulação de Arquivos JSON e XML",
+          "titulo": "AULA 33 - Troca de Dados: Manipulação de Arquivos JSON e XML",
           "descricao": "Estudo de formatos de intercâmbio de dados essenciais para a comunicação entre sistemas e APIs modernas.",
           "blocos": []
         },
         {
-          "titulo": "Criação de APIs RESTful em Java",
+          "titulo": "AULA 34 - Criação de APIs RESTful em Java",
           "descricao": "Desenvolvimento de Web Services que expõem funcionalidades do sistema via rede para serem consumidas por apps mobile ou outros front-ends.",
           "blocos": []
         },
         {
-          "titulo": "Segurança da Informação: Prevenção contra SQL Injection e XSS",
+          "titulo": "AULA 35 - Segurança da Informação: Prevenção contra SQL Injection e XSS",
           "descricao": "Práticas de codificação segura, como o uso de PreparedStatement para impedir ataques maliciosos em campos de entrada.",
           "blocos": []
         },
         {
-          "titulo": "Threads e Concorrência",
+          "titulo": "AULA 36 - Threads e Concorrência",
           "descricao": "Execução de tarefas paralelas para melhorar o desempenho de aplicações, utilizando a classe Thread e a interface Runnable.",
           "blocos": []
         },
         {
-          "titulo": "Java Moderno: Expressões Lambda e Streams",
+          "titulo": "AULA 37 - Java Moderno: Expressões Lambda e Streams",
           "descricao": "Introdução à programação funcional no Java para processamento eficiente de coleções de dados com código mais limpo.",
           "blocos": []
         },
         {
-          "titulo": "[Entrega do Projeto Final Hero] – ERP Completo",
+          "titulo": "AULA 38 - [Entrega do Projeto Final Hero] – ERP Completo",
           "descricao": "Desenvolvimento de uma aplicação robusta composta por API REST, banco de dados seguro e front-end visual integrado.",
           "blocos": []
         },
         {
-          "titulo": "Revisão Técnica Final: Preparação para o Mercado",
+          "titulo": "AULA 39 - Revisão Técnica Final: Preparação para o Mercado",
           "descricao": "Consolidação de Clean Code, padrões de projeto e tecnologias de mercado.",
           "blocos": []
         },
         {
-          "titulo": "Feedback Somativo e Encerramento do Curso",
+          "titulo": "AULA 40 - Feedback Somativo e Encerramento do Curso",
           "descricao": "Encerramento da jornada Zero to Hero com foco na carreira de desenvolvedor Java.",
           "blocos": []
         }

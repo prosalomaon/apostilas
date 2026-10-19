@@ -4,220 +4,220 @@
   "descricao": "Esta disciplina introduz os fundamentos da modelagem de dados, desde a abstração conceitual até a implementação prática, preparando o aluno para o desenvolvimento de sistemas de informação robustos.",
   "secoes": [
     {
-      "nome": "O Processo de Abstração e Modelo Conceitual",
+      "nome": "1º Bimestre - O Processo de Abstração e Modelo Conceitual",
       "aulas": [
         {
-          "titulo": "Introdução aos Bancos de Dados: Evolução histórica e papel nas organizações.",
+          "titulo": "AULA 01 - Introdução aos Bancos de Dados: Evolução histórica e papel nas organizações.",
           "descricao": "Conteúdo da aula 1 do bimestre 1: Introdução aos Bancos de Dados: Evolução histórica e papel nas organizações..",
           "blocos": []
         },
         {
-          "titulo": "O Processo de Abstração: Observação da realidade e definição do Minimundo.",
+          "titulo": "AULA 02 - O Processo de Abstração: Observação da realidade e definição do Minimundo.",
           "descricao": "Conteúdo da aula 2 do bimestre 1: O Processo de Abstração: Observação da realidade e definição do Minimundo..",
           "blocos": []
         },
         {
-          "titulo": "Modelo Entidade-Relacionamento (MER): Conceitos de Entidades e suas classificações.",
+          "titulo": "AULA 03 - Modelo Entidade-Relacionamento (MER): Conceitos de Entidades e suas classificações.",
           "descricao": "Conteúdo da aula 3 do bimestre 1: Modelo Entidade-Relacionamento (MER): Conceitos de Entidades e suas classificações..",
           "blocos": []
         },
         {
-          "titulo": "Atributos: Classificações (simples, compostos, multivalorados) e representações.",
+          "titulo": "AULA 04 - Atributos: Classificações (simples, compostos, multivalorados) e representações.",
           "descricao": "Conteúdo da aula 4 do bimestre 1: Atributos: Classificações (simples, compostos, multivalorados) e representações..",
           "blocos": []
         },
         {
-          "titulo": "Relacionamentos: Definições e grau de relacionamento (binário e ternário).",
+          "titulo": "AULA 05 - Relacionamentos: Definições e grau de relacionamento (binário e ternário).",
           "descricao": "Conteúdo da aula 5 do bimestre 1: Relacionamentos: Definições e grau de relacionamento (binário e ternário)..",
           "blocos": []
         },
         {
-          "titulo": "Cardinalidade: Definição de conectividade (1:1, 1:N, N:N).",
+          "titulo": "AULA 06 - Cardinalidade: Definição de conectividade (1:1, 1:N, N:N).",
           "descricao": "Conteúdo da aula 6 do bimestre 1: Cardinalidade: Definição de conectividade (1:1, 1:N, N:N)..",
           "blocos": []
         },
         {
-          "titulo": "Ferramentas CASE: Introdução ao uso de softwares para modelagem conceitual (brModelo/CASE).",
+          "titulo": "AULA 07 - Ferramentas CASE: Introdução ao uso de softwares para modelagem conceitual (brModelo/CASE).",
           "descricao": "Conteúdo da aula 7 do bimestre 1: Ferramentas CASE: Introdução ao uso de softwares para modelagem conceitual (brModelo/CASE)..",
           "blocos": []
         },
         {
-          "titulo": "Entrega de Projeto 1: Diagrama Conceitual (MER) de um cenário de pequeno porte.",
+          "titulo": "AULA 08 - Entrega de Projeto 1: Diagrama Conceitual (MER) de um cenário de pequeno porte.",
           "descricao": "Conteúdo da aula 8 do bimestre 1: Entrega de Projeto 1: Diagrama Conceitual (MER) de um cenário de pequeno porte..",
           "blocos": []
         },
         {
-          "titulo": "Revisão: Do texto ao diagrama.",
+          "titulo": "AULA 09 - Revisão: Do texto ao diagrama.",
           "descricao": "Conteúdo da aula 9 do bimestre 1: Revisão: Do texto ao diagrama..",
           "blocos": []
         },
         {
-          "titulo": "Correção coletiva: Resolução de conflitos de cardinalidade no MER.",
+          "titulo": "AULA 10 - Correção coletiva: Resolução de conflitos de cardinalidade no MER.",
           "descricao": "Conteúdo da aula 10 do bimestre 1: Correção coletiva: Resolução de conflitos de cardinalidade no MER..",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Modelagem Avançada e Mapeamento Lógico",
+      "nome": "2º Bimestre - Modelagem Avançada e Mapeamento Lógico",
       "aulas": [
         {
-          "titulo": "Entidades Fortes, Fracas e Opcionalidade: Dependência de existência e participação.",
+          "titulo": "AULA 11 - Entidades Fortes, Fracas e Opcionalidade: Dependência de existência e participação.",
           "descricao": "Conteúdo da aula 11 do bimestre 2: Entidades Fracas e Opcionalidade: Dependência de existência e participação.",
           "blocos": []
         },
         {
-          "titulo": "Autorrelacionamento: Modelagem de recursividade e hierarquias.",
+          "titulo": "AULA 12 - Autorrelacionamento: Modelagem de recursividade e hierarquias.",
           "descricao": "O autorrelacionamento (ou relacionamento reflexivo) ocorre quando detectamos uma associação entre ocorrências de uma mesma entidade.",
           "blocos": []
         },
         {
-          "titulo": "Abstrações Avançadas: Especialização e Generalização (Superclasses e Subclasses).",
+          "titulo": "AULA 13 - Abstrações Avançadas: Especialização e Generalização (Superclasses e Subclasses).",
           "descricao": "Esta aula aborda as Abstrações Avançadas no processo de modelagem de dados, focando especificamente nas técnicas de Especialização e Generalização.",
           "blocos": []
         },
         {
-          "titulo": "Introdução ao Modelo Lógico: O conceito de Tabelas e Domínios",
+          "titulo": "AULA 14 - Introdução ao Modelo Lógico: O conceito de Tabelas e Domínios",
           "descricao": "O Modelo Lógico traduz a visão conceitual em estruturas de tabelas (relações) formadas por colunas e linhas, cujos valores são restritos por domínios que definem os conjuntos de dados permitidos.",
           "blocos": []
         },
         {
-          "titulo": "Regras de Derivação: Transposição do MER (Conceitual) para o Relacional (Lógico).",
+          "titulo": "AULA 15 - Regras de Derivação: Transposição do MER (Conceitual) para o Relacional (Lógico).",
           "descricao": "Conteúdo da aula 15 do bimestre 2: Regras de Derivação: Transposição do MER (Conceitual) para o Relacional (Lógico)..",
           "blocos": []
         },
         {
-          "titulo": "Chaves Primárias (PK) e Estrangeiras (FK): Garantindo a Integridade Referencial no nível lógico.",
+          "titulo": "AULA 16 - Chaves Primárias (PK) e Estrangeiras (FK): Garantindo a Integridade Referencial no nível lógico.",
           "descricao": "Conteúdo da aula 16 do bimestre 2: Chaves Primárias (PK) e Estrangeiras (FK): Garantindo a Integridade Referencial no nível lógico..",
           "blocos": []
         },
         {
-          "titulo": "Dicionário de Dados: Documentando a estrutura e os domínios do projeto.",
+          "titulo": "AULA 17 - Dicionário de Dados: Documentando a estrutura e os domínios do projeto.",
           "descricao": "Conteúdo da aula 17 do bimestre 2: Dicionário de Dados: Documentando a estrutura e os domínios do projeto..",
           "blocos": []
         },
         {
-          "titulo": "Estudo de Caso Orientado: Projeto MyPocket",
+          "titulo": "AULA 18 - Estudo de Caso Orientado: Projeto MyPocket",
           "descricao": "Modelagem lógica e conceitual focada em Engenharia de Dados para um sistema de gestão financeira.",
           "blocos": []
         },
         {
-          "titulo": "Revisão: Regras de mapeamento 1:N e N:N.",
+          "titulo": "AULA 19 - Revisão: Regras de mapeamento 1:N e N:N.",
           "descricao": "Conteúdo da aula 19 do bimestre 2: Revisão: Regras de mapeamento 1:N e N:N..",
           "blocos": []
         },
         {
-          "titulo": "Correção individual: Validação da integridade referencial dos esquemas.",
+          "titulo": "AULA 20 - Correção individual: Validação da integridade referencial dos esquemas.",
           "descricao": "Conteúdo da aula 20 do bimestre 2: Correção individual: Validação da integridade referencial dos esquemas..",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Qualidade de Dados - Normalização",
+      "nome": "3º Bimestre - Qualidade de Dados - Normalização",
       "aulas": [
         {
-          "titulo": "Introdução à Normalização: Por que normalizar?",
+          "titulo": "AULA 21 - Introdução à Normalização: Por que normalizar?",
           "descricao": "Entenda o que é a normalização, seus principais objetivos (reduzir redundância, evitar inconsistências e anomalias) e por que ela é um passo essencial no projeto de bancos de dados relacionais.",
           "blocos": []
         },
         {
-          "titulo": "Dependências Funcionais: A base teórica das Formas Normais.",
+          "titulo": "AULA 22 - Dependências Funcionais: A base teórica das Formas Normais.",
           "descricao": "Entenda o que é uma Dependência Funcional (DF), como identificar determinantes e dependentes, os três tipos de dependências (total, parcial e transitiva) e o papel dessa base teórica na aplicação das Formas Normais (2FN, 3FN e FNBC).",
           "blocos": []
         },
         {
-          "titulo": "Primeira Forma Normal (1FN): Eliminação de grupos repetitivos e atomicidade",
+          "titulo": "AULA 23 - Primeira Forma Normal (1FN): Eliminação de grupos repetitivos e atomicidade",
           "descricao": "Entenda a Primeira Forma Normal (1FN): atomicidade dos atributos, eliminação de atributos compostos e multivalorados e a resolução de grupos repetitivos, utilizando o caso clássico da Nota Fiscal com itens.",
           "blocos": []
         },
         {
-          "titulo": "Segunda Forma Normal (2FN): Dependência Funcional Total e Tabelas Associativas",
+          "titulo": "AULA 24 - Segunda Forma Normal (2FN): Dependência Funcional Total e Tabelas Associativas",
           "descricao": "Compreender a 2FN, distinguir dependências funcionais totais e parciais, decompor tabelas com chave composta e implementar tabelas associativas em SQL.",
           "blocos": []
         },
         {
-          "titulo": "Terceira Forma Normal (3FN): Eliminação de dependências transitivas.",
+          "titulo": "AULA 25 - Terceira Forma Normal (3FN): Eliminação de dependências transitivas.",
           "descricao": "Compreender a 3FN, identificar e eliminar dependências transitivas, decompor tabelas para garantir que cada atributo não-chave dependa apenas da chave primária.",
           "blocos": []
         },
         {
-          "titulo": "Boyce-Codd (FNBC): Casos especiais de chaves candidatas sobrepostas.",
+          "titulo": "AULA 26 - Boyce-Codd (FNBC): Casos especiais de chaves candidatas sobrepostas.",
           "descricao": "Compreender a Forma Normal de Boyce-Codd, identificar chaves candidatas sobrepostas e decompor tabelas que estão na 3FN mas ainda violam a FNBC.",
           "blocos": []
         },
         {
-          "titulo": "Quarta Forma Normal (4FN) e Quinta Forma Normal (5FN): Dependências Multivaloradas e de Junção.",
+          "titulo": "AULA 27 - Quarta Forma Normal (4FN) e Quinta Forma Normal (5FN): Dependências Multivaloradas e de Junção.",
           "descricao": "Compreender as Dependências Multivaloradas (MVD) e Dependências de Junção (JD), aplicar a 4FN e a 5FN para eliminar anomalias remanescentes após a FNBC.",
           "blocos": []
         },
         {
-          "titulo": "Entrega de Projeto 3: Relatório de Normalização do banco de dados do aluno",
+          "titulo": "AULA 28 - Entrega de Projeto 3: Relatório de Normalização do banco de dados do aluno",
           "descricao": "Projeto prático de normalização: o aluno deve receber um banco de dados não normalizado, identificar dependências funcionais e multivaloradas, aplicar as Formas Normais (1FN, 2FN, 3FN e 4FN) e entregar o relatório completo com o esquema final.",
           "blocos": []
         },
         {
-          "titulo": "Revisão de Normalização: Exercícios práticos de decomposição de tabelas.",
+          "titulo": "AULA 29 - Revisão de Normalização: Exercícios práticos de decomposição de tabelas.",
           "descricao": "Conteúdo da aula 29 do bimestre 3: Revisão de Normalização: Exercícios práticos de decomposição de tabelas..",
           "blocos": []
         },
         {
-          "titulo": "Recuperação: Oficina de 'limpeza' de dados brutos para 3FN.",
+          "titulo": "AULA 30 - Recuperação: Oficina de 'limpeza' de dados brutos para 3FN.",
           "descricao": "Conteúdo da aula 30 do bimestre 3: Recuperação: Oficina de 'limpeza' de dados brutos para 3FN..",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Implementação Prática (Introdução à DDL)",
+      "nome": "4º Bimestre - Implementação Prática (Introdução à DDL)",
       "aulas": [
         {
-          "titulo": "Tipos de Dados e Domínios: Escolha técnica de tipos no SGBD (MySQL/Postgres).",
+          "titulo": "AULA 31 - Tipos de Dados e Domínios: Escolha técnica de tipos no SGBD (MySQL/Postgres).",
           "descricao": "Domínios e atomicidade, tipos numéricos exatos e aproximados, CHAR/VARCHAR/TEXT, tipos temporais com fuso horário e tipos especiais: escolha técnica de tipos comparando MySQL e PostgreSQL.",
           "blocos": []
         },
         {
-          "titulo": "Introdução ao SGBD: Interface de comando e conexão com o servidor.",
+          "titulo": "AULA 32 - Introdução ao SGBD: Interface de comando e conexão com o servidor.",
           "descricao": "Conteúdo da aula 32 do bimestre 4: Introdução ao SGBD: Interface de comando e conexão com o servidor..",
           "blocos": []
         },
         {
-          "titulo": "Linguagem DDL: Criação de Databases e as opções de COLLATION.",
+          "titulo": "AULA 33 - Linguagem DDL: Criação de Databases e as opções de COLLATION.",
           "descricao": "Conteúdo da aula 33 do bimestre 4: Linguagem DDL: Criação de Databases e as opções de COLLATION..",
           "blocos": []
         },
         {
-          "titulo": "Linguagem DDL: Criação de tabelas com restrições de integridade (NOT NULL, UNIQUE).",
+          "titulo": "AULA 34 - Linguagem DDL: Criação de tabelas com restrições de integridade (NOT NULL, UNIQUE).",
           "descricao": "Conteúdo da aula 34 do bimestre 4: Linguagem DDL: Criação de tabelas com restrições de integridade (NOT NULL, UNIQUE)..",
           "blocos": []
         },
         {
-          "titulo": "Implementação de Chaves Primárias e Estrangeiras em SQL.",
+          "titulo": "AULA 35 - Implementação de Chaves Primárias e Estrangeiras em SQL.",
           "descricao": "Conteúdo da aula 35 do bimestre 4: Implementação de Chaves Primárias e Estrangeiras em SQL..",
           "blocos": []
         },
         {
-          "titulo": "Manutenção da Estrutura: Uso de ALTER TABLE e DROP.",
+          "titulo": "AULA 36 - Manutenção da Estrutura: Uso de ALTER TABLE e DROP.",
           "descricao": "Conteúdo da aula 36 do bimestre 4: Manutenção da Estrutura: Uso de ALTER TABLE e DROP..",
           "blocos": []
         },
         {
-          "titulo": "Povoamento Inicial: Introdução básica ao comando INSERT (para teste do modelo).",
+          "titulo": "AULA 37 - Povoamento Inicial: Introdução básica ao comando INSERT (para teste do modelo).",
           "descricao": "Conteúdo da aula 37 do bimestre 4: Povoamento Inicial: Introdução básica ao comando INSERT (para teste do modelo)..",
           "blocos": []
         },
         {
-          "titulo": "Entrega de Projeto 4: Script SQL final (Criação completa do banco projetado no ano).",
+          "titulo": "AULA 38 - Entrega de Projeto 4: Script SQL final (Criação completa do banco projetado no ano).",
           "descricao": "Conteúdo da aula 38 do bimestre 4: Entrega de Projeto 4: Script SQL final (Criação completa do banco projetado no ano)..",
           "blocos": []
         },
         {
-          "titulo": "Revisão Geral: Do Minimundo ao Script SQL.",
+          "titulo": "AULA 39 - Revisão Geral: Do Minimundo ao Script SQL.",
           "descricao": "Conteúdo da aula 39 do bimestre 4: Revisão Geral: Do Minimundo ao Script SQL..",
           "blocos": []
         },
         {
-          "titulo": "Encerramento: Apresentação dos portfólios de Banco de Dados I.",
+          "titulo": "AULA 40 - Encerramento: Apresentação dos portfólios de Banco de Dados I.",
           "descricao": "Conteúdo da aula 40 do bimestre 4: Encerramento: Apresentação dos portfólios de Banco de Dados I..",
           "blocos": []
         }

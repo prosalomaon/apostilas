@@ -4,220 +4,220 @@
   "descricao": "Componente dedicado ao planejamento, desenvolvimento e execução do Trabalho de Conclusão de Curso, abrangendo desde a definição do tema até a apresentação final.",
   "secoes": [
     {
-      "nome": "Planejamento, Problematização e Modelagem de Negócio",
+      "nome": "1º Bimestre - Planejamento, Problematização e Modelagem de Negócio",
       "aulas": [
         {
-          "titulo": "Introdução ao PDTCC e diferenciação entre conhecimento popular e científico.",
+          "titulo": "AULA 01 - Introdução ao PDTCC e diferenciação entre conhecimento popular e científico.",
           "descricao": "Descrição da aula 01",
           "blocos": []
         },
         {
-          "titulo": "Escolha do tema, delimitação do problema e formulação de hipóteses.",
+          "titulo": "AULA 02 - Escolha do tema, delimitação do problema e formulação de hipóteses.",
           "descricao": "Descrição da aula 02",
           "blocos": []
         },
         {
-          "titulo": "Estudo de cenário: lacunas de mercado e tendências futuras em tecnologia.",
+          "titulo": "AULA 03 - Estudo de cenário: lacunas de mercado e tendências futuras em tecnologia.",
           "descricao": "Descrição da aula 03",
           "blocos": []
         },
         {
-          "titulo": "Definição de objetivos (Geral e Específicos) e Justificativa da pesquisa.",
+          "titulo": "AULA 04 - Definição de objetivos (Geral e Específicos) e Justificativa da pesquisa.",
           "descricao": "Descrição da aula 04",
           "blocos": []
         },
         {
-          "titulo": "Modelagem de Negócio para o projeto tecnológico (Lean Canvas / Business Model Generation).",
+          "titulo": "AULA 05 - Modelagem de Negócio para o projeto tecnológico (Lean Canvas / Business Model Generation).",
           "descricao": "Descrição da aula 05",
           "blocos": []
         },
         {
-          "titulo": "Técnicas de pesquisa I: Documentação Indireta (Pesquisa Bibliográfica e Documental).",
+          "titulo": "AULA 06 - Técnicas de pesquisa I: Documentação Indireta (Pesquisa Bibliográfica e Documental).",
           "descricao": "Descrição da aula 06",
           "blocos": []
         },
         {
-          "titulo": "Técnicas de pesquisa II: Pesquisa de Campo, Entrevistas e Questionários.",
+          "titulo": "AULA 07 - Técnicas de pesquisa II: Pesquisa de Campo, Entrevistas e Questionários.",
           "descricao": "Descrição da aula 07",
           "blocos": []
         },
         {
-          "titulo": "Entrega do Projeto do Bimestre (Anteprojeto: Tema, Problema, Objetivos e Lean Canvas).",
+          "titulo": "AULA 08 - Entrega do Projeto do Bimestre (Anteprojeto: Tema, Problema, Objetivos e Lean Canvas).",
           "descricao": "Descrição da aula 08",
           "blocos": []
         },
         {
-          "titulo": "Revisão de conteúdos e feedback coletivo sobre os temas escolhidos.",
+          "titulo": "AULA 09 - Revisão de conteúdos e feedback coletivo sobre os temas escolhidos.",
           "descricao": "Descrição da aula 09",
           "blocos": []
         },
         {
-          "titulo": "Correções individuais e ajustes nos anteprojetos.",
+          "titulo": "AULA 10 - Correções individuais e ajustes nos anteprojetos.",
           "descricao": "Descrição da aula 10",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Engenharia de Requisitos e Estrutura do Artigo",
+      "nome": "2º Bimestre - Engenharia de Requisitos e Estrutura do Artigo",
       "aulas": [
         {
-          "titulo": "Elaboração do cronograma de trabalho e levantamento de recursos necessários.",
+          "titulo": "AULA 11 - Elaboração do cronograma de trabalho e levantamento de recursos necessários.",
           "descricao": "Aprenda a estruturar cronogramas, definir WBS, e identificar recursos necessários para o desenvolvimento do seu TCC tecnológico.",
           "blocos": []
         },
         {
-          "titulo": "Ciclos de vida de software: Modelo Cascata vs. Metodologias Ágeis (Scrum/XP).",
+          "titulo": "AULA 12 - Ciclos de vida de software: Modelo Cascata vs. Metodologias Ágeis (Scrum/XP).",
           "descricao": "Descrição da aula 12",
           "blocos": []
         },
         {
-          "titulo": "Engenharia de Requisitos: Elicitação e especificação de requisitos funcionais e não funcionais.",
+          "titulo": "AULA 13 - Engenharia de Requisitos: Elicitação e especificação de requisitos funcionais e não funcionais.",
           "descricao": "Descrição da aula 13",
           "blocos": []
         },
         {
-          "titulo": "Fundamentação Teórica: Como realizar a curadoria e o fichamento de referências.",
+          "titulo": "AULA 14 - Fundamentação Teórica: Como realizar a curadoria e o fichamento de referências.",
           "descricao": "Descrição da aula 14",
           "blocos": []
         },
         {
-          "titulo": "Estrutura do Artigo Científico: Redação da Introdução e Metodologia.",
+          "titulo": "AULA 15 - Estrutura do Artigo Científico: Redação da Introdução e Metodologia.",
           "descricao": "Descrição da aula 15",
           "blocos": []
         },
         {
-          "titulo": "UML I: Diagrama de Casos de Uso para delimitação de escopo do sistema.",
+          "titulo": "AULA 16 - UML I: Diagrama de Casos de Uso para delimitação de escopo do sistema.",
           "descricao": "Descrição da aula 16",
           "blocos": []
         },
         {
-          "titulo": "Prototipagem de interface (UI/UX) e modelagem da navegação do sistema.",
+          "titulo": "AULA 17 - Prototipagem de interface (UI/UX) e modelagem da navegação do sistema.",
           "descricao": "Descrição da aula 17",
           "blocos": []
         },
         {
-          "titulo": "Entrega do Projeto do Bimestre (Documento de Requisitos + Introdução/Metodologia do Artigo).",
+          "titulo": "AULA 18 - Entrega do Projeto do Bimestre (Documento de Requisitos + Introdução/Metodologia do Artigo).",
           "descricao": "Descrição da aula 18",
           "blocos": []
         },
         {
-          "titulo": "Revisão sobre normas ABNT para citações e referências.",
+          "titulo": "AULA 19 - Revisão sobre normas ABNT para citações e referências.",
           "descricao": "Descrição da aula 19",
           "blocos": []
         },
         {
-          "titulo": "Correções de estilo acadêmico e validação técnica dos requisitos.",
+          "titulo": "AULA 20 - Correções de estilo acadêmico e validação técnica dos requisitos.",
           "descricao": "Descrição da aula 20",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Modelagem Técnica e Análise de Dados",
+      "nome": "3º Bimestre - Modelagem Técnica e Análise de Dados",
       "aulas": [
         {
-          "titulo": "Design de Sistemas: Transição da análise para o projeto (aspectos estáticos e dinâmicos).",
+          "titulo": "AULA 21 - Design de Sistemas: Transição da análise para o projeto (aspectos estáticos e dinâmicos).",
           "descricao": "Descrição da aula 21",
           "blocos": []
         },
         {
-          "titulo": "Modelagem de Banco de Dados: Modelos conceituais e lógicos (DER/MER).",
+          "titulo": "AULA 22 - Modelagem de Banco de Dados: Modelos conceituais e lógicos (DER/MER).",
           "descricao": "Descrição da aula 22",
           "blocos": []
         },
         {
-          "titulo": "UML II: Diagrama de Classes e refinamento de atributos e métodos.",
+          "titulo": "AULA 23 - UML II: Diagrama de Classes e refinamento de atributos e métodos.",
           "descricao": "Descrição da aula 23",
           "blocos": []
         },
         {
-          "titulo": "UML III: Aspectos dinâmicos (Diagramas de Sequência e Atividades).",
+          "titulo": "AULA 24 - UML III: Aspectos dinâmicos (Diagramas de Sequência e Atividades).",
           "descricao": "Descrição da aula 24",
           "blocos": []
         },
         {
-          "titulo": "Arquitetura de Software: Padrão MVC (Model-View-Controller) e persistência de dados.",
+          "titulo": "AULA 25 - Arquitetura de Software: Padrão MVC (Model-View-Controller) e persistência de dados.",
           "descricao": "Descrição da aula 25",
           "blocos": []
         },
         {
-          "titulo": "Execução da Pesquisa: Coleta de dados e realização de testes-piloto.",
+          "titulo": "AULA 26 - Execução da Pesquisa: Coleta de dados e realização de testes-piloto.",
           "descricao": "Descrição da aula 26",
           "blocos": []
         },
         {
-          "titulo": "Tabulação e organização de dados em tabelas, quadros e gráficos.",
+          "titulo": "AULA 27 - Tabulação e organização de dados em tabelas, quadros e gráficos.",
           "descricao": "Descrição da aula 27",
           "blocos": []
         },
         {
-          "titulo": "Entrega do Projeto do Bimestre (Especificação Técnica: UML + Diagrama de BD + Resultados Preliminares).",
+          "titulo": "AULA 28 - Entrega do Projeto do Bimestre (Especificação Técnica: UML + Diagrama de BD + Resultados Preliminares).",
           "descricao": "Descrição da aula 28",
           "blocos": []
         },
         {
-          "titulo": "Revisão de lógica de modelagem e consistência entre diagramas.",
+          "titulo": "AULA 29 - Revisão de lógica de modelagem e consistência entre diagramas.",
           "descricao": "Descrição da aula 29",
           "blocos": []
         },
         {
-          "titulo": "Correções individuais nos modelos técnicos e análise de dados.",
+          "titulo": "AULA 30 - Correções individuais nos modelos técnicos e análise de dados.",
           "descricao": "Descrição da aula 30",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Implementação, Finalização e Apresentação",
+      "nome": "4º Bimestre - Implementação, Finalização e Apresentação",
       "aulas": [
         {
-          "titulo": "Qualidade e Teste de Software: Plano de testes e verificação de erros.",
+          "titulo": "AULA 31 - Qualidade e Teste de Software: Plano de testes e verificação de erros.",
           "descricao": "Descrição da aula 31",
           "blocos": []
         },
         {
-          "titulo": "Documentação final: Elaboração de manuais técnicos e termos de uso (EULA).",
+          "titulo": "AULA 32 - Documentação final: Elaboração de manuais técnicos e termos de uso (EULA).",
           "descricao": "Descrição da aula 32",
           "blocos": []
         },
         {
-          "titulo": "Interpretação dos resultados e redação da seção de \\\"Discussão\\\" do artigo.",
+          "titulo": "AULA 33 - Interpretação dos resultados e redação da seção de \\\"Discussão\\\" do artigo.",
           "descricao": "Descrição da aula 33",
           "blocos": []
         },
         {
-          "titulo": "Finalização do Artigo Científico: Resumo (Abstract), Conclusões e Referências.",
+          "titulo": "AULA 34 - Finalização do Artigo Científico: Resumo (Abstract), Conclusões e Referências.",
           "descricao": "Descrição da aula 34",
           "blocos": []
         },
         {
-          "titulo": "Estilo e Redação Técnica: Clareza, objetividade e impessoalidade.",
+          "titulo": "AULA 35 - Estilo e Redação Técnica: Clareza, objetividade e impessoalidade.",
           "descricao": "Descrição da aula 35",
           "blocos": []
         },
         {
-          "titulo": "Técnicas de apresentação: Preparação de slides e postura para defesa oral.",
+          "titulo": "AULA 36 - Técnicas de apresentação: Preparação de slides e postura para defesa oral.",
           "descricao": "Descrição da aula 36",
           "blocos": []
         },
         {
-          "titulo": "Organização do \\\"Project Binder\\\" (Portfólio final com todos os artefatos do TCC).",
+          "titulo": "AULA 37 - Organização do \\\"Project Binder\\\" (Portfólio final com todos os artefatos do TCC).",
           "descricao": "Descrição da aula 37",
           "blocos": []
         },
         {
-          "titulo": "Entrega do Projeto Final (Software/Protótipo Funcional + Artigo Científico Completo).",
+          "titulo": "AULA 38 - Entrega do Projeto Final (Software/Protótipo Funcional + Artigo Científico Completo).",
           "descricao": "Descrição da aula 38",
           "blocos": []
         },
         {
-          "titulo": "Ensaio geral e simulação de banca examinadora.",
+          "titulo": "AULA 39 - Ensaio geral e simulação de banca examinadora.",
           "descricao": "Descrição da aula 39",
           "blocos": []
         },
         {
-          "titulo": "Revisão final de notas, menções e orientações para submissão ou publicação.",
+          "titulo": "AULA 40 - Revisão final de notas, menções e orientações para submissão ou publicação.",
           "descricao": "Descrição da aula 40",
           "blocos": []
         }

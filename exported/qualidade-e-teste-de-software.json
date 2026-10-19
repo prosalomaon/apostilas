@@ -4,220 +4,220 @@
   "descricao": "Esta disciplina aborda os fundamentos e práticas de qualidade de software, desde modelos de maturidade e normas ISO até técnicas avançadas de teste, automação e metodologias ágeis, preparando o aluno para garantir a excelência no ciclo de vida do software.",
   "secoes": [
     {
-      "nome": "Fundamentos e Modelos de Maturidade",
+      "nome": "1º Bimestre - Fundamentos e Modelos de Maturidade",
       "aulas": [
         {
-          "titulo": "Introdução, Crise do Software e Visões da Qualidade",
+          "titulo": "AULA 01 - Introdução, Crise do Software e Visões da Qualidade",
           "descricao": "Conteúdo da aula 01 do bimestre 01: Introdução, Crise do Software e Visões da Qualidade.",
           "blocos": []
         },
         {
-          "titulo": "V&V e Anatomia do Problema",
+          "titulo": "AULA 02 - V&V e Anatomia do Problema",
           "descricao": "Conteúdo da aula 02 do bimestre 01: V&V e Anatomia do Problema.",
           "blocos": []
         },
         {
-          "titulo": "Ciclo PDCA e Melhoria Contínua",
+          "titulo": "AULA 03 - Ciclo PDCA e Melhoria Contínua",
           "descricao": "Conteúdo da aula 03 do bimestre 01: Ciclo PDCA e Melhoria Contínua.",
           "blocos": []
         },
         {
-          "titulo": "Normas ISO para Processo e Produto",
+          "titulo": "AULA 04 - Normas ISO para Processo e Produto",
           "descricao": "Conteúdo da aula 04 do bimestre 01: Normas ISO para Processo e Produto.",
           "blocos": []
         },
         {
-          "titulo": "Modelo CMMI",
+          "titulo": "AULA 05 - Modelo CMMI",
           "descricao": "Conteúdo da aula 05 do bimestre 01: Modelo CMMI.",
           "blocos": []
         },
         {
-          "titulo": "Modelo MPS.BR",
+          "titulo": "AULA 06 - Modelo MPS.BR",
           "descricao": "Conteúdo da aula 06 do bimestre 01: Modelo MPS.BR.",
           "blocos": []
         },
         {
-          "titulo": "Comparativo e Integração CMMI vs. MPS.BR",
+          "titulo": "AULA 07 - Comparativo e Integração CMMI vs. MPS.BR",
           "descricao": "Conteúdo da aula 07 do bimestre 01: Comparativo e Integração CMMI vs. MPS.BR.",
           "blocos": []
         },
         {
-          "titulo": "Avaliação Bimestral",
+          "titulo": "AULA 08 - Avaliação Bimestral",
           "descricao": "Conteúdo da aula 08 do bimestre 01: Avaliação Bimestral.",
           "blocos": []
         },
         {
-          "titulo": "Revisão de Prova e Feedback Coletivo",
+          "titulo": "AULA 09 - Revisão de Prova e Feedback Coletivo",
           "descricao": "Conteúdo da aula 09 do bimestre 01: Revisão de Prova e Feedback Coletivo.",
           "blocos": []
         },
         {
-          "titulo": "Atividades de Recuperação e Fechamento do Bimestre",
+          "titulo": "AULA 10 - Atividades de Recuperação e Fechamento do Bimestre",
           "descricao": "Conteúdo da aula 10 do bimestre 01: Atividades de Recuperação e Fechamento do Bimestre.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Estratégias e Planejamento de Testes",
+      "nome": "2º Bimestre - Estratégias e Planejamento de Testes",
       "aulas": [
         {
-          "titulo": "Psicologia e Estratégias de Teste",
+          "titulo": "AULA 11 - Psicologia e Estratégias de Teste",
           "descricao": "Psicologia do teste, objetivos e estratégias de caixa preta, branca e cinzenta.",
           "blocos": []
         },
         {
-          "titulo": "Níveis de Teste I",
+          "titulo": "AULA 12 - Níveis de Teste I",
           "descricao": "Conteúdo da aula 02 do bimestre 02: Níveis de Teste I.",
           "blocos": []
         },
         {
-          "titulo": "Níveis de Teste II",
+          "titulo": "AULA 13 - Níveis de Teste II",
           "descricao": "Conteúdo da aula 03 do bimestre 02: Níveis de Teste II.",
           "blocos": []
         },
         {
-          "titulo": "Planejamento de Testes",
+          "titulo": "AULA 14 - Planejamento de Testes",
           "descricao": "Conteúdo da aula 04 do bimestre 02: Planejamento de Testes.",
           "blocos": []
         },
         {
-          "titulo": "Projeto de Casos de Teste",
+          "titulo": "AULA 15 - Projeto de Casos de Teste",
           "descricao": "Conteúdo da aula 05 do bimestre 02: Projeto de Casos de Teste.",
           "blocos": []
         },
         {
-          "titulo": "Gestão de Defeitos",
+          "titulo": "AULA 16 - Gestão de Defeitos",
           "descricao": "Conteúdo da aula 06 do bimestre 02: Gestão de Defeitos.",
           "blocos": []
         },
         {
-          "titulo": "Análise Estática e Gerenciamento de Riscos",
+          "titulo": "AULA 17 - Análise Estática e Gerenciamento de Riscos",
           "descricao": "Conteúdo da aula 07 do bimestre 02: Análise Estática e Gerenciamento de Riscos.",
           "blocos": []
         },
         {
-          "titulo": "Avaliação Bimestral",
+          "titulo": "AULA 18 - Avaliação Bimestral",
           "descricao": "Conteúdo da aula 08 do bimestre 02: Avaliação Bimestral.",
           "blocos": []
         },
         {
-          "titulo": "Revisão de Prova e Feedback Coletivo",
+          "titulo": "AULA 19 - Revisão de Prova e Feedback Coletivo",
           "descricao": "Conteúdo da aula 09 do bimestre 02: Revisão de Prova e Feedback Coletivo.",
           "blocos": []
         },
         {
-          "titulo": "Atividades de Recuperação e Fechamento do Bimestre",
+          "titulo": "AULA 20 - Atividades de Recuperação e Fechamento do Bimestre",
           "descricao": "Conteúdo da aula 10 do bimestre 02: Atividades de Recuperação e Fechamento do Bimestre.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Técnicas de Teste e Qualidade de Código",
+      "nome": "3º Bimestre - Técnicas de Teste e Qualidade de Código",
       "aulas": [
         {
-          "titulo": "Qualidade de Código e Dívida Técnica",
+          "titulo": "AULA 21 - Qualidade de Código e Dívida Técnica",
           "descricao": "Conceito de Clean Code, Dívida Técnica, seus quadrantes, causas, consequências e estratégias de redução.",
           "blocos": []
         },
         {
-          "titulo": "Técnicas de Teste de Caixa Preta",
+          "titulo": "AULA 22 - Técnicas de Teste de Caixa Preta",
           "descricao": "Esta aula apresenta as Técnicas de Teste de Caixa Preta (teste funcional), que tratam o software como um sistema fechado, focando na funcionalidade externa. Aborda Particionamento de Classes de Equivalência (ECP), Análise de Valor Limite (BVA), Tabelas de Decisão e técnicas complementares para projetar casos de teste eficazes.",
           "blocos": []
         },
         {
-          "titulo": "Técnicas de Caixa Branca e Complexidade Ciclomática",
+          "titulo": "AULA 23 - Técnicas de Caixa Branca e Complexidade Ciclomática",
           "descricao": "Esta aula apresenta o Teste de Caixa Branca (estrutural), a construção e interpretação do Grafo de Fluxo de Controle (CFG), o cálculo da Complexidade Ciclomática de McCabe e os critérios de cobertura de código (instruções, desvios e caminhos).",
           "blocos": []
         },
         {
-          "titulo": "Testes Não Funcionais",
+          "titulo": "AULA 24 - Testes Não Funcionais",
           "descricao": "Esta aula aborda os aspectos de qualidade relacionados à operação, comportamento externo e limitações técnicas do sistema. Ao contrário dos testes funcionais, que validam o que o sistema faz (requisitos funcionais), os Testes Não Funcionais validam como o sistema faz (atributos de qualidade como desempenho, segurança, robustez e usabilidade).",
           "blocos": []
         },
         {
-          "titulo": "Testes de Segurança",
+          "titulo": "AULA 25 - Testes de Segurança",
           "descricao": "Esta aula apresenta os fundamentos dos Testes de Segurança de software. Aborda a Tríade CIA (Confidencialidade, Integridade e Disponibilidade), vulnerabilidades comuns como SQL Injection, XSS, Buffer Overflow e Backdoors, o princípio de Falha Segura (Fail-Secure) e a elaboração de cenários de testes negativos baseados em Casos de Abuso (Misuse Cases).",
           "blocos": []
         },
         {
-          "titulo": "Testes de Regressão e Fundamentos da Automação",
+          "titulo": "AULA 26 - Testes de Regressão e Fundamentos da Automação",
           "descricao": "Conteúdo da aula 06 do bimestre 03: Testes de Regressão e Fundamentos da Automação.",
           "blocos": []
         },
         {
-          "titulo": "Escrita de Scripts de Teste",
+          "titulo": "AULA 27 - Escrita de Scripts de Teste",
           "descricao": "Conteúdo da aula 07 do bimestre 03: Escrita de Scripts de Teste.",
           "blocos": []
         },
         {
-          "titulo": "Avaliação Bimestral",
+          "titulo": "AULA 28 - Avaliação Bimestral",
           "descricao": "Conteúdo da aula 08 do bimestre 03: Avaliação Bimestral.",
           "blocos": []
         },
         {
-          "titulo": "Revisão de Prova e Feedback Coletivo",
+          "titulo": "AULA 29 - Revisão de Prova e Feedback Coletivo",
           "descricao": "Conteúdo da aula 09 do bimestre 03: Revisão de Prova e Feedback Coletivo.",
           "blocos": []
         },
         {
-          "titulo": "Atividades de Recuperação e Fechamento do Bimestre",
+          "titulo": "AULA 30 - Atividades de Recuperação e Fechamento do Bimestre",
           "descricao": "Conteúdo da aula 10 do bimestre 03: Atividades de Recuperação e Fechamento do Bimestre.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Agilidade e Projeto Prático",
+      "nome": "4º Bimestre - Agilidade e Projeto Prático",
       "aulas": [
         {
-          "titulo": "TDD (Test-Driven Development)",
+          "titulo": "AULA 31 - TDD (Test-Driven Development)",
           "descricao": "Conteúdo da aula 01 do bimestre 04: TDD (Test-Driven Development).",
           "blocos": []
         },
         {
-          "titulo": "Refatoração e Dublês de Teste",
+          "titulo": "AULA 32 - Refatoração e Dublês de Teste",
           "descricao": "Conteúdo da aula 02 do bimestre 04: Refatoração e Dublês de Teste.",
           "blocos": []
         },
         {
-          "titulo": "Qualidade em Contextos Ágeis",
+          "titulo": "AULA 33 - Qualidade em Contextos Ágeis",
           "descricao": "Conteúdo da aula 03 do bimestre 04: Qualidade em Contextos Ágeis.",
           "blocos": []
         },
         {
-          "titulo": "Integração Contínua (CI) e QAOps",
+          "titulo": "AULA 34 - Integração Contínua (CI) e QAOps",
           "descricao": "Conteúdo da aula 04 do bimestre 04: Integração Contínua (CI) e QAOps.",
           "blocos": []
         },
         {
-          "titulo": "Projeto Prático I",
+          "titulo": "AULA 35 - Projeto Prático I",
           "descricao": "Conteúdo da aula 05 do bimestre 04: Projeto Prático I.",
           "blocos": []
         },
         {
-          "titulo": "Projeto Prático II",
+          "titulo": "AULA 36 - Projeto Prático II",
           "descricao": "Conteúdo da aula 06 do bimestre 04: Projeto Prático II.",
           "blocos": []
         },
         {
-          "titulo": "Projeto Prático III",
+          "titulo": "AULA 37 - Projeto Prático III",
           "descricao": "Conteúdo da aula 07 do bimestre 04: Projeto Prático III.",
           "blocos": []
         },
         {
-          "titulo": "Entrega Final do Projeto",
+          "titulo": "AULA 38 - Entrega Final do Projeto",
           "descricao": "Conteúdo da aula 08 do bimestre 04: Entrega Final do Projeto.",
           "blocos": []
         },
         {
-          "titulo": "Apresentação, Feedback do Projeto e Revisão de Notas",
+          "titulo": "AULA 39 - Apresentação, Feedback do Projeto e Revisão de Notas",
           "descricao": "Conteúdo da aula 09 do bimestre 04: Apresentação, Feedback do Projeto e Revisão de Notas.",
           "blocos": []
         },
         {
-          "titulo": "Encerramento da Disciplina e Recuperação Final",
+          "titulo": "AULA 40 - Encerramento da Disciplina e Recuperação Final",
           "descricao": "Conteúdo da aula 10 do bimestre 04: Encerramento da Disciplina e Recuperação Final.",
           "blocos": []
         }

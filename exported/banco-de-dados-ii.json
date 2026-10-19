@@ -4,220 +4,220 @@
   "descricao": "Esta disciplina aprofunda o conhecimento em sistemas de gerenciamento de dados, focando na implementação física rigorosa, otimização de performance e automação avançada.",
   "secoes": [
     {
-      "nome": "Implementação Física e Integridade",
+      "nome": "1º Bimestre - Implementação Física e Integridade",
       "aulas": [
         {
-          "titulo": "Estrutura Física do SGBD: Criação de Databases, arquivos de dados e logs.",
+          "titulo": "AULA 01 - Estrutura Física do SGBD: Criação de Databases, arquivos de dados e logs.",
           "descricao": "Entendendo como os dados são realmente armazenados nos dispositivos físicos e a arquitetura de arquivos do SGBD.",
           "blocos": []
         },
         {
-          "titulo": "DDL e Datatypes: Escolha técnica de tipos de dados e regras de domínio.",
+          "titulo": "AULA 02 - DDL e Datatypes: Escolha técnica de tipos de dados e regras de domínio.",
           "descricao": "Escolha técnica de tipos de dados e regras de domínio na implementação física do banco de dados.",
           "blocos": []
         },
         {
-          "titulo": "Gestão de Constraints: Integridade de Identidade e Referencial",
+          "titulo": "AULA 03 - Gestão de Constraints: Integridade de Identidade e Referencial",
           "descricao": "Implementação rigorosa de Primary Keys, Unicidade e Foreign Keys para manutenção da Integridade Referencial.",
           "blocos": []
         },
         {
-          "titulo": "Comandos de Manutenção: Evolução da estrutura com ALTER e DROP.",
+          "titulo": "AULA 04 - Comandos de Manutenção: Evolução da estrutura com ALTER e DROP.",
           "descricao": "Evolução da estrutura do banco de dados utilizando os comandos ALTER e DROP.",
           "blocos": []
         },
         {
-          "titulo": "Ações em Cascata: Automação de exclusão e atualização (ON DELETE/UPDATE CASCADE).",
+          "titulo": "AULA 05 - Ações em Cascata: Automação de exclusão e atualização (ON DELETE/UPDATE CASCADE).",
           "descricao": "Automação de exclusão e atualização com as regras ON DELETE e ON UPDATE CASCADE.",
           "blocos": []
         },
         {
-          "titulo": "Povoamento e Carga: Manipulação de Dados com INSERT",
+          "titulo": "AULA 06 - Povoamento e Carga: Manipulação de Dados com INSERT",
           "descricao": "Manipulação de dados com o comando INSERT, abordando inserções individuais e em massa.",
           "blocos": []
         },
         {
-          "titulo": "Segurança e Privilégios: Controle de acesso com GRANT, REVOKE e DENY.",
+          "titulo": "AULA 07 - Segurança e Privilégios: Controle de acesso com GRANT, REVOKE e DENY.",
           "descricao": "Controle de acesso e segurança utilizando os comandos GRANT, REVOKE e DENY.",
           "blocos": []
         },
         {
-          "titulo": "Entrega de Projeto 1: Script completo de criação de um banco íntegro e seguro.",
+          "titulo": "AULA 08 - Entrega de Projeto 1: Script completo de criação de um banco íntegro e seguro.",
           "descricao": "Entrega do Projeto 1, consistindo no script completo de criação de um banco de dados íntegro e seguro.",
           "blocos": []
         },
         {
-          "titulo": "Revisão de conceitos e correção coletiva do Projeto 1.",
+          "titulo": "AULA 09 - Revisão de conceitos e correção coletiva do Projeto 1.",
           "descricao": "Revisão de conceitos abordados e correção coletiva do Projeto 1.",
           "blocos": []
         },
         {
-          "titulo": "Recuperação: Oficina de scripts DDL.",
+          "titulo": "AULA 10 - Recuperação: Oficina de scripts DDL.",
           "descricao": "Oficina prática de recuperação focada em scripts DDL.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Performance e Extração de Dados",
+      "nome": "2º Bimestre - Performance e Extração de Dados",
       "aulas": [
         {
-          "titulo": "DQL Avançada - Predicados IN, LIKE e BETWEEN",
+          "titulo": "AULA 11 - DQL Avançada - Predicados IN, LIKE e BETWEEN",
           "descricao": "Os predicados em SQL são filtros lógicos aplicados na cláusula WHERE que determinam se uma tupla (linha)",
           "blocos": []
         },
         {
-          "titulo": "Álgebra Relacional",
+          "titulo": "AULA 12 - Álgebra Relacional",
           "descricao": "Seleção, Projeção e Produto.",
           "blocos": []
         },
         {
-          "titulo": "Operações de Junção (Joins)",
+          "titulo": "AULA 13 - Operações de Junção (Joins)",
           "descricao": "Aprenda a recuperar informações de múltiplas tabelas simultaneamente utilizando INNER, OUTER, CROSS e SELF",
           "blocos": []
         },
         {
-          "titulo": "Funções de Agregação e Agrupamento",
+          "titulo": "AULA 14 - Funções de Agregação e Agrupamento",
           "descricao": "SUM, AVG, COUNT, MAX, MIN, GROUP BY e HAVING.",
           "blocos": []
         },
         {
-          "titulo": "Subqueries",
+          "titulo": "AULA 15 - Subqueries",
           "descricao": "Consultas aninhadas e otimização.",
           "blocos": []
         },
         {
-          "titulo": "Índices",
+          "titulo": "AULA 16 - Índices",
           "descricao": "Clustered e Non-Clustered.",
           "blocos": []
         },
         {
-          "titulo": "Visões (Views)",
+          "titulo": "AULA 17 - Visões (Views)",
           "descricao": "Esta aula aborda as Visões (Views), um recurso essencial no modelo físico de bancos de dados que permite a",
           "blocos": []
         },
         {
-          "titulo": "Projeto Integrador de Banco de Dados: Desafio StreamFlow",
+          "titulo": "AULA 18 - Projeto Integrador de Banco de Dados: Desafio StreamFlow",
           "descricao": "Foco: Engenharia de Dados, Performance e Business Intelligence",
           "blocos": []
         },
         {
-          "titulo": "Revisão",
+          "titulo": "AULA 19 - Revisão",
           "descricao": "SQL vs Álgebra Relacional.",
           "blocos": []
         },
         {
-          "titulo": "Recuperação",
+          "titulo": "AULA 20 - Recuperação",
           "descricao": "Tunning de consultas.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Programabilidade e Automação",
+      "nome": "3º Bimestre - Programabilidade e Automação",
       "aulas": [
         {
-          "titulo": "Blocos de Linguagem SQL - Procedimentos e Lógica",
+          "titulo": "AULA 21 - Blocos de Linguagem SQL - Procedimentos e Lógica",
           "descricao": "Esta aula aborda os Blocos de Linguagem SQL, estruturas fundamentais que agrupam múltiplas instruções",
           "blocos": []
         },
         {
-          "titulo": "Stored Procedures: Automatizando e Encapsulando a Lógica",
+          "titulo": "AULA 22 - Stored Procedures: Automatizando e Encapsulando a Lógica",
           "descricao": "Esta aula apresenta as Stored Procedures (Procedimentos Armazenados), objetos que agrupam comandos SQL em uma unidade lógica no servidor, cobrindo parâmetros IN/OUT/INOUT, implementação em MySQL e PostgreSQL e a diferença para funções.",
           "blocos": []
         },
         {
-          "titulo": "Stored Functions: Encapsulamento de Cálculos e Lógica",
+          "titulo": "AULA 23 - Stored Functions: Encapsulamento de Cálculos e Lógica",
           "descricao": "Esta aula apresenta as Stored Functions (Funções Armazenadas), objetos que encapsulam cálculos e lógica no servidor e retornam obrigatoriamente um único valor, cobrindo as diferenças para procedimentos, implementação em MySQL e PostgreSQL, níveis de volatilidade e controle de privilégios.",
           "blocos": []
         },
         {
-          "titulo": "Gatilhos (Triggers) I: Automação e Integridade",
+          "titulo": "AULA 24 - Gatilhos (Triggers) I: Automação e Integridade",
           "descricao": "Esta aula apresenta os Gatilhos (Triggers), objetos associados a tabelas que são disparados automaticamente por instruções INSERT, UPDATE ou DELETE, cobrindo os momentos de disparo (BEFORE/AFTER), abrangência (row-level e statement-level), palavras-chave NEW e OLD, implementação em MySQL e PostgreSQL e os cuidados com performance.",
           "blocos": []
         },
         {
-          "titulo": "Gatilhos (Triggers) II: Aplicações Avançadas e Estratégias",
+          "titulo": "AULA 25 - Gatilhos (Triggers) II: Aplicações Avançadas e Estratégias",
           "descricao": "Esta aula apresenta aplicações avançadas de gatilhos, cobrindo gatilhos INSTEAD OF em visões, simulação de funcionalidades como índices baseados em função e timestamps automáticos, saneamento e rejeição de dados, auditoria e logs de alterações e a diferença entre gatilhos de linha e de instrução no PostgreSQL.",
           "blocos": []
         },
         {
-          "titulo": "Tratamento de Exceções - Robustez e Gestão de Erros",
+          "titulo": "AULA 26 - Tratamento de Exceções - Robustez e Gestão de Erros",
           "descricao": "Tratamento de exceções em aplicações que acessam bancos de dados: captura de erros em PHP (PDO), Python e Java (JDBC), handlers internos no MySQL (DECLARE HANDLER), erros customizados com SIGNAL e boas práticas de transações.",
           "blocos": []
         },
         {
-          "titulo": "Mapeamento ORM — Incompatibilidade de Impedância Semântica e Persistência de Objetos",
+          "titulo": "AULA 27 - Mapeamento ORM — Incompatibilidade de Impedância Semântica e Persistência de Objetos",
           "descricao": "Mapeamento Objeto-Relacional (ORM): resolvendo a Incompatibilidade de Impedância Semântica entre programação orientada a objetos e bancos de dados relacionais com Hibernate (Java) e Drizzle (TypeScript).",
           "blocos": []
         },
         {
-          "titulo": "Projeto Integrador de Banco de Dados III: StreamFlow em Produção",
+          "titulo": "AULA 28 - Projeto Integrador de Banco de Dados III: StreamFlow em Produção",
           "descricao": "Foco: Programabilidade e Automação. Continuação do projeto StreamFlow, aplicando Stored Procedures, Stored Functions, Gatilhos (Triggers), Tratamento de Exceções e Mapeamento ORM sobre o banco já construído.",
           "blocos": []
         },
         {
-          "titulo": "Revisão Completa do 3º Bimestre",
+          "titulo": "AULA 29 - Revisão Completa do 3º Bimestre",
           "descricao": "Revisão completa do terceiro bimestre: consolidação dos conceitos de programabilidade e automação (Stored Procedures, Functions, Triggers, Tratamento de Exceções e ORM) integrados aos fundamentos de transações, DQL, junções, agregações, subconsultas, views e índices vistos nos bimestres anteriores.",
           "blocos": []
         },
         {
-          "titulo": "Recuperação",
+          "titulo": "AULA 30 - Recuperação",
           "descricao": "Laboratório de automação.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "NoSQL e Inteligência de Dados",
+      "nome": "4º Bimestre - NoSQL e Inteligência de Dados",
       "aulas": [
         {
-          "titulo": "Introdução ao NoSQL - Famílias, Teorema CAP e Persistência Poliglota",
+          "titulo": "AULA 31 - Introdução ao NoSQL - Famílias, Teorema CAP e Persistência Poliglota",
           "descricao": "Evolução histórica dos modelos de dados, o movimento NoSQL (Not Only SQL), o Teorema CAP, o modelo BASE, as quatro famílias de bancos NoSQL e o conceito de Persistência Poliglota em arquiteturas de microsserviços.",
           "blocos": []
         },
         {
-          "titulo": "Bancos de Documentos",
+          "titulo": "AULA 32 - Bancos de Documentos",
           "descricao": "Arquitetura JSON no MongoDB.",
           "blocos": []
         },
         {
-          "titulo": "CRUD NoSQL",
+          "titulo": "AULA 33 - CRUD NoSQL",
           "descricao": "Manipulação de documentos.",
           "blocos": []
         },
         {
-          "titulo": "Performance NoSQL",
+          "titulo": "AULA 34 - Performance NoSQL",
           "descricao": "Índices e Compass.",
           "blocos": []
         },
         {
-          "titulo": "Geração de Relatórios",
+          "titulo": "AULA 35 - Geração de Relatórios",
           "descricao": "Relatórios de inteligência.",
           "blocos": []
         },
         {
-          "titulo": "Integração de Sistemas",
+          "titulo": "AULA 36 - Integração de Sistemas",
           "descricao": "Sistemas e fontes híbridas.",
           "blocos": []
         },
         {
-          "titulo": "Refatoração e Controle",
+          "titulo": "AULA 37 - Refatoração e Controle",
           "descricao": "Versionamento e refatoração.",
           "blocos": []
         },
         {
-          "titulo": "Entrega de Projeto 4",
+          "titulo": "AULA 38 - Entrega de Projeto 4",
           "descricao": "Sistema integrado NoSQL.",
           "blocos": []
         },
         {
-          "titulo": "Revisão Final",
+          "titulo": "AULA 39 - Revisão Final",
           "descricao": "Big Data e Cloud.",
           "blocos": []
         },
         {
-          "titulo": "Recuperação Final",
+          "titulo": "AULA 40 - Recuperação Final",
           "descricao": "Integração integradora.",
           "blocos": []
         }

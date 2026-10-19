@@ -1,18 +1,242 @@
 ---
 layout: exercicio
-title: "Exercício 01 - Gerenciamento de Sessões: Autenticação de usuários e controle de 'Ãrea Restrita'"
+title: "Exercício 01 - Sessões: login, área restrita e logout seguro no PHP 8"
 exercicio_numero: "01"
 aula_numero: "32"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 32."
+description: "Atividade prática para consolidar o gerenciamento de sessões no PHP 8: autenticar usuários com password_verify(), regenerar o ID da sessão, proteger páginas com um script guardião, detectar divergência de impressão digital e realizar um logout completo."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    Você foi contratado(a) para implementar o módulo de autenticação de um sistema escolar. Todo o controle de acesso
+    deverá ser feito com <strong>sessões no servidor</strong> (função <code class="one-line-code">session_start()</code> e
+    superglobal <code class="one-line-code">$_SESSION</code>) — nenhum dado de permissão pode ser confiado ao navegador.
+  </p>
+  <p>
+    Execute e valide cada etapa no seu ambiente com PHP 8 antes de prosseguir para a próxima.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li>
+      <strong>Ambiente:</strong> PHP 8+ e MySQL em execução (XAMPP/WampServer). Confira a versão com
+      <code class="one-line-code">php -v</code> e suba a pasta com
+      <code class="one-line-code">php -S localhost:8080</code> ou pelo Apache.
+    </li>
+    <li>
+      <strong>Banco de dados:</strong> crie o banco <code class="one-line-code">escola</code> e a tabela de usuários:
+      <div class="code-container">
+        <pre><code class="language-sql">CREATE DATABASE escola CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE escola;
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    senha_hash VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;</code></pre>
+      </div>
+    </li>
+    <li>
+      <strong>Cadastro de um usuário para teste:</strong> nunca grave a senha em texto puro. Gere o hash em um script
+      temporário (apague o arquivo depois) e insira o resultado no banco:
+      <div class="code-container">
+        <pre><code class="language-php">&lt;?php
+// cadastro.php (executar UMA vez e depois excluir)
+$hash = password_hash('senha@123', PASSWORD_DEFAULT);
+
+$pdo = new PDO('mysql:host=localhost;dbname=escola;charset=utf8mb4', 'root', '');
+$stmt = $pdo-&gt;prepare('INSERT INTO usuarios (nome, email, senha_hash) VALUES (:nome, :email, :hash)');
+$stmt-&gt;execute(['nome' =&gt; 'Ana Souza', 'email' =&gt; 'ana@escola.com.br', 'hash' =&gt; $hash]);
+
+echo 'Usuário criado com hash: ' . $hash;</code></pre>
+      </div>
+    </li>
+    <li>
+      <strong>Ferramenta de inspeção:</strong> abra o DevTools (<code class="one-line-code">F12</code>) na aba
+      <strong>Application &rarr; Cookies</strong> para observar o <code class="one-line-code">PHPSESSID</code>, e na aba
+      <strong>Network</strong> para conferir os cabeçalhos <code class="one-line-code">Set-Cookie</code> e
+      <code class="one-line-code">Location</code>.
+    </li>
+    <li>
+      <strong>Console de erros:</strong> habilite a exibição de erros com
+      <code class="one-line-code">ini_set('display_errors', '1'); error_reporting(E_ALL);</code> no topo dos scripts durante
+      os testes.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Estrutura de Arquivos Proposta</h2>
+  <p>Crie a pasta <code class="one-line-code">sessao-aula32</code> com os seguintes arquivos:</p>
+  <ul>
+    <li>
+      <code class="one-line-code">login.php</code> — formulário e processamento do login (Exemplo 1 da aula).
+    </li>
+    <li>
+      <code class="one-line-code">autenticacao.php</code> — script guardião, incluído por toda página privada (Exemplo 2).
+    </li>
+    <li><code class="one-line-code">painel.php</code> — página restrita inicial.</li>
+    <li><code class="one-line-code">relatorios.php</code> — segunda página restrita, para testar a reutilização do guardião.</li>
+    <li><code class="one-line-code">logout.php</code> — encerramento completo da sessão (Exemplo 3 da aula).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Autenticando com Sessão no Servidor</h3>
+  <ol>
+    <li>
+      Monte o <code class="one-line-code">login.php</code> com <code class="one-line-code">session_start()</code> no topo,
+      consulta preparada por <code class="one-line-code">PDO</code> e verificação com
+      <code class="one-line-code">password_verify()</code>, exatamente na ordem apresentada no Exemplo 1 da aula.
+    </li>
+    <li>
+      Faça login com <code class="one-line-code">ana@escola.com.br</code> e
+      <code class="one-line-code">senha@123</code>. No DevTools, copie o valor do cookie
+      <code class="one-line-code">PHPSESSID</code> e abra
+      <code class="one-line-code">http://localhost:8080/sessao-aula32/painel.php</code> em uma aba anônima, forçando o mesmo
+      cookie com a extensão <em>EditThisCookie</em> ou com a aba <strong>Network &rarr; Request Headers</strong>. O que
+      acontece e por quê?
+    </li>
+    <li>
+      Troque <code class="one-line-code">password_verify($senha, $usuario['senha_hash'])</code> por
+      <code class="one-line-code">$senha === $usuario['senha_hash']</code> e tente logar. Explique por que a comparação
+      falha mesmo com a senha correta e por que a comparação direta, mesmo que funcionasse, seria insegura.
+    </li>
+    <li>
+      Deixe a mensagem de erro genérica ("E-mail ou senha incorretos"). Teste um e-mail inexistente e uma senha errada:
+      a resposta do sistema deve ser idêntica nos dois casos. Por que essa igualdade importa?
+    </li>
+  </ol>
+
+  <h3>Bloco 2: Regeneração de ID (Prevenção de Session Fixation)</h3>
+  <ol>
+    <li>
+      Antes de logar, copie o <code class="one-line-code">PHPSESSID</code> atual. Após o login bem-sucedido, compare o
+      cookie exibido no DevTools com o valor copiado. Confirme que eles são diferentes.
+    </li>
+    <li>
+      Comente a linha <code class="one-line-code">session_regenerate_id(true);</code>, repita o teste e observe o cookie
+      antes e depois do login. Com base nisso, descreva, com suas palavras, como um atacante exploraria esse cenário
+      enviando um link com <code class="one-line-code">?PHPSESSID=12345</code>.
+    </li>
+    <li>
+      Altere a chamada para <code class="one-line-code">session_regenerate_id();</code> (sem o argumento
+      <code class="one-line-code">true</code>) e investigue no diretório configurado em
+      <code class="one-line-code">session.save_path</code> (ou <code class="one-line-code">sys_get_temp_dir()</code>) quantos
+      arquivos <code class="one-line-code">sess_*</code> existem após vários logins. Qual é a diferença prática em relação
+      à versão com <code class="one-line-code">true</code>?
+    </li>
+    <li>
+      Mova a chamada <code class="one-line-code">session_regenerate_id(true)</code> para <strong>antes</strong> do
+      <code class="one-line-code">session_start()</code> e execute o script. Registre o aviso emitido pelo PHP e explique
+      a dependência entre as duas funções.
+    </li>
+  </ol>
+
+  <h3>Bloco 3: O Guardião da Área Restrita</h3>
+  <ol>
+    <li>
+      Crie <code class="one-line-code">autenticacao.php</code> com as três verificações do Exemplo 2 da aula:
+      existência de <code class="one-line-code">$_SESSION['usuario_id']</code>, conferência do
+      <code class="one-line-code">user_agent</code> e limite de inatividade.
+    </li>
+    <li>
+      Inclua <code class="one-line-code">require __DIR__ . '/autenticacao.php';</code> no topo de
+      <code class="one-line-code">painel.php</code> e de <code class="one-line-code">relatorios.php</code>. Sem estar
+      logado, tente acessar as duas URLs diretamente: qual é a URL final exibida na barra de endereço?
+    </li>
+    <li>
+      Com a página restrita aberta, edite o cookie <code class="one-line-code">PHPSESSID</code> para um valor inexistente
+      (ex.: <code class="one-line-code">hackeado123</code>) e recarregue. O que o guardião faz e por que nenhuma variável
+      de sessão "fictícia" consegue ser inventada pelo cliente?
+    </li>
+    <li>
+      Simule um sequestro de sessão: enquanto está logado, altere o cabeçalho
+      <code class="one-line-code">User-Agent</code> da requisição (aba <strong>Network &rarr; ... &rarr; Edit and
+      Resend</strong>) e envie de novo. Confirme que a sessão é destruída e você é redirecionado ao login.
+    </li>
+    <li>
+      Reduza o <code class="one-line-code">$tempoLimite</code> para 20 segundos, espere e recarregue a página restrita.
+      O que acontece e qual diretiva do <code class="one-line-code">php.ini</code> tem relação com esse comportamento?
+    </li>
+  </ol>
+
+  <h3>Bloco 4: Logout Completo</h3>
+  <ol>
+    <li>
+      Implemente o <code class="one-line-code">logout.php</code> com as três etapas: zerar
+      <code class="one-line-code">$_SESSION</code>, revogar o cookie com expiração no passado e chamar
+      <code class="one-line-code">session_destroy()</code>, sempre terminando com
+      <code class="one-line-code">header()</code> + <code class="one-line-code">exit;</code>.
+    </li>
+    <li>
+      Faça logout e, antes de recarregar qualquer página, observe o DevTools: o cookie
+      <code class="one-line-code">PHPSESSID</code> ainda está lá? Em seguida tente acessar
+      <code class="one-line-code">painel.php</code> e responda: o que acontece e por que?
+    </li>
+    <li>
+      Apague do <code class="one-line-code">logout.php</code> apenas o bloco que revoga o cookie. Mesmo com a tela de
+      login aparecendo, a sessão antiga continua existindo no servidor? Justifique relacionando com o tempo de inatividade.
+    </li>
+    <li>
+      Teste o botão "voltar" do navegador (<code class="one-line-code">Alt + &lt;-</code>) logo após o logout. Se o
+      conteúdo restrito voltar a aparecer, discuta a diferença entre conteúdo em cache e sessão autenticada.
+    </li>
+  </ol>
+
+  <h3>Bloco 5: Refletindo sobre a Prática</h3>
+  <ol>
+    <li>
+      Complete a frase: "Diferente do cookie da aula 31, a sessão do PHP guarda os dados reais porque...".
+    </li>
+    <li>
+      Por que a sessão é a escolha correta para <code class="one-line-code">usuario_id</code>, mas um cookie persistente
+      com <code class="one-line-code">httponly</code> pode ser conveniente para "manter conectado por 30 dias"?
+    </li>
+    <li>
+      Explique a diferença prática entre <em>Session Fixation</em> e <em>Session Hijacking</em> e indique qual das duas é
+      neutralizada por <code class="one-line-code">session_regenerate_id(true)</code>.
+    </li>
+    <li>
+      O guardião compara também o IP do cliente? Investigue os riscos de usar o IP como impressão digital em redes móveis
+      e atrás de proxies — a decisão pode deslogar usuários legítimos?
+    </li>
+    <li>
+      Que informações a LGPD exige que sejam observadas ao manter identificadores e dados pessoais dentro de uma sessão
+      temporária?
+    </li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Cabeçalhos primeiro:</strong> <code class="one-line-code">session_start()</code>,
+      <code class="one-line-code">header()</code> e <code class="one-line-code">exit;</code> precisam ocorrer antes de
+      qualquer HTML — inclusive sem espaços ou linhas em branco antes do
+      <code class="one-line-code">&lt;?php</code>.
+    </li>
+    <li>
+      <strong>Uma única fonte de verdade:</strong> a autorização é decidida por
+      <code class="one-line-code">$_SESSION['usuario_id']</code>. Nunca por campo escondido em formulário, por parâmetro na
+      URL ou por cookie definido no cliente.
+    </li>
+    <li>
+      <strong>Sempre terminando com</strong> <code class="one-line-code">exit;</code>: sem ele, o PHP continua processando
+      o arquivo depois de declarar o redirecionamento.
+    </li>
+    <li>
+      <strong>Escape na saída:</strong> todo dado exibido (nome, e-mail, mensagens) deve passar por
+      <code class="one-line-code">htmlspecialchars($valor, ENT_QUOTES, 'UTF-8')</code>.
+    </li>
+    <li>
+      <strong>Registre a evidência:</strong> fotografe ou anote o valor do <code class="one-line-code">PHPSESSID</code> antes
+      e depois do login para comprovar a regeneração do ID.
+    </li>
   </ul>
 </div>

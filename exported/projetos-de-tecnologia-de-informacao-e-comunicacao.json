@@ -4,220 +4,220 @@
   "descricao": "Desenvolvimento de competências digitais, desde gestão de arquivos e produtividade até lógica de programação e aplicação prática de Inteligência Artificial Generativa.",
   "secoes": [
     {
-      "nome": "Fundamentos Digitais e Design de Apresentações",
+      "nome": "1º Bimestre - Fundamentos Digitais e Design de Apresentações",
       "aulas": [
         {
-          "titulo": "Sistemas Operacionais e Gestão de Arquivos",
+          "titulo": "AULA 01 - Sistemas Operacionais e Gestão de Arquivos",
           "descricao": "Organização de pastas e arquivos em computadores, dispositivos móveis e ambientes locais.",
           "blocos": []
         },
         {
-          "titulo": "Computação em Nuvem e Sincronização",
+          "titulo": "AULA 02 - Computação em Nuvem e Sincronização",
           "descricao": "Métodos de backup, restauração e compartilhamento de dados em nuvem para garantir acessibilidade e integridade.",
           "blocos": []
         },
         {
-          "titulo": "Segurança e Privacidade Digital",
+          "titulo": "AULA 03 - Segurança e Privacidade Digital",
           "descricao": "Práticas de navegação segura, proteção contra fraudes e uso ético de redes sociais.",
           "blocos": []
         },
         {
-          "titulo": "Edição de Textos e Formatação Básica",
+          "titulo": "AULA 04 - Edição de Textos e Formatação Básica",
           "descricao": "Criação e edição de documentos focando na eficácia da comunicação de informações.",
           "blocos": []
         },
         {
-          "titulo": "Documentação Técnica e Normas ABNT",
+          "titulo": "AULA 05 - Documentação Técnica e Normas ABNT",
           "descricao": "Aprenda a importância da padronização técnica, aplicação de normas ABNT e estruturação profissional de documentos no Word.",
           "blocos": []
         },
         {
-          "titulo": "Elaboração de Apresentações Eletrônicas",
+          "titulo": "AULA 06 - Elaboração de Apresentações Eletrônicas",
           "descricao": "Foco na criação de slides, inserção de elementos (texto, imagens, gráficos) e organização tópica do conteúdo.",
           "blocos": []
         },
         {
-          "titulo": "Design de Apresentações: Slide Mestre e Temas",
+          "titulo": "AULA 07 - Design de Apresentações: Slide Mestre e Temas",
           "descricao": "Uso de slide mestre para padronização, aplicação de temas pré-definidos e layouts personalizados para harmonia visual.",
           "blocos": []
         },
         {
-          "titulo": "Entrega do Projeto do Bimestre (Dossiê Digital e Visual)",
+          "titulo": "AULA 08 - Entrega do Projeto do Bimestre (Dossiê Digital e Visual)",
           "descricao": "Finalização e entrega do projeto prático do primeiro bimestre.",
           "blocos": []
         },
         {
-          "titulo": "Correção e Feedback do Projeto",
+          "titulo": "AULA 09 - Correção e Feedback do Projeto",
           "descricao": "Análise dos resultados e orientações para melhorias.",
           "blocos": []
         },
         {
-          "titulo": "Revisão de Conteúdo e Nivelamento",
+          "titulo": "AULA 10 - Revisão de Conteúdo e Nivelamento",
           "descricao": "Consolidação dos conhecimentos adquiridos no bimestre.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Análise de Dados e Resolução de Problemas",
+      "nome": "2º Bimestre - Análise de Dados e Resolução de Problemas",
       "aulas": [
         {
-          "titulo": "Introdução a Planilhas Eletrônicas",
+          "titulo": "AULA 11 - Introdução a Planilhas Eletrônicas",
           "descricao": "Aprenda os fundamentos das planilhas eletrônicas, estrutura da interface, conceitos de células, intervalos e inserção de dados estruturados no Excel.",
           "blocos": []
         },
         {
-          "titulo": "Fórmulas e Funções Matemáticas",
+          "titulo": "AULA 12 - Fórmulas e Funções Matemáticas",
           "descricao": "Aplicação de cálculos essenciais e funções lógicas para automação de tarefas em planilhas.",
           "blocos": []
         },
         {
-          "titulo": "Visualização de Dados e Gráficos",
+          "titulo": "AULA 13 - Visualização de Dados e Gráficos",
           "descricao": "Criação de tabelas e representações gráficas para análise crítica de informações.",
           "blocos": []
         },
         {
-          "titulo": "Fundamentos do Pensamento Computacional",
+          "titulo": "AULA 14 - Fundamentos do Pensamento Computacional",
           "descricao": "Estudo da importância do pensamento estruturado e introdução aos seus quatro pilares.",
           "blocos": []
         },
         {
-          "titulo": "Decomposição de Problemas e Reconhecimento de Padrões",
+          "titulo": "AULA 15 - Decomposição de Problemas e Reconhecimento de Padrões",
           "descricao": "Divisão de problemas complexos em tarefas menores e identificação de regularidades.",
           "blocos": []
         },
         {
-          "titulo": "Abstração e Modelagem de Problemas",
+          "titulo": "AULA 16 - Abstração e Modelagem de Problemas",
           "descricao": "Identificação de elementos essenciais e eliminação de detalhes irrelevantes para criar soluções.",
           "blocos": []
         },
         {
-          "titulo": "Técnicas de Apresentação e Comunicação",
+          "titulo": "AULA 17 - Técnicas de Apresentação e Comunicação",
           "descricao": "Desenvolvimento de habilidades para exposições orais apoiadas por recursos digitais.",
           "blocos": []
         },
         {
-          "titulo": "Projeto Final de Bimestre: Meu Primeiro Planejador Financeiro Inteligente",
+          "titulo": "AULA 18 - Projeto Final de Bimestre: Meu Primeiro Planejador Financeiro Inteligente",
           "descricao": "Finalização e entrega do projeto prático do segundo bimestre.",
           "blocos": []
         },
         {
-          "titulo": "Correção e Feedback do Projeto",
+          "titulo": "AULA 19 - Correção e Feedback do Projeto",
           "descricao": "Análise dos resultados e orientações para melhorias.",
           "blocos": []
         },
         {
-          "titulo": "Revisão de Conteúdo e Nivelamento",
+          "titulo": "AULA 20 - Revisão de Conteúdo e Nivelamento",
           "descricao": "Consolidação dos conhecimentos adquiridos no bimestre.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Lógica de Programação e Introdução à IA",
+      "nome": "3º Bimestre - Lógica de Programação e Introdução à IA",
       "aulas": [
         {
-          "titulo": "Algoritmos e Lógica de Programação I",
+          "titulo": "AULA 21 - Algoritmos e Lógica de Programação I",
           "descricao": "Introdução a algoritmos e ao pensamento computacional usando o Google Planilhas como ambiente de desenvolvimento: células como variáveis, operadores e a função SE (IF).",
           "blocos": []
         },
         {
-          "titulo": "Lógica de Programação II",
+          "titulo": "AULA 22 - Lógica de Programação II",
           "descricao": "A Ponte de Ouro: tradução da lógica das planilhas para JavaScript — variáveis, tipos de dados, operadores, estruturas de decisão (if/else) e saída de dados com console.log().",
           "blocos": []
         },
         {
-          "titulo": "Estruturas de Controle e Otimização",
+          "titulo": "AULA 23 - Estruturas de Controle e Otimização",
           "descricao": "Fluxos de decisão complexos com if / else if / else, automação de tarefas repetitivas com as estruturas de repetição for e while e técnicas de otimização de algoritmos para garantir clareza e eficiência do código.",
           "blocos": []
         },
         {
-          "titulo": "Introdução à Inteligência Artificial",
+          "titulo": "AULA 24 - Introdução à Inteligência Artificial",
           "descricao": "Definição, histórico e distinção entre IA Tradicional e IA Generativa (IAGen).",
           "blocos": []
         },
         {
-          "titulo": "Áreas de Aplicação da IA",
+          "titulo": "AULA 25 - Áreas de Aplicação da IA",
           "descricao": "Visão geral sobre Processamento de Linguagem Natural (PLN), Visão Computacional e Machine Learning.",
           "blocos": []
         },
         {
-          "titulo": "Ética e Responsabilidade na IA",
+          "titulo": "AULA 26 - Ética e Responsabilidade na IA",
           "descricao": "Discussão sobre vieses, privacidade, direitos autorais e impactos sociais da tecnologia.",
           "blocos": []
         },
         {
-          "titulo": "Engenharia de Prompts",
+          "titulo": "AULA 27 - Engenharia de Prompts",
           "descricao": "Técnicas para elaborar comandos eficazes e exploração inicial de ferramentas de IAGen.",
           "blocos": []
         },
         {
-          "titulo": "Entrega do Projeto do Bimestre (Algoritmo Estruturado e Ético)",
+          "titulo": "AULA 28 - Entrega do Projeto do Bimestre (Algoritmo Estruturado e Ético)",
           "descricao": "Finalização e entrega do projeto prático do terceiro bimestre.",
           "blocos": []
         },
         {
-          "titulo": "Correção e Feedback do Projeto",
+          "titulo": "AULA 29 - Correção e Feedback do Projeto",
           "descricao": "Análise dos resultados e orientações para melhorias.",
           "blocos": []
         },
         {
-          "titulo": "Revisão de Conteúdo e Nivelamento",
+          "titulo": "AULA 30 - Revisão de Conteúdo e Nivelamento",
           "descricao": "Consolidação dos conhecimentos adquiridos no bimestre.",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Prática de IA Generativa e Projeto Integrador",
+      "nome": "4º Bimestre - Prática de IA Generativa e Projeto Integrador",
       "aulas": [
         {
-          "titulo": "Geração de Texto e Linguagem com IA",
+          "titulo": "AULA 31 - Geração de Texto e Linguagem com IA",
           "descricao": "Uso de modelos baseados em transformadores para redação assistida e criação de roteiros.",
           "blocos": []
         },
         {
-          "titulo": "Geração de Imagens e Conteúdo Visual",
+          "titulo": "AULA 32 - Geração de Imagens e Conteúdo Visual",
           "descricao": "Exploração de plataformas de geração de imagens e ajuste de parâmetros criativos.",
           "blocos": []
         },
         {
-          "titulo": "IA em Aplicativos de Produtividade",
+          "titulo": "AULA 33 - IA em Aplicativos de Produtividade",
           "descricao": "Integração de IA para elaboração de apresentações, textos e planilhas dinâmicas.",
           "blocos": []
         },
         {
-          "titulo": "Análise de Casos Reais de Inovação com IA",
+          "titulo": "AULA 34 - Análise de Casos Reais de Inovação com IA",
           "descricao": "Estudo de como a IA transforma setores como o jurídico e administrativo.",
           "blocos": []
         },
         {
-          "titulo": "Desenvolvimento de Projeto Prático I",
+          "titulo": "AULA 35 - Desenvolvimento de Projeto Prático I",
           "descricao": "Planejamento e início da criação de uma solução tecnológica integrando IAGen.",
           "blocos": []
         },
         {
-          "titulo": "Desenvolvimento de Projeto Prático II",
+          "titulo": "AULA 36 - Desenvolvimento de Projeto Prático II",
           "descricao": "Execução, testes e ajustes finos no projeto final, visando funcionalidade e inovação.",
           "blocos": []
         },
         {
-          "titulo": "Reflexão sobre o Futuro e Carreiras",
+          "titulo": "AULA 37 - Reflexão sobre o Futuro e Carreiras",
           "descricao": "Discussão sobre o impacto da IA no mercado de trabalho e as competências necessárias para o futuro.",
           "blocos": []
         },
         {
-          "titulo": "Entrega do Projeto Final (Solução Integrada de Tecnologia e IA)",
+          "titulo": "AULA 38 - Entrega do Projeto Final (Solução Integrada de Tecnologia e IA)",
           "descricao": "Finalização e entrega do projeto prático final.",
           "blocos": []
         },
         {
-          "titulo": "Correção e Feedback Final",
+          "titulo": "AULA 39 - Correção e Feedback Final",
           "descricao": "Análise dos resultados finais e orientações.",
           "blocos": []
         },
         {
-          "titulo": "Encerramento do Ano e Revisão Geral",
+          "titulo": "AULA 40 - Encerramento do Ano e Revisão Geral",
           "descricao": "Consolidação final dos conhecimentos e encerramento do curso.",
           "blocos": []
         }

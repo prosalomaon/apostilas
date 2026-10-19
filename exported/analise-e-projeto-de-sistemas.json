@@ -4,221 +4,221 @@
   "descricao": "Estudo dos processos, técnicas e ferramentas para análise, modelagem e projeto de sistemas de software orientados a objetos e arquitetura moderna.",
   "secoes": [
     {
-      "nome": "Fundamentos e Engenharia de Requisitos",
+      "nome": "1º Bimestre - Fundamentos e Engenharia de Requisitos",
       "aulas": [
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 01 - Introdução ao APS e Ciclo de Vida (SDLC)",
+          "descricao": "Conteúdo da aula 1 : Introdução ao APS e Ciclo de Vida (SDLC)",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 02 - Análise de Viabilidade",
+          "descricao": "Conteúdo da aula 2 : Análise de Viabilidade",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 03 - Introdução à Engenharia de Requisitos",
+          "descricao": "Conteúdo da aula 3 : Introdução à Engenharia de Requisitos",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 04 - Técnicas de Elicitação de Requisitos",
+          "descricao": "Conteúdo da aula 4 : Técnicas de Elicitação de Requisitos",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 05 - Classificação de Requisitos",
+          "descricao": "Conteúdo da aula 5 : Classificação de Requisitos",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 06 - Estratégias de Análise de Negócio",
+          "descricao": "Conteúdo da aula 6 : Estratégias de Análise de Negócio",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 07 - Proposta de Sistema e Ferramentas CASE",
+          "descricao": "Conteúdo da aula 7 : Proposta de Sistema e Ferramentas CASE",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 08 - Entrega do Projeto 1",
+          "descricao": "Conteúdo da aula 8 : Entrega do Projeto 1",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 09 - Revisão do Bimestre",
+          "descricao": "Conteúdo da aula 9 : Revisão do Bimestre",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 10 - Recuperação Bimestral",
+          "descricao": "Conteúdo da aula 10 : Recuperação Bimestral",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Modelagem Estática (Estrutura)",
+      "nome": "2º Bimestre - Modelagem Estática (Estrutura)",
       "aulas": [
         {
-          "titulo": "Introdução à UML e Modelagem de Objetos",
+          "titulo": "AULA 11 - Introdução à UML e Modelagem de Objetos",
           "descricao": "Conteúdo da aula 11 : Introdução à UML e Modelagem de Objetos",
           "blocos": []
         },
         {
-          "titulo": "Diagrama de Casos de Uso - Representação Gráfica",
+          "titulo": "AULA 12 - Diagrama de Casos de Uso - Representação Gráfica",
           "descricao": "Diagrama de Casos de Uso - O mais utilizado",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 13 - Diagrama de Casos de Uso - Relacionamentos",
+          "descricao": "Conteúdo da aula 13 : Diagrama de Casos de Uso - Relacionamentos",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 14 - Especificação Textual de Casos de Uso",
+          "descricao": "Conteúdo da aula 14 : Especificação Textual de Casos de Uso",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 15 - Introdução a Classes e Objetos",
+          "descricao": "Conteúdo da aula 15 : Introdução a Classes e Objetos",
           "blocos": []
         },
         {
-          "titulo": "Diagrama de Classes - Atributos e Métodos",
+          "titulo": "AULA 16 - Diagrama de Classes - Atributos e Métodos",
           "descricao": "O Diagrama de Classes é um modelo estrutural da UML que mapeia a estrutura estática de um sistema, descrevendo as suas classes, atributos, métodos e relacionamentos.",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 17 - Diagrama de Classes - Relacionamentos",
+          "descricao": "Conteúdo da aula 17 : Diagrama de Classes - Relacionamentos",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 18 - Projeto 2: Engenharia Reversa (Java → UML)",
+          "descricao": "Pedido de projeto: analisar a implementação em Java do módulo de pedidos de um totem de autoatendimento de fast-food e entregar o Diagrama de Casos de Uso e o Diagrama de Classes da UML.",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 19 - Revisão do Bimestre",
+          "descricao": "Conteúdo da aula 19 : Revisão do Bimestre",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 20 - Recuperação Bimestral",
+          "descricao": "Conteúdo da aula 20 : Recuperação Bimestral",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Modelagem Dinâmica (Comportamento)",
+      "nome": "3º Bimestre - Modelagem Dinâmica (Comportamento)",
       "aulas": [
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 21 - Transição da Análise para o Projeto",
+          "descricao": "Esta aula aborda a transição da análise para o projeto de sistemas: a mudança de perspectiva entre as necessidades do negócio (O quê?) e a viabilização técnica da solução (Como?), incluindo as atividades-chave do projeto, a fisicalização dos modelos lógicos, a Especificação do Sistema e as estratégias de aquisição (make vs. buy).",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 22 - Diagrama de Sequência - Fundamentos",
+          "descricao": "Esta aula aborda o Diagrama de Sequência da UML: um diagrama de interação que enfatiza a ordenação temporal das mensagens trocadas entre objetos, incluindo participantes, linhas de vida, foco de controle, mensagens síncronas e assíncronas, criação e destruição.",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 23 - Diagrama de Sequência - Operadores de Controle",
+          "descricao": "Esta aula aborda os operadores de controle dos Diagramas de Sequência da UML 2.0 (Fragmentos Combinados): alt, opt, loop, par, break, ref e operadores avançados como critical, neg, assert, ignore/consider, além do sequenciamento fraco (seq) e estrito (strict).",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 24 - Diagrama de Atividades - Fluxos de Controle",
+          "descricao": "Conteúdo da aula 24 : Diagrama de Atividades - Fluxos de Controle",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 25 - Diagrama de Atividades - Decisões e Concorrência",
+          "descricao": "Conteúdo da aula 25 : Diagrama de Atividades - Decisões e Concorrência",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 26 - Diagrama de Atividades - Partições (Swimlanes)",
+          "descricao": "Conteúdo da aula 26 : Diagrama de Atividades - Partições (Swimlanes)",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 27 - Diagrama de Máquina de Estados",
+          "descricao": "Conteúdo da aula 27 : Diagrama de Máquina de Estados",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 28 - Entrega do Projeto 3",
+          "descricao": "Conteúdo da aula 28 : Entrega do Projeto 3",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 29 - Revisão do Bimestre",
+          "descricao": "Conteúdo da aula 29 : Revisão do Bimestre",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 30 - Recuperação Bimestral",
+          "descricao": "Conteúdo da aula 30 : Recuperação Bimestral",
           "blocos": []
         }
       ]
     },
     {
-      "nome": "Arquitetura, Design e Padrões",
+      "nome": "4º Bimestre - Arquitetura, Design e Padrões",
       "aulas": [
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 31 - Projeto de Arquitetura e Padrão MVC",
+          "descricao": "Conteúdo da aula 31 : Projeto de Arquitetura e Padrão MVC",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 32 - Projeto de Interface Gráfica (GUI)",
+          "descricao": "Conteúdo da aula 32 : Projeto de Interface Gráfica (GUI)",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 33 - Persistência de Dados e Modelo Físico",
+          "descricao": "Conteúdo da aula 33 : Persistência de Dados e Modelo Físico",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 34 - Diagramas de Componentes e Implantação",
+          "descricao": "Conteúdo da aula 34 : Diagramas de Componentes e Implantação",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 35 - Introdução aos Padrões de Projeto (Design Patterns)",
+          "descricao": "Conteúdo da aula 35 : Introdução aos Padrões de Projeto (Design Patterns)",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 36 - Padrões de Criação e Estrutura",
+          "descricao": "Conteúdo da aula 36 : Padrões de Criação e Estrutura",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 37 - Padrões Comportamentais",
+          "descricao": "Conteúdo da aula 37 : Padrões Comportamentais",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 38 - Entrega do Projeto 4",
+          "descricao": "Conteúdo da aula 38 : Entrega do Projeto 4",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 39 - Revisão Final",
+          "descricao": "Conteúdo da aula 39 : Revisão Final",
           "blocos": []
         },
         {
-          "titulo": "",
-          "descricao": "",
+          "titulo": "AULA 40 - Recuperação Final",
+          "descricao": "Conteúdo da aula 40 : Recuperação Final",
           "blocos": []
         }
       ]

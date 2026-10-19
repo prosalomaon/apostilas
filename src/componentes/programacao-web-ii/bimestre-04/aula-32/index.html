@@ -1,49 +1,606 @@
 ---
-title: "Gerenciamento de Sessões: Autenticação de usuários e controle de 'Ãrea Restrita'"
+title: "Gerenciamento de Sessões: Autenticação de usuários e controle de 'Área Restrita'"
 aula_numero: "32"
-description: "Gerenciamento de Sessões: Autenticação de usuários e controle de 'Área Restrita'."
+description: "O HTTP é stateless e o cliente pode adulterar qualquer dado que esteja no seu computador. Aprenda a usar sessões no PHP 8 com session_start(), $_SESSION e session_regenerate_id(true) para autenticar usuários, proteger páginas restritas e se defender de Session Fixation e Session Hijacking."
 tags:
   - aula
   - bimestre-04
 ---
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo da aula 32 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    Na aula anterior, vimos que os <strong>cookies</strong> resolvem a ausência de estado do HTTP armazenando preferências e
+    histórico no <strong>navegador do cliente</strong>. Para um sistema de autenticação, porém, essa abordagem é
+    insuficiente: como qualquer dado gravado no computador do usuário pode ser inspecionado e editado pelas ferramentas de
+    desenvolvimento (ou por um atacante), <strong>nunca se deve confiar no cliente para decidir quem é o usuário</strong>.
+  </p>
+  <p>
+    Nesta aula do componente de <strong>Programação Web II</strong>, estudaremos o uso de <strong>Sessões no PHP</strong>:
+    moveremos a lógica de autenticação para o <strong>servidor</strong>, criaremos uma "área restrita" controlada e
+    aplicaremos as contramedidas contra os dois ataques clássicos de sessão, o
+    <strong>Session Fixation</strong> (fixação de sessão) e o <strong>Session Hijacking</strong> (sequestro de sessão).
+  </p>
+
+  <h3>1.1. O Conceito de Sessão no Lado do Servidor</h3>
+  <p>
+    Como o protocolo <strong>HTTP</strong> é <em>stateless</em> (não guarda memória entre uma requisição e outra), o
+    servidor trata cada página como uma transação isolada. As <strong>sessões</strong> existem justamente para preservar o
+    estado do usuário ao longo de múltiplas páginas sem violar essa característica do protocolo.
+  </p>
+  <p>
+    A diferença essencial em relação aos cookies tradicionais é <strong>onde os dados ficam</strong>: em uma sessão do PHP,
+    as informações reais (identificador do usuário, nível de permissão, carrinho, etc.) são gravadas em
+    <strong>arquivos privados no disco do servidor</strong>. No computador do cliente, o navegador guarda apenas um único
+    <strong>cookie temporário</strong> com a chave de identificação da sessão, normalmente chamado
+    <code class="one-line-code">PHPSESSID</code>.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-text">+--------------------------+                     +--------------------------+
+|   Navegador (Cliente)    |                     |     Servidor Web PHP     |
++--------------------------+                     +--------------------------+
+| Cookie:                  |                     | /tmp/sess_a1b2c3d4e5f6.. |
+| PHPSESSID=a1b2c3d4e5f6.. | --- Envia a chave --&gt; | ------------------------ |
+|                          |                     | $_SESSION['usuario_id']=5|
+| (Apenas o identificador) |                     | $_SESSION['nome'] = 'Ana'|
++--------------------------+                     +--------------------------+</code></pre>
+  </div>
+  <ul>
+    <li>
+      <strong>Se o cliente adulterar o cookie</strong> e enviar um <code class="one-line-code">PHPSESSID</code> inexistente,
+      o PHP simplesmente cria uma nova sessão vazia: nenhuma variável de permissão é inventada.
+    </li>
+    <li>
+      <strong>Se o arquivo de sessão no servidor for apagado</strong> (ou expirar), o usuário perde o estado e precisa se
+      autenticar novamente.
+    </li>
+    <li>
+      <strong>O cookie do cliente é apenas o elo:</strong> por isso ele precisa ser protegido com as flags
+      <code class="one-line-code">httponly</code> e <code class="one-line-code">secure</code>, estudadas na aula 31.
+    </li>
+  </ul>
+
+  <h3>1.2. O Ciclo de Vida da Sessão (<code class="one-line-code">session_start()</code>)</h3>
+  <p>
+    A função <strong><code class="one-line-code">session_start()</code></strong> faz as duas coisas necessárias ao início do
+    ciclo: lê o <code class="one-line-code">PHPSESSID</code> enviado pelo navegador, carrega o arquivo de sessão
+    correspondente no servidor (ou cria um novo, se o ID não existir) e popula a superglobal
+    <code class="one-line-code">$_SESSION</code>, pronta para leitura e gravação.
+  </p>
+  <ol>
+    <li>
+      <strong>Regra de ouro:</strong> <code class="one-line-code">session_start()</code> envia o cabeçalho HTTP
+      <code class="one-line-code">Set-Cookie: PHPSESSID=...</code>. Por isso ela deve ser executada
+      <strong>no início do script PHP, antes de qualquer saída de texto, espaço em branco ou tag HTML</strong> — caso
+      contrário aparece o aviso <code class="one-line-code">Cannot modify header information - headers already sent</code>.
+    </li>
+    <li>
+      <strong>Uma chamada por requisição:</strong> chamar <code class="one-line-code">session_start()</code> duas vezes gera
+      o aviso <code class="one-line-code">session_start(): Session cannot be started after headers have already been sent</code>
+      (ou o aviso de reabertura). O padrão defensivo é:
+      <code class="one-line-code">if (session_status() === PHP_SESSION_NONE) { session_start(); }</code>.
+    </li>
+    <li>
+      <strong>Estado em memória:</strong> as variáveis gravadas em <code class="one-line-code">$_SESSION</code> persistem
+      enquanto a sessão estiver ativa, mesmo que o usuário navegue por dezenas de páginas.
+    </li>
+    <li>
+      <strong>Encerramento:</strong> o ciclo termina com <code class="one-line-code">session_destroy()</code> (logout),
+      com o tempo de inatividade configurado em <code class="one-line-code">session.gc_maxlifetime</code> ou com o
+      fechamento do navegador, quando o cookie é de sessão.
+    </li>
+  </ol>
+
+  <h3>1.3. Autenticação Segura de Usuários</h3>
+  <p>
+    Autenticar significa <strong>verificar a identidade</strong> a partir de credenciais (e-mail/usuário e senha) e, em caso
+    de sucesso, registrar esse estado na sessão. A sequência correta tem quatro etapas:
+  </p>
+  <ol>
+    <li>
+      <strong>Validação da entrada:</strong> leitura do <code class="one-line-code">$_POST</code> com operador de
+      coalescência, remoção de espaços e verificação de campos vazios antes de qualquer consulta.
+    </li>
+    <li>
+      <strong>Consulta parametrizada:</strong> busca do usuário com <em>PDO</em> e <em>prepared statements</em>
+      (<code class="one-line-code">bindValue()</code>), neutralizando ataques de <em>SQL Injection</em>.
+    </li>
+    <li>
+      <strong>Verificação da senha com</strong>
+      <code class="one-line-code">password_verify()</code>: a senha digitada é comparada com o
+      <strong>hash criptográfico</strong> (Bcrypt/Argon2) armazenado no banco. Nunca com
+      <code class="one-line-code">==</code> e nunca com a senha em texto puro.
+    </li>
+    <li>
+      <strong>Registro do estado na sessão:</strong> apenas em caso de sucesso, grava-se
+      <code class="one-line-code">$_SESSION['usuario_id']</code> — é essa variável, e não o cookie, que passa a decidir o
+      acesso às páginas restritas.
+    </li>
+  </ol>
+
+  <h3>1.4. Proteção contra Vulnerabilidades Críticas de Sessão</h3>
+
+  <h4>A. Session Fixation (Fixação de Sessão)</h4>
+  <p>
+    O ataque ocorre quando o invasor <strong>força a vítima a usar um ID de sessão já conhecido por ele</strong> — por
+    exemplo, enviando um link com <code class="one-line-code">?PHPSESSID=12345</code> ou um cookie plantado no navegador da
+    vítima. Se a vítima fizer login <strong>sem que o ID mude</strong>, o atacante simplesmente passa a usar o mesmo ID e
+    acessa a conta já autenticada.
+  </p>
+  <p>
+    <strong>Solução:</strong> toda vez que o nível de privilégio do usuário mudar (login bem-sucedido, troca de perfil,
+    elevação de permissão), chame <strong><code class="one-line-code">session_regenerate_id(true)</code></strong>. A função
+    gera uma nova chave randômica para a sessão e <strong>deleta o arquivo da sessão antiga</strong>, invalidando o token
+    que o atacante conhecia.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+// Depois de confirmar as credenciais com password_verify():
+session_regenerate_id(true); // novo ID + destrói a sessão antiga
+$_SESSION['usuario_id'] = (int) $usuario['id'];</code></pre>
+  </div>
+
+  <h4>B. Session Hijacking (Sequestro de Sessão)</h4>
+  <p>
+    Neste ataque, o cibercriminoso <strong>rouba o cookie</strong> <code class="one-line-code">PHPSESSID</code> do usuário
+    legítimo — por escuta de rede (HTTP sem TLS), por um código XSS injetado na página ou por acesso físico ao
+    computador — e simplesmente o reutiliza: para o servidor, ele <em>é</em> o usuário.
+  </p>
+  <p>Medidas de proteção combinadas:</p>
+  <ul>
+    <li>
+      <strong>Cookie</strong> <code class="one-line-code">httponly</code> <strong>:</strong> impede que o JavaScript de um
+      eventual XSS leia o token via <code class="one-line-code">document.cookie</code>.
+    </li>
+    <li>
+      <strong>Cookie</strong> <code class="one-line-code">secure</code> <strong>+</strong>
+      <code class="one-line-code">samesite</code><strong>:</strong> força a transmissão apenas por HTTPS e limita o envio
+      cruzado de origens externas.
+    </li>
+    <li>
+      <strong>Impressão digital da sessão:</strong> grava-se no login o cabeçalho
+      <code class="one-line-code">HTTP_USER_AGENT</code> (e, com cautela, o IP) e compara-se a cada nova requisição. Havendo
+      divergência, a sessão é destruída e o usuário é levado ao login.
+    </li>
+    <li>
+      <strong>Tempo de inatividade:</strong> limita a janela de aproveitamento de um token roubado.
+    </li>
+  </ul>
+
+  <h3>1.5. O Mecanismo de Controle de "Área Restrita"</h3>
+  <p>
+    Para proteger qualquer página de acesso privado (<code class="one-line-code">painel.php</code>,
+    <code class="one-line-code">perfil.php</code>, <code class="one-line-code">relatorios.php</code>), cria-se uma
+    <strong>verificação de autorização no topo do script</strong>, antes de qualquer HTML:
+  </p>
+  <ol>
+    <li>Inicia (ou reaproveita) a sessão com <code class="one-line-code">session_start()</code>.</li>
+    <li>
+      Verifica se a variável de autenticação está definida e é válida
+      (<code class="one-line-code">isset($_SESSION['usuario_id'])</code>).
+    </li>
+    <li>
+      Se a variável <strong>não existir</strong>, interrompe o carregamento: envia
+      <code class="one-line-code">header('Location: login.php')</code> e encerra o script com
+      <strong><code class="one-line-code">exit;</code></strong>.
+    </li>
+  </ol>
+  <div class="tip-box">
+    <h4>Por que o <code class="one-line-code">exit;</code> é obrigatório?</h4>
+    <p>
+      O <code class="one-line-code">header('Location: ...')</code> apenas <strong>declara</strong> o redirecionamento no
+      cabeçalho da resposta; o PHP continua executando o restante do arquivo. Sem o
+      <code class="one-line-code">exit;</code>, todo o conteúdo da página restrita seria gerado (e até enviado) antes de o
+      navegador cumprir o redirecionamento — o que também libera o aviso de cabeçalhos já enviados e pode vazar a saída
+      para quem inspeciona a resposta.
+    </p>
+  </div>
+
+  <h3>1.6. Encerrando a Sessão com Segurança (Logout Limpo)</h3>
+  <p>
+    Um logout completo não se resume a apagar a variável da memória. É preciso eliminar os resíduos
+    <strong>no servidor</strong> e <strong>no cliente</strong>, sempre nesta ordem:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+session_start();
+
+// 1. Limpa todas as variáveis da sessão em memória
+$_SESSION = [];
+
+// 2. Destrói o cookie PHPSESSID no navegador do cliente
+if (ini_get('session.use_cookies')) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', [
+        'expires'  =&gt; time() - 42000,
+        'path'     =&gt; $params['path'],
+        'domain'   =&gt; $params['domain'],
+        'secure'   =&gt; $params['secure'],
+        'httponly' =&gt; $params['httponly'],
+        'samesite' =&gt; $params['samesite'] ?? 'Lax'
+    ]);
+}
+
+// 3. Destrói o arquivo de sessão gravado no servidor
+session_destroy();
+
+header('Location: login.php');
+exit;</code></pre>
+  </div>
+  <p>
+    Pular o passo 2 é o erro mais comum: o navegador continuaria enviando um
+    <code class="one-line-code">PHPSESSID</code> válido cujo arquivo ainda existiria no disco até a expiração por
+    inatividade.
+  </p>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo de Código</h2>
+  <h2>Exemplos de Código</h2>
+  <p>
+    Os três scripts abaixo formam um sistema de autenticação completo e funcional: <strong>login.php</strong> valida as
+    credenciais e regenera a sessão, <strong>autenticacao.php</strong> funciona como guardião reutilizável e
+    <strong>painel.php</strong> é a página protegida, encerrada pelo <strong>logout.php</strong>.
+  </p>
+
+  <h3>Exemplo 1: <code class="one-line-code">login.php</code> — Processamento de Login com Segurança</h3>
+  <p>
+    Recebe os dados via formulário POST, consulta o banco com PDO e <em>prepared statements</em>, valida a senha com
+    <code class="one-line-code">password_verify()</code>, regenera o ID da sessão e grava o estado de autenticação.
+  </p>
   <div class="code-container">
-    <pre><code class="language-php">// Em breve...</code></pre>
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+// 1. A sessão é iniciada ANTES de qualquer saída HTML
+session_start();
+
+$mensagemErro = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 2. Validação/sanitização da entrada
+    $email = trim($_POST['email'] ?? '');
+    $senha = $_POST['senha'] ?? '';
+
+    if ($email === '' || $senha === '') {
+        $mensagemErro = 'Preencha todos os campos corretamente.';
+    } else {
+        try {
+            $dsn = 'mysql:host=localhost;dbname=escola;charset=utf8mb4';
+            $pdo = new PDO($dsn, 'root', '', [
+                PDO::ATTR_ERRMODE            =&gt; PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC,
+            ]);
+
+            // 3. Consulta parametrizada: previne SQL Injection
+            $stmt = $pdo-&gt;prepare(
+                'SELECT id, nome, senha_hash FROM usuarios WHERE email = :email LIMIT 1'
+            );
+            $stmt-&gt;bindValue(':email', $email, PDO::PARAM_STR);
+            $stmt-&gt;execute();
+            $usuario = $stmt-&gt;fetch();
+
+            // 4. Verificação do hash da senha (Bcrypt/Argon2)
+            if ($usuario &amp;&amp; password_verify($senha, $usuario['senha_hash'])) {
+
+                // 5. PREVENÇÃO DE SESSION FIXATION
+                session_regenerate_id(true);
+
+                // 6. Registro do estado autenticado
+                $_SESSION['usuario_id']   = (int) $usuario['id'];
+                $_SESSION['usuario_nome'] = $usuario['nome'];
+                $_SESSION['user_agent']   = $_SERVER['HTTP_USER_AGENT'] ?? '';
+                $_SESSION['ultimo_acesso'] = time();
+
+                // 7. Redirecionamento para a área restrita
+                header('Location: painel.php');
+                exit;
+            }
+
+            // Mensagem genérica: não revela qual campo está errado
+            $mensagemErro = 'E-mail ou senha incorretos.';
+        } catch (PDOException $e) {
+            error_log('Erro de login: ' . $e-&gt;getMessage());
+            $mensagemErro = 'Ocorreu um erro ao processar o acesso.';
+        }
+    }
+}
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Acesso ao Sistema&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Acesso ao Sistema&lt;/h2&gt;
+
+    &lt;?php if ($mensagemErro !== ''): ?&gt;
+        &lt;p style="color:#b00020;"&gt;
+            &lt;?= htmlspecialchars($mensagemErro, ENT_QUOTES, 'UTF-8') ?&gt;
+        &lt;/p&gt;
+    &lt;?php endif; ?&gt;
+
+    &lt;form method="POST" action=""&gt;
+        &lt;label for="email"&gt;E-mail&lt;/label&gt;
+        &lt;input type="email" name="email" id="email" required&gt;
+
+        &lt;label for="senha"&gt;Senha&lt;/label&gt;
+        &lt;input type="password" name="senha" id="senha" required&gt;
+
+        &lt;button type="submit"&gt;Entrar&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Detalhes de segurança deste script</h4>
+    <ul>
+      <li>
+        A mensagem de erro é <strong>deliberadamente genérica</strong>: dizer "e-mail não cadastrado" permitiria enumeração
+        de usuários.
+      </li>
+      <li>
+        <code class="one-line-code">session_regenerate_id(true)</code> é chamado <strong>depois</strong> da confirmação e
+        <strong>antes</strong> de gravar as permissões — é o momento exato em que o privilégio muda.
+      </li>
+      <li>
+        Toda a saída dinâmica passa por <code class="one-line-code">htmlspecialchars()</code>, neutralizando XSS refletido
+        na mensagem de erro.
+      </li>
+    </ul>
+  </div>
+
+  <h3>Exemplo 2: <code class="one-line-code">autenticacao.php</code> &amp; <code class="one-line-code">painel.php</code> — Protegendo a Área Restrita</h3>
+  <p>
+    O script guardião é incluído no topo de toda página privada. Ele centraliza a verificação de autorização, a impressão
+    digital da sessão e o tempo de inatividade, evitando repetir o mesmo código em dezenas de arquivos.
+  </p>
+
+  <h4>Script guardião (<code class="one-line-code">autenticacao.php</code>):</h4>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+// Reaproveita a sessão se ela já estiver ativa; caso contrário, inicia
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// (A) Verificação de autorização
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: login.php');
+    exit; // Interrompe o script: nada da página restrita é gerado
+}
+
+// (B) Impressão digital: User-Agent registrado no login
+$fingerprintAtual = $_SERVER['HTTP_USER_AGENT'] ?? '';
+if (($_SESSION['user_agent'] ?? '') !== $fingerprintAtual) {
+    $_SESSION = [];
+    session_destroy();
+    header('Location: login.php?erro=sequestro');
+    exit;
+}
+
+// (C) Tempo de inatividade: 30 minutos sem acessar, encerra a sessão
+$tempoLimite = 30 * 60;
+if (isset($_SESSION['ultimo_acesso'])
+    &amp;&amp; (time() - $_SESSION['ultimo_acesso']) &gt; $tempoLimite) {
+    $_SESSION = [];
+    session_destroy();
+    header('Location: login.php?erro=timeout');
+    exit;
+}
+
+// Atualiza o relógio de inatividade a cada requisição autorizada
+$_SESSION['ultimo_acesso'] = time();</code></pre>
+  </div>
+
+  <h4>Página protegida (<code class="one-line-code">painel.php</code>):</h4>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+// Se o usuário não estiver autenticado, o guardião já enviou
+// o Location e encerrou a execução com exit
+require __DIR__ . '/autenticacao.php';
+
+$nomeExibido = htmlspecialchars($_SESSION['usuario_nome'] ?? '', ENT_QUOTES, 'UTF-8');
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Painel do Usuário&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Bem-vindo ao Painel, &lt;?= $nomeExibido ?&gt;!&lt;/h1&gt;
+    &lt;p&gt;Esta é uma página restrita, visível apenas para usuários autenticados.&lt;/p&gt;
+
+    &lt;nav&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;a href="painel.php"&gt;Início&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="relatorios.php"&gt;Relatórios&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="logout.php"&gt;Sair (Logout)&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <h3>Exemplo 3: <code class="one-line-code">logout.php</code> — Encerramento Seguro da Sessão</h3>
+  <p>
+    Destrói a sessão por completo — memória, cookie e arquivo no servidor — e redireciona o usuário para a tela de login.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 1. Memória: zera todas as variáveis da sessão
+$_SESSION = [];
+
+// 2. Cliente: remove o cookie PHPSESSID do navegador
+if (ini_get('session.use_cookies')) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', [
+        'expires'  =&gt; time() - 42000,
+        'path'     =&gt; $params['path'],
+        'domain'   =&gt; $params['domain'],
+        'secure'   =&gt; $params['secure'],
+        'httponly' =&gt; $params['httponly'],
+        'samesite' =&gt; $params['samesite'] ?? 'Lax'
+    ]);
+}
+
+// 3. Servidor: apaga o arquivo de sessão em disco
+session_destroy();
+
+header('Location: login.php');
+exit;</code></pre>
   </div>
 </section>
 
 <section class="section-box">
-  <h2>Representação Gráfica</h2>
+  <h2>Representações Gráficas (Diagramas Conceituais)</h2>
+
+  <h3>2.1. Fluxo Completo de Autenticação e Regeneração de Sessão</h3>
+  <p>
+    Sequência desde o envio das credenciais até a liberação da página restrita, destacando o momento em que o ID da sessão
+    é regenerado para neutralizar o Session Fixation.
+  </p>
+  <div class="mermaid">
+    sequenceDiagram
+    participant Usuario as Usuário (Navegador)
+    participant PHP as Servidor PHP (login.php)
+    participant DB as Banco de Dados
+    participant Restrito as Área Restrita (painel.php)
+
+    Usuario-&gt;&gt;PHP: 1. Envia e-mail e senha (POST)
+    PHP-&gt;&gt;DB: 2. Busca o usuário (Prepared Statement)
+    DB--&gt;&gt;PHP: Retorna o hash da senha armazenado
+
+    alt Senha válida (password_verify retornou true)
+        PHP-&gt;&gt;PHP: 3. session_regenerate_id(true) previne Session Fixation
+        PHP-&gt;&gt;PHP: 4. Grava usuario_id e user_agent em $_SESSION
+        PHP--&gt;&gt;Usuario: 5. Resposta com Header: Location: painel.php
+
+        Usuario-&gt;&gt;Restrito: 6. Acessa painel.php com o cookie PHPSESSID
+        Note over Restrito: Verifica isset($_SESSION["usuario_id"]) e o User-Agent
+        Restrito--&gt;&gt;Usuario: 7. Exibe o conteúdo restrito
+    else Credenciais inválidas
+        PHP--&gt;&gt;Usuario: Exibe a mensagem genérica de erro
+    end
+  </div>
+
+  <h3>2.2. Fluxo da Guarda da Área Restrita (Verificação no Topo do Script)</h3>
+  <p>
+    Decisões executadas pelo <code class="one-line-code">autenticacao.php</code> a cada requisição a uma página privada.
+  </p>
   <div class="mermaid">
     graph TD
-    A[Início] --> B[Processamento]
-    B --> C[Fim]
+    A[Usuário tenta acessar painel.php] --&gt; B[Executa session_start]
+    B --&gt; C{usuario_id definido na sessão?}
+    C --&gt;|Não| D[Redireciona: Location login.php]
+    D --&gt; E[Executa exit e interrompe o script]
+    C --&gt;|Sim| F{User-Agent confere com o do login?}
+    F --&gt;|Não| G[Destrói a sessão: suspeita de sequestro]
+    G --&gt; D
+    F --&gt;|Sim| H{Inatividade maior que 30 minutos?}
+    H --&gt;|Sim| G
+    H --&gt;|Não| I[Atualiza ultimo_acesso e libera o acesso]
+
+    style D fill:#f8d7da,stroke:#f5c6cb
+    style G fill:#fff3e0,stroke:#e65100
+    style I fill:#d4edda,stroke:#c3e6cb
   </div>
 </section>
 
 <div class="tip-box">
-  <h4>Dicas & Lembretes</h4>
+  <h4>Dicas, Lembretes e Segurança</h4>
   <ul>
-    <li>Pratique os conceitos logo após a leitura.</li>
+    <li>
+      <strong>Cookies de sessão endurecidos:</strong> antes de chamar
+      <code class="one-line-code">session_start()</code>, configure os parâmetros do cookie com
+      <code class="one-line-code">session_set_cookie_params(['httponly' =&gt; true, 'secure' =&gt; true, 'samesite' =&gt; 'Strict'])</code>.
+      Em ambiente local sem HTTPS, deixe <code class="one-line-code">secure =&gt; false</code> para não perder a sessão.
+    </li>
+    <li>
+      <strong>Nomes de sessão previsíveis:</strong> o ID deve ser gerado pelo PHP com entropia suficiente. Nunca aceite um
+      <code class="one-line-code">PHPSESSID</code> vindo da URL sem regenerá-lo logo em seguida, pois é exatamente assim que
+      o Session Fixation é explorado.
+    </li>
+    <li>
+      <strong><code class="one-line-code">session_regenerate_id(true)</code> nos momentos certos:</strong> login, logout e
+      qualquer mudança de perfil ou permissão. Chamá-lo a cada requisição também é possível, mas tem custo de disco extra.
+    </li>
+    <li>
+      <strong>Guardar o que é sensível apenas no servidor:</strong> permissões, identificadores e dados pessoais pertencem
+      a <code class="one-line-code">$_SESSION</code>. O cliente recebe somente a chave de identificação.
+    </li>
+    <li>
+      <strong>Serviços e tempo de vida:</strong> revise <code class="one-line-code">session.gc_maxlifetime</code>,
+      <code class="one-line-code">session.cookie_lifetime</code> e o caminho gravado em
+      <code class="one-line-code">session.save_path</code> no <code class="one-line-code">php.ini</code>; em produção,
+      considere armazenar as sessões em banco de dados ou Redis para escala e segurança.
+    </li>
+    <li>
+      <strong>LGPD:</strong> dados de identificação mantidos na sessão devem ser descartados no logout e permanecer pelo
+      menor tempo necessário à finalidade declarada ao usuário.
+    </li>
   </ul>
 </div>
 
 <section class="section-box">
   <h2>Como aplicar na Prática</h2>
-  <p>Aplicação real em desenvolvimento...</p>
+  <ul>
+    <li>
+      <strong>Login real:</strong> monte a tabela <code class="one-line-code">usuarios</code> com coluna
+      <code class="one-line-code">senha_hash</code>, cadastre senhas com
+      <code class="one-line-code">password_hash($senha, PASSWORD_DEFAULT)</code> e autentique apenas com
+      <code class="one-line-code">password_verify()</code>.
+    </li>
+    <li>
+      <strong>Guardião reutilizável:</strong> coloque a verificação em um único arquivo incluído com
+      <code class="one-line-code">require</code> no topo de cada página privada, em vez de copiar o
+      <code class="one-line-code">if</code> por toda a aplicação.
+    </li>
+    <li>
+      <strong>Redirecionamento sempre com</strong> <code class="one-line-code">exit;</code><strong>:</strong> após
+      <code class="one-line-code">header('Location: ...')</code> em login, logout e guardião.
+    </li>
+    <li>
+      <strong>Registro de auditoria:</strong> grave em log o momento do login, do logout e das falhas de verificação de
+      impressão digital, úteis para investigar acessos suspeitos.
+    </li>
+    <li>
+      <strong>Recuperação de senha:</strong> fluxo complementar com token de uso único e prazo curto, também gravado na
+      sessão ou em banco, nunca em cookie editável.
+    </li>
+    <li>
+      <strong>Próxima aula:</strong> com autenticação e sessão funcionando, organizaremos o código em camadas seguindo o
+      padrão <strong>MVC</strong>.
+    </li>
+  </ul>
 </section>
 
 <section class="section-box">
   <h2>Referências</h2>
   <ul>
-    <li>Material de apoio em breve.</li>
+    <li>
+      CENTRO PAULA SOUZA. <em>Plano de Curso nº 1062 - Técnico em Desenvolvimento de Sistemas</em>. Eixo Tecnológico de
+      Informação e Comunicação, 2026.
+    </li>
+    <li>CENTRO PAULA SOUZA. <em>Plano de Curso nº 370 - Técnico em Desenvolvimento de Sistemas (MTEC/AMS)</em>.</li>
+    <li>SOMMERFELD, Roni. <em>Unlock PHP 8: From Basic to Advanced</em>. BPB Publications.</li>
+    <li>MCLAUGHLIN, Brett. <em>PHP &amp; MySQL: The Missing Manual</em>. O'Reilly Media.</li>
+    <li>NIXON, Robin. <em>Learning PHP, MySQL, JavaScript, CSS &amp; HTML5</em>. 3ª ed. O'Reilly Media.</li>
+    <li>PHP DOCUMENTATION. <em>Session Handling</em>: session_start, session_regenerate_id, session_destroy.</li>
+    <li>OWASP. <em>Session Fixation</em> e <em>Session Hijacking</em> - Cheat Sheet de Proteção de Sessão.</li>
   </ul>
 </section>
 
