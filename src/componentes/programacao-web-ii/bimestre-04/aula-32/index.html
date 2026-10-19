@@ -505,7 +505,7 @@ exit;</code></pre>
     graph TD
     A[Usuário tenta acessar painel.php] --&gt; B[Executa session_start]
     B --&gt; C{usuario_id definido na sessão?}
-    C --&gt;|Não| D[Redireciona: Location login.php]
+    C --&gt;|Não| D[Redireciona para login.php]
     D --&gt; E[Executa exit e interrompe o script]
     C --&gt;|Sim| F{User-Agent confere com o do login?}
     F --&gt;|Não| G[Destrói a sessão: suspeita de sequestro]
