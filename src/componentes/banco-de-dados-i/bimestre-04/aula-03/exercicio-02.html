@@ -1,23 +1,188 @@
 ---
-layout: exercicio
-title: "Modelo Entidade-Relacionamento (MER): Conceitos de Entidades e suas classificações."
+layout: questionario
+title: "Questionário de Fixação — DDL: Criação de Databases e COLLATION"
 exercicio_numero: "02"
-03ero: "03"
-description: "Segunda atividade prática para consolidar os conhecimentos da aula 03."
+aula_numero: "33"
+sigla_componente: "BDI"
+description: "Questionário de fixação sobre DDL e CREATE DATABASE, character set e collation, sufixos de colação, template databases no PostgreSQL, efeito prático da colação em filtros e índices e exclusão de bancos no MySQL e no PostgreSQL."
+perguntas:
+  - texto: "Um script de implantação executa CREATE DATABASE antes de qualquer CREATE TABLE. Essa ordem se justifica porque:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "o CREATE DATABASE cria também as tabelas de sistema que armazenarão as chaves primárias declaradas depois"
+      - letra: "b"
+        texto: "o SGBD recusa comandos DDL sobre tabelas enquanto nenhum database estiver selecionado na sessão"
+      - letra: "c"
+        texto: "inicializar o database é o que define a área de armazenamento e as regras de texto que os objetos futuros herdarão"
+      - letra: "d"
+        texto: "a DDL só pode ser executada uma única vez por conexão, devendo ocorrer antes de qualquer DML do projeto"
+
+  - texto: "Em um banco recém-criado, duas responsabilidades distintas precisam ser definidas para colunas de texto. Assinale a alternativa que as relaciona corretamente:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "o Character Set define como as strings são comparadas, enquanto a Collation define o mapeamento de símbolo para byte"
+      - letra: "b"
+        texto: "o Character Set define o mapeamento de símbolo para byte, enquanto a Collation define as regras de comparação e ordenação"
+      - letra: "c"
+        texto: "ambos são sinônimos: o MySQL usa Character Set e o PostgreSQL usa Collation para nomear a mesma configuração"
+      - letra: "d"
+        texto: "o Character Set vale apenas para índices e a Collation vale apenas para filtros do comando WHERE"
+
+  - texto: "Uma coluna criada sob utf8mb4_0900_ai_ci armazena os valores 'á', 'A' e 'a'. A comparação da coluna com o literal 'a' considera esses valores:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "iguais entre si apenas quanto à caixa, pois o sufixo _ai trata somente a diferença entre maiúscula e minúscula"
+      - letra: "b"
+        texto: "distintos, pois a colação 0900 exige comparação binária entre caracteres acentuados e não acentuados"
+      - letra: "c"
+        texto: "iguais apenas para 'A' e 'a', pois os acentos são preservados sempre que o charset for UTF8MB4"
+      - letra: "d"
+        texto: "iguais aos três, pois o sufixo _ai ignora acentuação e o sufixo _ci ignora a diferença de caixa"
+
+  - texto: "O sufixo _bin em uma colação como utf8mb4_bin indica que a comparação:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "usa estritamente os valores numéricos dos bytes, sem tratamento linguístico de caixa ou acento"
+      - letra: "b"
+        texto: "converte as strings para binário hexadecimal antes de comparar, acelerando consultas em colunas LONGTEXT"
+      - letra: "c"
+        texto: "ignora a diferença entre maiúsculas e minúsculas, mas exige que os acentos coincidam exatamente"
+      - letra: "d"
+        texto: "só é aceita em colunas BINARY e VARBINARY, sendo recusada em colunas VARCHAR e TEXT"
+
+  - texto: "Um CREATE DATABASE é executado sem as cláusulas CHARACTER SET e COLLATE. O comportamento resultante é:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "o SGBD recusa a criação, porque charset e colação são obrigatórios em qualquer CREATE DATABASE"
+      - letra: "b"
+        texto: "o database é criado com encoding binário puro, herdando a configuração do sistema de arquivos"
+      - letra: "c"
+        texto: "o database herda as configurações globais do servidor, podendo divergir entre ambientes de desenvolvimento e produção"
+      - letra: "d"
+        texto: "o database assume UTF8MB4 com colação _cs, por serem os valores seguros recomendados pela ISO"
+
+  - texto: "Um e-mail de usuário precisa diferenciar 'USER@EMAIL.COM' de 'user@email.com' em uma tabela cuja colação é utf8mb4_0900_ai_ci. A solução que não exige alteração de DDL é:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "executar ALTER TABLE ... CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin na tabela"
+      - letra: "b"
+        texto: "aplicar o operador COLLATE utf8mb4_bin sobre a coluna dentro da expressão do WHERE"
+      - letra: "c"
+        texto: "recriar o database com CLONE DATABASE, preservando os dados e trocando apenas a colação"
+      - letra: "d"
+        texto: "gravar o e-mail sempre em minúsculas, dispensando qualquer comparação sensível à caixa"
+
+  - texto: "Após executar ALTER DATABASE loja_virtual COLLATE utf8mb4_bin, uma tabela de clientes já existente nesse database:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "passa a usar a nova colação automaticamente, pois a colação do database prevalece sobre a das colunas"
+      - letra: "b"
+        texto: "continua com a colação antiga até que a tabela seja recriada manualmente com o mesmo nome"
+      - letra: "c"
+        texto: "fica sem colação definida, devendo cada consulta declarar COLLATE sob pena de erro de execução"
+      - letra: "d"
+        texto: "mantém a colação original nas colunas existentes; a nova regra vale apenas para objetos futuros"
+
+  - texto: "No MySQL, a consulta SHOW COLLATION LIKE 'utf8mb4%' tem por finalidade:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "listar as colações disponíveis para o conjunto de caracteres utf8mb4 no servidor em uso"
+      - letra: "b"
+        texto: "exibir as colações já aplicadas a cada database existente no catálogo do servidor"
+      - letra: "c"
+        texto: "alterar a colação padrão da sessão para a primeira colação utf8mb4 encontrada"
+      - letra: "d"
+        texto: "validar se o charset utf8mb4 está correto em todas as colunas de texto do banco corrente"
+
+  - texto: "No PostgreSQL, uma criação de database especifica LC_COLLATE = 'pt_BR.UTF-8' e LC_CTYPE = 'pt_BR.UTF-8'. Por que a instrução inclui TEMPLATE = template0?"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "porque o template1 não aceita ser copiado e só existe como referência para consultas ao catálogo"
+      - letra: "b"
+        texto: "porque o template0 acelera a criação, já que não contém objetos de sistema a serem duplicados"
+      - letra: "c"
+        texto: "porque o template1 já está inicializado com o locale do servidor, que divergiria do locale solicitado"
+      - letra: "d"
+        texto: "porque o PostgreSQL exige template0 sempre que OWNER for declarado junto com ENCODING"
+
+  - texto: "No PostgreSQL, a diferença entre LC_COLLATE e LC_CTYPE é que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "LC_COLLATE define a codificação dos bytes gravados, enquanto LC_CTYPE define a ordem do índice"
+      - letra: "b"
+        texto: "LC_COLLATE rege a ordenação e igualdade de strings, enquanto LC_CTYPE classifica maiúsculas, minúsculas e dígitos"
+      - letra: "c"
+        texto: "LC_COLLATE vale para o MySQL e LC_CTYPE vale para o PostgreSQL, sem equivalência entre eles"
+      - letra: "d"
+        texto: "LC_CTYPE afeta apenas colunas citadas no WHERE, e LC_COLLATE afeta apenas colunas citadas no ORDER BY"
+
+  - texto: "Uma tabela cliente tem os registros 'Carlos', 'carlos' e 'CARLOS' e a coluna nome usa utf8mb4_0900_ai_ci. Executando SELECT * FROM cliente WHERE nome = 'carlos' e depois repetindo com WHERE nome = 'carlos' COLLATE utf8mb4_bin, os resultados são, respectivamente:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "3 registros e depois 1 registro"
+      - letra: "b"
+        texto: "1 registro e depois 3 registros"
+      - letra: "c"
+        texto: "3 registros em ambas as consultas, pois o COLLATE só afeta ordenações"
+      - letra: "d"
+        texto: "nenhum registro e depois 3 registros, pois a colação da coluna impede o filtro por literal"
+
+  - texto: "Uma coluna de texto é comparada em um JOIN com outra coluna de colação diferente. A consequência mais provável é:"
+    resposta_correta: "d"
+    alternativas:
+      - letra: "a"
+        texto: "erro de sintaxe em tempo de comparação, pois o SGBD exige colações idênticas em toda junção"
+      - letra: "b"
+        texto: "conversão das duas colunas para BINARY, tornando a comparação insensível a caixa e a acento"
+      - letra: "c"
+        texto: "recusa do SGBD em criar a junção, exigindo uma cláusula COLLATE explícita em cada coluna"
+      - letra: "d"
+        texto: "conversão implícita que neutraliza o índice sobre as colunas, elevando o custo da consulta"
+
+  - texto: "Sobre DROP DATABASE IF EXISTS loja_virtual, é correto afirmar que:"
+    resposta_correta: "b"
+    alternativas:
+      - letra: "a"
+        texto: "move o database para uma área de reciclagem por 30 dias, permitindo desfazer a exclusão"
+      - letra: "b"
+        texto: "evita erro quando o database não existe e, quando existe, apaga catálogo e dados de forma irreversível"
+      - letra: "c"
+        texto: "exclui apenas as tabelas, preservando o database vazio e suas configurações de colação"
+      - letra: "d"
+        texto: "rejeita a execução se houver qualquer conexão ativa, mesmo que o database já tenha sido removido"
+
+  - texto: "Em uma aplicação multi-idioma que grava comentários de usuários com emoji, a configuração adequada de criação no MySQL é:"
+    resposta_correta: "c"
+    alternativas:
+      - letra: "a"
+        texto: "CHARACTER SET latin1 COLLATE latin1_general_cs, pois a colação _cs impede a corrupção de caracteres"
+      - letra: "b"
+        texto: "CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci, pois o UTF8 cobre todos os idiomas europeus"
+      - letra: "c"
+        texto: "CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci, pois o UTF8MB4 representa os 4 bytes dos emoji"
+      - letra: "d"
+        texto: "CHARACTER SET binary COLLATE utf8mb4_bin, pois a comparação binária preserva qualquer símbolo"
+
+  - texto: "Sobre a diferença entre MySQL e PostgreSQL na definição de ordenação de um database, é correto afirmar que:"
+    resposta_correta: "a"
+    alternativas:
+      - letra: "a"
+        texto: "o MySQL usa as cláusulas CHARACTER SET e COLLATE, enquanto o PostgreSQL usa ENCODING, LC_COLLATE e LC_CTYPE"
+      - letra: "b"
+        texto: "o MySQL não permite definir colação na criação, aplicando sempre a colação global do servidor"
+      - letra: "c"
+        texto: "o PostgreSQL aceita apenas CLAUSE COLLATE, idêntica à do MySQL, para manter compatibilidade"
+      - letra: "d"
+        texto: "os dois SGBDs usam exatamente as mesmas cláusulas, variando apenas a grafia dos nomes das colações"
 ---
-
-<p>Enunciado do exercício 02 em desenvolvimento para a disciplina...</p>
-
-<div class="tip-box">
-  <h4>Orientações</h4>
-  <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
-  </ul>
-</div>
-
-
-
-
-

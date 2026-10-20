@@ -1,23 +1,260 @@
 ---
 layout: exercicio
-title: "Modelo Entidade-Relacionamento (MER): Conceitos de Entidades e suas classificações."
+title: "Criação e configuração de databases na prática (MySQL x PostgreSQL)"
 exercicio_numero: "01"
-03ero: "03"
-description: "Primeira atividade prática para consolidar os conhecimentos da aula 03."
+aula_numero: "33"
+subject: "banco-de-dados-i"
+description: "Atividade prática para aplicar a criação de databases com CHARACTER SET/COLLATE no MySQL e ENCODING/LC_COLLATE/TEMPLATE no PostgreSQL, inspecionar colações disponíveis, alterar a colação de um banco e comprovar o efeito prático da colação em filtros e chaves únicas."
 ---
 
-<p>Enunciado do exercício 01 em desenvolvimento para a disciplina...</p>
+<section class="section-box">
+  <h2>Enunciado</h2>
+  <p>
+    A <strong>Loja do Bairro</strong> está implantando sua base de dados e o responsável técnico exige que
+    <strong>nenhuma configuração de texto dependa do default da máquina</strong>. Você vai criar os bancos nos dois
+    SGBDs com charset e colação explícitos, inventariar as regras de cada servidor e comprovar, na prática, o que muda
+    quando a colação muda.
+  </p>
+  <p>
+    O grande diferencial desta atividade é a <strong>comparação experimental</strong>: os mesmos dados e as mesmas
+    consultas serão executados sob colações diferentes, para que você registre os resultados divergentes.
+  </p>
+
+  <h3>Preparação</h3>
+  <ol>
+    <li>
+      <strong>Ambiente:</strong> MySQL 8.0+ e PostgreSQL 12+ disponíveis (XAMPP, WampServer ou Docker), acessíveis por
+      MySQL Workbench, pgAdmin ou terminal.
+    </li>
+    <li>
+      <strong>Bancos:</strong> crie <code class="one-line-code">loja_mysql</code> e
+      <code class="one-line-code">loja_postgres</code> seguindo os blocos abaixo.
+    </li>
+    <li>
+      <strong>Registro:</strong> anote literalmente cada comando executado e o resultado obtido — a entrega é um
+      parecer com os comandos e as respostas colados.
+    </li>
+  </ol>
+</section>
+
+<section class="section-box">
+  <h2>1. Estrutura de Arquivos Proposta</h2>
+  <ul>
+    <li><code class="one-line-code">01_criacao.sql</code> — criação de databases com configuração explícita.</li>
+    <li><code class="one-line-code">02_inventario.sql</code> — inspeção de charsets e colações disponíveis.</li>
+    <li><code class="one-line-code">03_alteracao.sql</code> — ALTER DATABASE e seus efeitos reais.</li>
+    <li><code class="one-line-code">04_colisoes.sql</code> — o mesmo filtro sob colações diferentes.</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>2. Desafios de Prática</h2>
+
+  <h3>Bloco 1: Criação com Configuração Explícita</h3>
+  <ol>
+    <li>
+      Crie os bancos com charset e colação declarados nos dois SGBDs:
+      <div class="code-container">
+        <pre><code class="language-sql">-- MySQL
+CREATE DATABASE loja_mysql
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_0900_ai_ci;
+
+-- PostgreSQL (locale de Português/Brasil)
+CREATE DATABASE loja_postgres
+    WITH
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'pt_BR.UTF-8'
+    LC_CTYPE    = 'pt_BR.UTF-8'
+    TEMPLATE    = template0;</code></pre>
+      </div>
+    </li>
+    <li>
+      Se o PostgreSQL recusar a criação, anote a mensagem de erro e explique o que ela diz sobre
+      <code class="one-line-code">template1</code> e sobre o locale do servidor. Tente novamente sem a cláusula
+      <code class="one-line-code">TEMPLATE</code> e compare.
+    </li>
+    <li>
+      Sem declarar charset nenhum, crie <code class="one-line-code">loja_default</code> nos dois SGBDs e descubra quais
+      regras ela herdou:
+      <div class="code-container">
+        <pre><code class="language-sql">-- MySQL: qual charset/colação o banco recebeu?
+SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME
+  FROM information_schema.SCHEMATA
+ WHERE SCHEMA_NAME = 'loja_default';
+
+-- PostgreSQL: encoding e locales herdados
+SELECT datname, pg_encoding_to_char(encoding),
+       datcollate, datctype
+  FROM pg_database
+ WHERE datname = 'loja_default';</code></pre>
+      </div>
+      Os dois ambientes herdaram o mesmo? Justifique a importância disso para um script de implantação.
+    </li>
+  </ol>
+
+  <h3>Bloco 2: Inventário de Charsets e Colações</h3>
+  <ol>
+    <li>
+      Liste no MySQL os conjuntos de caracteres suportados e as colações do UTF8MB4:
+      <div class="code-container">
+        <pre><code class="language-sql">SHOW CHARACTER SET;
+SHOW COLLATION LIKE 'utf8mb4%';</code></pre>
+      </div>
+      Anote: quantas colações o <code class="one-line-code">utf8mb4</code> possui neste servidor? Qual é a padrão?
+    </li>
+    <li>
+      No PostgreSQL, procure as colações regionais brasileiras:
+      <div class="code-container">
+        <pre><code class="language-sql">SELECT collname, collencoding
+  FROM pg_collation
+ WHERE collname LIKE '%pt_BR%'
+ ORDER BY collname
+ LIMIT 15;</code></pre>
+      </div>
+      As colações do PostgreSQL dependem do servidor ou do sistema operacional? Explique a diferença prática.
+    </li>
+    <li>
+      Descubra qual colação está em vigor <strong>neste exato momento</strong> em cada sessão e em cada database:
+      <div class="code-container">
+        <pre><code class="language-sql">-- MySQL
+SELECT @@character_set_database, @@collation_database;
+
+-- PostgreSQL
+SHOW server_encoding;
+SHOW lc_collate;</code></pre>
+      </div>
+      Preencha: MySQL = ________ | PostgreSQL = ________
+    </li>
+  </ol>
+
+  <h3>Bloco 3: ALTER DATABASE e o que ele (não) muda</h3>
+  <ol>
+    <li>
+      Crie uma tabela <code class="one-line-code">cliente</code> em <code class="one-line-code">loja_mysql</code>,
+      insira três nomes com caixas diferentes e execute:
+      <div class="code-container">
+        <pre><code class="language-sql">USE loja_mysql;
+CREATE TABLE cliente (
+    id    INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome  VARCHAR(60) NOT NULL
+);
+INSERT INTO cliente (nome) VALUES ('Carlos'), ('carlos'), ('CARLOS');
+
+SELECT * FROM cliente WHERE nome = 'carlos';</code></pre>
+      </div>
+      Quantos registros retornaram? Por quê?
+    </li>
+    <li>
+      Execute <code class="one-line-code">ALTER DATABASE loja_mysql COLLATE utf8mb4_bin;</code> e repita a consulta da
+      questão anterior <strong>sem recriar a tabela</strong>. O resultado mudou? Explique observando a colação efetiva
+      da coluna:
+      <div class="code-container">
+        <pre><code class="language-sql">SELECT COLUMN_NAME, COLLATION_NAME
+  FROM information_schema.COLUMNS
+ WHERE TABLE_SCHEMA = 'loja_mysql'
+   AND TABLE_NAME = 'cliente';</code></pre>
+      </div>
+    </li>
+    <li>
+      Converta a tabela para a nova colação com
+      <code class="one-line-code">ALTER TABLE cliente CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;</code>,
+      repita a consulta e explique por que o comportamento mudou agora. Que cuidado esse comando exige em bases grandes?
+    </li>
+    <li>
+      No PostgreSQL, crie um segundo banco com <code class="one-line-code">LC_COLLATE = 'C'</code> (ordem por código de
+      bytes) e compare a saída de <code class="one-line-code">ORDER BY nome</code> em um banco
+      <code class="one-line-code">pt_BR.UTF-8</code>. Anote as duas sequências obtidas.
+    </li>
+  </ol>
+
+  <h3>Bloco 4: Colisões Silenciosas sob Diferentes Colações</h3>
+  <ol>
+    <li>
+      Teste a busca por e-mail exigindo distinção de caixa, sem alterar o DDL da tabela:
+      <div class="code-container">
+        <pre><code class="language-sql">CREATE TABLE usuarios (
+    id    INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(120) NOT NULL
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+INSERT INTO usuarios (email) VALUES ('USER@EMAIL.COM'), ('user@email.com');
+
+-- Sob _ci: quantos registros?
+SELECT * FROM usuarios WHERE email = 'user@email.com';
+
+-- Forçando a comparação binária na consulta:
+SELECT * FROM usuarios
+ WHERE email COLLATE utf8mb4_bin = 'user@email.com';</code></pre>
+      </div>
+      Registre os dois resultados.
+    </li>
+    <li>
+      Com a tabela <code class="one-line-code">usuarios</code> ainda sob <code class="one-line-code">_ci</code>,
+      tente inserir o e-mail duplicado em caixa diferente. O que a chave única (se houver) ou a segunda
+      <code class="one-line-code">INSERT</code> revelam sobre o custo silencioso da colação
+      <code class="one-line-code">_ci</code>?
+    </li>
+    <li>
+      Modele no PostgreSQL o mesmo cenário com <code class="one-line-code">citext</code> (extensão
+      <code class="one-line-code">CREATE EXTENSION citext;</code>) e compare: o PostgreSQL resolve
+      <em>case-insensitivity</em> por colação ou por tipo de dado? Essa diferença é uma questão de portabilidade?
+    </li>
+    <li>
+      Ordene os mesmos nomes ('Carlos', 'carlos', 'CH', 'Ch', 'casa') sob
+      <code class="one-line-code">utf8mb4_0900_ai_ci</code> e sob <code class="one-line-code">utf8mb4_bin</code>. Cole
+      as duas saídas e explique a diferença observada.
+    </li>
+  </ol>
+
+  <h3>Bloco 5: Exclusão Segura</h3>
+  <ol>
+    <li>
+      Execute <code class="one-line-code">DROP DATABASE banco_inexistente;</code> e anote o erro. Repita com
+      <code class="one-line-code">IF EXISTS</code> e explique por que essa forma é preferida em scripts
+      reexecutáveis.
+    </li>
+    <li>
+      Tente excluir um database com conexões ativas. Documente a mensagem de erro de cada SGBD e a providência
+      necessária antes do <code class="one-line-code">DROP</code>.
+    </li>
+  </ol>
+
+  <h3>Bloco 6: Refletindo sobre a Prática</h3>
+  <ol>
+    <li>
+      Por que o charset/colação devem ser declarados no script de implantação em vez de depender do default do
+      servidor? Cite um cenário concreto de divergência entre desenvolvimento e produção.
+    </li>
+    <li>
+      Sua equipe usa MySQL em produção e o cliente exige migração futura para PostgreSQL. Liste os 3 pontos desta aula
+      que exigem decisão na migração (charset, colação e locale) e proponha como documentá-los.
+    </li>
+    <li>
+      Justifique tecnicamente por que comparar colunas de colações diferentes em um <code class="one-line-code">JOIN</code>
+      impede o uso de índice B-Tree, lembrando que a árvore foi construída na ordem de uma colação específica.
+    </li>
+  </ol>
+</section>
 
 <div class="tip-box">
-  <h4>Orientações</h4>
+  <h4>Orientações Finais</h4>
   <ul>
-    <li>Leia atentamente o enunciado.</li>
-    <li>Consulte o conteúdo da aula caso tenha dúvidas.</li>
-    <li>Tente resolver de forma independente antes de buscar ajuda.</li>
+    <li>
+      <strong>Experimento controlado:</strong> toda diferença afirmada na entrega deve vir de um comando executado nos
+      dois servidores, com o resultado colado.
+    </li>
+    <li>
+      <strong>Charset não é colação:</strong> ao registrar resultados, diga sempre qual dos dois está variando — a
+      codificação dos bytes ou a régua de comparação.
+    </li>
+    <li>
+      <strong>Alterar colação é migração:</strong> antes de recomendar <code class="one-line-code">CONVERT TO CHARACTER
+      SET</code>, avalie o lock e o risco de duplicatas decorrentes da nova regra de unicidade.
+    </li>
+    <li>
+      <strong>Próxima aula:</strong> Aula 34 — criação de tabelas com restrições de integridade (NOT NULL, UNIQUE),
+      aplicando dentro do database criado aqui as regras que garantem a qualidade dos dados.
+    </li>
   </ul>
 </div>
-
-
-
-
-

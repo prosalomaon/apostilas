@@ -2,29 +2,601 @@
 title: "Linguagem DDL: Criação de Databases e as opções de COLLATION."
 aula_numero: "33"
 subject: "banco-de-dados-i"
-description: "Conteúdo da aula 33 do bimestre 4: Linguagem DDL: Criação de Databases e as opções de COLLATION.."
+description: "Conteúdo da aula 33 do bimestre 4: criação de databases com CREATE DATABASE, character set e collation no MySQL e no PostgreSQL, sufixos de colação, alteração e exclusão de bancos e o impacto prático da colação nas consultas cotidianas."
 tags:
-- aula
-- bimestre-04
+  - aula
+  - bimestre-04
 ---
-aula_numero: "33"
-subject: "banco-de-dados-i"
 
 <section class="section-box">
-  <h2>Teoria & Conceitos</h2>
-  <p>Conteúdo teórico da aula 03 em desenvolvimento...</p>
+  <h2>Teoria &amp; Conceitos</h2>
+  <p>
+    A <strong>Linguagem de Definição de Dados</strong> (<em>Data Definition Language</em> — <strong>DDL</strong>) é a
+    sublinguagem da SQL utilizada por administradores de banco de dados (DBAs) e projetistas para definir, modificar e
+    estruturar o esquema do banco de dados no catálogo do SGBD. Enquanto a DML manipula o conteúdo das tabelas, a DDL
+    constrói o próprio contêiner que as armazena.
+  </p>
+  <p>
+    No ciclo de implementação do modelo físico, antes de criar tabelas, chaves primárias e relacionamentos, o primeiro
+    passo lógico e operacional consiste em <strong>inicializar a área de armazenamento</strong> onde residirão todos os
+    objetos da aplicação: o <strong>Database</strong> (Banco de Dados). O comando responsável por essa etapa é o
+    <code class="one-line-code">CREATE DATABASE</code>. Durante sua execução, define-se não apenas o nome lógico do
+    banco de dados, mas também suas <strong>regras de codificação de texto e ordenação</strong> — regras que, como veremos,
+    acompanham todas as colunas de texto criadas dentro dele.
+  </p>
+
+  <h3>1. Fundamentos de Conjunto de Caracteres (<em>Character Set</em>) e Colação (<em>Collation</em>)</h3>
+  <p>
+    Ao armazenar informações de texto (strings) em um banco de dados relacional, o SGBD precisa saber <strong>como
+    converter caracteres humanos em bytes</strong> fisicamente e <strong>como comparar duas sequências de texto</strong>
+    entre si. São duas responsabilidades distintas, que costumam ser confundidas:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-plaintext">1. Character Set (Encoding) --&gt; Define COMO os caracteres viram bytes.
+2. Collation (Colação)      --&gt; Define COMO as strings são comparadas.</code></pre>
+  </div>
+
+  <h4>1.1. Character Set (Conjunto de Caracteres)</h4>
+  <p>
+    O <strong>Character Set</strong> (ou <em>charset</em>) é a tabela de mapeamento que associa cada símbolo, letra ou
+    número a um código numérico binário bruto. Ele responde à pergunta: <em>"que byte devo gravar em disco para
+    representar a letra 'ç'?"</em>
+  </p>
+  <ul>
+    <li>
+      <strong>Latin1 (cp1252 / ISO-8859-1):</strong> codifica caracteres da Europa Ocidental ocupando
+      <strong>1 byte por caractere</strong>. Cobre o português, mas não representa a maior parte dos símbolos globais.
+    </li>
+    <li>
+      <strong>UTF-8 / UTF8MB3:</strong> codificação Unicode de tamanho variável (de 1 a 3 bytes) para caracteres da
+      camada básica multilíngue (<em>Basic Multilingual Plane</em>).
+    </li>
+    <li>
+      <strong>UTF8MB4:</strong> codificação Unicode completa, de até 4 bytes por caractere. É o
+      <strong>padrão recomendado modernamente</strong>, pois suporta todos os símbolos mundiais, ideogramas complexos e
+      <em>emojis</em> sem perda ou corrupção de dados — inclusive os caracteres fora do plano básico, que o UTF8MB3
+      simplesmente descarta.
+    </li>
+  </ul>
+  <div class="tip-box">
+    <h4>Por que 4 bytes fazem diferença</h4>
+    <p>
+      Um <em>emoji</em> como 😀 ocupa 4 bytes em UTF8MB4. Gravá-lo em uma coluna
+      <code class="one-line-code">VARCHAR(10)</code> sob UTF8MB3 faz o SGBD truncar ou recusar o caractere, porque o
+      UTF8MB3 não possui representação para ele. O limite de <code class="one-line-code">VARCHAR(n)</code> é contado em
+      <strong>caracteres</strong>, mas o espaço físico é medido em <strong>bytes</strong>: 1 caractere UTF8MB4 pode
+      consumir 4 bytes.
+    </p>
+  </div>
+
+  <h4>1.2. Collation (Colação / Regra de Ordenação)</h4>
+  <p>
+    A <strong>Collation</strong> é o conjunto de regras lógicas que determina a <strong>ordenação</strong> e a
+    <strong>comparação de igualdade</strong> entre caracteres dentro de um determinado <em>Character Set</em>. Ela
+    responde a perguntas como:
+  </p>
+  <ul>
+    <li><code class="one-line-code">'A'</code> é igual a <code class="one-line-code">'a'</code>?</li>
+    <li><code class="one-line-code">'á'</code> é igual a <code class="one-line-code">'a'</code>?</li>
+    <li>
+      O caractere <code class="one-line-code">'ch'</code> vem depois de <code class="one-line-code">'c'</code> ou é
+      tratado como uma letra simples (como no espanhol tradicional)?
+    </li>
+  </ul>
+  <p>
+    Uma mesma colação só pode ser aplicada sobre um <em>Character Set</em> compatível: não existe
+    <code class="one-line-code">utf8mb4_0900_ai_ci</code> sobre Latin1, porque as regras de comparação pressupõem o
+    alfabeto que o charset consegue representar.
+  </p>
+
+  <h4>1.3. Convenções de Nomenclatura de Collations (Sufixos)</h4>
+  <p>
+    Nos SGBDs relacionais (especialmente no MySQL), o nome da colação indica seu comportamento por meio de sufixos
+    padronizados. Decifrar o nome é ler a semântica da comparação:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Sufixo</th>
+        <th>Significado</th>
+        <th>Comportamento na Comparação</th>
+        <th>Exemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>_ci</strong></td>
+        <td><em>Case-Insensitive</em></td>
+        <td><strong>Insensível</strong> a maiúsculas e minúsculas (<code class="one-line-code">'A' = 'a'</code>).</td>
+        <td><code class="one-line-code">utf8mb4_0900_ai_ci</code></td>
+      </tr>
+      <tr>
+        <td><strong>_cs</strong></td>
+        <td><em>Case-Sensitive</em></td>
+        <td><strong>Sensível</strong> a maiúsculas e minúsculas (<code class="one-line-code">'A' ≠ 'a'</code>).</td>
+        <td><code class="one-line-code">latin1_general_cs</code></td>
+      </tr>
+      <tr>
+        <td><strong>_bin</strong></td>
+        <td><em>Binary</em></td>
+        <td>Compara estritamente os valores numéricos dos bytes, sem interpretação linguística.</td>
+        <td><code class="one-line-code">utf8mb4_bin</code></td>
+      </tr>
+      <tr>
+        <td><strong>_ai</strong></td>
+        <td><em>Accent-Insensitive</em></td>
+        <td><strong>Insensível</strong> a acentos (<code class="one-line-code">'á' = 'a'</code>).</td>
+        <td><code class="one-line-code">utf8mb4_0900_ai_ci</code></td>
+      </tr>
+      <tr>
+        <td><strong>_as</strong></td>
+        <td><em>Accent-Sensitive</em></td>
+        <td><strong>Sensível</strong> a acentos (<code class="one-line-code">'á' ≠ 'a'</code>).</td>
+        <td><code class="one-line-code">utf8mb4_0900_as_cs</code></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Note que o nome pode combinar sufixos: <code class="one-line-code">utf8mb4_0900_ai_ci</code> é
+    <em>accent-insensitive</em> <strong>e</strong> <em>case-insensitive</em>, enquanto
+    <code class="one-line-code">utf8mb4_0900_as_cs</code> é sensível nos dois eixos.
+  </p>
+
+  <h3>2. Implementação Prática no MySQL</h3>
+  <p>
+    No MySQL, a criação do banco de dados permite especificar explicitamente o <em>Character Set</em> e a
+    <em>Collation</em> padrão. Caso não sejam informados, o servidor adotará suas configurações globais
+    (<code class="one-line-code">character_set_server</code> e
+    <code class="one-line-code">collation_server</code>), o que significa que o comportamento do seu DDL pode variar de
+    uma máquina para outra.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Criando um banco de dados com configurações padrão do servidor
+CREATE DATABASE comercial;
+
+-- Criando um banco de dados garantindo codificação UTF-8 completa
+-- e colação insensível a maiúsculas/acentos
+CREATE DATABASE loja_virtual
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_0900_ai_ci;
+
+-- Listar todos os conjuntos de caracteres suportados pelo MySQL
+SHOW CHARACTER SET;
+
+-- Listar as colações disponíveis para o charset utf8mb4
+SHOW COLLATION LIKE 'utf8mb4%';</code></pre>
+  </div>
+
+  <h4>Alterando e Verificando o Database Atual</h4>
+  <p>
+    Se as necessidades da aplicação mudarem, é possível alterar o conjunto padrão de caracteres de um banco existente com
+    o comando <code class="one-line-code">ALTER DATABASE</code>:
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Selecionando o banco de dados para uso
+USE loja_virtual;
+
+-- Alterando a colação padrão do banco existente
+ALTER DATABASE loja_virtual
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_bin;</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4><code class="one-line-code">ALTER DATABASE</code> muda a régua, não as fichas já gravadas</h4>
+    <p>
+      A alteração afeta o <strong>padrão aplicado a novos objetos</strong> (tabelas e colunas criadas a partir daquele
+      momento). As colunas já existentes <strong>não são convertidas automaticamente</strong>: para isso seria preciso
+      um <code class="one-line-code">ALTER TABLE ... CONVERT TO CHARACTER SET ...</code> sobre cada tabela — uma
+      operação de migração de dados, com lock e tempo proporcional ao volume.
+    </p>
+  </div>
+
+  <h3>3. Implementação Prática no PostgreSQL</h3>
+  <p>
+    O PostgreSQL lida com codificação de texto por meio dos parâmetros de <strong>Locale</strong> do sistema operacional
+    (<code class="one-line-code">LC_COLLATE</code> e <code class="one-line-code">LC_CTYPE</code>) e utiliza o conceito de
+    <strong>Template Databases</strong> durante o <code class="one-line-code">CREATE DATABASE</code>.
+  </p>
+
+  <h4>3.1. O Conceito de Template Database</h4>
+  <p>
+    Quando um banco de dados é criado no PostgreSQL, ele é gerado a partir de uma <strong>cópia de um banco de dados
+    modelo</strong> existente (por padrão, o <code class="one-line-code">template1</code> ou
+    <code class="one-line-code">template0</code>). O <code class="one-line-code">template1</code> é o "molde vivo" do
+    servidor: se você instalar extensões ou objetos nele, todo banco criado depois já os herdará. O
+    <code class="one-line-code">template0</code> é a cópia pristine, intocada, usada quando é preciso controlar encoding
+    e locale explicitamente.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Criando um banco de dados básico (herda encoding e locale do template1)
+CREATE DATABASE gestao_db;
+
+-- Criando um banco de dados com Encoding UTF8 e Locales específicos de Português/Brasil
+CREATE DATABASE escolar_db
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'pt_BR.UTF-8'
+    LC_CTYPE = 'pt_BR.UTF-8'
+    TEMPLATE = template0;</code></pre>
+  </div>
+  <ul>
+    <li>
+      <strong><code class="one-line-code">ENCODING</code>:</strong> define a codificação de caracteres armazenados — o
+      equivalente ao <code class="one-line-code">CHARACTER SET</code> do MySQL.
+    </li>
+    <li>
+      <strong><code class="one-line-code">LC_COLLATE</code>:</strong> define a regra de ordenação de strings
+      (alfabetização) segundo a cultura regional (<code class="one-line-code">pt_BR</code>).
+    </li>
+    <li>
+      <strong><code class="one-line-code">LC_CTYPE</code>:</strong> define a classificação de tipos de caracteres — o que
+      é letra maiúscula, minúscula ou dígito.
+    </li>
+    <li>
+      <strong><code class="one-line-code">TEMPLATE</code>:</strong> indica qual banco será copiado. Ao especificar
+      <code class="one-line-code">LC_COLLATE</code> diferente do locale do servidor, é obrigatório usar o
+      <code class="one-line-code">template0</code>, pois o <code class="one-line-code">template1</code> já está
+      inicializado com o locale do servidor: usá-lo como molde resultaria em erro, porque o locale do novo database
+      divergiria do locale já gravado na cópia.
+    </li>
+  </ul>
+
+  <h3>4. Impacto Prático da COLLATION nas Aplicações</h3>
+  <p>
+    A escolha da <em>Collation</em> afeta diretamente o comportamento das consultas SQL cotidianas — não é um detalhe de
+    configuração "de infraestrutura".
+  </p>
+
+  <h4>4.1. Comparações e Filtros (<code class="one-line-code">WHERE</code>)</h4>
+  <p>Considere uma tabela com os nomes <code class="one-line-code">'Carlos'</code>, <code class="one-line-code">'carlos'</code> e <code class="one-line-code">'CARLOS'</code>:</p>
+  <ul>
+    <li>
+      Com colação <strong>utf8mb4_0900_ai_ci</strong>: a consulta
+      <code class="one-line-code">SELECT * FROM cliente WHERE nome = 'carlos'</code> retornará
+      <strong>os 3 registros</strong>.
+    </li>
+    <li>
+      Com colação <strong>utf8mb4_bin</strong> ou <strong>_cs</strong>: a mesma consulta retornará
+      <strong>apenas o registro</strong> <code class="one-line-code">'carlos'</code>.
+    </li>
+  </ul>
+
+  <h4>4.2. Ordenação (<code class="one-line-code">ORDER BY</code>)</h4>
+  <p>
+    Em línguas diferentes, a ordem alfabética varia. Por exemplo, em espanhol tradicional, a colação
+    <code class="one-line-code">utf8_spanish2_ci</code> ordena a sequência <code class="one-line-code">'ch'</code> depois
+    da letra <code class="one-line-code">'c'</code>, diferentemente da colação genérica
+    <code class="one-line-code">utf8_general_ci</code>, que trata <code class="one-line-code">'ch'</code> como qualquer
+    dígrafo — <code class="one-line-code">c</code> seguido de <code class="one-line-code">h</code>.
+  </p>
+
+  <h4>4.3. Índices e Desempenho</h4>
+  <p>
+    A ordenação dos dados em índices B-Tree depende diretamente da colação escolhida: a árvore é construída
+    <strong>na ordem em que a colação compara</strong>. Comparar strings com colações diferentes em comandos de junção
+    (<code class="one-line-code">JOIN</code>) impede o uso de índices e força a conversão explícita de tipos, reduzindo a
+    velocidade de resposta do SGBD.
+  </p>
+
+  <h3>5. Alteração e Exclusão de Databases</h3>
+  <p>
+    A remoção de um banco de dados é uma instrução DDL <strong>irreversível</strong> que apaga permanentemente o catálogo,
+    suas tabelas e todos os dados gravados. Não há lixeira: a partir do commit da transação DDL, os dados não existem
+    mais.
+  </p>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Sintaxe para exclusão permanente do banco de dados
+DROP DATABASE loja_virtual;
+
+-- Prevenção de erro caso o banco não exista
+DROP DATABASE IF EXISTS loja_virtual;</code></pre>
+  </div>
+
+  <h3>6. Resumo Comparativo: MySQL vs. PostgreSQL (Criação de Databases)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Requisito DDL</th>
+        <th>MySQL</th>
+        <th>PostgreSQL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Comando de Criação</strong></td>
+        <td><code class="one-line-code">CREATE DATABASE db_nome;</code></td>
+        <td><code class="one-line-code">CREATE DATABASE db_nome;</code></td>
+      </tr>
+      <tr>
+        <td><strong>Definição de Encoding</strong></td>
+        <td>Cláusula <code class="one-line-code">CHARACTER SET</code></td>
+        <td>Cláusula <code class="one-line-code">ENCODING</code></td>
+      </tr>
+      <tr>
+        <td><strong>Definição de Ordenação</strong></td>
+        <td>Cláusula <code class="one-line-code">COLLATE</code></td>
+        <td>Cláusulas <code class="one-line-code">LC_COLLATE</code> e <code class="one-line-code">LC_CTYPE</code></td>
+      </tr>
+      <tr>
+        <td><strong>Uso de Modelos</strong></td>
+        <td>Automático no servidor (padrões globais)</td>
+        <td>Cláusula <code class="one-line-code">TEMPLATE</code> (<code class="one-line-code">template0</code>/<code class="one-line-code">template1</code>)</td>
+      </tr>
+      <tr>
+        <td><strong>Verificação de Regras</strong></td>
+        <td><code class="one-line-code">SHOW COLLATION;</code></td>
+        <td><code class="one-line-code">SELECT * FROM pg_collation;</code></td>
+      </tr>
+    </tbody>
+  </table>
 </section>
 
 <section class="section-box">
-  <h2>Exemplo Prático</h2>
-  <p>Exemplo prático da aula 03 em desenvolvimento...</p>
+  <h2>Exemplo de Código</h2>
+  <p>
+    Vamos materializar a criação de bancos com regras de codificação explícitas nos dois SGBDs. Todos os blocos devem
+    ser executados no ambiente da aula e verificados com os comandos de inspeção ao final de cada um.
+  </p>
+
+  <h3>Exemplo 1: Criação de Database no MySQL com Charset Explícito</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Banco com padrões do servidor (atenção: pode variar entre máquinas!)
+CREATE DATABASE comercial;
+
+-- Banco com UTF8MB4 completo e colação insensível a caixa e acentos
+CREATE DATABASE loja_virtual
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_0900_ai_ci;
+
+-- Verificando qual charset/collation o banco realmente recebeu
+SELECT DEFAULT_CHARACTER_SET_NAME AS charset,
+       DEFAULT_COLLATION_NAME     AS collation
+  FROM information_schema.SCHEMATA
+ WHERE SCHEMA_NAME = 'loja_virtual';</code></pre>
+  </div>
+
+  <h3>Exemplo 2: Inspecionando Charsets e Collations Disponíveis</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Listar todos os conjuntos de caracteres suportados pelo MySQL
+SHOW CHARACTER SET;
+
+-- Listar as colações disponíveis para o charset utf8mb4
+SHOW COLLATION LIKE 'utf8mb4%';
+
+-- Descobrir qual colação está em vigor nesta sessão, neste momento
+SELECT @@character_set_database AS charset_atual,
+       @@collation_database     AS collation_atual;</code></pre>
+  </div>
+
+  <h3>Exemplo 3: Alterando a Colação de um Banco Existente</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">USE loja_virtual;
+
+-- Passando o banco para colação binária (sensível a caixa e acentos)
+ALTER DATABASE loja_virtual
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_bin;
+
+-- Atenção: tabelas JÁ existentes não mudaram. Converta-as explicitamente:
+ALTER TABLE cliente
+    CONVERT TO CHARACTER SET utf8mb4
+    COLLATE utf8mb4_bin;</code></pre>
+  </div>
+  <div class="tip-box">
+    <h4>Conversão de tabela existente é migração de dados</h4>
+    <p>
+      O <code class="one-line-code">ALTER TABLE ... CONVERT TO CHARACTER SET</code> reescreve as colunas de texto da
+      tabela inteira. Em bases grandes, isso exige janela de manutenção — e pode até <strong>alterar o resultado de
+      chaves únicas</strong>, porque valores que colidiam sob a colação antiga deixam de colidir sob a nova (ou vice-versa).
+    </p>
+  </div>
+
+  <h3>Exemplo 4: Criação de Database no PostgreSQL com Locale Regional</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Banco básico: herda encoding e locale do template1
+CREATE DATABASE gestao_db;
+
+-- Banco com Encoding UTF8 e Locales de Português/Brasil.
+-- O TEMPLATE = template0 é obrigatório quando LC_COLLATE/LC_CTYPE
+-- diferem dos valores já gravados no template1.
+CREATE DATABASE escolar_db
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'pt_BR.UTF-8'
+    LC_CTYPE    = 'pt_BR.UTF-8'
+    TEMPLATE    = template0;
+
+-- Verificando as regras do banco criado
+SELECT datname, pg_encoding_to_char(encoding) AS encoding,
+       datcollate AS lc_collate, datctype AS lc_ctype
+  FROM pg_database
+ WHERE datname = 'escolar_db';
+
+-- Listando colações conhecidas pelo servidor
+SELECT collname, collencoding
+  FROM pg_collation
+ WHERE collname LIKE '%pt_BR%'
+ LIMIT 10;</code></pre>
+  </div>
+
+  <h3>Exemplo 5: Forçando uma Colação em Tempo de Consulta (MySQL)</h3>
+  <div class="code-container">
+    <pre><code class="language-sql">-- Tabela criada sob a colação padrão case-insensitive
+CREATE TABLE usuarios (
+    id     INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    email  VARCHAR(120) NOT NULL
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+INSERT INTO usuarios (email) VALUES ('USER@EMAIL.COM'), ('user@email.com');
+
+-- Sob _ci, o filtro encontra os DOIS registros (maiusculas ignoradas)
+SELECT * FROM usuarios WHERE email = 'user@email.com';
+
+-- Forçando comparação binária na consulta, sem alterar a tabela
+SELECT * FROM usuarios
+ WHERE email COLLATE utf8mb4_bin = 'user@email.com';
+-- Resultado: apenas 'user@email.com'</code></pre>
+  </div>
+  <p>
+    O operador <code class="one-line-code">COLLATE</code> dentro da consulta sobrepõe a colação da coluna
+    <strong>para aquela expressão específica</strong>. É a solução pontual quando a regra da tabela não serve para um
+    filtro determinado — sem exigir <code class="one-line-code">ALTER TABLE</code>.
+  </p>
 </section>
 
+<section class="section-box">
+  <h2>Representação Gráfica (Diagramas Conceituais)</h2>
 
+  <h3>Fluxo de Decisão na Criação de um Database</h3>
+  <p>
+    Sequência de decisão recomendada antes de executar o <code class="one-line-code">CREATE DATABASE</code> em um novo
+    servidor de produção.
+  </p>
+  <div class="mermaid">
+    graph TD
+    A["Novo banco de dados"] --> B{"A aplicação guarda<br/>emoji / idiomas<br/>não-latinos?"}
+    B -->|Não| C["Latin1 é tecnicamente possível<br/>(não recomendado)"]
+    B -->|Sim| D["UTF8MB4 / UTF8<br/>(padrão moderno)"]
+    D --> E{"A busca deve diferenciar<br/>maiúsculas e acentos?"}
+    E -->|Não| F["Collation _ai_ci<br/>ex: utf8mb4_0900_ai_ci"]
+    E -->|Sim| G["Collation _as_cs ou _bin<br/>ex: utf8mb4_bin"]
+    F --> H["CREATE DATABASE ...<br/>CHARACTER SET + COLLATE"]
+    G --> H
+    C --> H
+    H --> I["Verificar com<br/>SHOW COLLATION /<br/>information_schema.SCHEMATA"]
 
+    style F fill:#d4edda,stroke:#c3e6cb
+    style G fill:#fff3e0,stroke:#e65100
+    style H fill:#e1f5fe,stroke:#01579b
+  </div>
 
+  <h3>Efeito da Collation em uma Consulta com Filtro</h3>
+  <p>
+    Os mesmos três registros, o mesmo <code class="one-line-code">WHERE</code>, duas colações — e resultados
+    radicalmente diferentes.
+  </p>
+  <div class="mermaid">
+    sequenceDiagram
+    participant App as Aplicação
+    participant MySQL as MySQL
 
+    Note over App,MySQL: Tabela cliente: 'Carlos', 'carlos', 'CARLOS'
+    App->>MySQL: SELECT * FROM cliente WHERE nome = 'carlos'
+    Note over MySQL: Colação da coluna = utf8mb4_0900_ai_ci
+    MySQL-->>App: 3 registros (case-insensitive)
 
+    App->>MySQL: SELECT * FROM cliente WHERE nome = 'carlos' COLLATE utf8mb4_bin
+    Note over MySQL: Colação sobrescrita na expressão
+    MySQL-->>App: 1 registro ('carlos')
+    Note over App,MySQL: A diferença não está nos dados, mas na régua de comparação
+  </div>
 
+  <h3>Derivação dos Sufixos de Colação</h3>
+  <div class="mermaid">
+    graph TD
+    A["Nome da collation"] --> B{"Sufixo _ci<br/>ou _cs?"}
+    B -->|_ci| C["Case-Insensitive:<br/>'A' = 'a'"]
+    B -->|_cs| D["Case-Sensitive:<br/>'A' ≠ 'a'"]
+    A --> E{"Sufixo _ai<br/>ou _as?"}
+    E -->|_ai| F["Accent-Insensitive:<br/>'á' = 'a'"]
+    E -->|_as| G["Accent-Sensitive:<br/>'á' ≠ 'a'"]
+    A --> H["_bin: comparação<br/>estrita dos bytes"]
 
+    style C fill:#d4edda,stroke:#c3e6cb
+    style D fill:#fff3e0,stroke:#e65100
+    style F fill:#d4edda,stroke:#c3e6cb
+    style G fill:#fff3e0,stroke:#e65100
+    style H fill:#e1f5fe,stroke:#01579b
+  </div>
+</section>
 
+<div class="tip-box">
+  <h4>Dicas &amp; Lembretes</h4>
+  <ul>
+    <li>
+      <strong>Charset é a régua, collation é a comparação:</strong> o <em>Character Set</em> decide o byte gravado; a
+      <em>Collation</em> decide se dois bytes diferentes "contam" como o mesmo texto.
+    </li>
+    <li>
+      <strong>Padrão moderno é UTF8MB4:</strong> qualquer banco novo sem charset explícito herda a configuração global
+      do servidor — que pode ser antiga. Especifique sempre <code class="one-line-code">CHARACTER SET</code> e
+      <code class="one-line-code">COLLATE</code> no script de implantação.
+    </li>
+    <li>
+      <strong><code class="one-line-code">_ci</code> tem custo silencioso em unicidade:</strong> sob
+      <code class="one-line-code">_ci</code>, uma chave única sobre e-mail recusa <code class="one-line-code">'USER@X.COM'</code>
+      depois de <code class="one-line-code">'user@x.com'</code> — o que pode ser desejável (e-mail é case-insensitive no
+      domínio local) ou um bug de negócio.
+    </li>
+    <li>
+      <strong>Colação não é só MySQL:</strong> no PostgreSQL a ordenação vem do locale do sistema
+      (<code class="one-line-code">LC_COLLATE</code>), por isso a criação do banco usa
+      <code class="one-line-code">TEMPLATE = template0</code> quando o locale precisa ser controlado.
+    </li>
+    <li>
+      <strong>Altere a colação antes de popular:</strong> converter a colação de uma tabela cheia é uma migração com
+      lock, e pode quebrar ou criar chaves duplicadas conforme a nova régua de comparação.
+    </li>
+    <li>
+      <strong>Próxima aula:</strong> Aula 34 — Criação de tabelas com restrições de integridade (NOT NULL, UNIQUE), para
+      aplicar dentro do database recém-criado as regras que garantem a qualidade dos dados gravados.
+    </li>
+  </ul>
+</div>
+
+<section class="section-box">
+  <h2>Como aplicar na Prática</h2>
+  <ul>
+    <li>
+      <strong>Script de implantação versionado:</strong> o <code class="one-line-code">CREATE DATABASE</code> deve
+      entrar no repositório junto com o DDL das tabelas, com charset e collation explícitos — nunca depender do default
+      da máquina do desenvolvedor.
+    </li>
+    <li>
+      <strong>Multi-idioma desde o início:</strong> para sistemas com comentários de usuário, catálogo com produtos
+      internacionais ou suporte a emoji, adote <code class="one-line-code">utf8mb4</code> + colação
+      <code class="one-line-code">_ai_ci</code> no MySQL e <code class="one-line-code">ENCODING 'UTF8'</code> no
+      PostgreSQL.
+    </li>
+    <li>
+      <strong>Identificadores estritos:</strong> para colunas como código de barras, chaves de acesso ou tokens, use
+      colação <code class="one-line-code">utf8mb4_bin</code> — comparação byte a byte, sem normalização inesperada.
+    </li>
+    <li>
+      <strong>Auditoria de bases legadas:</strong> rode
+      <code class="one-line-code">SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA</code>
+      (MySQL) e <code class="one-line-code">SELECT datname, datcollate, datctype FROM pg_database</code> (PostgreSQL)
+      para inventariar quais bancos herdaram charset antigo.
+    </li>
+    <li>
+      <strong>Filtro pontual sem DDL:</strong> quando apenas uma consulta precisa de outra regra, use o operador
+      <code class="one-line-code">COLLATE</code> na expressão, em vez de alterar a coluna para todos os consumidores.
+    </li>
+    <li>
+      <strong>Cuidado com <code class="one-line-code">DROP DATABASE</code> em scripts:</strong> use
+      <code class="one-line-code">IF EXISTS</code> para idempotência, mas mantenha a execução do script destrutivo
+      separada do deploy rotineiro.
+    </li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Referências</h2>
+  <ul>
+    <li>HEUSER, Carlos Alberto. <em>Projeto de Banco de Dados</em>. 6. ed. Porto Alegre: Bookman, 2009.</li>
+    <li>MACHADO, Felipe Nery Rodrigues. <em>Projeto e implementação de banco de dados</em>. 3. ed. São Paulo: Érica, 2014.</li>
+    <li>SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. <em>Database System Concepts</em>. 7. ed. New York: McGraw-Hill, 2020.</li>
+    <li>ORACLE CORPORATION. <em>MySQL 8.0 Reference Manual</em>. Capítulos 10 (Character Sets, Collations, and Unicode) e 13 (Data Definition Language).</li>
+    <li>POSTGRESQL GLOBAL DEVELOPMENT GROUP. <em>PostgreSQL Documentation</em>. Capítulos 22 (Character Set Support) e 5 (Database Creation and Removal / Locale Support).</li>
+  </ul>
+</section>
+
+<section class="section-box">
+  <h2>Para Praticar</h2>
+  <ul>
+    <li><a href="./exercicio-01/">Exercício 01: Criação e configuração de databases na prática (MySQL x PostgreSQL)</a></li>
+    <li><a href="./exercicio-02/">Exercício 02: Questionário de Fixação</a></li>
+  </ul>
+</section>
